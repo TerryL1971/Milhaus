@@ -1,0 +1,15 @@
+-- supabase/migrations/20260821150254_fix_storage_list_policy.sql
+-- Removes the "listing-photos: public read" SELECT policy added in the
+-- init migration. Supabase Studio flags it correctly: SELECT on
+-- storage.objects governs *listing/enumerating* files, not just
+-- downloading a known path. That policy had no scoping at all, so any
+-- client (including anon) could list every file across every user's
+-- folder in the bucket.
+--
+-- It was also unnecessary. The bucket is already `public = true`, so
+-- individual files are downloadable via the public URL scheme
+-- (/storage/v1/object/public/listing-photos/<path>), which does not
+-- consult storage.objects RLS at all. The app reads photo URLs from
+-- `listings.photos` (already RLS-scoped via the listings table), never
+-- by listing the bucket — so no SELECT policy is needed here.
+drop policy if exists "listing-photos: public read" on storage.objects;
