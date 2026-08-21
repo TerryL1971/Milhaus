@@ -8,14 +8,14 @@ const columns = [
   {
     heading: "For renters",
     links: [
-      { label: "Browse listings", href: "/listings" },
+      { label: "Browse listings", href: "/#listings" },
       { label: "How verification works", href: "#" },
     ],
   },
   {
     heading: "For listers",
     links: [
-      { label: "Post a home", href: "/post" },
+      { label: "Post a home", href: "/#how" },
       { label: "For landlords", href: "#" },
     ],
   },

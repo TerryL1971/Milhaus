@@ -16,10 +16,10 @@ export function SiteHeader() {
         </Link>
 
         <nav className="hidden gap-7 text-[0.92rem] font-medium md:flex">
-          <Link href="/listings" className="opacity-85 transition-opacity hover:opacity-100">
+          <Link href="/#listings" className="opacity-85 transition-opacity hover:opacity-100">
             Browse listings
           </Link>
-          <Link href="/post" className="opacity-85 transition-opacity hover:opacity-100">
+          <Link href="/#how" className="opacity-85 transition-opacity hover:opacity-100">
             List your home
           </Link>
           <Link href="#" className="opacity-85 transition-opacity hover:opacity-100">
@@ -35,7 +35,7 @@ export function SiteHeader() {
             Sign in
           </Link>
           <Link
-            href="/listings"
+            href="/#listings"
             className="rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
           >
             Browse listings
