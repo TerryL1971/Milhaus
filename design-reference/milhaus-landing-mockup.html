@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>milhaus — Find home before you land</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:ital,wght@0,400;0,500;0,600;0,700;1,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1B2A3A;
+    --ink-soft: #2C4053;
+    --canvas: #F0EDE4;
+    --canvas-deep: #E6E1D2;
+    --olive: #6B7353;
+    --olive-deep: #545A41;
+    --rust: #B5502F;
+    --brass: #C89B3C;
+    --brass-deep: #AD8530;
+    --charcoal: #22201B;
+    --paper: #FBFAF6;
+    --white: #FFFFFF;
+    --font-display: 'Zilla Slab', Georgia, serif;
+    --font-body: 'IBM Plex Sans', -apple-system, sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+    --radius: 6px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--canvas);
+    color: var(--charcoal);
+    font-family: var(--font-body);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  img, svg { display: block; max-width: 100%; }
+
+  a { color: inherit; }
+
+  :focus-visible {
+    outline: 3px solid var(--brass);
+    outline-offset: 2px;
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  /* ---------- NAV ---------- */
+  header.site {
+    background: var(--ink);
+    color: var(--paper);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+  .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 32px;
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+  .logo {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: 0.01em;
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+  }
+  .logo .dot { color: var(--brass); }
+  nav.links {
+    display: flex;
+    gap: 28px;
+    font-size: 0.92rem;
+    font-weight: 500;
+  }
+  nav.links a { text-decoration: none; opacity: 0.85; transition: opacity 0.15s; }
+  nav.links a:hover { opacity: 1; }
+  .nav-actions { display: flex; align-items: center; gap: 18px; }
+  .btn {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: var(--radius);
+    padding: 11px 20px;
+    cursor: pointer;
+    display: inline-block;
+    text-decoration: none;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-brass { background: var(--brass); color: var(--ink); }
+  .btn-brass:hover { background: var(--brass-deep); }
+  .btn-ghost { background: transparent; color: var(--paper); border: 1px solid rgba(251,250,246,0.35); }
+  .btn-ghost:hover { border-color: rgba(251,250,246,0.7); }
+
+  @media (max-width: 780px) {
+    nav.links { display: none; }
+  }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    padding: 72px 0 64px;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 56px;
+    align-items: center;
+  }
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; }
+  }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--olive-deep);
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 7px; height: 7px;
+    background: var(--olive);
+    display: inline-block;
+    border-radius: 1px;
+    transform: rotate(45deg);
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(2.4rem, 4.4vw, 3.6rem);
+    line-height: 1.05;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    margin-bottom: 20px;
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--rust);
+  }
+  .hero p.sub {
+    font-size: 1.08rem;
+    color: var(--ink-soft);
+    max-width: 46ch;
+    margin-bottom: 32px;
+  }
+
+  /* search utility bar */
+  .search-bar {
+    background: var(--paper);
+    border: 1px solid var(--canvas-deep);
+    border-radius: var(--radius);
+    padding: 14px;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 0.9fr auto;
+    gap: 10px;
+    box-shadow: 0 8px 24px rgba(27,42,58,0.08);
+  }
+  @media (max-width: 640px) {
+    .search-bar { grid-template-columns: 1fr; }
+  }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    opacity: 0.75;
+  }
+  .field select, .field input {
+    font-family: var(--font-body);
+    font-size: 0.92rem;
+    border: none;
+    background: transparent;
+    color: var(--charcoal);
+    padding: 4px 0;
+  }
+  .field select:focus, .field input:focus { outline: none; }
+  .field { border-right: 1px solid var(--canvas-deep); padding-right: 14px; }
+  .field:last-of-type { border-right: none; }
+  @media (max-width: 640px) { .field { border-right: none; border-bottom: 1px solid var(--canvas-deep); padding-bottom: 10px; } }
+  .search-bar .btn { align-self: center; white-space: nowrap; }
+
+  /* hero card fan */
+  .card-fan {
+    position: relative;
+    height: 380px;
+  }
+  .listing-card {
+    position: absolute;
+    width: 260px;
+    background: var(--paper);
+    border-radius: var(--radius);
+    border: 1px solid var(--canvas-deep);
+    box-shadow: 0 14px 34px rgba(27,42,58,0.16);
+    overflow: hidden;
+  }
+  .card-fan .listing-card:nth-child(1) { top: 0; left: 10%; transform: rotate(-5deg); z-index: 1; }
+  .card-fan .listing-card:nth-child(2) { top: 40px; left: 32%; transform: rotate(3deg); z-index: 2; }
+  .card-fan .listing-card:nth-child(3) { top: 10px; left: 54%; transform: rotate(-2deg); z-index: 3; }
+  @media (max-width: 900px) {
+    .card-fan { height: 300px; }
+    .listing-card { width: 210px; }
+  }
+  @media (max-width: 560px) {
+    .card-fan { display: none; }
+  }
+
+  .card-photo {
+    height: 130px;
+    background: linear-gradient(135deg, #C9B896, #8E9B7A 60%, #6B7353);
+  }
+  .card-body { padding: 12px 14px 14px; }
+  .card-price {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 1.02rem;
+    color: var(--ink);
+  }
+  .card-meta { font-size: 0.78rem; color: var(--ink-soft); margin-top: 2px; }
+
+  /* stamp signature */
+  .stamp {
+    position: absolute;
+    top: 10px; right: 10px;
+    width: 52px; height: 52px;
+    border: 2px dashed var(--olive);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotate(-12deg);
+    background: rgba(251,250,246,0.9);
+  }
+  .stamp span {
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--olive-deep);
+    text-align: center;
+    text-transform: uppercase;
+    line-height: 1.1;
+  }
+
+  /* ---------- TRUST STRIP ---------- */
+  .trust {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 34px 0;
+  }
+  .trust-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  @media (max-width: 780px) { .trust-grid { grid-template-columns: 1fr; } }
+  .trust-item { display: flex; gap: 14px; align-items: flex-start; }
+  .trust-item .mark {
+    flex: none;
+    width: 34px; height: 34px;
+    border: 1.5px solid var(--brass);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--brass);
+  }
+  .trust-item p { font-size: 0.88rem; opacity: 0.85; }
+  .trust-item strong { display: block; font-size: 0.94rem; margin-bottom: 2px; }
+
+  /* ---------- LISTINGS ---------- */
+  .listings-section { padding: 72px 0; }
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 28px;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  h2 {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.03em;
+    padding: 7px 13px;
+    border: 1px solid var(--canvas-deep);
+    border-radius: 999px;
+    background: var(--paper);
+    color: var(--ink-soft);
+  }
+  .chip.active { background: var(--olive); color: var(--paper); border-color: var(--olive); }
+
+  .grid-listings {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+  }
+  @media (max-width: 940px) { .grid-listings { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 620px) { .grid-listings { grid-template-columns: 1fr; } }
+
+  .g-card {
+    position: relative;
+    background: var(--paper);
+    border: 1px solid var(--canvas-deep);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+  }
+  .g-card:hover { box-shadow: 0 12px 28px rgba(27,42,58,0.12); transform: translateY(-2px); }
+  .g-photo { height: 160px; }
+  .g-photo.p1 { background: linear-gradient(135deg,#D8C9A8,#A9AE83); }
+  .g-photo.p2 { background: linear-gradient(135deg,#C3B79D,#8C9873); }
+  .g-photo.p3 { background: linear-gradient(135deg,#CBBBA0,#8E7C63); }
+  .g-photo.p4 { background: linear-gradient(135deg,#D3C6A6,#9AA37E); }
+  .g-photo.p5 { background: linear-gradient(135deg,#C7B8A0,#7E8A6C); }
+  .g-photo.p6 { background: linear-gradient(135deg,#D9CBAF,#B0A184); }
+
+  .g-body { padding: 14px 16px 16px; }
+  .g-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+  .g-price { font-family: var(--font-mono); font-weight: 600; font-size: 1.08rem; color: var(--ink); }
+  .g-status {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-weight: 600;
+  }
+  .g-status.avail { background: rgba(107,115,83,0.14); color: var(--olive-deep); }
+  .g-status.rented { background: rgba(181,80,47,0.12); color: var(--rust); text-decoration: line-through; }
+  .g-addr { font-size: 0.86rem; color: var(--ink-soft); margin-bottom: 8px; }
+  .g-specs {
+    display: flex;
+    gap: 12px;
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    color: var(--charcoal);
+    opacity: 0.8;
+  }
+  .g-source {
+    margin-top: 10px;
+    font-size: 0.72rem;
+    color: var(--olive-deep);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .g-source::before { content: "✓"; font-weight: 700; }
+  .g-source.plain { color: #8A8272; }
+  .g-source.plain::before { content: "—"; }
+
+  /* ---------- HOW IT WORKS ---------- */
+  .how { background: var(--canvas-deep); padding: 72px 0; }
+  .how-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-top: 34px;
+  }
+  @media (max-width: 780px) { .how-grid { grid-template-columns: 1fr; } }
+  .how-step { position: relative; padding-left: 4px; }
+  .how-num {
+    font-family: var(--font-display);
+    font-size: 2.6rem;
+    font-weight: 700;
+    color: var(--brass);
+    opacity: 0.9;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+  .how-step h3 { font-family: var(--font-display); font-size: 1.2rem; color: var(--ink); margin-bottom: 8px; font-weight: 600; }
+  .how-step p { font-size: 0.92rem; color: var(--ink-soft); max-width: 32ch; }
+
+  /* ---------- CTA STRIP ---------- */
+  .cta-strip {
+    background: var(--rust);
+    color: var(--paper);
+    padding: 46px 0;
+    text-align: center;
+  }
+  .cta-strip h2 { color: var(--paper); font-size: 1.7rem; margin-bottom: 10px; }
+  .cta-strip p { opacity: 0.92; margin-bottom: 22px; font-size: 0.96rem; }
+  .cta-strip .btn-brass { color: var(--ink); }
+
+  /* ---------- FOOTER ---------- */
+  footer {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 44px 0 28px;
+  }
+  .footer-grid {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 24px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid rgba(251,250,246,0.14);
+    margin-bottom: 18px;
+  }
+  .footer-grid .logo { color: var(--paper); }
+  footer .cols { display: flex; gap: 50px; flex-wrap: wrap; }
+  footer .col h4 {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin-bottom: 12px;
+  }
+  footer .col a {
+    display: block;
+    font-size: 0.86rem;
+    opacity: 0.8;
+    text-decoration: none;
+    margin-bottom: 8px;
+  }
+  footer .col a:hover { opacity: 1; }
+  .footer-fine { font-size: 0.78rem; opacity: 0.55; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; scroll-behavior: auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="navbar">
+    <div class="logo">milhaus<span class="dot">.</span></div>
+    <nav class="links">
+      <a href="#listings">Browse listings</a>
+      <a href="#how">List your home</a>
+      <a href="#">For landlords</a>
+    </nav>
+    <div class="nav-actions">
+      <a class="btn btn-ghost" href="#">Sign in</a>
+      <a class="btn btn-brass" href="#listings">Browse listings</a>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">For Americans moving to Germany</div>
+      <h1>Find home <em>before</em><br>you land.</h1>
+      <p class="sub">Housing-office listings and homes from families rotating out — verified, in plain English, and taken down the day they're gone.</p>
+
+      <div class="search-bar">
+        <div class="field">
+          <label>Near base</label>
+          <select><option>Stuttgart / Panzer</option><option>Kaiserslautern</option><option>Ramstein</option><option>Wiesbaden</option></select>
+        </div>
+        <div class="field">
+          <label>Move-in</label>
+          <input type="text" placeholder="Any time" />
+        </div>
+        <div class="field">
+          <label>Bedrooms</label>
+          <select><option>Any</option><option>1+</option><option>2+</option><option>3+</option></select>
+        </div>
+        <button class="btn btn-brass">Search</button>
+      </div>
+    </div>
+
+    <div class="card-fan" aria-hidden="true">
+      <div class="listing-card">
+        <div class="card-photo"></div>
+        <div class="stamp"><span>Housing<br>Office</span></div>
+        <div class="card-body">
+          <div class="card-price">€1,180 / mo</div>
+          <div class="card-meta">3 bed · Böblingen · 12 min to base</div>
+        </div>
+      </div>
+      <div class="listing-card">
+        <div class="card-photo"></div>
+        <div class="card-body">
+          <div class="card-price">€950 / mo</div>
+          <div class="card-meta">2 bed · Sindelfingen · PCS listing</div>
+        </div>
+      </div>
+      <div class="listing-card">
+        <div class="card-photo"></div>
+        <div class="stamp"><span>Housing<br>Office</span></div>
+        <div class="card-body">
+          <div class="card-price">€1,420 / mo</div>
+          <div class="card-meta">4 bed · Herrenberg · 18 min to base</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="trust">
+  <div class="wrap trust-grid">
+    <div class="trust-item">
+      <div class="mark">1</div>
+      <p><strong>Sourced with base housing</strong>Direct feed from the on-base housing office, not scraped or guessed.</p>
+    </div>
+    <div class="trust-item">
+      <div class="mark">2</div>
+      <p><strong>Every listing reviewed</strong>Self-listed homes are checked before they go live — no ghost posts.</p>
+    </div>
+    <div class="trust-item">
+      <div class="mark">3</div>
+      <p><strong>Down the day it's rented</strong>No calling about a place that's been gone for three weeks.</p>
+    </div>
+  </div>
+</section>
+
+<section class="listings-section" id="listings">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Open right now</h2>
+      <div class="chips">
+        <span class="chip active">All bases</span>
+        <span class="chip">Stuttgart</span>
+        <span class="chip">Kaiserslautern</span>
+        <span class="chip">Ramstein</span>
+        <span class="chip">Wiesbaden</span>
+      </div>
+    </div>
+
+    <div class="grid-listings">
+
+      <div class="g-card">
+        <div class="g-photo p1"></div>
+        <div class="g-body">
+          <div class="g-top"><span class="g-price">€1,180 / mo</span><span class="g-status avail">Available</span></div>
+          <div class="g-addr">Böblingen · 12 min to Panzer Kaserne</div>
+          <div class="g-specs"><span>3 bed</span><span>2 bath</span><span>110 m²</span></div>
+          <div class="g-source">Housing office listing</div>
+        </div>
+      </div>
+
+      <div class="g-card">
+        <div class="g-photo p2"></div>
+        <div class="g-body">
+          <div class="g-top"><span class="g-price">€950 / mo</span><span class="g-status avail">Available</span></div>
+          <div class="g-addr">Sindelfingen · 9 min to Panzer Kaserne</div>
+          <div class="g-specs"><span>2 bed</span><span>1 bath</span><span>78 m²</span></div>
+          <div class="g-source plain">Listed by outgoing family</div>
+        </div>
+      </div>
+
+      <div class="g-card">
+        <div class="g-photo p3"></div>
+        <div class="g-body">
+          <div class="g-top"><span class="g-price">€1,420 / mo</span><span class="g-status rented">Rented</span></div>
+          <div class="g-addr">Herrenberg · 18 min to Panzer Kaserne</div>
+          <div class="g-specs"><span>4 bed</span><span>2 bath</span><span>142 m²</span></div>
+          <div class="g-source">Housing office listing</div>
+        </div>
+      </div>
+
+      <div class="g-card">
+        <div class="g-photo p4"></div>
+        <div class="g-body">
+          <div class="g-top"><span class="g-price">€1,050 / mo</span><span class="g-status avail">Available</span></div>
+          <div class="g-addr">Kaiserslautern · 14 min to Ramstein</div>
+          <div class="g-specs"><span>3 bed</span><span>1 bath</span><span>95 m²</span></div>
+          <div class="g-source plain">Listed by outgoing family</div>
+        </div>
+      </div>
+
+      <div class="g-card">
+        <div class="g-photo p5"></div>
+        <div class="g-body">
+          <div class="g-top"><span class="g-price">€1,290 / mo</span><span class="g-status avail">Available</span></div>
+          <div class="g-addr">Ramstein-Miesenbach · 6 min to base</div>
+          <div class="g-specs"><span>3 bed</span><span>2 bath</span><span>118 m²</span></div>
+          <div class="g-source">Housing office listing</div>
+        </div>
+      </div>
+
+      <div class="g-card">
+        <div class="g-photo p6"></div>
+        <div class="g-body">
+          <div class="g-top"><span class="g-price">€890 / mo</span><span class="g-status avail">Available</span></div>
+          <div class="g-addr">Wiesbaden · 11 min to Clay Kaserne</div>
+          <div class="g-specs"><span>2 bed</span><span>1 bath</span><span>72 m²</span></div>
+          <div class="g-source plain">Listed by outgoing family</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="how" id="how">
+  <div class="wrap">
+    <h2>Moving out? List it in five minutes.</h2>
+    <div class="how-grid">
+      <div class="how-step">
+        <div class="how-num">01</div>
+        <h3>Post your home</h3>
+        <p>A few photos, the price, and the date you're out. No agency, no paperwork.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">02</div>
+        <h3>We check it</h3>
+        <p>A quick review, usually same day, so every listing on the site can be trusted.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">03</div>
+        <h3>Mark it rented</h3>
+        <p>One tap and it's off the site — no one calls about a place that's already gone.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-strip">
+  <div class="wrap">
+    <h2>PCSing to Germany soon?</h2>
+    <p>Start looking before you've even packed a box.</p>
+    <a class="btn btn-brass" href="#listings">Browse open listings</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="logo">milhaus<span class="dot">.</span></div>
+      <div class="cols">
+        <div class="col">
+          <h4>For renters</h4>
+          <a href="#">Browse listings</a>
+          <a href="#">How verification works</a>
+        </div>
+        <div class="col">
+          <h4>For listers</h4>
+          <a href="#">Post a home</a>
+          <a href="#">For landlords</a>
+        </div>
+        <div class="col">
+          <h4>About</h4>
+          <a href="#">Contact</a>
+          <a href="#">Impressum</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-fine">A resource for the American community living in Germany. Not affiliated with the U.S. Department of Defense.</div>
+  </div>
+</footer>
+
+</body>
+</html>
