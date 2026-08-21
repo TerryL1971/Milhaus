@@ -1,0 +1,11 @@
+<!-- supabase/templates/magic_link.html -->
+<!--
+  Custom "Magic Link" email template. Points at our own /auth/confirm route
+  (which calls supabase.auth.verifyOtp server-side) instead of Supabase's
+  default hosted verify endpoint, so the session cookie gets set correctly
+  by our own SSR client. Used locally via supabase/config.toml, and must
+  also be pasted into the real project's dashboard — see supabase/SETUP.md.
+-->
+<h2>Sign in to milhaus</h2>
+<p><a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email">Click here to sign in</a></p>
+<p>If you didn't request this, you can safely ignore this email.</p>
