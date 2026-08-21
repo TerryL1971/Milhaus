@@ -47,13 +47,14 @@ export function ListingCard({
         </div>
 
         <p className="mb-2 text-[0.86rem] text-ink-soft">
-          {listing.city} · {listing.distanceToBase}
+          {listing.city}
+          {listing.distanceToBase ? ` · ${listing.distanceToBase}` : ""}
         </p>
 
         <div className="flex gap-3 font-mono text-[0.76rem] text-charcoal/80">
           <span>{listing.bedrooms} bed</span>
           <span>{listing.bathrooms} bath</span>
-          <span>{listing.sizeSqm} m²</span>
+          {listing.sizeSqm != null && <span>{listing.sizeSqm} m²</span>}
         </div>
 
         <p

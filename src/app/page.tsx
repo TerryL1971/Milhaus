@@ -2,12 +2,12 @@
 // Landing + browse page — ported from
 // /design-reference/milhaus-landing-mockup.html. Combines the marketing
 // hero with the live listings grid, matching the mockup's single-page
-// structure. Listing data is mocked until Supabase is wired up.
+// structure. Listing data is read live from Supabase.
 
 import Link from "next/link";
 import { ListingsGrid } from "@/components/listings-grid";
 import { StampBadge } from "@/components/stamp-badge";
-import { mockListings } from "@/lib/mock-listings";
+import { getActiveListings } from "@/lib/listings";
 
 const trustItems = [
   {
@@ -42,7 +42,8 @@ const howSteps = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const listings = await getActiveListings();
   return (
     <main className="flex-1">
       {/* ---------- HERO ---------- */}
@@ -119,7 +120,7 @@ export default function Home() {
                     "linear-gradient(135deg, #C9B896, #8E9B7A 60%, #6B7353)",
                 }}
               >
-                <StampBadge />
+                <StampBadge className="right-2.5 top-2.5" />
               </div>
               <div className="px-3.5 py-3">
                 <div className="font-mono text-[1.02rem] font-semibold text-ink">
@@ -157,7 +158,7 @@ export default function Home() {
                     "linear-gradient(135deg, #C9B896, #8E9B7A 60%, #6B7353)",
                 }}
               >
-                <StampBadge />
+                <StampBadge className="right-2.5 top-2.5" />
               </div>
               <div className="px-3.5 py-3">
                 <div className="font-mono text-[1.02rem] font-semibold text-ink">
@@ -194,7 +195,7 @@ export default function Home() {
       {/* ---------- LISTINGS ---------- */}
       <section id="listings" className="py-18">
         <div className="mx-auto max-w-[1180px] px-8">
-          <ListingsGrid listings={mockListings} />
+          <ListingsGrid listings={listings} />
         </div>
       </section>
 

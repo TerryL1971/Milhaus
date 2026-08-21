@@ -27,14 +27,15 @@ export interface Listing {
   description: string;
   address: string;
   city: string;
-  /** The base this listing is closest to — used for filtering. */
-  base: string;
-  distanceToBase: string;
+  /** The base this listing is closest to — used for filtering. Nullable:
+   * populated by the post-a-listing form (not built yet) or a seed script. */
+  base: string | null;
+  distanceToBase: string | null;
   priceEurMonth: number;
   bedrooms: number;
   bathrooms: number;
-  sizeSqm: number;
-  availableFrom: string; // ISO date
+  sizeSqm: number | null;
+  availableFrom: string | null; // ISO date
   photos: string[];
   source: ListingSource;
   status: ListingStatus;
