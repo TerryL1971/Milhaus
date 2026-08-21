@@ -3,21 +3,29 @@ import { redirect } from "next/navigation";
 import { SignInForm } from "@/components/sign-in-form";
 import { createClient } from "@/lib/supabase/server";
 
+// Only allow same-origin relative paths — "next" comes from the URL, so
+// without this check it'd be an open-redirect (e.g. next=https://evil.example).
+function safeNext(next: string | undefined): string {
+  if (next && next.startsWith("/") && !next.startsWith("//")) return next;
+  return "/";
+}
+
 export default async function SignInPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; next?: string }>;
 }) {
+  const { error, next } = await searchParams;
+  const nextPath = safeNext(next);
+
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (user) {
-    redirect("/");
+    redirect(nextPath);
   }
-
-  const { error } = await searchParams;
 
   return (
     <main className="flex flex-1 items-center justify-center px-8 py-20">

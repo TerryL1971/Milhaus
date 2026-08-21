@@ -27,7 +27,7 @@ export async function SiteHeader() {
           <Link href="/#listings" className="opacity-85 transition-opacity hover:opacity-100">
             Browse listings
           </Link>
-          <Link href="/#how" className="opacity-85 transition-opacity hover:opacity-100">
+          <Link href="/post" className="opacity-85 transition-opacity hover:opacity-100">
             List your home
           </Link>
           <Link href="#" className="opacity-85 transition-opacity hover:opacity-100">

@@ -15,7 +15,7 @@ const columns = [
   {
     heading: "For listers",
     links: [
-      { label: "Post a home", href: "/#how" },
+      { label: "Post a home", href: "/post" },
       { label: "For landlords", href: "#" },
     ],
   },
