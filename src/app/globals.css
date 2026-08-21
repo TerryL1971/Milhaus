@@ -1,27 +1,46 @@
 /* src/app/globals.css */
 @import "tailwindcss";
 
+/*
+ * Design tokens — from the approved mockup at
+ * /design-reference/milhaus-landing-mockup.html. Keep these two in sync;
+ * this is the single source of truth for the Tailwind theme.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ink: #1b2a3a;
+  --ink-soft: #2c4053;
+  --canvas: #f0ede4;
+  --canvas-deep: #e6e1d2;
+  --olive: #6b7353;
+  --olive-deep: #545a41;
+  --rust: #b5502f;
+  --brass: #c89b3c;
+  --brass-deep: #ad8530;
+  --charcoal: #22201b;
+  --paper: #fbfaf6;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-canvas: var(--canvas);
+  --color-canvas-deep: var(--canvas-deep);
+  --color-olive: var(--olive);
+  --color-olive-deep: var(--olive-deep);
+  --color-rust: var(--rust);
+  --color-brass: var(--brass);
+  --color-brass-deep: var(--brass-deep);
+  --color-charcoal: var(--charcoal);
+  --color-paper: var(--paper);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* next/font sets these variables on <html> in layout.tsx */
+  --font-display: var(--font-zilla-slab), Georgia, serif;
+  --font-body: var(--font-ibm-plex-sans), -apple-system, sans-serif;
+  --font-mono: var(--font-ibm-plex-mono), monospace;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--canvas);
+  color: var(--charcoal);
+  font-family: var(--font-body);
 }
