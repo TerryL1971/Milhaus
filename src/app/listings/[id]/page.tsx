@@ -49,10 +49,16 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
           ← Back to listings
         </Link>
 
-        <div
-          className="relative h-72 rounded-md sm:h-96"
-          style={{ background: "linear-gradient(135deg, #C9B896, #8E9B7A 60%, #6B7353)" }}
-        >
+        <div className="relative h-72 overflow-hidden rounded-md sm:h-96">
+          {listing.photos[0] ? (
+            // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL, not worth next/image's config for a placeholder SVG
+            <img src={listing.photos[0]} alt="" className="h-full w-full object-cover" />
+          ) : (
+            <div
+              className="h-full w-full"
+              style={{ background: "linear-gradient(135deg, #C9B896, #8E9B7A 60%, #6B7353)" }}
+            />
+          )}
           {isHousingOffice && <StampBadge size="lg" className="right-4 top-4" />}
         </div>
 

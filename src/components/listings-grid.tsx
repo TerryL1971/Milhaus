@@ -10,7 +10,15 @@ import { useMemo, useState } from "react";
 import { ListingCard } from "@/components/listing-card";
 import type { Listing } from "@/lib/types";
 
-const BASES = ["All bases", "Stuttgart", "Kaiserslautern", "Ramstein", "Wiesbaden"];
+const BASES = [
+  "All bases",
+  "Stuttgart",
+  "Kaiserslautern",
+  "Ramstein",
+  "Wiesbaden",
+  "Grafenwöhr",
+  "Spangdahlem",
+];
 
 const PHOTO_GRADIENTS = [
   "linear-gradient(135deg,#D8C9A8,#A9AE83)",

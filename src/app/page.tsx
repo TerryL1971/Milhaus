@@ -78,6 +78,8 @@ export default async function Home() {
                     <option>Kaiserslautern</option>
                     <option>Ramstein</option>
                     <option>Wiesbaden</option>
+                    <option>Grafenwöhr</option>
+                    <option>Spangdahlem</option>
                   </select>
                 </div>
                 <div className="flex flex-col gap-1 border-b border-canvas-deep pb-2.5 sm:border-b-0 sm:border-r sm:pb-0 sm:pr-3.5">

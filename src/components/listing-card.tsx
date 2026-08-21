@@ -29,7 +29,16 @@ export function ListingCard({
       href={`/listings/${listing.id}`}
       className="group block overflow-hidden rounded-md border border-canvas-deep bg-paper transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(27,42,58,0.12)]"
     >
-      <div className="h-40" style={{ background: photoGradient }} />
+      {listing.photos[0] ? (
+        // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL, not worth next/image's config for a placeholder SVG
+        <img
+          src={listing.photos[0]}
+          alt=""
+          className="h-40 w-full object-cover"
+        />
+      ) : (
+        <div className="h-40" style={{ background: photoGradient }} />
+      )}
       <div className="px-4 pb-4 pt-3.5">
         <div className="mb-1 flex items-start justify-between">
           <span className="font-mono text-[1.08rem] font-semibold text-ink">
