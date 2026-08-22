@@ -5,8 +5,10 @@
 // structure. Listing data is read live from Supabase.
 
 import Link from "next/link";
+import { Suspense } from "react";
 import { ListingsGrid } from "@/components/listings-grid";
 import { StampBadge } from "@/components/stamp-badge";
+import { BASE_NAMES } from "@/lib/bases";
 import { getActiveListings } from "@/lib/listings";
 
 const trustItems = [
@@ -67,50 +69,66 @@ export default async function Home() {
               gone.
             </p>
 
-            <div className="rounded-md border border-canvas-deep bg-paper p-3.5 shadow-[0_8px_24px_rgba(27,42,58,0.08)]">
+            <form
+              action="/#listings"
+              className="rounded-md border border-canvas-deep bg-paper p-3.5 shadow-[0_8px_24px_rgba(27,42,58,0.08)]"
+            >
               <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-[1.2fr_1fr_0.9fr_auto] sm:items-center">
                 <div className="flex flex-col gap-1 border-b border-canvas-deep pb-2.5 sm:border-b-0 sm:border-r sm:pb-0 sm:pr-3.5">
-                  <label className="font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
+                  <label htmlFor="hero-base" className="font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
                     Near base
                   </label>
-                  <select className="bg-transparent py-1 text-[0.92rem] text-charcoal focus:outline-none">
-                    <option>Stuttgart / Panzer</option>
-                    <option>Kaiserslautern</option>
-                    <option>Ramstein</option>
-                    <option>Wiesbaden</option>
-                    <option>Grafenwöhr</option>
-                    <option>Spangdahlem</option>
+                  <select
+                    id="hero-base"
+                    name="base"
+                    defaultValue=""
+                    className="bg-transparent py-1 text-[0.92rem] text-charcoal focus:outline-none"
+                  >
+                    <option value="">Any base</option>
+                    {BASE_NAMES.map((base) => (
+                      <option key={base} value={base}>
+                        {base}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="flex flex-col gap-1 border-b border-canvas-deep pb-2.5 sm:border-b-0 sm:border-r sm:pb-0 sm:pr-3.5">
-                  <label className="font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
+                  <label htmlFor="hero-movein" className="font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
                     Move-in
                   </label>
                   <input
+                    id="hero-movein"
                     type="text"
                     placeholder="Any time"
-                    className="bg-transparent py-1 text-[0.92rem] text-charcoal placeholder:text-charcoal/50 focus:outline-none"
+                    disabled
+                    title="Coming soon"
+                    className="bg-transparent py-1 text-[0.92rem] text-charcoal placeholder:text-charcoal/50 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
+                  <label htmlFor="hero-bedrooms" className="font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
                     Bedrooms
                   </label>
-                  <select className="bg-transparent py-1 text-[0.92rem] text-charcoal focus:outline-none">
-                    <option>Any</option>
-                    <option>1+</option>
-                    <option>2+</option>
-                    <option>3+</option>
+                  <select
+                    id="hero-bedrooms"
+                    name="bedrooms"
+                    defaultValue=""
+                    className="bg-transparent py-1 text-[0.92rem] text-charcoal focus:outline-none"
+                  >
+                    <option value="">Any</option>
+                    <option value="1">1+</option>
+                    <option value="2">2+</option>
+                    <option value="3">3+</option>
                   </select>
                 </div>
-                <Link
-                  href="/#listings"
+                <button
+                  type="submit"
                   className="self-center whitespace-nowrap rounded-md bg-brass px-5 py-2.5 text-center text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
                 >
                   Search
-                </Link>
+                </button>
               </div>
-            </div>
+            </form>
           </div>
 
           <div className="relative hidden h-[380px] lg:block" aria-hidden="true">
@@ -197,7 +215,9 @@ export default async function Home() {
       {/* ---------- LISTINGS ---------- */}
       <section id="listings" className="py-18">
         <div className="mx-auto max-w-[1180px] px-8">
-          <ListingsGrid listings={listings} />
+          <Suspense fallback={null}>
+            <ListingsGrid listings={listings} />
+          </Suspense>
         </div>
       </section>
 
