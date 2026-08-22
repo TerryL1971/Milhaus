@@ -8,8 +8,15 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { approveListing, archiveListing, markRented, rejectListing, setFeatured } from "@/app/admin/actions";
-import { getLiveListings, getPendingListings } from "@/lib/listings";
+import {
+  approveListing,
+  archiveListing,
+  markRented,
+  rejectListing,
+  relistListing,
+  setFeatured,
+} from "@/app/admin/actions";
+import { getArchivedListings, getLiveListings, getPendingListings } from "@/lib/listings";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -35,7 +42,11 @@ export default async function AdminPage() {
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
   if (profile?.role !== "admin") redirect("/");
 
-  const [pending, live] = await Promise.all([getPendingListings(), getLiveListings()]);
+  const [pending, live, archived] = await Promise.all([
+    getPendingListings(),
+    getLiveListings(),
+    getArchivedListings(),
+  ]);
 
   return (
     <main className="flex-1 py-12">
@@ -196,6 +207,61 @@ export default async function AdminPage() {
                             </button>
                           </form>
                         </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+
+        <section className="mt-14">
+          <h2 className="mb-4 font-display text-xl font-semibold text-ink">Archived</h2>
+          <p className="mb-4 text-sm text-ink-soft">
+            Off the site — a rejected submission, or a house that came off the market. Relist to
+            bring one back live if it&apos;s available again.
+          </p>
+
+          {archived.length === 0 ? (
+            <p className="text-sm text-ink-soft">Nothing archived.</p>
+          ) : (
+            <div className="overflow-x-auto rounded-md border border-canvas-deep bg-paper">
+              <table className="w-full min-w-[640px] border-collapse text-sm">
+                <thead>
+                  <tr className="border-b border-canvas-deep text-left font-mono text-xs uppercase tracking-wider text-ink-soft/75">
+                    <th className="px-4 py-3 font-medium">Listing</th>
+                    <th className="px-4 py-3 font-medium">Price</th>
+                    <th className="px-4 py-3 font-medium">Archived</th>
+                    <th className="px-4 py-3 font-medium"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {archived.map((listing) => (
+                    <tr key={listing.id} className="border-b border-canvas-deep last:border-0">
+                      <td className="px-4 py-3">
+                        <p className="font-medium text-ink">{listing.title}</p>
+                        <p className="text-xs text-ink-soft">
+                          {listing.city}
+                          {listing.base ? ` · ${listing.base}` : ""}
+                        </p>
+                      </td>
+                      <td className="px-4 py-3 font-mono">
+                        {currencyFormatter.format(listing.priceEurMonth)}
+                      </td>
+                      <td className="px-4 py-3 text-xs text-ink-soft">
+                        {dateFormatter.format(new Date(listing.statusChangedAt))}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <form action={relistListing}>
+                          <input type="hidden" name="id" value={listing.id} />
+                          <button
+                            type="submit"
+                            className="rounded-md border border-canvas-deep px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-olive hover:text-olive-deep"
+                          >
+                            Relist
+                          </button>
+                        </form>
                       </td>
                     </tr>
                   ))}

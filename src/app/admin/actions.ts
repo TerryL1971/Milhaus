@@ -45,6 +45,14 @@ export async function archiveListing(formData: FormData) {
   await updateListingStatus(formData.get("id") as string, "archived");
 }
 
+// Bringing a house back onto the market (or, for a previously-rejected
+// submission, approving it after all) — either way it goes straight back
+// to active. It was already reviewed once before landing in the archive,
+// so this doesn't route back through pending_review.
+export async function relistListing(formData: FormData) {
+  await updateListingStatus(formData.get("id") as string, "active");
+}
+
 export async function setFeatured(formData: FormData) {
   const id = formData.get("id") as string;
   const isFeatured = formData.get("isFeatured") === "true";

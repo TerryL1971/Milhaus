@@ -135,3 +135,22 @@ export async function getLiveListings(): Promise<Listing[]> {
   }
   return (data ?? []).map(mapRow);
 }
+
+/** Admin dashboard: everything archived — a rejected submission, or a
+ * house that came off the market. Once a listing hits `archived` it drops
+ * out of getLiveListings entirely, so this is the only place an admin can
+ * find it again to bring it back with Relist. */
+export async function getArchivedListings(): Promise<Listing[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("listings")
+    .select("*")
+    .eq("status", "archived")
+    .order("status_changed_at", { ascending: false });
+
+  if (error) {
+    console.error("getArchivedListings failed:", error.message);
+    return [];
+  }
+  return (data ?? []).map(mapRow);
+}
