@@ -26,7 +26,7 @@ export async function SiteHeader() {
           href="/"
           className="flex items-baseline gap-0.5 font-display text-2xl font-bold tracking-tight"
         >
-          milhaus<span className="text-brass">.</span>
+          Milhaus<span className="text-brass">.</span>
         </Link>
 
         <nav className="hidden gap-7 text-[0.92rem] font-medium md:flex">
