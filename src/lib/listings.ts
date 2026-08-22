@@ -9,7 +9,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Listing } from "@/lib/types";
 
 // Supabase returns snake_case columns; the app's Listing type is camelCase.
-function mapRow(row: Record<string, unknown>): Listing {
+export function mapRow(row: Record<string, unknown>): Listing {
   return {
     id: row.id as string,
     type: row.type as Listing["type"],
@@ -69,4 +69,39 @@ export async function getListingById(id: string): Promise<Listing | null> {
     return null;
   }
   return data ? mapRow(data) : null;
+}
+
+/** Admin dashboard: submissions waiting on review. RLS only lets an admin
+ * see other people's pending_review rows, so this naturally returns
+ * nothing for a non-admin caller rather than needing its own check. */
+export async function getPendingListings(): Promise<Listing[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("listings")
+    .select("*")
+    .eq("status", "pending_review")
+    .order("created_at");
+
+  if (error) {
+    console.error("getPendingListings failed:", error.message);
+    return [];
+  }
+  return (data ?? []).map(mapRow);
+}
+
+/** Admin dashboard: everything currently live (active or rented), for the
+ * "what's live" table and its one-click status changes. */
+export async function getLiveListings(): Promise<Listing[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("listings")
+    .select("*")
+    .in("status", ["active", "rented"])
+    .order("status_changed_at", { ascending: false });
+
+  if (error) {
+    console.error("getLiveListings failed:", error.message);
+    return [];
+  }
+  return (data ?? []).map(mapRow);
 }

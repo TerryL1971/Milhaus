@@ -13,6 +13,12 @@ export async function SiteHeader() {
     data: { user },
   } = await supabase.auth.getUser();
 
+  let isAdmin = false;
+  if (user) {
+    const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+    isAdmin = profile?.role === "admin";
+  }
+
   return (
     <header className="sticky top-0 z-20 bg-ink text-paper">
       <div className="mx-auto flex max-w-[1180px] items-center justify-between px-8 py-[18px]">
@@ -38,6 +44,14 @@ export async function SiteHeader() {
         <div className="flex items-center gap-4.5">
           {user ? (
             <>
+              {isAdmin && (
+                <Link
+                  href="/admin"
+                  className="rounded-md border border-brass/50 px-4 py-2 text-sm font-semibold text-brass transition-[transform,box-shadow] hover:-translate-y-px hover:border-brass"
+                >
+                  Admin
+                </Link>
+              )}
               <span className="hidden text-sm opacity-85 sm:inline">{user.email}</span>
               <form action="/auth/sign-out" method="post">
                 <button
