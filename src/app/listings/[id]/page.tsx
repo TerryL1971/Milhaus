@@ -107,7 +107,7 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
 
         <div className="relative h-72 overflow-hidden rounded-md sm:h-96">
           {listing.photos[0] ? (
-            // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL, not worth next/image's config for a placeholder SVG
+            // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL, not worth next/image's config here
             <img src={listing.photos[0]} alt="" className="h-full w-full object-cover" />
           ) : (
             <div
@@ -117,6 +117,15 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
           )}
           {isHousingOffice && <StampBadge size="lg" className="right-4 top-4" />}
         </div>
+
+        {listing.photos.length > 1 && (
+          <div className="mt-3 grid grid-cols-4 gap-3 sm:grid-cols-5">
+            {listing.photos.slice(1).map((photo) => (
+              // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL, not worth next/image's config here
+              <img key={photo} src={photo} alt="" className="h-20 w-full rounded-md object-cover sm:h-24" />
+            ))}
+          </div>
+        )}
 
         <div className="mt-6 flex flex-wrap items-start justify-between gap-3">
           <div>

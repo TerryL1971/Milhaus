@@ -1,9 +1,9 @@
 // scripts/seed-demo-listings.mjs
 // Seeds demo listings for showing the site to Charlie before real housing
 // office / self-listed data exists. Creates two demo auth accounts (one
-// "housing office", one "family") as the owners, one placeholder photo per
-// listing (a generated SVG, uploaded to the real listing-photos bucket —
-// not hotlinked from elsewhere), then the listings themselves.
+// "housing office", one "family") as the owners, uploads a small set of
+// real (CC0, see scripts/demo-photos/SOURCES.md) stock photos per listing
+// to the real listing-photos bucket, then the listings themselves.
 //
 // Rerunnable: deletes any existing demo-* accounts first (which cascades
 // away their listings and storage objects), then recreates everything from
@@ -18,6 +18,8 @@
 import { createClient } from "@supabase/supabase-js";
 import { readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 function loadEnvLocal() {
   try {
@@ -50,41 +52,13 @@ const DEMO_EMAIL_DOMAIN = "@milhaus.internal";
 const DEMO_HOUSING_OFFICE_EMAIL = "demo-housing-office" + DEMO_EMAIL_DOMAIN;
 const DEMO_FAMILY_EMAIL = "demo-family" + DEMO_EMAIL_DOMAIN;
 
-// Same earthy/olive palette as PHOTO_GRADIENTS in listings-grid.tsx, plus
-// two more pairs for the two new bases — kept in the same family so a real
-// photo (once one exists) doesn't look out of place next to these.
-const GRADIENT_PAIRS = [
-  ["#D8C9A8", "#A9AE83"],
-  ["#C3B79D", "#8C9873"],
-  ["#CBBBA0", "#8E7C63"],
-  ["#D3C6A6", "#9AA37E"],
-  ["#C7B8A0", "#7E8A6C"],
-  ["#D9CBAF", "#B0A184"],
-  ["#CFC2A0", "#94A277"],
-  ["#D6C7AC", "#86927A"],
-];
-
-// A plain, clearly-labeled placeholder illustration — not styled to pass as
-// a real photo. Simple shapes only (a roofline, a door, two windows).
-function housePlaceholderSvg([from, to]) {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="${from}"/>
-      <stop offset="100%" stop-color="${to}"/>
-    </linearGradient>
-  </defs>
-  <rect width="800" height="500" fill="url(#bg)"/>
-  <g transform="translate(300,150)" fill="none" stroke="#FBFAF6" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" opacity="0.92">
-    <path d="M0 120 L0 220 L200 220 L200 120"/>
-    <path d="M-20 130 L100 30 L220 130"/>
-    <rect x="85" y="150" width="30" height="70"/>
-    <rect x="30" y="150" width="35" height="35"/>
-    <rect x="135" y="150" width="35" height="35"/>
-  </g>
-  <text x="400" y="460" text-anchor="middle" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15" letter-spacing="2" fill="#FBFAF6" opacity="0.6">PHOTO PLACEHOLDER</text>
-</svg>`;
-}
+const DEMO_PHOTOS_DIR = fileURLToPath(new URL("./demo-photos/", import.meta.url));
+const CONTENT_TYPES = {
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
+  ".png": "image/png",
+};
 
 async function deleteExistingDemoUsers() {
   const { data, error } = await supabase.auth.admin.listUsers();
@@ -103,15 +77,23 @@ async function createDemoUser(email) {
   return data.user.id;
 }
 
-async function uploadPlaceholderPhoto(listingId, gradientPair) {
-  const path = `${listingId}/photo-1.svg`;
-  const svg = housePlaceholderSvg(gradientPair);
-  const { error } = await supabase.storage
-    .from("listing-photos")
-    .upload(path, svg, { contentType: "image/svg+xml", upsert: true });
-  if (error) throw error;
-  const { data } = supabase.storage.from("listing-photos").getPublicUrl(path);
-  return data.publicUrl;
+async function uploadDemoPhotos(listingId, filenames) {
+  const urls = [];
+  for (const [index, filename] of filenames.entries()) {
+    const bytes = readFileSync(path.join(DEMO_PHOTOS_DIR, filename));
+    const ext = path.extname(filename).toLowerCase();
+    const storagePath = `${listingId}/photo-${index + 1}${ext}`;
+    const { error } = await supabase.storage
+      .from("listing-photos")
+      .upload(storagePath, bytes, {
+        contentType: CONTENT_TYPES[ext] ?? "application/octet-stream",
+        upsert: true,
+      });
+    if (error) throw error;
+    const { data } = supabase.storage.from("listing-photos").getPublicUrl(storagePath);
+    urls.push(data.publicUrl);
+  }
+  return urls;
 }
 
 async function main() {
@@ -152,6 +134,7 @@ async function main() {
       available_from: "2026-09-15",
       source: "housing_office",
       owner_id: housingOfficeId,
+      photoSet: ["exterior-1.jpg", "kitchen-1.webp", "bathroom-1.webp"],
     },
     {
       title: "2-bedroom apartment, PCS move-out",
@@ -168,6 +151,7 @@ async function main() {
       available_from: "2026-10-01",
       source: "self_listed",
       owner_id: familyId,
+      photoSet: ["exterior-2.webp", "living-room-1.webp"],
     },
     {
       title: "4-bedroom family home",
@@ -183,6 +167,7 @@ async function main() {
       available_from: "2026-09-01",
       source: "housing_office",
       owner_id: housingOfficeId,
+      photoSet: ["exterior-1.jpg", "bedroom-1.webp", "living-room-1.webp"],
     },
     {
       title: "3-bedroom townhouse near Ramstein",
@@ -199,6 +184,7 @@ async function main() {
       available_from: "2026-09-01",
       source: "self_listed",
       owner_id: familyId,
+      photoSet: ["exterior-2.webp", "kitchen-1.webp"],
     },
     {
       title: "3-bedroom house, walk to base",
@@ -214,6 +200,7 @@ async function main() {
       available_from: "2026-09-01",
       source: "housing_office",
       owner_id: housingOfficeId,
+      photoSet: ["exterior-1.jpg", "bathroom-1.webp"],
     },
     {
       title: "2-bedroom apartment near Clay Kaserne",
@@ -229,6 +216,7 @@ async function main() {
       available_from: "2026-09-20",
       source: "self_listed",
       owner_id: familyId,
+      photoSet: ["exterior-2.webp", "bedroom-1.webp"],
     },
     {
       title: "3-bedroom house near Rose Barracks",
@@ -245,6 +233,7 @@ async function main() {
       available_from: "2026-09-10",
       source: "housing_office",
       owner_id: housingOfficeId,
+      photoSet: ["exterior-1.jpg", "kitchen-1.webp", "living-room-1.webp"],
     },
     {
       title: "2-bedroom apartment near Spangdahlem AB",
@@ -260,18 +249,14 @@ async function main() {
       available_from: "2026-10-05",
       source: "self_listed",
       owner_id: familyId,
+      photoSet: ["exterior-2.webp", "bathroom-1.webp"],
     },
-  ].map((listing, index) => ({
-    ...listing,
-    id: randomUUID(),
-    status: "active",
-    gradientPair: GRADIENT_PAIRS[index % GRADIENT_PAIRS.length],
-  }));
+  ].map((listing) => ({ ...listing, id: randomUUID(), status: "active" }));
 
-  console.log(`Generating and uploading ${listings.length} placeholder photos...`);
+  console.log(`Uploading photos for ${listings.length} demo listings...`);
   for (const listing of listings) {
-    listing.photos = [await uploadPlaceholderPhoto(listing.id, listing.gradientPair)];
-    delete listing.gradientPair;
+    listing.photos = await uploadDemoPhotos(listing.id, listing.photoSet);
+    delete listing.photoSet;
   }
 
   console.log(`Inserting ${listings.length} demo listings...`);
