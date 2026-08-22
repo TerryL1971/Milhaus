@@ -68,6 +68,14 @@ export async function getFeaturedListings(limit = 3): Promise<Listing[]> {
     .limit(limit);
 
   if (error) {
+    // 42703 = undefined column: the is_featured migration hasn't been run
+    // on this database yet. Degrade to "most recent active" instead of
+    // returning nothing — a missing migration shouldn't take down the
+    // entire hero, just the featuring behavior on top of it.
+    if (error.code === "42703") {
+      const fallback = await getActiveListings();
+      return fallback.slice(0, limit);
+    }
     console.error("getFeaturedListings failed:", error.message);
     return [];
   }

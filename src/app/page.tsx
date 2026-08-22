@@ -73,7 +73,7 @@ export default async function Home() {
             </div>
 
             <h1 className="mb-5 font-display text-4xl font-semibold leading-[1.05] tracking-tight text-ink lg:text-6xl">
-              Find home <em className="italic text-rust">before</em>
+              Find your home <em className="italic text-rust">before</em>
               <br />
               you land.
             </h1>

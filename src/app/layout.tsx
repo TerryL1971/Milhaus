@@ -32,13 +32,13 @@ const description =
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "milhaus — Find home before you land",
+    default: "milhaus — Find your home before you land",
     template: "%s — milhaus",
   },
   description,
   robots: { index: true, follow: true },
   openGraph: {
-    title: "milhaus — Find home before you land",
+    title: "milhaus — Find your home before you land",
     description,
     siteName: "milhaus",
     type: "website",
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "milhaus — Find home before you land",
+    title: "milhaus — Find your home before you land",
     description,
   },
   verification: {
