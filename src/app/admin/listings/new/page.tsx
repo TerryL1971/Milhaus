@@ -4,10 +4,16 @@
 // someone else). Goes straight to `active`: the admin adding it is the
 // review.
 
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ListingForm } from "@/components/listing-form";
 import { createClient } from "@/lib/supabase/server";
+
+export const metadata: Metadata = {
+  title: "Add a listing",
+  robots: { index: false, follow: false },
+};
 
 export default async function AdminNewListingPage() {
   const supabase = await createClient();

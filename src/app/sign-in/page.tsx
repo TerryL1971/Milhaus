@@ -1,7 +1,13 @@
 // src/app/sign-in/page.tsx
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { SignInForm } from "@/components/sign-in-form";
 import { createClient } from "@/lib/supabase/server";
+
+export const metadata: Metadata = {
+  title: "Sign in",
+  robots: { index: false, follow: false },
+};
 
 // Only allow same-origin relative paths — "next" comes from the URL, so
 // without this check it'd be an open-redirect (e.g. next=https://evil.example).

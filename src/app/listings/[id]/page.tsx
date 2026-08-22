@@ -9,6 +9,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { StampBadge } from "@/components/stamp-badge";
 import { getListingById } from "@/lib/listings";
+import { SITE_URL } from "@/lib/site-url";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -27,10 +28,32 @@ type Params = Promise<{ id: string }>;
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { id } = await params;
   const listing = await getListingById(id);
-  if (!listing) return { title: "Listing not found — milhaus" };
+  if (!listing) return { title: "Listing not found", robots: { index: false, follow: false } };
+
+  const title = `${listing.city} · ${currencyFormatter.format(listing.priceEurMonth)}/mo`;
+  const description = listing.description || `${listing.bedrooms}-bedroom home in ${listing.city}.`;
+  const url = `${SITE_URL}/listings/${listing.id}`;
+
   return {
-    title: `${listing.city} · ${currencyFormatter.format(listing.priceEurMonth)}/mo — milhaus`,
-    description: listing.description || `${listing.bedrooms}-bedroom home in ${listing.city}.`,
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: "website",
+      images: listing.photos[0] ? [{ url: listing.photos[0] }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: listing.photos[0] ? [listing.photos[0]] : undefined,
+    },
+    // Pending/rented/archived listings resolve here but shouldn't be
+    // indexed — only what's genuinely available belongs in search results.
+    robots: listing.status === "active" ? { index: true, follow: true } : { index: false, follow: false },
   };
 }
 
@@ -42,8 +65,41 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
   const isRented = listing.status === "rented";
   const isHousingOffice = listing.source === "housing_office";
 
+  // Structured data — helps both traditional search (rich results) and
+  // AI answer engines (ChatGPT/Perplexity/Google AI Overviews lean on
+  // schema.org markup to extract facts like price and availability
+  // reliably, rather than parsing prose).
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "RealEstateListing",
+    name: listing.title,
+    description: listing.description || undefined,
+    url: `${SITE_URL}/listings/${listing.id}`,
+    datePosted: listing.createdAt,
+    image: listing.photos.length > 0 ? listing.photos : undefined,
+    numberOfBedrooms: listing.bedrooms,
+    numberOfBathroomsTotal: listing.bathrooms,
+    floorSize: listing.sizeSqm
+      ? { "@type": "QuantitativeValue", value: listing.sizeSqm, unitCode: "MTK" }
+      : undefined,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: listing.address,
+      addressLocality: listing.city,
+      addressCountry: "DE",
+    },
+    offers: {
+      "@type": "Offer",
+      price: listing.priceEurMonth,
+      priceCurrency: "EUR",
+      availability: isRented ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
+    },
+  };
+
   return (
     <main className="flex-1 py-10">
+      {/* Static JSON we built above, not user input. */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <div className="mx-auto max-w-[860px] px-8">
         <Link href="/#listings" className="mb-6 inline-block text-sm text-ink-soft hover:text-ink">
           ← Back to listings

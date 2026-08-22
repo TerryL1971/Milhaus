@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans, Zilla_Slab } from "next/font/google";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { SITE_URL } from "@/lib/site-url";
 import "./globals.css";
 
 const zillaSlab = Zilla_Slab({
@@ -24,10 +25,32 @@ const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-ibm-plex-mono",
 });
 
+const description =
+  "A rental-listing marketplace for Americans relocating to Germany, combining on-base housing office listings with self-listed homes from families rotating out.";
+
 export const metadata: Metadata = {
-  title: "milhaus — Find home before you land",
-  description:
-    "A rental-listing marketplace for Americans relocating to Germany, combining on-base housing office listings with self-listed homes from families rotating out.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "milhaus — Find home before you land",
+    template: "%s — milhaus",
+  },
+  description,
+  robots: { index: true, follow: true },
+  openGraph: {
+    title: "milhaus — Find home before you land",
+    description,
+    siteName: "milhaus",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "milhaus — Find home before you land",
+    description,
+  },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

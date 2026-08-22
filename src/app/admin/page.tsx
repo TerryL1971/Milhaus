@@ -5,11 +5,17 @@
 // more than that — "genuinely simple... Charlie is non-technical and will
 // use this daily" per CLAUDE.md.
 
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { approveListing, archiveListing, markRented, rejectListing } from "@/app/admin/actions";
 import { getLiveListings, getPendingListings } from "@/lib/listings";
 import { createClient } from "@/lib/supabase/server";
+
+export const metadata: Metadata = {
+  title: "Admin",
+  robots: { index: false, follow: false },
+};
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",

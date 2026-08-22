@@ -3,9 +3,15 @@
 // — housing-office listings are added by an admin instead, at
 // /admin/listings/new (same form, different variant).
 
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { ListingForm } from "@/components/listing-form";
 import { createClient } from "@/lib/supabase/server";
+
+export const metadata: Metadata = {
+  title: "List your home",
+  robots: { index: false, follow: false },
+};
 
 export default async function PostListingPage() {
   const supabase = await createClient();
