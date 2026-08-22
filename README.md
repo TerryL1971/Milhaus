@@ -1,4 +1,4 @@
-# milhaus
+# Milhaus
 
 A rental-listing marketplace for Americans relocating to Germany, combining
 on-base housing office listings with self-listed homes from families
