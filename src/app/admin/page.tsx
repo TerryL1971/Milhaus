@@ -6,6 +6,7 @@
 // use this daily" per CLAUDE.md.
 
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { approveListing, archiveListing, markRented, rejectListing } from "@/app/admin/actions";
 import { getLiveListings, getPendingListings } from "@/lib/listings";
 import { createClient } from "@/lib/supabase/server";
@@ -33,8 +34,18 @@ export default async function AdminPage() {
   return (
     <main className="flex-1 py-12">
       <div className="mx-auto max-w-[900px] px-8">
-        <h1 className="mb-1 font-display text-3xl font-semibold text-ink">Admin</h1>
-        <p className="mb-10 text-ink-soft">Review submissions and manage what&apos;s live.</p>
+        <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h1 className="mb-1 font-display text-3xl font-semibold text-ink">Admin</h1>
+            <p className="text-ink-soft">Review submissions and manage what&apos;s live.</p>
+          </div>
+          <Link
+            href="/admin/listings/new"
+            className="rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+          >
+            + Add listing
+          </Link>
+        </div>
 
         <section className="mb-14">
           <h2 className="mb-4 font-display text-xl font-semibold text-ink">

@@ -1,10 +1,10 @@
 // src/app/post/page.tsx
-// Post-a-listing (build order step 6). Signed-in-only — self-listed
-// homes only; housing-office listings come through a separate feed that
-// doesn't exist yet (explicitly out of scope per CLAUDE.md).
+// Post-a-listing (build order step 6). Signed-in-only, always self-listed
+// — housing-office listings are added by an admin instead, at
+// /admin/listings/new (same form, different variant).
 
 import { redirect } from "next/navigation";
-import { PostListingForm } from "@/components/post-listing-form";
+import { ListingForm } from "@/components/listing-form";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function PostListingPage() {
@@ -23,7 +23,7 @@ export default async function PostListingPage() {
           A few details and some photos — we&apos;ll review it, usually the same day, and it goes
           live.
         </p>
-        <PostListingForm />
+        <ListingForm variant="self-list" />
       </div>
     </main>
   );

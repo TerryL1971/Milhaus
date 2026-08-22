@@ -1,30 +1,43 @@
-// src/components/post-listing-form.tsx
-// The post-a-listing form. Submit does three round trips under one button:
-// 1) create the listing as a `draft` row (so it has an id to own a photo
-//    folder — the storage policy checks that a listings row with this id
-//    and owner_id exists before allowing an upload into it),
-// 2) upload each selected photo into `${listingId}/...`,
-// 3) update the row with the resulting photo URLs and flip it to
-//    `pending_review`, where it sits until an admin approves it.
+// src/components/listing-form.tsx
+// Shared by the self-listing flow (/post) and the admin "add a listing"
+// flow (/admin/listings/new) — same fields, same three-round-trip submit
+// (create a draft row for its id -> upload photos into ${id}/... -> update
+// with the photo URLs and the final status), just two differences:
+//
+// - self-list always submits source="self_listed" and lands on
+//   pending_review, same as any other self-submitted home.
+// - admin-add lets the admin pick the source (defaulting to
+//   housing_office, since that's the actual reason this exists — Charlie
+//   entering a housing-office home directly) and goes straight to active:
+//   an admin adding it themselves *is* the review.
+//
+// Kept as one component with a variant, not two near-duplicates: the
+// FormData/event.currentTarget bug found earlier this session was exactly
+// the kind of thing that's easy to fix in one copy and forget in another.
 
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { BASE_NAMES } from "@/lib/bases";
 import { createClient } from "@/lib/supabase/client";
+import type { ListingSource } from "@/lib/types";
 
 type Status = "idle" | "submitting" | "success" | "error";
+type Variant = "self-list" | "admin-add";
 
 const labelClass = "mb-1 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75";
 const inputClass =
   "w-full rounded-md border border-canvas-deep bg-paper px-3 py-2 text-[0.95rem] text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none";
 
-export function PostListingForm() {
+export function ListingForm({ variant }: { variant: Variant }) {
   const router = useRouter();
   const [status, setStatus] = useState<Status>("idle");
   const [progress, setProgress] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+
+  const isAdminAdd = variant === "admin-add";
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -46,9 +59,11 @@ export function PostListingForm() {
     }
 
     const files = (formData.getAll("photos") as File[]).filter((file) => file.size > 0);
-
     const sizeSqmRaw = formData.get("sizeSqm") as string;
     const availableFromRaw = formData.get("availableFrom") as string;
+    const source: ListingSource = isAdminAdd
+      ? ((formData.get("source") as ListingSource) ?? "housing_office")
+      : "self_listed";
 
     setProgress("Saving details…");
     const { data: created, error: insertError } = await supabase
@@ -65,7 +80,7 @@ export function PostListingForm() {
         bathrooms: Number(formData.get("bathrooms")),
         size_sqm: sizeSqmRaw ? Number(sizeSqmRaw) : null,
         available_from: availableFromRaw || null,
-        source: "self_listed",
+        source,
         status: "draft",
         owner_id: user.id,
       })
@@ -96,10 +111,10 @@ export function PostListingForm() {
       photoUrls.push(publicUrlData.publicUrl);
     }
 
-    setProgress("Submitting for review…");
+    setProgress(isAdminAdd ? "Publishing…" : "Submitting for review…");
     const { error: updateError } = await supabase
       .from("listings")
-      .update({ photos: photoUrls, status: "pending_review" })
+      .update({ photos: photoUrls, status: isAdminAdd ? "active" : "pending_review" })
       .eq("id", listingId);
 
     if (updateError) {
@@ -115,11 +130,19 @@ export function PostListingForm() {
   if (status === "success") {
     return (
       <div className="rounded-md border border-canvas-deep bg-paper p-6 text-center">
-        <p className="mb-1 font-display text-xl font-semibold text-ink">Submitted for review</p>
-        <p className="text-sm text-ink-soft">
-          We&apos;ll take a look, usually the same day. It&apos;ll show up on the site as soon as
-          it&apos;s approved.
+        <p className="mb-1 font-display text-xl font-semibold text-ink">
+          {isAdminAdd ? "Listing published" : "Submitted for review"}
         </p>
+        <p className="mb-4 text-sm text-ink-soft">
+          {isAdminAdd
+            ? "It's live on the site now."
+            : "We'll take a look, usually the same day. It'll show up on the site as soon as it's approved."}
+        </p>
+        {isAdminAdd && (
+          <Link href="/admin" className="text-sm font-semibold text-olive-deep hover:underline">
+            ← Back to admin
+          </Link>
+        )}
       </div>
     );
   }
@@ -129,6 +152,18 @@ export function PostListingForm() {
       onSubmit={handleSubmit}
       className="flex flex-col gap-5 rounded-md border border-canvas-deep bg-paper p-6 shadow-[0_8px_24px_rgba(27,42,58,0.08)]"
     >
+      {isAdminAdd && (
+        <div>
+          <label htmlFor="source" className={labelClass}>
+            Source
+          </label>
+          <select id="source" name="source" className={inputClass} defaultValue="housing_office">
+            <option value="housing_office">Housing office</option>
+            <option value="self_listed">Self-listed</option>
+          </select>
+        </div>
+      )}
+
       <div>
         <label htmlFor="title" className={labelClass}>
           Title
@@ -268,7 +303,11 @@ export function PostListingForm() {
         disabled={status === "submitting"}
         className="rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {status === "submitting" ? progress || "Submitting…" : "Post home"}
+        {status === "submitting"
+          ? progress || "Submitting…"
+          : isAdminAdd
+            ? "Publish listing"
+            : "Post home"}
       </button>
     </form>
   );
