@@ -1,5 +1,6 @@
 // next.config.ts
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
   // Next's dev server only trusts requests to its internal dev assets from
@@ -13,4 +14,14 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ["127.0.0.1"],
 };
 
-export default nextConfig;
+// SENTRY_ORG/SENTRY_PROJECT/SENTRY_AUTH_TOKEN are all optional here — unset
+// (as they are until someone wires up a CI upload step), this just skips
+// the source-map upload rather than failing the build. Error reporting
+// itself doesn't need them at all; source maps only make stack traces in
+// Sentry readable instead of pointing at minified code.
+export default withSentryConfig(nextConfig, {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  silent: true,
+});
