@@ -19,7 +19,10 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
 
 // Position/rotation for the hero's 3-card fan, by index — the cards
 // themselves are real listings now (admin-featured, or the most recent
-// active ones as a fallback), not hardcoded content.
+// active ones as a fallback), not hardcoded content. The z-10/20/30 here
+// is only the fanned stacking *among the 3 cards* (later card in front,
+// matching the mockup) — it must stay below SiteHeader's z-50, or a card
+// renders on top of the sticky nav wherever they visually overlap.
 const HERO_CARD_STYLES = [
   "absolute left-[10%] top-0 z-10 w-65 -rotate-6",
   "absolute left-[32%] top-10 z-20 w-65 rotate-3",
