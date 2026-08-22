@@ -5,6 +5,7 @@
 // state, so it's never stale the way a client-fetched version could be.
 
 import Link from "next/link";
+import { HomeLink } from "@/components/home-link";
 import { createClient } from "@/lib/supabase/server";
 
 export async function SiteHeader() {
@@ -22,12 +23,9 @@ export async function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 bg-ink text-paper">
       <div className="mx-auto flex max-w-[1180px] items-center justify-between px-8 py-[18px]">
-        <Link
-          href="/"
-          className="flex items-baseline gap-0.5 font-display text-2xl font-bold tracking-tight"
-        >
+        <HomeLink className="flex items-baseline gap-0.5 font-display text-2xl font-bold tracking-tight">
           Milhaus<span className="text-brass">.</span>
-        </Link>
+        </HomeLink>
 
         <nav className="hidden gap-7 text-[0.92rem] font-medium md:flex">
           <Link href="/#listings" className="opacity-85 transition-opacity hover:opacity-100">
