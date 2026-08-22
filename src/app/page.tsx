@@ -9,7 +9,22 @@ import { Suspense } from "react";
 import { ListingsGrid } from "@/components/listings-grid";
 import { StampBadge } from "@/components/stamp-badge";
 import { BASE_NAMES } from "@/lib/bases";
-import { getActiveListings } from "@/lib/listings";
+import { getActiveListings, getFeaturedListings } from "@/lib/listings";
+
+const currencyFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "EUR",
+  maximumFractionDigits: 0,
+});
+
+// Position/rotation for the hero's 3-card fan, by index — the cards
+// themselves are real listings now (admin-featured, or the most recent
+// active ones as a fallback), not hardcoded content.
+const HERO_CARD_STYLES = [
+  "absolute left-[10%] top-0 z-10 w-65 -rotate-6",
+  "absolute left-[32%] top-10 z-20 w-65 rotate-3",
+  "absolute left-[54%] top-2.5 z-30 w-65 -rotate-2",
+];
 
 const trustItems = [
   {
@@ -45,7 +60,7 @@ const howSteps = [
 ];
 
 export default async function Home() {
-  const listings = await getActiveListings();
+  const [listings, featured] = await Promise.all([getActiveListings(), getFeaturedListings(3)]);
   return (
     <main className="flex-1">
       {/* ---------- HERO ---------- */}
@@ -131,65 +146,39 @@ export default async function Home() {
             </form>
           </div>
 
-          <div className="relative hidden h-[380px] lg:block" aria-hidden="true">
-            <div className="absolute left-[10%] top-0 z-10 w-65 -rotate-6 overflow-hidden rounded-md border border-canvas-deep bg-paper shadow-[0_14px_34px_rgba(27,42,58,0.16)]">
-              <div
-                className="relative h-33"
-                style={{
-                  background:
-                    "linear-gradient(135deg, #C9B896, #8E9B7A 60%, #6B7353)",
-                }}
-              >
-                <StampBadge className="right-2.5 top-2.5" />
-              </div>
-              <div className="px-3.5 py-3">
-                <div className="font-mono text-[1.02rem] font-semibold text-ink">
-                  €1,180 / mo
-                </div>
-                <div className="mt-0.5 text-xs text-ink-soft">
-                  3 bed · Böblingen · 12 min to base
-                </div>
-              </div>
+          {featured.length > 0 && (
+            <div className="relative hidden h-[380px] lg:block">
+              {featured.map((listing, index) => (
+                <Link
+                  key={listing.id}
+                  href={`/listings/${listing.id}`}
+                  className={`${HERO_CARD_STYLES[index]} overflow-hidden rounded-md border border-canvas-deep bg-paper shadow-[0_14px_34px_rgba(27,42,58,0.16)] transition-transform hover:-translate-y-1`}
+                >
+                  <div className="relative h-33">
+                    {listing.photos[0] ? (
+                      // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL, not worth next/image's config here
+                      <img src={listing.photos[0]} alt="" className="h-full w-full object-cover" />
+                    ) : (
+                      <div
+                        className="h-full w-full"
+                        style={{ background: "linear-gradient(135deg, #C9B896, #8E9B7A 60%, #6B7353)" }}
+                      />
+                    )}
+                    {listing.source === "housing_office" && <StampBadge className="right-2.5 top-2.5" />}
+                  </div>
+                  <div className="px-3.5 py-3">
+                    <div className="font-mono text-[1.02rem] font-semibold text-ink">
+                      {currencyFormatter.format(listing.priceEurMonth)} / mo
+                    </div>
+                    <div className="mt-0.5 text-xs text-ink-soft">
+                      {listing.bedrooms} bed · {listing.city}
+                      {listing.distanceToBase ? ` · ${listing.distanceToBase}` : ""}
+                    </div>
+                  </div>
+                </Link>
+              ))}
             </div>
-
-            <div className="absolute left-[32%] top-10 z-20 w-65 rotate-3 overflow-hidden rounded-md border border-canvas-deep bg-paper shadow-[0_14px_34px_rgba(27,42,58,0.16)]">
-              <div
-                className="h-33"
-                style={{
-                  background:
-                    "linear-gradient(135deg, #C9B896, #8E9B7A 60%, #6B7353)",
-                }}
-              />
-              <div className="px-3.5 py-3">
-                <div className="font-mono text-[1.02rem] font-semibold text-ink">
-                  €950 / mo
-                </div>
-                <div className="mt-0.5 text-xs text-ink-soft">
-                  2 bed · Sindelfingen · PCS listing
-                </div>
-              </div>
-            </div>
-
-            <div className="absolute left-[54%] top-2.5 z-30 w-65 -rotate-2 overflow-hidden rounded-md border border-canvas-deep bg-paper shadow-[0_14px_34px_rgba(27,42,58,0.16)]">
-              <div
-                className="relative h-33"
-                style={{
-                  background:
-                    "linear-gradient(135deg, #C9B896, #8E9B7A 60%, #6B7353)",
-                }}
-              >
-                <StampBadge className="right-2.5 top-2.5" />
-              </div>
-              <div className="px-3.5 py-3">
-                <div className="font-mono text-[1.02rem] font-semibold text-ink">
-                  €1,420 / mo
-                </div>
-                <div className="mt-0.5 text-xs text-ink-soft">
-                  4 bed · Herrenberg · 18 min to base
-                </div>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </section>
 

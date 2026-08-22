@@ -7,7 +7,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { StampBadge } from "@/components/stamp-badge";
+import { ListingPhotoGallery } from "@/components/listing-photo-gallery";
 import { getListingById } from "@/lib/listings";
 import { SITE_URL } from "@/lib/site-url";
 
@@ -105,27 +105,7 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
           ← Back to listings
         </Link>
 
-        <div className="relative h-72 overflow-hidden rounded-md sm:h-96">
-          {listing.photos[0] ? (
-            // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL, not worth next/image's config here
-            <img src={listing.photos[0]} alt="" className="h-full w-full object-cover" />
-          ) : (
-            <div
-              className="h-full w-full"
-              style={{ background: "linear-gradient(135deg, #C9B896, #8E9B7A 60%, #6B7353)" }}
-            />
-          )}
-          {isHousingOffice && <StampBadge size="lg" className="right-4 top-4" />}
-        </div>
-
-        {listing.photos.length > 1 && (
-          <div className="mt-3 grid grid-cols-4 gap-3 sm:grid-cols-5">
-            {listing.photos.slice(1).map((photo) => (
-              // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL, not worth next/image's config here
-              <img key={photo} src={photo} alt="" className="h-20 w-full rounded-md object-cover sm:h-24" />
-            ))}
-          </div>
-        )}
+        <ListingPhotoGallery photos={listing.photos} showStamp={isHousingOffice} />
 
         <div className="mt-6 flex flex-wrap items-start justify-between gap-3">
           <div>

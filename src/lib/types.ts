@@ -39,6 +39,9 @@ export interface Listing {
   photos: string[];
   source: ListingSource;
   status: ListingStatus;
+  /** Admin-controlled: whether this shows in the homepage hero's 3-card
+   * fan. Toggled from the admin dashboard's live-listings table. */
+  isFeatured: boolean;
   ownerId: string;
   createdAt: string;
   updatedAt: string;

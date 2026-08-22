@@ -27,6 +27,7 @@ export function mapRow(row: Record<string, unknown>): Listing {
     photos: (row.photos as string[]) ?? [],
     source: row.source as Listing["source"],
     status: row.status as Listing["status"],
+    isFeatured: Boolean(row.is_featured),
     ownerId: row.owner_id as string,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
@@ -47,6 +48,27 @@ export async function getActiveListings(): Promise<Listing[]> {
 
   if (error) {
     console.error("getActiveListings failed:", error.message);
+    return [];
+  }
+  return (data ?? []).map(mapRow);
+}
+
+/** Homepage hero's 3-card fan. Admin-featured active listings first (most
+ * recently featured/added among them), backfilled with the most recent
+ * active listings so there are always up to `limit` cards even before an
+ * admin has featured anything. */
+export async function getFeaturedListings(limit = 3): Promise<Listing[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("listings")
+    .select("*")
+    .eq("status", "active")
+    .order("is_featured", { ascending: false })
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error("getFeaturedListings failed:", error.message);
     return [];
   }
   return (data ?? []).map(mapRow);

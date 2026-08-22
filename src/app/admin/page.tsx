@@ -8,7 +8,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { approveListing, archiveListing, markRented, rejectListing } from "@/app/admin/actions";
+import { approveListing, archiveListing, markRented, rejectListing, setFeatured } from "@/app/admin/actions";
 import { getLiveListings, getPendingListings } from "@/lib/listings";
 import { createClient } from "@/lib/supabase/server";
 
@@ -134,7 +134,10 @@ export default async function AdminPage() {
                   {live.map((listing) => (
                     <tr key={listing.id} className="border-b border-canvas-deep last:border-0">
                       <td className="px-4 py-3">
-                        <p className="font-medium text-ink">{listing.title}</p>
+                        <p className="font-medium text-ink">
+                          {listing.isFeatured && <span className="mr-1 text-brass">★</span>}
+                          {listing.title}
+                        </p>
                         <p className="text-xs text-ink-soft">
                           {listing.city}
                           {listing.base ? ` · ${listing.base}` : ""}
@@ -156,6 +159,22 @@ export default async function AdminPage() {
                       </td>
                       <td className="px-4 py-3 text-right">
                         <div className="flex justify-end gap-2">
+                          {listing.status === "active" && (
+                            <form action={setFeatured}>
+                              <input type="hidden" name="id" value={listing.id} />
+                              <input type="hidden" name="isFeatured" value={(!listing.isFeatured).toString()} />
+                              <button
+                                type="submit"
+                                className={`rounded-md border px-3 py-1.5 text-xs font-semibold ${
+                                  listing.isFeatured
+                                    ? "border-brass bg-brass/15 text-brass-deep"
+                                    : "border-canvas-deep text-ink-soft hover:border-brass hover:text-brass-deep"
+                                }`}
+                              >
+                                {listing.isFeatured ? "★ Featured" : "☆ Feature"}
+                              </button>
+                            </form>
+                          )}
                           {listing.status === "active" && (
                             <form action={markRented}>
                               <input type="hidden" name="id" value={listing.id} />

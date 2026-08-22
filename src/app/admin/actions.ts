@@ -44,3 +44,23 @@ export async function markRented(formData: FormData) {
 export async function archiveListing(formData: FormData) {
   await updateListingStatus(formData.get("id") as string, "archived");
 }
+
+export async function setFeatured(formData: FormData) {
+  const id = formData.get("id") as string;
+  const isFeatured = formData.get("isFeatured") === "true";
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("listings")
+    .update({ is_featured: isFeatured })
+    .eq("id", id)
+    .select("id");
+
+  if (error) {
+    throw new Error(error.message);
+  }
+  if (!data || data.length === 0) {
+    throw new Error("That didn't go through — you may not have permission to do this.");
+  }
+  revalidatePath("/admin");
+  revalidatePath("/");
+}
