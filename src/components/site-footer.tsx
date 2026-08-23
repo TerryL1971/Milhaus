@@ -9,7 +9,7 @@ const columns = [
     heading: "For renters",
     links: [
       { label: "Browse listings", href: "/#listings" },
-      { label: "How verification works", href: "#" },
+      { label: "How verification works", href: "/how-verification-works" },
     ],
   },
   {
