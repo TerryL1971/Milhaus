@@ -56,12 +56,20 @@ export default async function AdminPage() {
             <h1 className="mb-1 font-display text-3xl font-semibold text-ink">Admin</h1>
             <p className="text-ink-soft">Review submissions and manage what&apos;s live.</p>
           </div>
-          <Link
-            href="/admin/listings/new"
-            className="rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
-          >
-            + Add listing
-          </Link>
+          <div className="flex gap-2">
+            <Link
+              href="/admin/users"
+              className="rounded-md border border-canvas-deep px-5 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-ink hover:text-ink"
+            >
+              Users
+            </Link>
+            <Link
+              href="/admin/listings/new"
+              className="rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+            >
+              + Add listing
+            </Link>
+          </div>
         </div>
 
         <section className="mb-14">
