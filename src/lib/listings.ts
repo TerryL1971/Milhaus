@@ -101,6 +101,31 @@ export async function getListingById(id: string): Promise<Listing | null> {
   return data ? mapRow(data) : null;
 }
 
+/** Listing detail page's "contact the lister" box. Only returns data when
+ * RLS actually allows it — the caller must be signed in, and the owner
+ * must have at least one active listing (see the
+ * profiles_contact_visible_for_active_listings migration). Anything else
+ * (not signed in, listing not active, migration not yet applied) comes
+ * back null and the page falls back to the "sign in" prompt instead of
+ * throwing. */
+export async function getOwnerContact(
+  ownerId: string,
+): Promise<{ displayName: string | null; contactEmail: string | null; contactPhone: string | null } | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("display_name, contact_email, contact_phone")
+    .eq("id", ownerId)
+    .maybeSingle();
+
+  if (error || !data) return null;
+  return {
+    displayName: data.display_name as string | null,
+    contactEmail: data.contact_email as string | null,
+    contactPhone: data.contact_phone as string | null,
+  };
+}
+
 /** Admin dashboard: submissions waiting on review. RLS only lets an admin
  * see other people's pending_review rows, so this naturally returns
  * nothing for a non-admin caller rather than needing its own check. */

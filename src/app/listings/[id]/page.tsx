@@ -8,7 +8,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ListingPhotoGallery } from "@/components/listing-photo-gallery";
-import { getListingById } from "@/lib/listings";
+import { getListingById, getOwnerContact } from "@/lib/listings";
+import { createClient } from "@/lib/supabase/server";
 import { SITE_URL } from "@/lib/site-url";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
@@ -64,6 +65,15 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
 
   const isRented = listing.status === "rented";
   const isHousingOffice = listing.source === "housing_office";
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  // null unless RLS actually allows it (signed in + owner has an active
+  // listing) — see getOwnerContact and its migration. A signed-out visitor,
+  // or a not-yet-migrated database, both just fall back to "sign in".
+  const ownerContact = user ? await getOwnerContact(listing.ownerId) : null;
 
   // Structured data — helps both traditional search (rich results) and
   // AI answer engines (ChatGPT/Perplexity/Google AI Overviews lean on
@@ -155,15 +165,41 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
         </p>
 
         <div className="mt-8 rounded-md border border-canvas-deep bg-paper p-5">
-          <p className="mb-3 text-sm text-ink-soft">
-            Interested in this home? Sign in to contact the lister.
-          </p>
-          <Link
-            href="/sign-in"
-            className="inline-block rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
-          >
-            Sign in
-          </Link>
+          {ownerContact ? (
+            <>
+              <p className="mb-3 text-sm font-semibold text-ink">Interested in this home?</p>
+              <div className="flex flex-col gap-2 text-sm">
+                {ownerContact.contactEmail && (
+                  <a
+                    href={`mailto:${ownerContact.contactEmail}?subject=${encodeURIComponent(`About: ${listing.title}`)}`}
+                    className="inline-block w-fit rounded-md bg-brass px-5 py-2.5 font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+                  >
+                    Email {ownerContact.displayName ?? "the lister"}
+                  </a>
+                )}
+                {ownerContact.contactPhone && (
+                  <a
+                    href={`tel:${ownerContact.contactPhone.replace(/[^+\d]/g, "")}`}
+                    className="text-ink-soft hover:text-ink"
+                  >
+                    {ownerContact.contactPhone}
+                  </a>
+                )}
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="mb-3 text-sm text-ink-soft">
+                Interested in this home? Sign in to contact the lister.
+              </p>
+              <Link
+                href={`/sign-in?next=/listings/${listing.id}`}
+                className="inline-block rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+              >
+                Sign in
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </main>
