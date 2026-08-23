@@ -7,7 +7,13 @@ import { revalidatePath } from "next/cache";
 import type { ProfileRole } from "@/lib/types";
 import { createClient } from "@/lib/supabase/server";
 
-const VALID_ROLES: ProfileRole[] = ["admin", "housing_office_partner", "landlord", "individual_lister"];
+const VALID_ROLES: ProfileRole[] = [
+  "owner",
+  "admin",
+  "housing_office_partner",
+  "landlord",
+  "individual_lister",
+];
 
 export async function setUserRole(formData: FormData) {
   const id = formData.get("id") as string;

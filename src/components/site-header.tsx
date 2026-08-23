@@ -6,6 +6,7 @@
 
 import Link from "next/link";
 import { HomeLink } from "@/components/home-link";
+import { isAdminRole } from "@/lib/roles";
 import { createClient } from "@/lib/supabase/server";
 
 export async function SiteHeader() {
@@ -17,7 +18,7 @@ export async function SiteHeader() {
   let isAdmin = false;
   if (user) {
     const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-    isAdmin = profile?.role === "admin";
+    isAdmin = isAdminRole(profile?.role);
   }
 
   return (

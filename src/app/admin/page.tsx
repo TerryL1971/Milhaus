@@ -17,6 +17,7 @@ import {
   setFeatured,
 } from "@/app/admin/actions";
 import { getArchivedListings, getLiveListings, getPendingListings } from "@/lib/listings";
+import { isAdminRole } from "@/lib/roles";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -40,7 +41,7 @@ export default async function AdminPage() {
   if (!user) redirect("/sign-in?next=/admin");
 
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-  if (profile?.role !== "admin") redirect("/");
+  if (!isAdminRole(profile?.role)) redirect("/");
 
   const [pending, live, archived] = await Promise.all([
     getPendingListings(),

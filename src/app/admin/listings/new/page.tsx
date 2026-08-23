@@ -8,6 +8,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ListingForm } from "@/components/listing-form";
+import { isAdminRole } from "@/lib/roles";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -23,7 +24,7 @@ export default async function AdminNewListingPage() {
   if (!user) redirect("/sign-in?next=/admin/listings/new");
 
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-  if (profile?.role !== "admin") redirect("/");
+  if (!isAdminRole(profile?.role)) redirect("/");
 
   return (
     <main className="flex-1 py-14">

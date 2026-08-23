@@ -15,6 +15,7 @@ export type ListingStatus =
   | "archived";
 
 export type ProfileRole =
+  | "owner"
   | "admin"
   | "housing_office_partner"
   | "landlord"

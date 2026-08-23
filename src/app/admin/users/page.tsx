@@ -8,6 +8,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { setUserRole } from "@/app/admin/users/actions";
 import { getAllProfiles, ROLE_LABELS } from "@/lib/profiles";
+import { isAdminRole } from "@/lib/roles";
 import { createClient } from "@/lib/supabase/server";
 import type { ProfileRole } from "@/lib/types";
 
@@ -26,7 +27,7 @@ export default async function AdminUsersPage() {
   if (!user) redirect("/sign-in?next=/admin/users");
 
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-  if (profile?.role !== "admin") redirect("/");
+  if (!isAdminRole(profile?.role)) redirect("/");
 
   const profiles = await getAllProfiles();
 

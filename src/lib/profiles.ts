@@ -18,6 +18,7 @@ export interface Profile {
 // Human-readable labels for the role dropdown — so nobody has to remember
 // the exact enum string (the problem that prompted building this page).
 export const ROLE_LABELS: Record<ProfileRole, string> = {
+  owner: "Owner",
   admin: "Admin",
   housing_office_partner: "Housing office partner",
   landlord: "Landlord",
