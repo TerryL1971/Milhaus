@@ -38,6 +38,10 @@ export function ListingsGrid({ listings }: { listings: Listing[] }) {
   // must also mean "no filter."
   const activeBase = searchParams.get("base") || ALL_BASES;
   const minBedrooms = Number(searchParams.get("bedrooms")) || 0;
+  // moveIn stays a plain "YYYY-MM-DD" string on purpose — that's exactly
+  // what <input type="date"> submits and what availableFrom is stored as,
+  // so comparing the two lexically avoids any Date/timezone parsing at all.
+  const moveIn = searchParams.get("movein") || "";
 
   function setActiveBase(base: string) {
     const params = new URLSearchParams(searchParams.toString());
@@ -55,9 +59,14 @@ export function ListingsGrid({ listings }: { listings: Listing[] }) {
       listings.filter((listing) => {
         if (activeBase !== ALL_BASES && listing.base !== activeBase) return false;
         if (minBedrooms > 0 && listing.bedrooms < minBedrooms) return false;
+        // "I need to move in by this date" — a listing works if it's
+        // already available, or becomes available on/before that date.
+        // A listing with no availableFrom set stays in rather than getting
+        // hidden by missing data.
+        if (moveIn && listing.availableFrom && listing.availableFrom > moveIn) return false;
         return true;
       }),
-    [listings, activeBase, minBedrooms],
+    [listings, activeBase, minBedrooms, moveIn],
   );
 
   return (
@@ -85,7 +94,9 @@ export function ListingsGrid({ listings }: { listings: Listing[] }) {
       {filtered.length === 0 ? (
         <p className="text-ink-soft">
           No open listings{activeBase !== ALL_BASES ? ` near ${activeBase}` : ""}
-          {minBedrooms > 0 ? ` with ${minBedrooms}+ bedrooms` : ""} right now.
+          {minBedrooms > 0 ? ` with ${minBedrooms}+ bedrooms` : ""}
+          {moveIn ? ` available by ${new Date(`${moveIn}T00:00:00`).toLocaleDateString("en-US", { month: "long", day: "numeric" })}` : ""}{" "}
+          right now.
         </p>
       ) : (
         <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">

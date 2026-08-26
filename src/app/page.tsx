@@ -116,11 +116,9 @@ export default async function Home() {
                   </label>
                   <input
                     id="hero-movein"
-                    type="text"
-                    placeholder="Any time"
-                    disabled
-                    title="Coming soon"
-                    className="bg-transparent py-1 text-[0.92rem] text-charcoal placeholder:text-charcoal/50 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
+                    name="movein"
+                    type="date"
+                    className="bg-transparent py-1 text-[0.92rem] text-charcoal focus:outline-none"
                   />
                 </div>
                 <div className="flex flex-col gap-1">
