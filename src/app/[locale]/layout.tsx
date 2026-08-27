@@ -84,6 +84,13 @@ export default async function LocaleLayout({
     <html
       lang={locale}
       className={`${zillaSlab.variable} ${ibmPlexSans.variable} ${ibmPlexMono.variable} h-full antialiased`}
+      // Browser extensions (screen recorders, password managers, etc.) can
+      // inject attributes onto <html> before React hydrates — a genuine
+      // client/server mismatch, but not one caused by this app, and not
+      // one worth React bailing out over. suppressHydrationWarning only
+      // silences attribute/text mismatches on this exact element, not
+      // anything inside it.
+      suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col font-body">
         <NextIntlClientProvider>

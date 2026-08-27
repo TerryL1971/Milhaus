@@ -19,7 +19,7 @@ export default function GlobalError({ error }: { error: Error & { digest?: strin
   }, [error]);
 
   return (
-    <html>
+    <html suppressHydrationWarning>
       <body>
         <NextError statusCode={0} />
       </body>

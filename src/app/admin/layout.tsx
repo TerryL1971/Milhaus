@@ -46,6 +46,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <html
       lang="en"
       className={`${zillaSlab.variable} ${ibmPlexSans.variable} ${ibmPlexMono.variable} h-full antialiased`}
+      // See src/app/[locale]/layout.tsx for why — same browser-extension
+      // attribute-injection issue, same fix.
+      suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col font-body">
         <NextIntlClientProvider locale="en" messages={enMessages}>
