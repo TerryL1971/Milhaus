@@ -17,10 +17,11 @@
 
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { AMENITY_KEYS, AMENITY_LABELS } from "@/lib/amenities";
+import { Link } from "@/i18n/navigation";
+import { AMENITY_KEYS } from "@/lib/amenities";
 import { BASE_NAMES } from "@/lib/bases";
 import { createClient } from "@/lib/supabase/client";
 import type { ListingSource } from "@/lib/types";
@@ -33,6 +34,8 @@ const inputClass =
   "w-full rounded-md border border-canvas-deep bg-paper px-3 py-2 text-[0.95rem] text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none";
 
 export function ListingForm({ variant }: { variant: Variant }) {
+  const t = useTranslations("ListingForm");
+  const tAmenities = useTranslations("Amenities");
   const router = useRouter();
   const [status, setStatus] = useState<Status>("idle");
   const [progress, setProgress] = useState("");
@@ -55,7 +58,7 @@ export function ListingForm({ variant }: { variant: Variant }) {
     } = await supabase.auth.getUser();
     if (!user) {
       setStatus("error");
-      setErrorMessage("Your session expired — please sign in again.");
+      setErrorMessage(t("sessionExpired"));
       return;
     }
 
@@ -66,7 +69,7 @@ export function ListingForm({ variant }: { variant: Variant }) {
       ? ((formData.get("source") as ListingSource) ?? "housing_office")
       : "self_listed";
 
-    setProgress("Saving details…");
+    setProgress(t("progressSaving"));
     const { data: created, error: insertError } = await supabase
       .from("listings")
       .insert({
@@ -91,14 +94,14 @@ export function ListingForm({ variant }: { variant: Variant }) {
 
     if (insertError || !created) {
       setStatus("error");
-      setErrorMessage(insertError?.message ?? "Could not save the listing.");
+      setErrorMessage(insertError?.message ?? t("saveFailed"));
       return;
     }
     const listingId = created.id as string;
 
     const photoUrls: string[] = [];
     for (const [index, file] of files.entries()) {
-      setProgress(`Uploading photo ${index + 1} of ${files.length}…`);
+      setProgress(t("progressUploading", { current: index + 1, total: files.length }));
       const ext = file.name.split(".").pop() || "jpg";
       const path = `${listingId}/photo-${index + 1}.${ext}`;
       const { error: uploadError } = await supabase.storage
@@ -106,14 +109,14 @@ export function ListingForm({ variant }: { variant: Variant }) {
         .upload(path, file, { upsert: true });
       if (uploadError) {
         setStatus("error");
-        setErrorMessage(`Photo upload failed: ${uploadError.message}`);
+        setErrorMessage(t("photoUploadFailed", { message: uploadError.message }));
         return;
       }
       const { data: publicUrlData } = supabase.storage.from("listing-photos").getPublicUrl(path);
       photoUrls.push(publicUrlData.publicUrl);
     }
 
-    setProgress(isAdminAdd ? "Publishing…" : "Submitting for review…");
+    setProgress(isAdminAdd ? t("progressPublishing") : t("progressReview"));
     const { error: updateError } = await supabase
       .from("listings")
       .update({ photos: photoUrls, status: isAdminAdd ? "active" : "pending_review" })
@@ -133,16 +136,14 @@ export function ListingForm({ variant }: { variant: Variant }) {
     return (
       <div className="rounded-md border border-canvas-deep bg-paper p-6 text-center">
         <p className="mb-1 font-display text-xl font-semibold text-ink">
-          {isAdminAdd ? "Listing published" : "Submitted for review"}
+          {isAdminAdd ? t("successAdminAddTitle") : t("successSelfListTitle")}
         </p>
         <p className="mb-4 text-sm text-ink-soft">
-          {isAdminAdd
-            ? "It's live on the site now."
-            : "We'll take a look, usually the same day. It'll show up on the site as soon as it's approved."}
+          {isAdminAdd ? t("successAdminAddBody") : t("successSelfListBody")}
         </p>
         {isAdminAdd && (
           <Link href="/admin" className="text-sm font-semibold text-olive-deep hover:underline">
-            ← Back to admin
+            {t("backToAdmin")}
           </Link>
         )}
       </div>
@@ -157,37 +158,37 @@ export function ListingForm({ variant }: { variant: Variant }) {
       {isAdminAdd && (
         <div>
           <label htmlFor="source" className={labelClass}>
-            Source
+            {t("source")}
           </label>
           <select id="source" name="source" className={inputClass} defaultValue="housing_office">
-            <option value="housing_office">Housing office</option>
-            <option value="self_listed">Self-listed</option>
+            <option value="housing_office">{t("sourceHousingOffice")}</option>
+            <option value="self_listed">{t("sourceSelfListed")}</option>
           </select>
         </div>
       )}
 
       <div>
         <label htmlFor="title" className={labelClass}>
-          Title
+          {t("title")}
         </label>
         <input
           id="title"
           name="title"
           required
-          placeholder="e.g. 3-bedroom house near Panzer Kaserne"
+          placeholder={t("titlePlaceholder")}
           className={inputClass}
         />
       </div>
 
       <div>
         <label htmlFor="description" className={labelClass}>
-          Description
+          {t("description")}
         </label>
         <textarea
           id="description"
           name="description"
           rows={4}
-          placeholder="What should someone know about this place?"
+          placeholder={t("descriptionPlaceholder")}
           className={inputClass}
         />
       </div>
@@ -195,13 +196,13 @@ export function ListingForm({ variant }: { variant: Variant }) {
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label htmlFor="address" className={labelClass}>
-            Address
+            {t("address")}
           </label>
           <input id="address" name="address" required className={inputClass} />
         </div>
         <div>
           <label htmlFor="city" className={labelClass}>
-            City
+            {t("city")}
           </label>
           <input id="city" name="city" required className={inputClass} />
         </div>
@@ -210,11 +211,11 @@ export function ListingForm({ variant }: { variant: Variant }) {
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label htmlFor="base" className={labelClass}>
-            Nearest base
+            {t("nearestBase")}
           </label>
           <select id="base" name="base" className={inputClass} defaultValue="">
             <option value="" disabled>
-              Choose one
+              {t("chooseOne")}
             </option>
             {BASE_NAMES.map((base) => (
               <option key={base} value={base}>
@@ -225,12 +226,12 @@ export function ListingForm({ variant }: { variant: Variant }) {
         </div>
         <div>
           <label htmlFor="distanceToBase" className={labelClass}>
-            Distance to base
+            {t("distanceToBase")}
           </label>
           <input
             id="distanceToBase"
             name="distanceToBase"
-            placeholder="e.g. 12 min to Panzer Kaserne"
+            placeholder={t("distanceToBasePlaceholder")}
             className={inputClass}
           />
         </div>
@@ -239,7 +240,7 @@ export function ListingForm({ variant }: { variant: Variant }) {
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         <div>
           <label htmlFor="priceEurMonth" className={labelClass}>
-            € / month
+            {t("priceEurMonth")}
           </label>
           <input
             id="priceEurMonth"
@@ -252,13 +253,13 @@ export function ListingForm({ variant }: { variant: Variant }) {
         </div>
         <div>
           <label htmlFor="bedrooms" className={labelClass}>
-            Bedrooms
+            {t("bedrooms")}
           </label>
           <input id="bedrooms" name="bedrooms" type="number" min="0" required className={inputClass} />
         </div>
         <div>
           <label htmlFor="bathrooms" className={labelClass}>
-            Bathrooms
+            {t("bathrooms")}
           </label>
           <input
             id="bathrooms"
@@ -271,7 +272,7 @@ export function ListingForm({ variant }: { variant: Variant }) {
         </div>
         <div>
           <label htmlFor="sizeSqm" className={labelClass}>
-            Size (m²)
+            {t("sizeSqm")}
           </label>
           <input id="sizeSqm" name="sizeSqm" type="number" min="0" className={inputClass} />
         </div>
@@ -279,23 +280,26 @@ export function ListingForm({ variant }: { variant: Variant }) {
 
       <div>
         <label htmlFor="availableFrom" className={labelClass}>
-          Available from
+          {t("availableFrom")}
         </label>
         <input id="availableFrom" name="availableFrom" type="date" className={inputClass} />
       </div>
 
       <div>
-        <span className={labelClass}>Features</span>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        <span className={labelClass}>{t("features")}</span>
+        {/* Fixed at 2 columns, not 3 — German compounds ("Waschmaschine/
+            Trockner") run long enough that a 3rd column left too little
+            width per cell and the label overflowed into its neighbor. */}
+        <div className="grid grid-cols-2 gap-2">
           {AMENITY_KEYS.map((key) => (
-            <label key={key} className="flex items-center gap-2 text-sm text-charcoal">
+            <label key={key} className="flex min-w-0 items-center gap-2 text-sm text-charcoal">
               <input
                 type="checkbox"
                 name="amenities"
                 value={key}
-                className="h-4 w-4 rounded border-canvas-deep text-olive focus:ring-olive"
+                className="h-4 w-4 flex-shrink-0 rounded border-canvas-deep text-olive focus:ring-olive"
               />
-              {AMENITY_LABELS[key]}
+              <span>{tAmenities(key)}</span>
             </label>
           ))}
         </div>
@@ -303,7 +307,7 @@ export function ListingForm({ variant }: { variant: Variant }) {
 
       <div>
         <label htmlFor="photos" className={labelClass}>
-          Photos
+          {t("photos")}
         </label>
         <input
           id="photos"
@@ -323,10 +327,10 @@ export function ListingForm({ variant }: { variant: Variant }) {
         className="rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep disabled:cursor-not-allowed disabled:opacity-60"
       >
         {status === "submitting"
-          ? progress || "Submitting…"
+          ? progress || t("submitting")
           : isAdminAdd
-            ? "Publish listing"
-            : "Post home"}
+            ? t("submitAdminAdd")
+            : t("submitSelfList")}
       </button>
     </form>
   );

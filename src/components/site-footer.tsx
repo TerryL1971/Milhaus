@@ -2,33 +2,36 @@
 // Ported from the "FOOTER" section of
 // /design-reference/milhaus-landing-mockup.html.
 
-import Link from "next/link";
-
-const columns = [
-  {
-    heading: "For renters",
-    links: [
-      { label: "Browse listings", href: "/#listings" },
-      { label: "How verification works", href: "/how-verification-works" },
-    ],
-  },
-  {
-    heading: "For listers",
-    links: [
-      { label: "Post a home", href: "/post" },
-      { label: "For landlords", href: "/for-landlords" },
-    ],
-  },
-  {
-    heading: "About",
-    links: [
-      { label: "Contact", href: "#" },
-      { label: "Impressum", href: "#" },
-    ],
-  },
-];
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 export function SiteFooter() {
+  const t = useTranslations("SiteFooter");
+
+  const columns = [
+    {
+      heading: t("forRentersHeading"),
+      links: [
+        { label: t("browseListings"), href: "/#listings" },
+        { label: t("howVerificationWorks"), href: "/how-verification-works" },
+      ],
+    },
+    {
+      heading: t("forListersHeading"),
+      links: [
+        { label: t("postAHome"), href: "/post" },
+        { label: t("forLandlords"), href: "/for-landlords" },
+      ],
+    },
+    {
+      heading: t("aboutHeading"),
+      links: [
+        { label: t("contact"), href: "#" },
+        { label: t("impressum"), href: "#" },
+      ],
+    },
+  ];
+
   return (
     <footer className="bg-ink text-paper">
       <div className="mx-auto max-w-[1180px] px-8 pb-7 pt-11">
@@ -57,10 +60,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <p className="text-[0.78rem] opacity-55">
-          A resource for the American community living in Germany. Not
-          affiliated with the U.S. Department of Defense.
-        </p>
+        <p className="text-[0.78rem] opacity-55">{t("tagline")}</p>
       </div>
     </footer>
   );

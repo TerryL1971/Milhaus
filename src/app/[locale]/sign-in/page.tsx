@@ -1,5 +1,6 @@
-// src/app/sign-in/page.tsx
+// src/app/[locale]/sign-in/page.tsx
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { SignInForm } from "@/components/sign-in-form";
 import { createClient } from "@/lib/supabase/server";
@@ -21,6 +22,7 @@ export default async function SignInPage({
 }: {
   searchParams: Promise<{ error?: string; next?: string }>;
 }) {
+  const t = await getTranslations("SignIn");
   const { error, next } = await searchParams;
   const nextPath = safeNext(next);
 
@@ -37,19 +39,17 @@ export default async function SignInPage({
     <main className="flex flex-1 items-center justify-center px-8 py-20">
       <div className="w-full max-w-sm">
         <h1 className="mb-2 text-center font-display text-3xl font-semibold text-ink">
-          Sign in
+          {t("heading")}
         </h1>
-        <p className="mb-6 text-center text-sm text-ink-soft">
-          No password — we&apos;ll email you a link.
-        </p>
+        <p className="mb-6 text-center text-sm text-ink-soft">{t("subhead")}</p>
 
         {error === "link-expired" && (
           <p className="mb-4 rounded-md bg-rust/10 px-4 py-3 text-center text-sm text-rust">
-            That link expired or was already used. Request a new one below.
+            {t("linkExpired")}
           </p>
         )}
 
-        <SignInForm />
+        <SignInForm next={nextPath} />
       </div>
     </main>
   );

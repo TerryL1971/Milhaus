@@ -1,13 +1,14 @@
-// src/app/page.tsx
+// src/app/[locale]/page.tsx
 // Landing + browse page — ported from
 // /design-reference/milhaus-landing-mockup.html. Combines the marketing
 // hero with the live listings grid, matching the mockup's single-page
 // structure. Listing data is read live from Supabase.
 
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { ListingsGrid } from "@/components/listings-grid";
 import { StampBadge } from "@/components/stamp-badge";
+import { Link } from "@/i18n/navigation";
 import { BASE_NAMES } from "@/lib/bases";
 import { getActiveListings, getFeaturedListings } from "@/lib/listings";
 
@@ -29,41 +30,21 @@ const HERO_CARD_STYLES = [
   "absolute left-[54%] top-2.5 z-30 w-65 -rotate-2",
 ];
 
-const trustItems = [
-  {
-    heading: "Sourced with base housing",
-    body: "Direct feed from the on-base housing office, not scraped or guessed.",
-  },
-  {
-    heading: "Every listing reviewed",
-    body: "Self-listed homes are checked before they go live — no ghost posts.",
-  },
-  {
-    heading: "Down the day it's rented",
-    body: "No calling about a place that's been gone for three weeks.",
-  },
-];
-
-const howSteps = [
-  {
-    num: "01",
-    heading: "Post your home",
-    body: "A few photos, the price, and the date you're out. No agency, no paperwork.",
-  },
-  {
-    num: "02",
-    heading: "We check it",
-    body: "A quick review, usually same day, so every listing on the site can be trusted.",
-  },
-  {
-    num: "03",
-    heading: "Mark it rented",
-    body: "One tap and it's off the site — no one calls about a place that's already gone.",
-  },
-];
-
 export default async function Home() {
+  const t = await getTranslations("HomePage");
   const [listings, featured] = await Promise.all([getActiveListings(), getFeaturedListings(3)]);
+
+  const trustItems = [
+    { heading: t("trust1Heading"), body: t("trust1Body") },
+    { heading: t("trust2Heading"), body: t("trust2Body") },
+    { heading: t("trust3Heading"), body: t("trust3Body") },
+  ];
+  const howSteps = [
+    { num: "01", heading: t("how1Heading"), body: t("how1Body") },
+    { num: "02", heading: t("how2Heading"), body: t("how2Body") },
+    { num: "03", heading: t("how3Heading"), body: t("how3Body") },
+  ];
+
   return (
     <main className="flex-1">
       {/* ---------- HERO ---------- */}
@@ -72,20 +53,16 @@ export default async function Home() {
           <div>
             <div className="mb-4.5 inline-flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-olive-deep">
               <span className="inline-block h-1.5 w-1.5 rotate-45 bg-olive" />
-              For Americans moving to Germany
+              {t("eyebrow")}
             </div>
 
             <h1 className="mb-5 font-display text-4xl font-semibold leading-[1.05] tracking-tight text-ink lg:text-6xl">
-              Find your home <em className="italic text-rust">before</em>
+              {t("headlineStart")} <em className="italic text-rust">{t("headlineEmphasis")}</em>
               <br />
-              you land.
+              {t("headlineEnd")}
             </h1>
 
-            <p className="mb-8 max-w-[46ch] text-lg text-ink-soft">
-              Housing-office listings and homes from families rotating out —
-              verified, in plain English, and taken down the day they&apos;re
-              gone.
-            </p>
+            <p className="mb-8 max-w-[46ch] text-lg text-ink-soft">{t("subhead")}</p>
 
             <form
               action="/#listings"
@@ -94,7 +71,7 @@ export default async function Home() {
               <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-[1.2fr_1fr_0.9fr_auto] sm:items-center">
                 <div className="flex flex-col gap-1 border-b border-canvas-deep pb-2.5 sm:border-b-0 sm:border-r sm:pb-0 sm:pr-3.5">
                   <label htmlFor="hero-base" className="font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
-                    Near base
+                    {t("searchNearBase")}
                   </label>
                   <select
                     id="hero-base"
@@ -102,7 +79,7 @@ export default async function Home() {
                     defaultValue=""
                     className="bg-transparent py-1 text-[0.92rem] text-charcoal focus:outline-none"
                   >
-                    <option value="">Any base</option>
+                    <option value="">{t("searchAnyBase")}</option>
                     {BASE_NAMES.map((base) => (
                       <option key={base} value={base}>
                         {base}
@@ -112,7 +89,7 @@ export default async function Home() {
                 </div>
                 <div className="flex flex-col gap-1 border-b border-canvas-deep pb-2.5 sm:border-b-0 sm:border-r sm:pb-0 sm:pr-3.5">
                   <label htmlFor="hero-movein" className="font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
-                    Move-in
+                    {t("searchMoveIn")}
                   </label>
                   <input
                     id="hero-movein"
@@ -123,7 +100,7 @@ export default async function Home() {
                 </div>
                 <div className="flex flex-col gap-1">
                   <label htmlFor="hero-bedrooms" className="font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
-                    Bedrooms
+                    {t("searchBedrooms")}
                   </label>
                   <select
                     id="hero-bedrooms"
@@ -131,7 +108,7 @@ export default async function Home() {
                     defaultValue=""
                     className="bg-transparent py-1 text-[0.92rem] text-charcoal focus:outline-none"
                   >
-                    <option value="">Any</option>
+                    <option value="">{t("searchAnyBedrooms")}</option>
                     <option value="1">1+</option>
                     <option value="2">2+</option>
                     <option value="3">3+</option>
@@ -141,7 +118,7 @@ export default async function Home() {
                   type="submit"
                   className="self-center whitespace-nowrap rounded-md bg-brass px-5 py-2.5 text-center text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
                 >
-                  Search
+                  {t("searchButton")}
                 </button>
               </div>
             </form>
@@ -214,12 +191,10 @@ export default async function Home() {
       {/* ---------- HOW IT WORKS ---------- */}
       <section id="how" className="bg-canvas-deep py-18">
         <div className="mx-auto max-w-[1180px] px-8">
-          <h2 className="font-display text-[2rem] font-semibold text-ink">
-            Moving out? List it in five minutes.
-          </h2>
+          <h2 className="font-display text-[2rem] font-semibold text-ink">{t("howHeading")}</h2>
           <div className="mt-8.5 grid grid-cols-1 gap-7.5 md:grid-cols-3">
             {howSteps.map((step) => (
-              <div key={step.num}>
+              <div key={step.heading}>
                 <div className="mb-2.5 font-display text-[2.6rem] font-bold leading-none text-brass/90">
                   {step.num}
                 </div>
@@ -237,16 +212,14 @@ export default async function Home() {
       <section className="bg-rust py-11 text-center text-paper">
         <div className="mx-auto max-w-[1180px] px-8">
           <h2 className="mb-2.5 font-display text-[1.7rem] font-semibold text-paper">
-            PCSing to Germany soon?
+            {t("ctaHeading")}
           </h2>
-          <p className="mb-5.5 text-[0.96rem] opacity-90">
-            Start looking before you&apos;ve even packed a box.
-          </p>
+          <p className="mb-5.5 text-[0.96rem] opacity-90">{t("ctaBody")}</p>
           <Link
             href="/#listings"
             className="inline-block rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
           >
-            Browse open listings
+            {t("ctaButton")}
           </Link>
         </div>
       </section>

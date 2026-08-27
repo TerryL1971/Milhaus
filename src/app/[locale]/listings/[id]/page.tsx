@@ -1,13 +1,14 @@
-// src/app/listings/[id]/page.tsx
+// src/app/[locale]/listings/[id]/page.tsx
 // Listing detail page (build order step 4). Shows the full graphical
 // StampBadge for housing_office listings — the grid card only has room for
 // the compact checkmark/dash line, but CLAUDE.md calls for the stamp to be
 // visible on both the grid and here.
 
 import type { Metadata } from "next";
-import Link from "next/link";
+import { getLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { ListingPhotoGallery } from "@/components/listing-photo-gallery";
+import { getPathname, Link } from "@/i18n/navigation";
 import { AMENITY_LABELS, type AmenityKey } from "@/lib/amenities";
 import { getListingById, getOwnerContact } from "@/lib/listings";
 import { createClient } from "@/lib/supabase/server";
@@ -19,13 +20,7 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 0,
 });
 
-const dateFormatter = new Intl.DateTimeFormat("en-US", {
-  month: "long",
-  day: "numeric",
-  year: "numeric",
-});
-
-type Params = Promise<{ id: string }>;
+type Params = Promise<{ id: string; locale: string }>;
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { id } = await params;
@@ -64,6 +59,10 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
   const listing = await getListingById(id);
   if (!listing) notFound();
 
+  const t = await getTranslations("ListingDetail");
+  const locale = await getLocale();
+  const dateFormatter = new Intl.DateTimeFormat(locale, { month: "long", day: "numeric", year: "numeric" });
+
   const isRented = listing.status === "rented";
   const isHousingOffice = listing.source === "housing_office";
 
@@ -76,10 +75,16 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
   // or a not-yet-migrated database, both just fall back to "sign in".
   const ownerContact = user ? await getOwnerContact(listing.ownerId) : null;
 
+  // Locale-prefixed so signing in from the German page returns here in
+  // German too, not silently back to the English default.
+  const nextPath = getPathname({ href: `/listings/${listing.id}`, locale });
+
   // Structured data — helps both traditional search (rich results) and
   // AI answer engines (ChatGPT/Perplexity/Google AI Overviews lean on
   // schema.org markup to extract facts like price and availability
-  // reliably, rather than parsing prose).
+  // reliably, rather than parsing prose). Deliberately not translated —
+  // schema.org values are for machine consumption, and mixing languages
+  // here would only complicate parsing.
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "RealEstateListing",
@@ -113,7 +118,7 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <div className="mx-auto max-w-[860px] px-8">
         <Link href="/#listings" className="mb-6 inline-block text-sm text-ink-soft hover:text-ink">
-          ← Back to listings
+          {t("backToListings")}
         </Link>
 
         <ListingPhotoGallery photos={listing.photos} showStamp={isHousingOffice} />
@@ -136,17 +141,17 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
                 isRented ? "bg-rust/10 text-rust line-through" : "bg-olive/15 text-olive-deep"
               }`}
             >
-              {isRented ? "Rented" : "Available"}
+              {isRented ? t("rented") : t("availableStatus")}
             </span>
           </div>
         </div>
 
         <div className="mt-6 flex gap-6 border-y border-canvas-deep py-4 font-mono text-sm text-charcoal/80">
-          <span>{listing.bedrooms} bed</span>
-          <span>{listing.bathrooms} bath</span>
+          <span>{listing.bedrooms} {t("bed")}</span>
+          <span>{listing.bathrooms} {t("bath")}</span>
           {listing.sizeSqm != null && <span>{listing.sizeSqm} m²</span>}
           {listing.availableFrom && (
-            <span>Available {dateFormatter.format(new Date(listing.availableFrom))}</span>
+            <span>{t("available", { date: dateFormatter.format(new Date(listing.availableFrom)) })}</span>
           )}
         </div>
 
@@ -175,20 +180,20 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
           }`}
         >
           <span className="font-bold">{isHousingOffice ? "✓" : "—"}</span>
-          {isHousingOffice ? "Housing office listing" : "Listed by outgoing family"}
+          {isHousingOffice ? t("housingOfficeListing") : t("listedByFamily")}
         </p>
 
         <div className="mt-8 rounded-md border border-canvas-deep bg-paper p-5">
           {ownerContact ? (
             <>
-              <p className="mb-3 text-sm font-semibold text-ink">Interested in this home?</p>
+              <p className="mb-3 text-sm font-semibold text-ink">{t("interestedHeading")}</p>
               <div className="flex flex-col gap-2 text-sm">
                 {ownerContact.contactEmail && (
                   <a
                     href={`mailto:${ownerContact.contactEmail}?subject=${encodeURIComponent(`About: ${listing.title}`)}`}
                     className="inline-block w-fit rounded-md bg-brass px-5 py-2.5 font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
                   >
-                    Email {ownerContact.displayName ?? "the lister"}
+                    {t("emailButton", { name: ownerContact.displayName ?? t("theLister") })}
                   </a>
                 )}
                 {ownerContact.contactPhone && (
@@ -203,14 +208,12 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
             </>
           ) : (
             <>
-              <p className="mb-3 text-sm text-ink-soft">
-                Interested in this home? Sign in to contact the lister.
-              </p>
+              <p className="mb-3 text-sm text-ink-soft">{t("signInToContact")}</p>
               <Link
-                href={`/sign-in?next=/listings/${listing.id}`}
+                href={`/sign-in?next=${nextPath}`}
                 className="inline-block rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
               >
-                Sign in
+                {t("signIn")}
               </Link>
             </>
           )}

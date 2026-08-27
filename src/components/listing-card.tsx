@@ -2,13 +2,16 @@
 // A single listing in the browse grid — ported from the ".g-card" rules in
 // /design-reference/milhaus-landing-mockup.html.
 
-import Link from "next/link";
-import { AMENITY_LABELS, type AmenityKey } from "@/lib/amenities";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
+import type { AmenityKey } from "@/lib/amenities";
 import type { Listing } from "@/lib/types";
 
 // en-US formatting reads "€1,180" (matching the mockup) rather than the
 // de-DE "1.180 €" — the audience is English-speaking Americans, even
-// though the currency is Euros.
+// though the currency is Euros. Kept as en-US in both languages on
+// purpose, for the same reason: the price format isn't part of what
+// changes with the language toggle.
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "EUR",
@@ -22,6 +25,8 @@ export function ListingCard({
   listing: Listing;
   photoGradient: string;
 }) {
+  const t = useTranslations("ListingCard");
+  const tAmenities = useTranslations("Amenities");
   const isRented = listing.status === "rented";
   const isHousingOffice = listing.source === "housing_office";
 
@@ -43,7 +48,7 @@ export function ListingCard({
       <div className="px-4 pb-4 pt-3.5">
         <div className="mb-1 flex items-start justify-between">
           <span className="font-mono text-[1.08rem] font-semibold text-ink">
-            {currencyFormatter.format(listing.priceEurMonth)} / mo
+            {currencyFormatter.format(listing.priceEurMonth)} {t("perMonth")}
           </span>
           <span
             className={`rounded-[3px] px-2 py-0.5 font-mono text-[0.66rem] font-semibold uppercase tracking-wider ${
@@ -52,7 +57,7 @@ export function ListingCard({
                 : "bg-olive/15 text-olive-deep"
             }`}
           >
-            {isRented ? "Rented" : "Available"}
+            {isRented ? t("rented") : t("available")}
           </span>
         </div>
 
@@ -62,8 +67,8 @@ export function ListingCard({
         </p>
 
         <div className="flex gap-3 font-mono text-[0.76rem] text-charcoal/80">
-          <span>{listing.bedrooms} bed</span>
-          <span>{listing.bathrooms} bath</span>
+          <span>{listing.bedrooms} {t("bed")}</span>
+          <span>{listing.bathrooms} {t("bath")}</span>
           {listing.sizeSqm != null && <span>{listing.sizeSqm} m²</span>}
         </div>
 
@@ -74,12 +79,12 @@ export function ListingCard({
                 key={key}
                 className="rounded-full bg-canvas px-2 py-0.5 text-[0.68rem] text-ink-soft"
               >
-                {AMENITY_LABELS[key as AmenityKey] ?? key}
+                {tAmenities(key as AmenityKey)}
               </span>
             ))}
             {listing.amenities.length > 3 && (
               <span className="rounded-full bg-canvas px-2 py-0.5 text-[0.68rem] text-ink-soft">
-                +{listing.amenities.length - 3} more
+                {t("moreAmenities", { count: listing.amenities.length - 3 })}
               </span>
             )}
           </div>
@@ -91,7 +96,7 @@ export function ListingCard({
           }`}
         >
           <span className="font-bold">{isHousingOffice ? "✓" : "—"}</span>
-          {isHousingOffice ? "Housing office listing" : "Listed by outgoing family"}
+          {isHousingOffice ? t("housingOfficeListing") : t("listedByFamily")}
         </p>
       </div>
     </Link>

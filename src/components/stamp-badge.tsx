@@ -11,6 +11,8 @@
 // order, making "append an overriding className" unreliable for anything
 // this component already sets.
 
+import { useTranslations } from "next-intl";
+
 const SIZES = {
   md: { box: "h-13 w-13", text: "text-[0.5rem]" },
   lg: { box: "h-16 w-16", text: "text-[0.62rem]" },
@@ -23,6 +25,7 @@ export function StampBadge({
   size?: keyof typeof SIZES;
   className?: string;
 }) {
+  const t = useTranslations("StampBadge");
   const { box, text } = SIZES[size];
   return (
     <div
@@ -31,9 +34,9 @@ export function StampBadge({
       <span
         className={`text-center font-mono ${text} font-semibold uppercase leading-tight tracking-wide text-olive-deep`}
       >
-        Housing
+        {t("line1")}
         <br />
-        Office
+        {t("line2")}
       </span>
     </div>
   );

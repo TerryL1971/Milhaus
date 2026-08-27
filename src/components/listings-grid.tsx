@@ -10,15 +10,13 @@
 
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
 import { useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ListingCard } from "@/components/listing-card";
-import { AMENITY_KEYS, AMENITY_LABELS, type AmenityKey } from "@/lib/amenities";
+import { AMENITY_KEYS, type AmenityKey } from "@/lib/amenities";
 import { BASE_NAMES } from "@/lib/bases";
 import type { Listing } from "@/lib/types";
-
-const ALL_BASES = "All bases";
-const BASES = [ALL_BASES, ...BASE_NAMES];
 
 const PHOTO_GRADIENTS = [
   "linear-gradient(135deg,#D8C9A8,#A9AE83)",
@@ -30,9 +28,18 @@ const PHOTO_GRADIENTS = [
 ];
 
 export function ListingsGrid({ listings }: { listings: Listing[] }) {
+  const t = useTranslations("ListingsGrid");
+  const tAmenities = useTranslations("Amenities");
+  const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  // Sentinel for "no base filter" — locale-aware, but that's harmless: it
+  // never leaks into the URL (selecting it does params.delete, not set),
+  // it only ever gets compared against itself within this component.
+  const ALL_BASES = t("allBases");
+  const BASES = [ALL_BASES, ...BASE_NAMES];
 
   // `|| ` on purpose, not `??` — an unselected <select name="base"> in the
   // hero form submits as an empty string, not an absent param, and that
@@ -92,13 +99,13 @@ export function ListingsGrid({ listings }: { listings: Listing[] }) {
         if (activeAmenities.some((key) => !listing.amenities.includes(key))) return false;
         return true;
       }),
-    [listings, activeBase, minBedrooms, moveIn, activeAmenities],
+    [listings, activeBase, minBedrooms, moveIn, activeAmenities, ALL_BASES],
   );
 
   return (
     <>
       <div className="mb-7 flex flex-wrap items-end justify-between gap-5">
-        <h2 className="font-display text-[2rem] font-semibold text-ink">Open right now</h2>
+        <h2 className="font-display text-[2rem] font-semibold text-ink">{t("heading")}</h2>
         <div className="flex flex-wrap gap-2">
           {BASES.map((base) => (
             <button
@@ -129,20 +136,23 @@ export function ListingsGrid({ listings }: { listings: Listing[] }) {
                 : "border-canvas-deep bg-paper text-ink-soft hover:border-brass/50"
             }`}
           >
-            {AMENITY_LABELS[key]}
+            {tAmenities(key)}
           </button>
         ))}
       </div>
 
       {filtered.length === 0 ? (
         <p className="text-ink-soft">
-          No open listings{activeBase !== ALL_BASES ? ` near ${activeBase}` : ""}
-          {minBedrooms > 0 ? ` with ${minBedrooms}+ bedrooms` : ""}
-          {moveIn ? ` available by ${new Date(`${moveIn}T00:00:00`).toLocaleDateString("en-US", { month: "long", day: "numeric" })}` : ""}
+          {t("emptyPrefix")}
+          {activeBase !== ALL_BASES ? ` ${t("emptyNear", { base: activeBase })}` : ""}
+          {minBedrooms > 0 ? ` ${t("emptyBedrooms", { count: minBedrooms })}` : ""}
+          {moveIn
+            ? ` ${t("emptyMoveIn", { date: new Date(`${moveIn}T00:00:00`).toLocaleDateString(locale, { month: "long", day: "numeric" }) })}`
+            : ""}
           {activeAmenities.length > 0
-            ? ` with ${activeAmenities.map((key) => AMENITY_LABELS[key]).join(", ")}`
+            ? ` ${t("emptyAmenities", { list: activeAmenities.map((key) => tAmenities(key)).join(", ") })}`
             : ""}{" "}
-          right now.
+          {t("emptySuffix")}
         </p>
       ) : (
         <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">

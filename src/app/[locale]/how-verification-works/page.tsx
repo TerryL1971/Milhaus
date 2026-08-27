@@ -1,4 +1,4 @@
-// src/app/how-verification-works/page.tsx
+// src/app/[locale]/how-verification-works/page.tsx
 // Renter-facing explainer, linked from the footer's "How verification
 // works" link (previously "#"). No external dependency — content mirrors
 // what's already true of the review pipeline (admin/actions.ts:
@@ -6,8 +6,9 @@
 // listings.source === "housing_office").
 
 import type { Metadata } from "next";
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { StampBadge } from "@/components/stamp-badge";
+import { Link } from "@/i18n/navigation";
 
 export const metadata: Metadata = {
   title: "How verification works",
@@ -15,25 +16,15 @@ export const metadata: Metadata = {
     "How every milhaus listing gets checked before it goes live, and what the housing-office stamp means.",
 };
 
-const reviewSteps = [
-  {
-    num: "01",
-    heading: "Someone submits it",
-    body: "A PCSing family lists the home they're leaving, or it comes in through the on-base housing office feed.",
-  },
-  {
-    num: "02",
-    heading: "We check it",
-    body: "Every self-listed submission is reviewed by hand before it's visible to anyone — usually the same day. Nothing goes live automatically.",
-  },
-  {
-    num: "03",
-    heading: "It's live — until it isn't",
-    body: "One tap takes a listing off the site the moment it's rented. No calling about a place that's been gone for three weeks.",
-  },
-];
+export default async function HowVerificationWorksPage() {
+  const t = await getTranslations("HowVerification");
 
-export default function HowVerificationWorksPage() {
+  const reviewSteps = [
+    { num: t("step1Num"), heading: t("step1Heading"), body: t("step1Body") },
+    { num: t("step2Num"), heading: t("step2Heading"), body: t("step2Body") },
+    { num: t("step3Num"), heading: t("step3Heading"), body: t("step3Body") },
+  ];
+
   return (
     <main className="flex-1">
       {/* ---------- HERO ---------- */}
@@ -41,15 +32,12 @@ export default function HowVerificationWorksPage() {
         <div className="mx-auto max-w-[720px] px-8 text-center">
           <div className="mb-4.5 inline-flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-olive-deep">
             <span className="inline-block h-1.5 w-1.5 rotate-45 bg-olive" />
-            How it works
+            {t("eyebrow")}
           </div>
           <h1 className="mb-5 font-display text-4xl font-semibold leading-[1.05] tracking-tight text-ink lg:text-5xl">
-            Nothing goes live unchecked.
+            {t("heading")}
           </h1>
-          <p className="mx-auto max-w-[52ch] text-lg text-ink-soft">
-            Every listing on milhaus — whether it came from the housing office or a family
-            rotating out — is reviewed before it&apos;s visible, and taken down the day it&apos;s gone.
-          </p>
+          <p className="mx-auto max-w-[52ch] text-lg text-ink-soft">{t("subhead")}</p>
         </div>
       </section>
 
@@ -79,15 +67,8 @@ export default function HowVerificationWorksPage() {
             </div>
           </div>
           <div>
-            <h2 className="mb-2 font-display text-xl font-semibold text-ink">
-              The stamp means it came from the housing office
-            </h2>
-            <p className="max-w-[56ch] text-sm text-ink-soft">
-              Listings with this mark are a direct feed from the on-base housing office, not
-              scraped or self-submitted. A listing without it is a self-listed home from an
-              outgoing family — still reviewed, just sourced differently. Both go through the same
-              check before they&apos;re visible; the stamp only tells you where a listing came from.
-            </p>
+            <h2 className="mb-2 font-display text-xl font-semibold text-ink">{t("stampHeading")}</h2>
+            <p className="max-w-[56ch] text-sm text-ink-soft">{t("stampBody")}</p>
           </div>
         </div>
       </section>
@@ -96,16 +77,14 @@ export default function HowVerificationWorksPage() {
       <section className="bg-rust py-11 text-center text-paper">
         <div className="mx-auto max-w-[1180px] px-8">
           <h2 className="mb-2.5 font-display text-[1.7rem] font-semibold text-paper">
-            Ready to look?
+            {t("ctaHeading")}
           </h2>
-          <p className="mb-5.5 text-[0.96rem] opacity-90">
-            Every listing you&apos;ll see has already been through this.
-          </p>
+          <p className="mb-5.5 text-[0.96rem] opacity-90">{t("ctaBody")}</p>
           <Link
             href="/#listings"
             className="inline-block rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
           >
-            Browse open listings
+            {t("ctaButton")}
           </Link>
         </div>
       </section>

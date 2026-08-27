@@ -5,6 +5,7 @@
 
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { StampBadge } from "@/components/stamp-badge";
 
@@ -15,6 +16,7 @@ export function ListingPhotoGallery({
   photos: string[];
   showStamp: boolean;
 }) {
+  const t = useTranslations("PhotoGallery");
   const [selected, setSelected] = useState(0);
   const hero = photos[selected];
 
@@ -40,7 +42,7 @@ export function ListingPhotoGallery({
               key={photo}
               type="button"
               onClick={() => setSelected(index)}
-              aria-label={`Show photo ${index + 1}`}
+              aria-label={t("showPhoto", { number: index + 1 })}
               aria-current={index === selected}
               className={`h-20 overflow-hidden rounded-md sm:h-24 ${
                 index === selected

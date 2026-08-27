@@ -4,12 +4,19 @@
 // reads the session on every request to swap "Sign in" for the signed-in
 // state, so it's never stale the way a client-fetched version could be.
 
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
+import NextLink from "next/link";
 import { HomeLink } from "@/components/home-link";
+import { LanguageToggle } from "@/components/language-toggle";
+import { Link } from "@/i18n/navigation";
 import { isAdminRole } from "@/lib/roles";
 import { createClient } from "@/lib/supabase/server";
 
+const toggleButtonClass =
+  "rounded-md border border-brass/50 px-4 py-2 text-sm font-semibold text-brass transition-[transform,box-shadow] hover:-translate-y-px hover:border-brass";
+
 export async function SiteHeader() {
+  const t = await getTranslations("SiteHeader");
   const supabase = await createClient();
   const {
     data: { user },
@@ -30,26 +37,29 @@ export async function SiteHeader() {
 
         <nav className="hidden gap-7 text-[0.92rem] font-medium md:flex">
           <Link href="/#listings" className="opacity-85 transition-opacity hover:opacity-100">
-            Browse listings
+            {t("browseListings")}
           </Link>
           <Link href="/post" className="opacity-85 transition-opacity hover:opacity-100">
-            List your home
+            {t("listYourHome")}
           </Link>
           <Link href="/for-landlords" className="opacity-85 transition-opacity hover:opacity-100">
-            For landlords
+            {t("forLandlords")}
           </Link>
         </nav>
 
         <div className="flex items-center gap-4.5">
+          {/* Same slot/style as the Admin link — DE/EN always shows here;
+              Admin joins it alongside for admins, rather than replacing it. */}
+          <LanguageToggle className={toggleButtonClass} />
           {user ? (
             <>
+              {/* Plain next/link, not the i18n one — /admin sits outside
+                  the [locale] segment entirely (see src/app/admin/layout.tsx),
+                  so it shouldn't get a locale prefix. */}
               {isAdmin && (
-                <Link
-                  href="/admin"
-                  className="rounded-md border border-brass/50 px-4 py-2 text-sm font-semibold text-brass transition-[transform,box-shadow] hover:-translate-y-px hover:border-brass"
-                >
-                  Admin
-                </Link>
+                <NextLink href="/admin" className={toggleButtonClass}>
+                  {t("admin")}
+                </NextLink>
               )}
               <span className="hidden text-sm opacity-85 sm:inline">{user.email}</span>
               <form action="/auth/sign-out" method="post">
@@ -57,7 +67,7 @@ export async function SiteHeader() {
                   type="submit"
                   className="rounded-md border border-paper/35 px-5 py-2.5 text-sm font-semibold transition-[transform,box-shadow] hover:-translate-y-px hover:border-paper/70"
                 >
-                  Sign out
+                  {t("signOut")}
                 </button>
               </form>
             </>
@@ -66,14 +76,14 @@ export async function SiteHeader() {
               href="/sign-in"
               className="rounded-md border border-paper/35 px-5 py-2.5 text-sm font-semibold transition-[transform,box-shadow] hover:-translate-y-px hover:border-paper/70"
             >
-              Sign in
+              {t("signIn")}
             </Link>
           )}
           <Link
             href="/#listings"
             className="rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
           >
-            Browse listings
+            {t("browseListings")}
           </Link>
         </div>
       </div>

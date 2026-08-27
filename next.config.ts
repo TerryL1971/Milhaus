@@ -1,6 +1,9 @@
 // next.config.ts
 import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
+import createNextIntlPlugin from "next-intl/plugin";
+
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
   // Next's dev server only trusts requests to its internal dev assets from
@@ -19,7 +22,7 @@ const nextConfig: NextConfig = {
 // the source-map upload rather than failing the build. Error reporting
 // itself doesn't need them at all; source maps only make stack traces in
 // Sentry readable instead of pointing at minified code.
-export default withSentryConfig(nextConfig, {
+export default withSentryConfig(withNextIntl(nextConfig), {
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,
   authToken: process.env.SENTRY_AUTH_TOKEN,
