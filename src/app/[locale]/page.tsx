@@ -6,6 +6,7 @@
 
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
+import { FilterModal } from "@/components/filter-modal";
 import { ListingsGrid } from "@/components/listings-grid";
 import { StampBadge } from "@/components/stamp-badge";
 import { Link } from "@/i18n/navigation";
@@ -114,12 +115,15 @@ export default async function Home() {
                     <option value="3">3+</option>
                   </select>
                 </div>
-                <button
-                  type="submit"
-                  className="self-center whitespace-nowrap rounded-md bg-brass px-5 py-2.5 text-center text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
-                >
-                  {t("searchButton")}
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="submit"
+                    className="flex-1 self-center whitespace-nowrap rounded-md bg-brass px-5 py-2.5 text-center text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep sm:flex-none"
+                  >
+                    {t("searchButton")}
+                  </button>
+                  <FilterModal />
+                </div>
               </div>
             </form>
           </div>

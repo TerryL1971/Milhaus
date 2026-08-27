@@ -4,20 +4,22 @@
 // /design-reference/milhaus-landing-mockup.html.
 //
 // Filter state lives in the URL (?base=...&bedrooms=...), not just local
-// component state, so the hero search form (a plain HTML GET form, no JS)
-// and these chips (client-side clicks) both drive the same filter instead
-// of being two disconnected UIs that silently don't affect each other.
+// component state, so the hero search form (a plain HTML GET form, no JS),
+// FilterModal (the hero's filter icon), and these chips all drive the same
+// filter instead of being disconnected UIs that silently don't affect each
+// other. The read/write logic itself lives in useListingFilters, shared
+// with FilterModal.
 
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
 import { useMemo } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ListingCard } from "@/components/listing-card";
 import { Link } from "@/i18n/navigation";
-import { AMENITY_KEYS, type AmenityKey } from "@/lib/amenities";
+import { AMENITY_KEYS } from "@/lib/amenities";
 import { BASE_NAMES } from "@/lib/bases";
 import type { Listing } from "@/lib/types";
+import { useListingFilters } from "@/lib/use-listing-filters";
 
 const PHOTO_GRADIENTS = [
   "linear-gradient(135deg,#D8C9A8,#A9AE83)",
@@ -62,57 +64,16 @@ export function ListingsGrid({ listings }: { listings: Listing[] }) {
   const t = useTranslations("ListingsGrid");
   const tAmenities = useTranslations("Amenities");
   const locale = useLocale();
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
-  // Sentinel for "no base filter" — locale-aware, but that's harmless: it
-  // never leaks into the URL (selecting it does params.delete, not set),
-  // it only ever gets compared against itself within this component.
-  const ALL_BASES = t("allBases");
+  const {
+    ALL_BASES,
+    activeBase,
+    minBedrooms,
+    moveIn,
+    activeAmenities,
+    setActiveBase,
+    toggleAmenity,
+  } = useListingFilters();
   const BASES = [ALL_BASES, ...BASE_NAMES];
-
-  // `|| ` on purpose, not `??` — an unselected <select name="base"> in the
-  // hero form submits as an empty string, not an absent param, and that
-  // must also mean "no filter."
-  const activeBase = searchParams.get("base") || ALL_BASES;
-  const minBedrooms = Number(searchParams.get("bedrooms")) || 0;
-  // moveIn stays a plain "YYYY-MM-DD" string on purpose — that's exactly
-  // what <input type="date"> submits and what availableFrom is stored as,
-  // so comparing the two lexically avoids any Date/timezone parsing at all.
-  const moveIn = searchParams.get("movein") || "";
-  const activeAmenities = useMemo(
-    () =>
-      (searchParams.get("amenities") ?? "")
-        .split(",")
-        .filter((key): key is AmenityKey => AMENITY_KEYS.includes(key as AmenityKey)),
-    [searchParams],
-  );
-
-  function toggleAmenity(key: AmenityKey) {
-    const next = activeAmenities.includes(key)
-      ? activeAmenities.filter((k) => k !== key)
-      : [...activeAmenities, key];
-    const params = new URLSearchParams(searchParams.toString());
-    if (next.length === 0) {
-      params.delete("amenities");
-    } else {
-      params.set("amenities", next.join(","));
-    }
-    const query = params.toString();
-    router.replace(`${pathname}${query ? `?${query}` : ""}#listings`, { scroll: false });
-  }
-
-  function setActiveBase(base: string) {
-    const params = new URLSearchParams(searchParams.toString());
-    if (base === ALL_BASES) {
-      params.delete("base");
-    } else {
-      params.set("base", base);
-    }
-    const query = params.toString();
-    router.replace(`${pathname}${query ? `?${query}` : ""}#listings`, { scroll: false });
-  }
 
   const filtered = useMemo(
     () =>

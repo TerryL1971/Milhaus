@@ -203,6 +203,14 @@
     "ctaBody": "Jedes Angebot, das Sie sehen, hat das bereits durchlaufen.",
     "ctaButton": "Offene Angebote ansehen"
   },
+  "FilterModal": {
+    "openLabel": "Filter öffnen",
+    "openLabelWithCount": "Filter öffnen ({count} aktiv)",
+    "title": "Filter",
+    "close": "Schließen",
+    "clearAll": "Alle Filter zurücksetzen",
+    "done": "Fertig"
+  },
   "StampBadge": {
     "line1": "Housing",
     "line2": "Office"

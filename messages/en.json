@@ -203,6 +203,14 @@
     "ctaBody": "Every listing you'll see has already been through this.",
     "ctaButton": "Browse open listings"
   },
+  "FilterModal": {
+    "openLabel": "Open filters",
+    "openLabelWithCount": "Open filters ({count} active)",
+    "title": "Filters",
+    "close": "Close",
+    "clearAll": "Clear all filters",
+    "done": "Done"
+  },
   "StampBadge": {
     "line1": "Housing",
     "line2": "Office"
