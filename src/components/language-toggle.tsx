@@ -10,14 +10,32 @@
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 
-export function LanguageToggle({ className }: { className?: string }) {
+export function LanguageToggle({
+  className,
+  preservePath = true,
+}: {
+  className?: string;
+  // false on pages outside the [locale] segment (currently just /admin —
+  // see src/app/admin/layout.tsx). usePathname() there returns the bare
+  // "/admin"-style path, and next-intl has no way to know that path has no
+  // German counterpart: it would happily build /de/admin/..., which 404s
+  // (confirmed by hand — clicked DE from /admin, then "+ Add listing",
+  // landed on a real 404). Sending the toggle to the homepage instead is
+  // the honest option: there's nowhere translated to preserve.
+  preservePath?: boolean;
+}) {
   const pathname = usePathname();
   const locale = useLocale();
   const other = locale === "en" ? "de" : "en";
   const t = useTranslations("SiteHeader");
 
   return (
-    <Link href={pathname} locale={other} className={className} aria-label={t("languageToggle")}>
+    <Link
+      href={preservePath ? pathname : "/"}
+      locale={other}
+      className={className}
+      aria-label={t("languageToggle")}
+    >
       {other.toUpperCase()}
     </Link>
   );

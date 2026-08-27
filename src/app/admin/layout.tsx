@@ -49,7 +49,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     >
       <body className="flex min-h-full flex-col font-body">
         <NextIntlClientProvider locale="en" messages={enMessages}>
-          <SiteHeader />
+          <SiteHeader translatedPage={false} />
           <div className="flex flex-1 flex-col">{children}</div>
           <SiteFooter />
         </NextIntlClientProvider>

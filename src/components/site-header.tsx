@@ -15,7 +15,7 @@ import { createClient } from "@/lib/supabase/server";
 const toggleButtonClass =
   "rounded-md border border-brass/50 px-4 py-2 text-sm font-semibold text-brass transition-[transform,box-shadow] hover:-translate-y-px hover:border-brass";
 
-export async function SiteHeader() {
+export async function SiteHeader({ translatedPage = true }: { translatedPage?: boolean } = {}) {
   const t = await getTranslations("SiteHeader");
   const supabase = await createClient();
   const {
@@ -50,7 +50,7 @@ export async function SiteHeader() {
         <div className="flex items-center gap-4.5">
           {/* Same slot/style as the Admin link — DE/EN always shows here;
               Admin joins it alongside for admins, rather than replacing it. */}
-          <LanguageToggle className={toggleButtonClass} />
+          <LanguageToggle className={toggleButtonClass} preservePath={translatedPage} />
           {user ? (
             <>
               {/* Plain next/link, not the i18n one — /admin sits outside
