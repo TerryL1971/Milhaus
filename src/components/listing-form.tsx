@@ -20,6 +20,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { AMENITY_KEYS, AMENITY_LABELS } from "@/lib/amenities";
 import { BASE_NAMES } from "@/lib/bases";
 import { createClient } from "@/lib/supabase/client";
 import type { ListingSource } from "@/lib/types";
@@ -80,6 +81,7 @@ export function ListingForm({ variant }: { variant: Variant }) {
         bathrooms: Number(formData.get("bathrooms")),
         size_sqm: sizeSqmRaw ? Number(sizeSqmRaw) : null,
         available_from: availableFromRaw || null,
+        amenities: formData.getAll("amenities"),
         source,
         status: "draft",
         owner_id: user.id,
@@ -280,6 +282,23 @@ export function ListingForm({ variant }: { variant: Variant }) {
           Available from
         </label>
         <input id="availableFrom" name="availableFrom" type="date" className={inputClass} />
+      </div>
+
+      <div>
+        <span className={labelClass}>Features</span>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+          {AMENITY_KEYS.map((key) => (
+            <label key={key} className="flex items-center gap-2 text-sm text-charcoal">
+              <input
+                type="checkbox"
+                name="amenities"
+                value={key}
+                className="h-4 w-4 rounded border-canvas-deep text-olive focus:ring-olive"
+              />
+              {AMENITY_LABELS[key]}
+            </label>
+          ))}
+        </div>
       </div>
 
       <div>

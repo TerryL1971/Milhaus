@@ -8,6 +8,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ListingPhotoGallery } from "@/components/listing-photo-gallery";
+import { AMENITY_LABELS, type AmenityKey } from "@/lib/amenities";
 import { getListingById, getOwnerContact } from "@/lib/listings";
 import { createClient } from "@/lib/supabase/server";
 import { SITE_URL } from "@/lib/site-url";
@@ -153,6 +154,19 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
           <p className="mt-6 whitespace-pre-line text-[0.98rem] leading-relaxed text-charcoal">
             {listing.description}
           </p>
+        )}
+
+        {listing.amenities.length > 0 && (
+          <div className="mt-6 flex flex-wrap gap-2">
+            {listing.amenities.map((key) => (
+              <span
+                key={key}
+                className="rounded-full border border-canvas-deep bg-canvas px-3 py-1 text-sm text-ink-soft"
+              >
+                {AMENITY_LABELS[key as AmenityKey] ?? key}
+              </span>
+            ))}
+          </div>
         )}
 
         <p

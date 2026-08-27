@@ -38,6 +38,9 @@ export interface Listing {
   sizeSqm: number | null;
   availableFrom: string | null; // ISO date
   photos: string[];
+  /** Fixed set of property features — keys from AMENITY_LABELS in
+   * src/lib/amenities.ts (e.g. "pet_friendly", "garage"). */
+  amenities: string[];
   source: ListingSource;
   status: ListingStatus;
   /** Admin-controlled: whether this shows in the homepage hero's 3-card

@@ -13,6 +13,7 @@
 import { useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ListingCard } from "@/components/listing-card";
+import { AMENITY_KEYS, AMENITY_LABELS, type AmenityKey } from "@/lib/amenities";
 import { BASE_NAMES } from "@/lib/bases";
 import type { Listing } from "@/lib/types";
 
@@ -42,6 +43,27 @@ export function ListingsGrid({ listings }: { listings: Listing[] }) {
   // what <input type="date"> submits and what availableFrom is stored as,
   // so comparing the two lexically avoids any Date/timezone parsing at all.
   const moveIn = searchParams.get("movein") || "";
+  const activeAmenities = useMemo(
+    () =>
+      (searchParams.get("amenities") ?? "")
+        .split(",")
+        .filter((key): key is AmenityKey => AMENITY_KEYS.includes(key as AmenityKey)),
+    [searchParams],
+  );
+
+  function toggleAmenity(key: AmenityKey) {
+    const next = activeAmenities.includes(key)
+      ? activeAmenities.filter((k) => k !== key)
+      : [...activeAmenities, key];
+    const params = new URLSearchParams(searchParams.toString());
+    if (next.length === 0) {
+      params.delete("amenities");
+    } else {
+      params.set("amenities", next.join(","));
+    }
+    const query = params.toString();
+    router.replace(`${pathname}${query ? `?${query}` : ""}#listings`, { scroll: false });
+  }
 
   function setActiveBase(base: string) {
     const params = new URLSearchParams(searchParams.toString());
@@ -64,9 +86,13 @@ export function ListingsGrid({ listings }: { listings: Listing[] }) {
         // A listing with no availableFrom set stays in rather than getting
         // hidden by missing data.
         if (moveIn && listing.availableFrom && listing.availableFrom > moveIn) return false;
+        // AND, not OR — "garage + garden" means both, matching how real
+        // estate filters usually read (each additional check narrows the
+        // results further, rather than broadening them).
+        if (activeAmenities.some((key) => !listing.amenities.includes(key))) return false;
         return true;
       }),
-    [listings, activeBase, minBedrooms, moveIn],
+    [listings, activeBase, minBedrooms, moveIn, activeAmenities],
   );
 
   return (
@@ -91,11 +117,31 @@ export function ListingsGrid({ listings }: { listings: Listing[] }) {
         </div>
       </div>
 
+      <div className="mb-7 flex flex-wrap gap-2">
+        {AMENITY_KEYS.map((key) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => toggleAmenity(key)}
+            className={`rounded-full border px-3.5 py-1.5 font-mono text-[0.74rem] tracking-wide transition-colors ${
+              activeAmenities.includes(key)
+                ? "border-brass bg-brass/15 text-brass-deep"
+                : "border-canvas-deep bg-paper text-ink-soft hover:border-brass/50"
+            }`}
+          >
+            {AMENITY_LABELS[key]}
+          </button>
+        ))}
+      </div>
+
       {filtered.length === 0 ? (
         <p className="text-ink-soft">
           No open listings{activeBase !== ALL_BASES ? ` near ${activeBase}` : ""}
           {minBedrooms > 0 ? ` with ${minBedrooms}+ bedrooms` : ""}
-          {moveIn ? ` available by ${new Date(`${moveIn}T00:00:00`).toLocaleDateString("en-US", { month: "long", day: "numeric" })}` : ""}{" "}
+          {moveIn ? ` available by ${new Date(`${moveIn}T00:00:00`).toLocaleDateString("en-US", { month: "long", day: "numeric" })}` : ""}
+          {activeAmenities.length > 0
+            ? ` with ${activeAmenities.map((key) => AMENITY_LABELS[key]).join(", ")}`
+            : ""}{" "}
           right now.
         </p>
       ) : (

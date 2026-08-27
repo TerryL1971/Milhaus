@@ -25,6 +25,7 @@ export function mapRow(row: Record<string, unknown>): Listing {
     sizeSqm: row.size_sqm === null ? null : Number(row.size_sqm),
     availableFrom: (row.available_from as string | null) ?? null,
     photos: (row.photos as string[]) ?? [],
+    amenities: (row.amenities as string[]) ?? [],
     source: row.source as Listing["source"],
     status: row.status as Listing["status"],
     isFeatured: Boolean(row.is_featured),
