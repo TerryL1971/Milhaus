@@ -73,7 +73,15 @@
     "emptyBedrooms": "mit {count}+ Schlafzimmern",
     "emptyMoveIn": "verfügbar bis {date}",
     "emptyAmenities": "mit {list}",
-    "emptySuffix": "gerade jetzt."
+    "emptySuffix": "gerade jetzt.",
+    "placeholder1Heading": "Bald neue Angebote",
+    "placeholder1Body": "Wohnungen vom Housing Office und von ausziehenden Familien werden laufend ergänzt, sobald sie geprüft sind — schauen Sie bald wieder vorbei.",
+    "placeholder2Heading": "Ziehen Sie aus?",
+    "placeholder2Body": "Inserieren Sie Ihr Zuhause in fünf Minuten — keine Agentur, kein Papierkram.",
+    "placeholder2Cta": "Zuhause inserieren",
+    "placeholder3Heading": "Vom Housing Office?",
+    "placeholder3Body": "Wir richten Ihre Angebote direkt für Sie ein.",
+    "placeholder3Cta": "Kontakt aufnehmen"
   },
   "ListingCard": {
     "perMonth": "/ Monat",

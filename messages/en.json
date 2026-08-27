@@ -73,7 +73,15 @@
     "emptyBedrooms": "with {count}+ bedrooms",
     "emptyMoveIn": "available by {date}",
     "emptyAmenities": "with {list}",
-    "emptySuffix": "right now."
+    "emptySuffix": "right now.",
+    "placeholder1Heading": "New listings soon",
+    "placeholder1Body": "Homes from the housing office and outgoing families are added as they're reviewed — check back soon.",
+    "placeholder2Heading": "Moving out?",
+    "placeholder2Body": "List your home in five minutes — no agency, no paperwork.",
+    "placeholder2Cta": "List your home",
+    "placeholder3Heading": "From the housing office?",
+    "placeholder3Body": "We'll set your listings up directly.",
+    "placeholder3Cta": "Get in touch"
   },
   "ListingCard": {
     "perMonth": "/ mo",

@@ -14,6 +14,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ListingCard } from "@/components/listing-card";
+import { Link } from "@/i18n/navigation";
 import { AMENITY_KEYS, type AmenityKey } from "@/lib/amenities";
 import { BASE_NAMES } from "@/lib/bases";
 import type { Listing } from "@/lib/types";
@@ -26,6 +27,36 @@ const PHOTO_GRADIENTS = [
   "linear-gradient(135deg,#C7B8A0,#7E8A6C)",
   "linear-gradient(135deg,#D9CBAF,#B0A184)",
 ];
+
+// Shown to fill out the grid to 3 cards when real inventory is thin (a
+// brand-new launch, or just a slow week) — but never disguised as actual
+// listings. No price, no address, no photo of a specific house; a dashed
+// border and centered text instead of the ListingCard treatment, same
+// visual language as an "empty slot" UI convention. Never shown while a
+// filter is active — padding a filtered, specific result set with generic
+// filler would be actively misleading ("3 listings near Ramstein" when
+// there's really 1), not just decorative.
+function PlaceholderCard({ variant }: { variant: 0 | 1 | 2 }) {
+  const t = useTranslations("ListingsGrid");
+  const content: { heading: string; body: string; ctaLabel?: string; ctaHref?: string }[] = [
+    { heading: t("placeholder1Heading"), body: t("placeholder1Body") },
+    { heading: t("placeholder2Heading"), body: t("placeholder2Body"), ctaLabel: t("placeholder2Cta"), ctaHref: "/post" },
+    { heading: t("placeholder3Heading"), body: t("placeholder3Body"), ctaLabel: t("placeholder3Cta"), ctaHref: "/for-landlords" },
+  ];
+  const { heading, body, ctaLabel, ctaHref } = content[variant];
+
+  return (
+    <div className="flex min-h-[260px] flex-col items-center justify-center gap-2 rounded-md border border-dashed border-canvas-deep bg-canvas/40 p-6 text-center">
+      <p className="font-display text-base font-semibold text-ink">{heading}</p>
+      <p className="text-sm text-ink-soft">{body}</p>
+      {ctaHref && (
+        <Link href={ctaHref} className="mt-2 text-sm font-semibold text-olive-deep hover:underline">
+          {ctaLabel} →
+        </Link>
+      )}
+    </div>
+  );
+}
 
 export function ListingsGrid({ listings }: { listings: Listing[] }) {
   const t = useTranslations("ListingsGrid");
@@ -102,6 +133,11 @@ export function ListingsGrid({ listings }: { listings: Listing[] }) {
     [listings, activeBase, minBedrooms, moveIn, activeAmenities, ALL_BASES],
   );
 
+  const hasActiveFilters =
+    activeBase !== ALL_BASES || minBedrooms > 0 || !!moveIn || activeAmenities.length > 0;
+  // Only pad the *unfiltered* view — see PlaceholderCard's comment for why.
+  const placeholderCount = hasActiveFilters ? 0 : Math.max(0, 3 - filtered.length);
+
   return (
     <>
       <div className="mb-7 flex flex-wrap items-end justify-between gap-5">
@@ -141,7 +177,7 @@ export function ListingsGrid({ listings }: { listings: Listing[] }) {
         ))}
       </div>
 
-      {filtered.length === 0 ? (
+      {filtered.length === 0 && hasActiveFilters ? (
         <p className="text-ink-soft">
           {t("emptyPrefix")}
           {activeBase !== ALL_BASES ? ` ${t("emptyNear", { base: activeBase })}` : ""}
@@ -162,6 +198,9 @@ export function ListingsGrid({ listings }: { listings: Listing[] }) {
               listing={listing}
               photoGradient={PHOTO_GRADIENTS[index % PHOTO_GRADIENTS.length]}
             />
+          ))}
+          {Array.from({ length: placeholderCount }).map((_, index) => (
+            <PlaceholderCard key={`placeholder-${index}`} variant={index as 0 | 1 | 2} />
           ))}
         </div>
       )}
