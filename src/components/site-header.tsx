@@ -8,6 +8,7 @@ import { getTranslations } from "next-intl/server";
 import NextLink from "next/link";
 import { HomeLink } from "@/components/home-link";
 import { LanguageToggle } from "@/components/language-toggle";
+import { LogoIcon } from "@/components/logo-icon";
 import { Link } from "@/i18n/navigation";
 import { isAdminRole } from "@/lib/roles";
 import { createClient } from "@/lib/supabase/server";
@@ -31,7 +32,8 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
   return (
     <header className="sticky top-0 z-50 bg-ink text-paper">
       <div className="mx-auto flex max-w-[1180px] items-center justify-between px-8 py-[18px]">
-        <HomeLink className="flex items-baseline gap-0.5 font-display text-2xl font-bold tracking-tight">
+        <HomeLink className="flex items-center gap-2.5 font-display text-2xl font-bold tracking-tight">
+          <LogoIcon className="h-7 w-auto text-paper" />
           Milhaus<span className="text-brass">.</span>
         </HomeLink>
 
