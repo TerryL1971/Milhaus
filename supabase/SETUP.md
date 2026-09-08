@@ -68,20 +68,20 @@ New hosted projects use Supabase's shared email service, capped at
 
 - **Custom SMTP** (Authentication → Emails → SMTP Settings) — Resend,
   Postmark, SES. Removes the cap and is required before real users anyway.
-- To unblock *yourself* during development without waiting or sending
-  email: mint a token straight from the Admin API (doesn't count against
-  the limit), then open it against the local app:
+  With Resend: sender must be on a **verified domain** (an
+  `onboarding@resend.dev` sender only delivers to your own Resend account
+  address). Settings: host `smtp.resend.com`, port `465`, user `resend`,
+  password = a Resend API key. Then raise Authentication → Rate Limits →
+  emails/hour.
+- To sign in during local development without email at all: visit
 
-  ```sh
-  curl -s -X POST "$SUPABASE_URL/auth/v1/admin/generate_link" \
-    -H "apikey: $SERVICE_ROLE_KEY" -H "Authorization: Bearer $SERVICE_ROLE_KEY" \
-    -H "Content-Type: application/json" \
-    -d '{"type":"magiclink","email":"you@example.com"}' | python3 -m json.tool
+  ```
+  http://localhost:3000/auth/dev-signin?email=you@example.com
   ```
 
-  Take `hashed_token` from the response and visit
-  `http://localhost:3000/auth/confirm?token_hash=<hashed_token>&type=email`,
-  or use the `email_otp` value in the sign-in form's code field.
+  It mints and verifies a token server-side with the service-role key and
+  drops you on the homepage signed in. It 404s unless `NODE_ENV` is
+  `development` and the request is on localhost, so it's inert on Vercel.
 
 ## 4. Auth: URL configuration
 
