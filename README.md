@@ -14,6 +14,24 @@ listings come down the day they're rented. See [CLAUDE.md](./CLAUDE.md) for
 the full product brief; [design-reference/milhaus-landing-mockup.html](./design-reference/milhaus-landing-mockup.html)
 is the source of truth for visual direction (colours, type, layout).
 
+## Screens
+
+| | |
+|---|---|
+| **Landing + browse** — hero, filter chips by base and amenity, listing grid | **Listing detail** — photo gallery, the "housing office" stamp, contact |
+| [![Landing and browse page](./docs/screenshots/01-home.png)](./docs/screenshots/01-home.png) | [![Listing detail page](./docs/screenshots/02-listing-detail.png)](./docs/screenshots/02-listing-detail.png) |
+| **For landlords** — two paths: self-list, or hand a portfolio to the admin | **Post a listing** — one form, defaults to `pending_review` |
+| [![For landlords page](./docs/screenshots/03-for-landlords.png)](./docs/screenshots/03-for-landlords.png) | [![Post a listing form](./docs/screenshots/04-post.png)](./docs/screenshots/04-post.png) |
+
+**Admin dashboard** — the review queue, the live-listings table with one-click
+status changes, and the archive. Built to be run solo by a non-technical
+stakeholder.
+
+[![Admin dashboard](./docs/screenshots/05-admin.png)](./docs/screenshots/05-admin.png)
+
+_Listings and photos above are demo data (`node scripts/seed-demo-listings.mjs`);
+the photos are CC0._
+
 ## Status
 
 MVP feature-complete against the build plan in CLAUDE.md (scaffold → design
