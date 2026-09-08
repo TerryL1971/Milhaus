@@ -101,11 +101,13 @@ export function SignInForm({ next }: { next: string }) {
             inputMode="numeric"
             autoComplete="one-time-code"
             pattern="[0-9]*"
-            maxLength={6}
+            // Supabase's OTP length is project-configurable (6-10) — don't
+            // cap the field at 6 or a longer code can't be typed in full.
+            maxLength={10}
             value={code}
             onChange={(event) => setCode(event.target.value.replace(/\D/g, ""))}
-            placeholder="123456"
-            className="mb-4 w-full border-b border-canvas-deep bg-transparent py-2 font-mono text-lg tracking-[0.3em] text-charcoal placeholder:text-charcoal/40 focus:outline-none"
+            placeholder="Code from the email"
+            className="mb-4 w-full border-b border-canvas-deep bg-transparent py-2 font-mono text-lg tracking-[0.2em] text-charcoal placeholder:text-sm placeholder:tracking-normal placeholder:text-charcoal/40 focus:outline-none"
           />
           {codeStatus === "error" && <p className="mb-4 text-sm text-rust">{codeError}</p>}
           <button

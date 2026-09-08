@@ -12,15 +12,20 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 
-type SearchParams = Promise<{ token_hash?: string; type?: string; error?: string }>;
+type SearchParams = Promise<{
+  token_hash?: string;
+  type?: string;
+  code?: string;
+  error?: string;
+}>;
 
 export default async function ConfirmSignInPage({
   searchParams,
 }: {
   searchParams: SearchParams;
 }) {
-  const { token_hash: tokenHash, type, error } = await searchParams;
-  const canConfirm = Boolean(tokenHash && type);
+  const { token_hash: tokenHash, type, code, error } = await searchParams;
+  const canConfirm = Boolean((tokenHash && type) || code);
 
   return (
     <main className="flex flex-1 items-center justify-center px-8 py-20">
@@ -43,8 +48,9 @@ export default async function ConfirmSignInPage({
               One more click to confirm it was really you who asked to sign in.
             </p>
             <form action={confirmSignIn}>
-              <input type="hidden" name="token_hash" value={tokenHash} />
-              <input type="hidden" name="type" value={type} />
+              <input type="hidden" name="token_hash" value={tokenHash ?? ""} />
+              <input type="hidden" name="type" value={type ?? ""} />
+              <input type="hidden" name="code" value={code ?? ""} />
               <button
                 type="submit"
                 className="w-full rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
