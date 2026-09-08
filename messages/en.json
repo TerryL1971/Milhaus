@@ -159,7 +159,10 @@
     "sending": "Sending…",
     "sendLink": "Send sign-in link",
     "checkEmailHeading": "Check your email",
-    "checkEmailBody": "We sent a sign-in link to <strong>{email}</strong>. Click it to finish signing in."
+    "checkEmailBody": "We sent a sign-in link and a 6-digit code to <strong>{email}</strong>. Click the link, or enter the code below.",
+    "codeLabel": "6-digit code",
+    "verifyCode": "Sign in with code",
+    "verifying": "Verifying…"
   },
   "ForLandlords": {
     "eyebrow": "For landlords",

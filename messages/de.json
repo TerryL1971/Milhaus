@@ -159,7 +159,10 @@
     "sending": "Wird gesendet…",
     "sendLink": "Anmeldelink senden",
     "checkEmailHeading": "E-Mails prüfen",
-    "checkEmailBody": "Wir haben einen Anmeldelink an <strong>{email}</strong> gesendet. Klicken Sie darauf, um die Anmeldung abzuschließen."
+    "checkEmailBody": "Wir haben einen Anmeldelink und einen 6-stelligen Code an <strong>{email}</strong> gesendet. Klicken Sie auf den Link oder geben Sie den Code unten ein.",
+    "codeLabel": "6-stelliger Code",
+    "verifyCode": "Mit Code anmelden",
+    "verifying": "Wird geprüft…"
   },
   "ForLandlords": {
     "eyebrow": "Für Vermieter",

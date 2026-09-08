@@ -37,29 +37,67 @@ three values.
 Sign-in is passwordless (magic link) — done in **Authentication → Email
 Templates → Magic Link**. Replace the default template's content with
 `supabase/templates/magic_link.html`'s contents (same file used for local
-testing). The important part is the link:
+testing). Two things in that template matter:
 
 ```
 {{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email
 ```
 
-This points at our own `/auth/confirm` route (which verifies the token and
-sets the session cookie server-side) instead of Supabase's default hosted
-verify endpoint — required for the Next.js SSR cookie handling to work.
+The link points at our own `/auth/confirm` **page** (not Supabase's hosted
+verify endpoint) so the Next.js SSR client sets the session cookie. That
+page shows a "Confirm sign-in" button rather than verifying on load — a
+single-use token, and email security scanners / browser prefetchers GET
+every link in a message, so an auto-verifying URL gets its token spent
+before the recipient clicks. The button (a POST server action) is the only
+thing that spends it.
+
+```
+{{ .Token }}
+```
+
+The 6-digit code, also in the template, is the fallback: the sign-in form
+takes it directly, and it can't be consumed by a link scanner. If users
+report "link expired or already used" on every attempt, that's a scanner
+in their mail/browser stack — the code path gets them in regardless.
+
+## 3a. Auth: email rate limit (important for testing)
+
+New hosted projects use Supabase's shared email service, capped at
+**2 sign-in emails per hour** (`[auth.rate_limit] email_sent`). You'll hit
+"email rate limit exceeded" fast while testing. Options:
+
+- **Custom SMTP** (Authentication → Emails → SMTP Settings) — Resend,
+  Postmark, SES. Removes the cap and is required before real users anyway.
+  With Resend: sender must be on a **verified domain** (an
+  `onboarding@resend.dev` sender only delivers to your own Resend account
+  address). Settings: host `smtp.resend.com`, port `465`, user `resend`,
+  password = a Resend API key. Then raise Authentication → Rate Limits →
+  emails/hour.
+- To sign in during local development without email at all: visit
+
+  ```
+  http://localhost:3000/auth/dev-signin?email=you@example.com
+  ```
+
+  It mints and verifies a token server-side with the service-role key and
+  drops you on the homepage signed in. It 404s unless `NODE_ENV` is
+  `development` and the request is on localhost, so it's inert on Vercel.
 
 ## 4. Auth: URL configuration
 
 **Authentication → URL Configuration:**
 
-- **Site URL** — set to your deployed domain once you have one (e.g.
-  `https://milhaus.com`). This is what `{{ .SiteURL }}` resolves to in the
-  email template above, so it must be correct before real users sign in.
-  Until then, leave it as whatever default was set — magic links will just
-  redirect to that placeholder domain, which is fine for now since real
-  signups aren't happening yet.
-- **Redirect URLs** — add your deployed domain here too once you have one
-  (e.g. `https://milhaus.com/**`), otherwise Supabase will refuse the
-  redirect after sign-in.
+- **Site URL** — this is what `{{ .SiteURL }}` resolves to when building
+  the emailed link, so the emailed link is only clickable if this points
+  at wherever the app is actually running. While developing against this
+  hosted project from localhost, set it to `http://localhost:3000`. Switch
+  it to the deployed domain (e.g. `https://milhaus.com`) at launch. If it's
+  wrong, every emailed sign-in link 404s — use the 6-digit code, or the
+  Admin API workaround in 3a, until it's fixed.
+- **Redirect URLs** — add `http://localhost:3000/**` now (for local dev)
+  and your deployed domain (e.g. `https://milhaus.com/**`) at launch.
+  `signInWithOtp` passes `emailRedirectTo: <origin>/auth/confirm`; Supabase
+  refuses to honor it unless the origin is on this list.
 
 ## 5. Bootstrapping the first admin
 
