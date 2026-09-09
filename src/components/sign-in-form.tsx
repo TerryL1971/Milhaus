@@ -6,8 +6,9 @@
 // one-time token in a magic link before the recipient clicks it:
 //   1. the link — lands on /auth/confirm, which makes you click a button
 //      (so a scanner's GET can't complete it), then verifies.
-//   2. the 6-digit code in the same email — typed back in here, immune to
-//      link scanning entirely.
+//   2. the numeric code in the same email — typed back in here, immune to
+//      link scanning entirely. (Length is set by the Supabase project's
+//      mailer_otp_length; the field doesn't assume a fixed count.)
 
 "use client";
 

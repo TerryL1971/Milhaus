@@ -2,17 +2,18 @@
 <!--
   Custom "Magic Link" email template. The link points at our own
   /auth/confirm page — an interstitial with a "Confirm sign-in" button, not
-  an auto-verifying URL — so that email link-scanners (which GET every link
-  in a message) can't spend the single-use token before the recipient
-  clicks. {{ .Token }} is the 6-digit fallback for when the link
-  round-trip fails; it's typed back into the sign-in form. Used locally via
-  supabase/config.toml, and must also be pasted into the hosted project's
-  dashboard (Authentication -> Email Templates -> Magic Link) — see
-  supabase/SETUP.md.
+  an auto-verifying URL — so email link-scanners (which GET every link in a
+  message) can't spend the single-use token before the recipient clicks.
+  {{ .Token }} is the numeric code fallback, typed back into the sign-in
+  form; its length follows the project's mailer_otp_length.
+
+  This is the source of truth for the hosted project's Magic Link template.
+  Apply it with scripts/configure-supabase-auth.sh (or paste it into
+  Authentication -> Emails -> Templates -> Magic Link). See supabase/SETUP.md.
 -->
-<h2>Sign in to milhaus</h2>
+<h2>Sign in to Milhaus</h2>
 <p><a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email">Click here to sign in</a></p>
-<p>Or, if you started signing in on this device, enter this code:</p>
+<p>Or enter this code:</p>
 <p style="font-size:22px;font-family:monospace;letter-spacing:4px"><strong>{{ .Token }}</strong></p>
 <p>The link and the code both expire in one hour, and each can only be used once.</p>
-<p>If you didn't request this, you can safely ignore this email.</p>
+<p>If you did not request this, you can safely ignore this email.</p>

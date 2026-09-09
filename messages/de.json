@@ -159,8 +159,8 @@
     "sending": "Wird gesendet…",
     "sendLink": "Anmeldelink senden",
     "checkEmailHeading": "E-Mails prüfen",
-    "checkEmailBody": "Wir haben einen Anmeldelink und einen 6-stelligen Code an <strong>{email}</strong> gesendet. Klicken Sie auf den Link oder geben Sie den Code unten ein.",
-    "codeLabel": "6-stelliger Code",
+    "checkEmailBody": "Wir haben einen Anmeldelink und einen Code an <strong>{email}</strong> gesendet. Klicken Sie auf den Link oder geben Sie den Code unten ein.",
+    "codeLabel": "Code aus der E-Mail",
     "verifyCode": "Mit Code anmelden",
     "verifying": "Wird geprüft…"
   },
