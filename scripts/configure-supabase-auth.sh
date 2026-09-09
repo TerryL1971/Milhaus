@@ -39,9 +39,10 @@ template = (
     "<p>The link and the code both expire in one hour, and each can only be used once.</p>\n"
     "<p>If you did not request this, you can safely ignore this email.</p>\n"
 )
+allow = {f"{site}/**", "http://localhost:3000/**", "http://127.0.0.1:3000/**"}
 json.dump({
     "site_url": site,
-    "uri_allow_list": f"{site}/**,http://127.0.0.1:3000/**",
+    "uri_allow_list": ",".join(sorted(allow)),
     "mailer_subjects_magic_link": "Your Milhaus sign-in link",
     "mailer_templates_magic_link_content": template,
     "mailer_otp_length": 6,
