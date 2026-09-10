@@ -73,6 +73,27 @@ New hosted projects use Supabase's shared email service, capped at
   address). Settings: host `smtp.resend.com`, port `465`, user `resend`,
   password = a Resend API key. Then raise Authentication → Rate Limits →
   emails/hour.
+  - **Turn OFF click + open tracking** for the sending domain in Resend
+    (Domains → the domain → Tracking). With tracking on, every link in the
+    sign-in email is rewritten through a shared redirect domain, which
+    reads as phishing to spam filters and lands the email in junk.
+  - Add a **DMARC** DNS record for the sending domain:
+    `_dmarc  TXT  v=DMARC1; p=none;` — enough to lift inbox placement.
+
+## 3b. `scripts/configure-supabase-auth.sh`
+
+Applies the pieces above to the hosted project via the Management API in
+one shot — the Magic Link template ([supabase/templates/magic_link.html](./templates/magic_link.html)),
+custom SMTP, the redirect allow-list, `mailer_otp_length`, and the rate
+limit. Run:
+
+```sh
+PAT=sbp_… RESEND_KEY=re_… SITE_URL=https://your-domain bash scripts/configure-supabase-auth.sh
+```
+
+`PAT` from supabase.com/dashboard/account/tokens (revoke it after).
+`SITE_URL` is what the emailed magic link points at — the deployed URL in
+production, `http://localhost:3000` for local-only.
 - To sign in during local development without email at all: visit
 
   ```
