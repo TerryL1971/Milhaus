@@ -17,7 +17,7 @@ function withLanguageAlternates(path: string) {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const listings = await getActiveListings();
+  const [rentals, cars] = await Promise.all([getActiveListings("rental"), getActiveListings("car")]);
 
   return [
     {
@@ -27,12 +27,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1,
       alternates: { languages: withLanguageAlternates("") },
     },
-    ...listings.map((listing) => ({
+    {
+      url: `${SITE_URL}/cars`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.9,
+      alternates: { languages: withLanguageAlternates("/cars") },
+    },
+    ...rentals.map((listing) => ({
       url: `${SITE_URL}/listings/${listing.id}`,
       lastModified: new Date(listing.updatedAt),
       changeFrequency: "daily" as const,
       priority: 0.8,
       alternates: { languages: withLanguageAlternates(`/listings/${listing.id}`) },
+    })),
+    ...cars.map((listing) => ({
+      url: `${SITE_URL}/cars/${listing.id}`,
+      lastModified: new Date(listing.updatedAt),
+      changeFrequency: "daily" as const,
+      priority: 0.8,
+      alternates: { languages: withLanguageAlternates(`/cars/${listing.id}`) },
     })),
   ];
 }

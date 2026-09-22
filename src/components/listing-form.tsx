@@ -1,19 +1,23 @@
 // src/components/listing-form.tsx
-// Shared by the self-listing flow (/post) and the admin "add a listing"
-// flow (/admin/listings/new) — same fields, same three-round-trip submit
+// Shared by the self-listing flow (/post, /post-car) and the admin "add a
+// listing" flow (/admin/listings/new) — same three-round-trip submit
 // (create a draft row for its id -> upload photos into ${id}/... -> update
-// with the photo URLs and the final status), just two differences:
+// with the photo URLs and the final status) for both listing types, just
+// the field set and the insert payload branch on `kind`:
 //
 // - self-list always submits source="self_listed" and lands on
-//   pending_review, same as any other self-submitted home.
+//   pending_review, same as any other self-submitted listing.
 // - admin-add lets the admin pick the source (defaulting to
-//   housing_office, since that's the actual reason this exists — Charlie
-//   entering a housing-office home directly) and goes straight to active:
-//   an admin adding it themselves *is* the review.
+//   housing_office for rentals — that's the actual reason this exists,
+//   Charlie entering a housing-office home directly) and goes straight to
+//   active: an admin adding it themselves *is* the review. Cars have no
+//   housing-office equivalent, so admin-add for a car skips the source
+//   picker entirely and is always self_listed.
 //
-// Kept as one component with a variant, not two near-duplicates: the
-// FormData/event.currentTarget bug found earlier this session was exactly
-// the kind of thing that's easy to fix in one copy and forget in another.
+// Kept as one component with variant + kind props, not four near-
+// duplicates: the FormData/event.currentTarget bug found earlier this
+// session was exactly the kind of thing that's easy to fix in one copy
+// and forget in another.
 
 "use client";
 
@@ -28,12 +32,13 @@ import type { ListingSource } from "@/lib/types";
 
 type Status = "idle" | "submitting" | "success" | "error";
 type Variant = "self-list" | "admin-add";
+type Kind = "rental" | "car";
 
 const labelClass = "mb-1 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75";
 const inputClass =
   "w-full rounded-md border border-canvas-deep bg-paper px-3 py-2 text-[0.95rem] text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none";
 
-export function ListingForm({ variant }: { variant: Variant }) {
+export function ListingForm({ variant, kind = "rental" }: { variant: Variant; kind?: Kind }) {
   const t = useTranslations("ListingForm");
   const tAmenities = useTranslations("Amenities");
   const router = useRouter();
@@ -42,6 +47,7 @@ export function ListingForm({ variant }: { variant: Variant }) {
   const [errorMessage, setErrorMessage] = useState("");
 
   const isAdminAdd = variant === "admin-add";
+  const isCar = kind === "car";
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -63,32 +69,44 @@ export function ListingForm({ variant }: { variant: Variant }) {
     }
 
     const files = (formData.getAll("photos") as File[]).filter((file) => file.size > 0);
-    const sizeSqmRaw = formData.get("sizeSqm") as string;
-    const availableFromRaw = formData.get("availableFrom") as string;
-    const source: ListingSource = isAdminAdd
-      ? ((formData.get("source") as ListingSource) ?? "housing_office")
-      : "self_listed";
+    // Cars have no housing-office equivalent — always self_listed,
+    // regardless of variant. Rentals keep the admin's source choice.
+    const source: ListingSource =
+      isAdminAdd && !isCar ? ((formData.get("source") as ListingSource) ?? "housing_office") : "self_listed";
 
     setProgress(t("progressSaving"));
+    const basePayload = {
+      title: formData.get("title"),
+      description: formData.get("description") || "",
+      city: formData.get("city"),
+      base: formData.get("base") || null,
+      distance_to_base: formData.get("distanceToBase") || null,
+      price_eur_month: Number(formData.get("priceEurMonth")),
+      source,
+      status: "draft",
+      owner_id: user.id,
+    };
+    const typePayload = isCar
+      ? {
+          type: "car" as const,
+          make: formData.get("make"),
+          model: formData.get("model"),
+          year: Number(formData.get("year")),
+          mileage_km: formData.get("mileageKm") ? Number(formData.get("mileageKm")) : null,
+        }
+      : {
+          type: "rental" as const,
+          address: formData.get("address"),
+          bedrooms: Number(formData.get("bedrooms")),
+          bathrooms: Number(formData.get("bathrooms")),
+          size_sqm: formData.get("sizeSqm") ? Number(formData.get("sizeSqm")) : null,
+          available_from: (formData.get("availableFrom") as string) || null,
+          amenities: formData.getAll("amenities"),
+        };
+
     const { data: created, error: insertError } = await supabase
       .from("listings")
-      .insert({
-        title: formData.get("title"),
-        description: formData.get("description") || "",
-        address: formData.get("address"),
-        city: formData.get("city"),
-        base: formData.get("base") || null,
-        distance_to_base: formData.get("distanceToBase") || null,
-        price_eur_month: Number(formData.get("priceEurMonth")),
-        bedrooms: Number(formData.get("bedrooms")),
-        bathrooms: Number(formData.get("bathrooms")),
-        size_sqm: sizeSqmRaw ? Number(sizeSqmRaw) : null,
-        available_from: availableFromRaw || null,
-        amenities: formData.getAll("amenities"),
-        source,
-        status: "draft",
-        owner_id: user.id,
-      })
+      .insert({ ...basePayload, ...typePayload })
       .select("id")
       .single();
 
@@ -136,10 +154,18 @@ export function ListingForm({ variant }: { variant: Variant }) {
     return (
       <div className="rounded-md border border-canvas-deep bg-paper p-6 text-center">
         <p className="mb-1 font-display text-xl font-semibold text-ink">
-          {isAdminAdd ? t("successAdminAddTitle") : t("successSelfListTitle")}
+          {isAdminAdd
+            ? t("successAdminAddTitle")
+            : isCar
+              ? t("successSelfListCarTitle")
+              : t("successSelfListTitle")}
         </p>
         <p className="mb-4 text-sm text-ink-soft">
-          {isAdminAdd ? t("successAdminAddBody") : t("successSelfListBody")}
+          {isAdminAdd
+            ? t("successAdminAddBody")
+            : isCar
+              ? t("successSelfListCarBody")
+              : t("successSelfListBody")}
         </p>
         {isAdminAdd && (
           <Link href="/admin" className="text-sm font-semibold text-olive-deep hover:underline">
@@ -155,7 +181,7 @@ export function ListingForm({ variant }: { variant: Variant }) {
       onSubmit={handleSubmit}
       className="flex flex-col gap-5 rounded-md border border-canvas-deep bg-paper p-6 shadow-[0_8px_24px_rgba(27,42,58,0.08)]"
     >
-      {isAdminAdd && (
+      {isAdminAdd && !isCar && (
         <div>
           <label htmlFor="source" className={labelClass}>
             {t("source")}
@@ -175,7 +201,7 @@ export function ListingForm({ variant }: { variant: Variant }) {
           id="title"
           name="title"
           required
-          placeholder={t("titlePlaceholder")}
+          placeholder={isCar ? t("carTitlePlaceholder") : t("titlePlaceholder")}
           className={inputClass}
         />
       </div>
@@ -188,25 +214,71 @@ export function ListingForm({ variant }: { variant: Variant }) {
           id="description"
           name="description"
           rows={4}
-          placeholder={t("descriptionPlaceholder")}
+          placeholder={isCar ? t("carDescriptionPlaceholder") : t("descriptionPlaceholder")}
           className={inputClass}
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="address" className={labelClass}>
-            {t("address")}
-          </label>
-          <input id="address" name="address" required className={inputClass} />
+      {isCar ? (
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div>
+            <label htmlFor="year" className={labelClass}>
+              {t("year")}
+            </label>
+            <input
+              id="year"
+              name="year"
+              type="number"
+              min="1900"
+              max="2100"
+              required
+              className={inputClass}
+            />
+          </div>
+          <div>
+            <label htmlFor="make" className={labelClass}>
+              {t("make")}
+            </label>
+            <input id="make" name="make" required placeholder={t("makePlaceholder")} className={inputClass} />
+          </div>
+          <div>
+            <label htmlFor="model" className={labelClass}>
+              {t("model")}
+            </label>
+            <input id="model" name="model" required placeholder={t("modelPlaceholder")} className={inputClass} />
+          </div>
+          <div>
+            <label htmlFor="mileageKm" className={labelClass}>
+              {t("mileageKm")}
+            </label>
+            <input id="mileageKm" name="mileageKm" type="number" min="0" className={inputClass} />
+          </div>
         </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="address" className={labelClass}>
+              {t("address")}
+            </label>
+            <input id="address" name="address" required className={inputClass} />
+          </div>
+          <div>
+            <label htmlFor="city" className={labelClass}>
+              {t("city")}
+            </label>
+            <input id="city" name="city" required className={inputClass} />
+          </div>
+        </div>
+      )}
+
+      {isCar && (
         <div>
           <label htmlFor="city" className={labelClass}>
             {t("city")}
           </label>
           <input id="city" name="city" required className={inputClass} />
         </div>
-      </div>
+      )}
 
       <div className="grid grid-cols-2 gap-4">
         <div>
@@ -237,10 +309,10 @@ export function ListingForm({ variant }: { variant: Variant }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+      {isCar ? (
         <div>
           <label htmlFor="priceEurMonth" className={labelClass}>
-            {t("priceEurMonth")}
+            {t("carPrice")}
           </label>
           <input
             id="priceEurMonth"
@@ -251,59 +323,79 @@ export function ListingForm({ variant }: { variant: Variant }) {
             className={inputClass}
           />
         </div>
-        <div>
-          <label htmlFor="bedrooms" className={labelClass}>
-            {t("bedrooms")}
-          </label>
-          <input id="bedrooms" name="bedrooms" type="number" min="0" required className={inputClass} />
-        </div>
-        <div>
-          <label htmlFor="bathrooms" className={labelClass}>
-            {t("bathrooms")}
-          </label>
-          <input
-            id="bathrooms"
-            name="bathrooms"
-            type="number"
-            min="0"
-            required
-            className={inputClass}
-          />
-        </div>
-        <div>
-          <label htmlFor="sizeSqm" className={labelClass}>
-            {t("sizeSqm")}
-          </label>
-          <input id="sizeSqm" name="sizeSqm" type="number" min="0" className={inputClass} />
-        </div>
-      </div>
-
-      <div>
-        <label htmlFor="availableFrom" className={labelClass}>
-          {t("availableFrom")}
-        </label>
-        <input id="availableFrom" name="availableFrom" type="date" className={inputClass} />
-      </div>
-
-      <div>
-        <span className={labelClass}>{t("features")}</span>
-        {/* Fixed at 2 columns, not 3 — German compounds ("Waschmaschine/
-            Trockner") run long enough that a 3rd column left too little
-            width per cell and the label overflowed into its neighbor. */}
-        <div className="grid grid-cols-2 gap-2">
-          {AMENITY_KEYS.map((key) => (
-            <label key={key} className="flex min-w-0 items-center gap-2 text-sm text-charcoal">
-              <input
-                type="checkbox"
-                name="amenities"
-                value={key}
-                className="h-4 w-4 flex-shrink-0 rounded border-canvas-deep text-olive focus:ring-olive"
-              />
-              <span>{tAmenities(key)}</span>
+      ) : (
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div>
+            <label htmlFor="priceEurMonth" className={labelClass}>
+              {t("priceEurMonth")}
             </label>
-          ))}
+            <input
+              id="priceEurMonth"
+              name="priceEurMonth"
+              type="number"
+              min="0"
+              required
+              className={inputClass}
+            />
+          </div>
+          <div>
+            <label htmlFor="bedrooms" className={labelClass}>
+              {t("bedrooms")}
+            </label>
+            <input id="bedrooms" name="bedrooms" type="number" min="0" required className={inputClass} />
+          </div>
+          <div>
+            <label htmlFor="bathrooms" className={labelClass}>
+              {t("bathrooms")}
+            </label>
+            <input
+              id="bathrooms"
+              name="bathrooms"
+              type="number"
+              min="0"
+              required
+              className={inputClass}
+            />
+          </div>
+          <div>
+            <label htmlFor="sizeSqm" className={labelClass}>
+              {t("sizeSqm")}
+            </label>
+            <input id="sizeSqm" name="sizeSqm" type="number" min="0" className={inputClass} />
+          </div>
         </div>
-      </div>
+      )}
+
+      {!isCar && (
+        <div>
+          <label htmlFor="availableFrom" className={labelClass}>
+            {t("availableFrom")}
+          </label>
+          <input id="availableFrom" name="availableFrom" type="date" className={inputClass} />
+        </div>
+      )}
+
+      {!isCar && (
+        <div>
+          <span className={labelClass}>{t("features")}</span>
+          {/* Fixed at 2 columns, not 3 — German compounds ("Waschmaschine/
+              Trockner") run long enough that a 3rd column left too little
+              width per cell and the label overflowed into its neighbor. */}
+          <div className="grid grid-cols-2 gap-2">
+            {AMENITY_KEYS.map((key) => (
+              <label key={key} className="flex min-w-0 items-center gap-2 text-sm text-charcoal">
+                <input
+                  type="checkbox"
+                  name="amenities"
+                  value={key}
+                  className="h-4 w-4 flex-shrink-0 rounded border-canvas-deep text-olive focus:ring-olive"
+                />
+                <span>{tAmenities(key)}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div>
         <label htmlFor="photos" className={labelClass}>
@@ -329,8 +421,12 @@ export function ListingForm({ variant }: { variant: Variant }) {
         {status === "submitting"
           ? progress || t("submitting")
           : isAdminAdd
-            ? t("submitAdminAdd")
-            : t("submitSelfList")}
+            ? isCar
+              ? t("submitAdminAddCar")
+              : t("submitAdminAdd")
+            : isCar
+              ? t("submitSelfListCar")
+              : t("submitSelfList")}
       </button>
     </form>
   );

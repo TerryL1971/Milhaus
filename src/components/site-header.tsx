@@ -41,6 +41,9 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
           <Link href="/#listings" className="opacity-85 transition-opacity hover:opacity-100">
             {t("browseListings")}
           </Link>
+          <Link href="/cars" className="opacity-85 transition-opacity hover:opacity-100">
+            {t("cars")}
+          </Link>
           <Link href="/post" className="opacity-85 transition-opacity hover:opacity-100">
             {t("listYourHome")}
           </Link>

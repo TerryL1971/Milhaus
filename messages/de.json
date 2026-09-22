@@ -17,6 +17,7 @@
   },
   "SiteHeader": {
     "browseListings": "Angebote durchsuchen",
+    "cars": "Autos",
     "listYourHome": "Zuhause inserieren",
     "forLandlords": "Für Vermieter",
     "admin": "Admin",
@@ -31,6 +32,9 @@
     "forListersHeading": "Für Inserenten",
     "postAHome": "Zuhause inserieren",
     "forLandlords": "Für Vermieter",
+    "carsHeading": "Autos",
+    "browseCars": "Autos durchsuchen",
+    "sellYourCar": "Auto verkaufen",
     "aboutHeading": "Über uns",
     "contact": "Kontakt",
     "impressum": "Impressum",
@@ -99,8 +103,10 @@
     "sourceSelfListed": "Selbst inseriert",
     "title": "Titel",
     "titlePlaceholder": "z. B. 3-Zimmer-Haus nahe Panzer Kaserne",
+    "carTitlePlaceholder": "z. B. 2016 Volkswagen Jetta Sport",
     "description": "Beschreibung",
     "descriptionPlaceholder": "Was sollte man über diese Wohnung wissen?",
+    "carDescriptionPlaceholder": "Zustand, Servicehistorie, Verkaufsgrund — was sollte ein Käufer wissen?",
     "address": "Adresse",
     "city": "Stadt",
     "nearestBase": "Nächster Stützpunkt",
@@ -108,14 +114,23 @@
     "distanceToBase": "Entfernung zum Stützpunkt",
     "distanceToBasePlaceholder": "z. B. 12 Min. zur Panzer Kaserne",
     "priceEurMonth": "€ / Monat",
+    "carPrice": "Verkaufspreis (€)",
     "bedrooms": "Schlafzimmer",
     "bathrooms": "Badezimmer",
     "sizeSqm": "Größe (m²)",
     "availableFrom": "Verfügbar ab",
     "features": "Ausstattung",
+    "year": "Baujahr",
+    "make": "Marke",
+    "makePlaceholder": "z. B. Volkswagen",
+    "model": "Modell",
+    "modelPlaceholder": "z. B. Jetta",
+    "mileageKm": "Kilometerstand (km)",
     "photos": "Fotos",
     "submitSelfList": "Zuhause inserieren",
+    "submitSelfListCar": "Auto inserieren",
     "submitAdminAdd": "Angebot veröffentlichen",
+    "submitAdminAddCar": "Auto-Anzeige veröffentlichen",
     "submitting": "Wird gesendet…",
     "progressSaving": "Details werden gespeichert…",
     "progressUploading": "Foto {current} von {total} wird hochgeladen…",
@@ -123,6 +138,8 @@
     "progressReview": "Wird zur Prüfung eingereicht…",
     "successSelfListTitle": "Zur Prüfung eingereicht",
     "successSelfListBody": "Wir schauen es uns an, meist noch am selben Tag. Es erscheint auf der Seite, sobald es freigegeben ist.",
+    "successSelfListCarTitle": "Zur Prüfung eingereicht",
+    "successSelfListCarBody": "Wir schauen es uns an, meist noch am selben Tag. Ihre Anzeige erscheint auf der Autos-Seite, sobald sie freigegeben ist.",
     "successAdminAddTitle": "Angebot veröffentlicht",
     "successAdminAddBody": "Es ist jetzt live auf der Seite.",
     "backToAdmin": "← Zurück zum Admin-Bereich",
@@ -220,5 +237,36 @@
   },
   "PhotoGallery": {
     "showPhoto": "Foto {number} anzeigen"
+  },
+  "CarsPage": {
+    "metaTitle": "Autos zu verkaufen",
+    "metaDescription": "Autos von Amerikanern in Deutschland — PCS-Umzüge, Einzelverkäufe, alle geprüft, bevor sie online gehen.",
+    "eyebrow": "Autos & Trucks",
+    "heading": "Autos zu verkaufen",
+    "subhead": "Ziehen Sie um und verkaufen Ihr Auto, oder wollen Sie einfach umsteigen? Von der Community inseriert, genauso geprüft wie jedes Zuhause auf dieser Seite.",
+    "sellYourCar": "Auto verkaufen",
+    "searchPlaceholder": "Suche nach Marke, Modell oder Stadt…",
+    "emptyNone": "Gerade keine Autos gelistet — schauen Sie bald wieder vorbei, oder seien Sie die/der Erste.",
+    "emptyNoMatch": "Keine Autos passen zu dieser Suche."
+  },
+  "CarCard": {
+    "available": "Verfügbar",
+    "sold": "Verkauft",
+    "mileage": "{km} km"
+  },
+  "CarDetail": {
+    "backToCars": "← Zurück zu den Autos",
+    "sold": "Verkauft",
+    "availableStatus": "Verfügbar",
+    "mileage": "{km} km",
+    "interestedHeading": "Interesse an diesem Auto?",
+    "signInToContact": "Interesse an diesem Auto? Melden Sie sich an, um den Verkäufer zu kontaktieren.",
+    "signIn": "Anmelden",
+    "emailButton": "E-Mail an {name}",
+    "theSeller": "den Verkäufer"
+  },
+  "PostCarPage": {
+    "heading": "Auto verkaufen",
+    "body": "Ein paar Details und einige Fotos — wir prüfen es, meist noch am selben Tag, dann geht es auf der Autos-Seite live."
   }
 }

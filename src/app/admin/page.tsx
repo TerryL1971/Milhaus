@@ -87,21 +87,37 @@ export default async function AdminPage() {
             <p className="text-sm text-ink-soft">Nothing waiting on you right now.</p>
           ) : (
             <div className="flex flex-col gap-3">
-              {pending.map((listing) => (
+              {pending.map((listing) => {
+                const isCar = listing.type === "car";
+                return (
                 <div
                   key={listing.id}
                   className="flex flex-wrap items-center justify-between gap-4 rounded-md border border-canvas-deep bg-paper p-4"
                 >
                   <div>
-                    <p className="font-semibold text-ink">{listing.title}</p>
+                    <p className="font-semibold text-ink">
+                      <span className="mr-2 rounded-full bg-canvas-deep px-2 py-0.5 align-middle font-mono text-[0.6rem] uppercase tracking-wider text-ink-soft">
+                        {isCar ? "Car" : "Rental"}
+                      </span>
+                      {isCar ? `${listing.year} ${listing.make} ${listing.model}` : listing.title}
+                    </p>
                     <p className="text-sm text-ink-soft">
-                      {listing.address}, {listing.city}
+                      {isCar ? listing.city : `${listing.address}, ${listing.city}`}
                       {listing.base ? ` · ${listing.base}` : ""}
                     </p>
                     <div className="mt-1 flex flex-wrap gap-3 font-mono text-xs text-charcoal/80">
-                      <span>{currencyFormatter.format(listing.priceEurMonth)}/mo</span>
-                      <span>{listing.bedrooms} bed</span>
-                      <span>{listing.bathrooms} bath</span>
+                      <span>
+                        {currencyFormatter.format(listing.priceEurMonth)}
+                        {isCar ? "" : "/mo"}
+                      </span>
+                      {isCar ? (
+                        listing.mileageKm != null && <span>{listing.mileageKm.toLocaleString("en-US")} km</span>
+                      ) : (
+                        <>
+                          <span>{listing.bedrooms} bed</span>
+                          <span>{listing.bathrooms} bath</span>
+                        </>
+                      )}
                       <span className="text-ink-soft">
                         {listing.source === "housing_office" ? "Housing office" : "Self-listed"} · submitted{" "}
                         {dateFormatter.format(new Date(listing.createdAt))}
@@ -129,7 +145,8 @@ export default async function AdminPage() {
                     </form>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </section>
@@ -156,6 +173,11 @@ export default async function AdminPage() {
                       <td className="px-4 py-3">
                         <p className="font-medium text-ink">
                           {listing.isFeatured && <span className="mr-1 text-brass">★</span>}
+                          {listing.type === "car" && (
+                            <span className="mr-1.5 rounded-full bg-canvas-deep px-1.5 py-0.5 align-middle font-mono text-[0.58rem] uppercase tracking-wider text-ink-soft">
+                              Car
+                            </span>
+                          )}
                           {listing.title}
                         </p>
                         <p className="text-xs text-ink-soft">
@@ -165,6 +187,7 @@ export default async function AdminPage() {
                       </td>
                       <td className="px-4 py-3 font-mono">
                         {currencyFormatter.format(listing.priceEurMonth)}
+                        {listing.type === "rental" ? "/mo" : ""}
                       </td>
                       <td className="px-4 py-3">
                         <span

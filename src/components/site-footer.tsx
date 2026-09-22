@@ -25,6 +25,13 @@ export function SiteFooter() {
       ],
     },
     {
+      heading: t("carsHeading"),
+      links: [
+        { label: t("browseCars"), href: "/cars" },
+        { label: t("sellYourCar"), href: "/post-car" },
+      ],
+    },
+    {
       heading: t("aboutHeading"),
       links: [
         { label: t("contact"), href: "#" },

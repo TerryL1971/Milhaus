@@ -17,6 +17,7 @@
   },
   "SiteHeader": {
     "browseListings": "Browse listings",
+    "cars": "Cars",
     "listYourHome": "List your home",
     "forLandlords": "For landlords",
     "admin": "Admin",
@@ -31,6 +32,9 @@
     "forListersHeading": "For listers",
     "postAHome": "Post a home",
     "forLandlords": "For landlords",
+    "carsHeading": "Cars",
+    "browseCars": "Browse cars",
+    "sellYourCar": "Sell your car",
     "aboutHeading": "About",
     "contact": "Contact",
     "impressum": "Impressum",
@@ -99,8 +103,10 @@
     "sourceSelfListed": "Self-listed",
     "title": "Title",
     "titlePlaceholder": "e.g. 3-bedroom house near Panzer Kaserne",
+    "carTitlePlaceholder": "e.g. 2016 Volkswagen Jetta Sport",
     "description": "Description",
     "descriptionPlaceholder": "What should someone know about this place?",
+    "carDescriptionPlaceholder": "Condition, service history, why you're selling — what should a buyer know?",
     "address": "Address",
     "city": "City",
     "nearestBase": "Nearest base",
@@ -108,14 +114,23 @@
     "distanceToBase": "Distance to base",
     "distanceToBasePlaceholder": "e.g. 12 min to Panzer Kaserne",
     "priceEurMonth": "€ / month",
+    "carPrice": "Asking price (€)",
     "bedrooms": "Bedrooms",
     "bathrooms": "Bathrooms",
     "sizeSqm": "Size (m²)",
     "availableFrom": "Available from",
     "features": "Features",
+    "year": "Year",
+    "make": "Make",
+    "makePlaceholder": "e.g. Volkswagen",
+    "model": "Model",
+    "modelPlaceholder": "e.g. Jetta",
+    "mileageKm": "Mileage (km)",
     "photos": "Photos",
     "submitSelfList": "Post home",
+    "submitSelfListCar": "Post car ad",
     "submitAdminAdd": "Publish listing",
+    "submitAdminAddCar": "Publish car ad",
     "submitting": "Submitting…",
     "progressSaving": "Saving details…",
     "progressUploading": "Uploading photo {current} of {total}…",
@@ -123,6 +138,8 @@
     "progressReview": "Submitting for review…",
     "successSelfListTitle": "Submitted for review",
     "successSelfListBody": "We'll take a look, usually the same day. It'll show up on the site as soon as it's approved.",
+    "successSelfListCarTitle": "Submitted for review",
+    "successSelfListCarBody": "We'll take a look, usually the same day. Your ad will show up on the Cars page as soon as it's approved.",
     "successAdminAddTitle": "Listing published",
     "successAdminAddBody": "It's live on the site now.",
     "backToAdmin": "← Back to admin",
@@ -220,5 +237,36 @@
   },
   "PhotoGallery": {
     "showPhoto": "Show photo {number}"
+  },
+  "CarsPage": {
+    "metaTitle": "Cars for sale",
+    "metaDescription": "Cars for sale from Americans in Germany — PCS moves, one-off sales, all reviewed before they're listed.",
+    "eyebrow": "Cars & trucks",
+    "heading": "Cars for sale",
+    "subhead": "PCSing out and selling your car, or just upgrading? Listed by the community, reviewed the same way every home on this site is.",
+    "sellYourCar": "Sell your car",
+    "searchPlaceholder": "Search by make, model, or city…",
+    "emptyNone": "No cars listed right now — check back soon, or be the first.",
+    "emptyNoMatch": "No cars match that search."
+  },
+  "CarCard": {
+    "available": "Available",
+    "sold": "Sold",
+    "mileage": "{km} km"
+  },
+  "CarDetail": {
+    "backToCars": "← Back to cars",
+    "sold": "Sold",
+    "availableStatus": "Available",
+    "mileage": "{km} km",
+    "interestedHeading": "Interested in this car?",
+    "signInToContact": "Interested in this car? Sign in to contact the seller.",
+    "signIn": "Sign in",
+    "emailButton": "Email {name}",
+    "theSeller": "the seller"
+  },
+  "PostCarPage": {
+    "heading": "Sell your car",
+    "body": "A few details and some photos — we'll review it, usually the same day, and it goes live on the Cars page."
   }
 }

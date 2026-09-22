@@ -79,7 +79,7 @@ export function ListingsGrid({ listings }: { listings: Listing[] }) {
     () =>
       listings.filter((listing) => {
         if (activeBase !== ALL_BASES && listing.base !== activeBase) return false;
-        if (minBedrooms > 0 && listing.bedrooms < minBedrooms) return false;
+        if (minBedrooms > 0 && listing.bedrooms != null && listing.bedrooms < minBedrooms) return false;
         // "I need to move in by this date" — a listing works if it's
         // already available, or becomes available on/before that date.
         // A listing with no availableFrom set stays in rather than getting

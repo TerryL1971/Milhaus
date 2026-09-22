@@ -6,7 +6,7 @@
 // would otherwise allow (e.g. an owner or admin viewing their own listing).
 
 import { createClient } from "@/lib/supabase/server";
-import type { Listing } from "@/lib/types";
+import type { Listing, ListingType } from "@/lib/types";
 
 // Supabase returns snake_case columns; the app's Listing type is camelCase.
 export function mapRow(row: Record<string, unknown>): Listing {
@@ -15,17 +15,21 @@ export function mapRow(row: Record<string, unknown>): Listing {
     type: row.type as Listing["type"],
     title: row.title as string,
     description: row.description as string,
-    address: row.address as string,
+    address: (row.address as string | null) ?? null,
     city: row.city as string,
     base: (row.base as string | null) ?? null,
     distanceToBase: (row.distance_to_base as string | null) ?? null,
     priceEurMonth: Number(row.price_eur_month),
-    bedrooms: row.bedrooms as number,
-    bathrooms: row.bathrooms as number,
+    bedrooms: row.bedrooms === null ? null : Number(row.bedrooms),
+    bathrooms: row.bathrooms === null ? null : Number(row.bathrooms),
     sizeSqm: row.size_sqm === null ? null : Number(row.size_sqm),
     availableFrom: (row.available_from as string | null) ?? null,
     photos: (row.photos as string[]) ?? [],
     amenities: (row.amenities as string[]) ?? [],
+    make: (row.make as string | null) ?? null,
+    model: (row.model as string | null) ?? null,
+    year: row.year === null || row.year === undefined ? null : Number(row.year),
+    mileageKm: row.mileage_km === null || row.mileage_km === undefined ? null : Number(row.mileage_km),
     source: row.source as Listing["source"],
     status: row.status as Listing["status"],
     isFeatured: Boolean(row.is_featured),
@@ -38,13 +42,16 @@ export function mapRow(row: Record<string, unknown>): Listing {
 
 /** Every listing visible to the current caller with status='active' — the
  * public browse page. Anonymous visitors see all of these; RLS handles the
- * restriction, this function doesn't need to know who's asking. */
-export async function getActiveListings(): Promise<Listing[]> {
+ * restriction, this function doesn't need to know who's asking. Defaults
+ * to 'rental' so the existing homepage/sitemap callers are unaffected by
+ * cars existing at all — pass "car" for the cars browse page. */
+export async function getActiveListings(type: ListingType = "rental"): Promise<Listing[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("listings")
     .select("*")
     .eq("status", "active")
+    .eq("type", type)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -54,16 +61,18 @@ export async function getActiveListings(): Promise<Listing[]> {
   return (data ?? []).map(mapRow);
 }
 
-/** Homepage hero's 3-card fan. Admin-featured active listings first (most
- * recently featured/added among them), backfilled with the most recent
- * active listings so there are always up to `limit` cards even before an
- * admin has featured anything. */
+/** Homepage hero's 3-card fan — rentals only (the hero's search bar is
+ * rental-specific: near base, move-in date, bedrooms). Admin-featured
+ * active listings first (most recently featured/added among them),
+ * backfilled with the most recent active rentals so there are always up
+ * to `limit` cards even before an admin has featured anything. */
 export async function getFeaturedListings(limit = 3): Promise<Listing[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("listings")
     .select("*")
     .eq("status", "active")
+    .eq("type", "rental")
     .order("is_featured", { ascending: false })
     .order("created_at", { ascending: false })
     .limit(limit);
@@ -74,7 +83,7 @@ export async function getFeaturedListings(limit = 3): Promise<Listing[]> {
     // returning nothing — a missing migration shouldn't take down the
     // entire hero, just the featuring behavior on top of it.
     if (error.code === "42703") {
-      const fallback = await getActiveListings();
+      const fallback = await getActiveListings("rental");
       return fallback.slice(0, limit);
     }
     console.error("getFeaturedListings failed:", error.message);

@@ -2,7 +2,7 @@
 
 ## What this is
 
-A rental-listing marketplace for Americans relocating to Germany (military and expat), combining the structure of a real-estate portal (ImmobilienScout24) with the low-friction posting of a classifieds board (BooKoo). Two supply sources: an on-base housing office feed, and individual families self-listing the home they're moving out of. A car-ads category may be added later — build the listing engine generically enough to support a second content type without a rewrite, but do not build cars now.
+A rental-listing marketplace for Americans relocating to Germany (military and expat), combining the structure of a real-estate portal (ImmobilienScout24) with the low-friction posting of a classifieds board (BooKoo). Two supply sources: an on-base housing office feed, and individual families self-listing the home they're moving out of. A second content type — car ads, at Charlie's request, styled after BooKoo's Cars & Trucks category — was added on top of the same listing engine and review pipeline (`/cars`, `/cars/[id]`, `/post-car`); see the data model below for how `type` branches.
 
 Owner/stakeholder: Charlie. He is non-technical, his input will be minimal, and he is 100% responsible for actually working the listings (reviewing submissions, coordinating with the housing office) once the site is live. Build accordingly: the admin/review experience needs to be simple enough for a non-developer to run solo.
 
@@ -40,14 +40,14 @@ Signature UI element: the "stamp" — a dashed-circle badge marking a listing as
 ## Data model (MVP)
 
 **listings**
-- id, type (`rental` for now; enum, extensible)
+- id, type (`rental` | `car`)
 - title, description
-- address, city, distance_to_base (text is fine for MVP, no geocoding yet)
-- price_eur_month, bedrooms, bathrooms, size_sqm
-- available_from (date)
+- rental only: address, city, distance_to_base (text is fine for MVP, no geocoding yet), bedrooms, bathrooms, size_sqm, available_from (date), amenities
+- car only: make, model, year, mileage_km
+- price_eur_month — the asking price for both types (one-time for a car, not just monthly rent; only the UI's "/ mo" suffix is type-conditional)
 - photos (array of storage URLs)
-- source (`housing_office` | `self_listed`)
-- status (`draft` | `pending_review` | `active` | `rented` | `archived`)
+- source (`housing_office` | `self_listed`) — a car ad is always `self_listed`, enforced in the app layer since there's no housing-office equivalent for cars
+- status (`draft` | `pending_review` | `active` | `rented` | `archived`) — same review pipeline for both types, same admin dashboard
 - owner_id (FK to profiles)
 - created_at, updated_at, status_changed_at
 
@@ -68,7 +68,7 @@ Signature UI element: the "stamp" — a dashed-circle badge marking a listing as
 8. **SEO basics**: `app/sitemap.ts` generating a dynamic sitemap from active listings, meta tags per listing page, Google Search Console verification file/tag placeholder
 9. **Monitoring**: Sentry (`@sentry/nextjs` via the setup wizard) and Vercel Analytics for Web Vitals — wire up but don't over-invest yet
 
-Do not build: car listings, payments, housing-office bulk-import tooling, or the referral/affiliate monetization ideas. Those come after the MVP is validated with Charlie.
+Do not build: payments, housing-office bulk-import tooling, a car-specific admin queue (cars share the housing review queue), or the referral/affiliate monetization ideas. Those come after the MVP is validated with Charlie.
 
 ## Conventions
 

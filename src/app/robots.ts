@@ -17,6 +17,8 @@ export default function robots(): MetadataRoute.Robots {
         "/admin/*",
         "/post",
         "/de/post",
+        "/post-car",
+        "/de/post-car",
         "/sign-in",
         "/de/sign-in",
         "/auth/*",
