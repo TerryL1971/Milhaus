@@ -37,7 +37,7 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
           Milhaus<span className="text-brass">.</span>
         </HomeLink>
 
-        <nav className="hidden gap-7 text-[0.92rem] font-medium md:flex">
+        <nav className="hidden gap-5 text-[0.92rem] font-medium md:flex">
           <Link href="/#listings" className="opacity-85 transition-opacity hover:opacity-100">
             {t("browseListings")}
           </Link>
@@ -52,7 +52,7 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
           </Link>
         </nav>
 
-        <div className="flex items-center gap-4.5">
+        <div className="flex flex-shrink-0 items-center gap-3">
           {/* Same slot/style as the Admin link — DE/EN always shows here;
               Admin joins it alongside for admins, rather than replacing it. */}
           <LanguageToggle className={toggleButtonClass} preservePath={translatedPage} />
