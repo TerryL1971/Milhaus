@@ -2,8 +2,13 @@
 // Seeds demo listings for showing the site to Charlie before real housing
 // office / self-listed data exists. Creates two demo auth accounts (one
 // "housing office", one "family") as the owners, uploads a small set of
-// real (CC0, see scripts/demo-photos/SOURCES.md) stock photos per listing
-// to the real listing-photos bucket, then the listings themselves.
+// real (CC0, see scripts/demo-photos/SOURCES.md) stock photos per rental
+// listing to the real listing-photos bucket, then the listings themselves.
+// Also seeds a handful of demo car ads (type="car", always self_listed —
+// no housing-office equivalent for cars) under the same "family" account,
+// photo-less: CarListingCard already falls back to a gradient tile with no
+// photo, and there's no CC0 car-photo set sourced yet (see SOURCES.md if
+// that changes — same upload path would work for cars too).
 //
 // Rerunnable: deletes any existing demo-* accounts first (which cascades
 // away their listings and storage objects), then recreates everything from
@@ -251,7 +256,12 @@ async function main() {
       owner_id: familyId,
       photoSet: ["exterior-2.webp", "bathroom-1.webp"],
     },
-  ].map((listing) => ({ ...listing, id: randomUUID(), status: "active" }));
+  ].map((listing) => ({ ...listing, id: randomUUID(), status: "active", type: "rental" }));
+  // type is set explicitly (rather than relying on the column default) so
+  // that inserting rentals and car ads together in one batch below doesn't
+  // hit PostgREST's column-union behavior — a key present on some rows in
+  // a batch and absent on others gets NULLed on the rows missing it,
+  // rather than falling through to the DB default.
 
   console.log(`Uploading photos for ${listings.length} demo listings...`);
   for (const listing of listings) {
@@ -259,8 +269,98 @@ async function main() {
     delete listing.photoSet;
   }
 
-  console.log(`Inserting ${listings.length} demo listings...`);
-  const { data, error } = await supabase.from("listings").insert(listings).select("id, title");
+  const carListings = [
+    {
+      type: "car",
+      title: "2016 Volkswagen Jetta Sport",
+      description:
+        "PCSing out next month and need it gone. One owner, dealer-serviced, no accidents. Winter tires included.",
+      city: "Kaiserslautern",
+      base: "Kaiserslautern",
+      distance_to_base: "10 min to Ramstein",
+      price_eur_month: 9500,
+      make: "Volkswagen",
+      model: "Jetta Sport",
+      year: 2016,
+      mileage_km: 92000,
+    },
+    {
+      type: "car",
+      title: "2019 Toyota Camry SE",
+      description: "US-spec Camry brought over on our last PCS. Clean title, well maintained, great daily driver.",
+      city: "Böblingen",
+      base: "Stuttgart",
+      distance_to_base: "12 min to Panzer Kaserne",
+      price_eur_month: 15900,
+      make: "Toyota",
+      model: "Camry SE",
+      year: 2019,
+      mileage_km: 61000,
+    },
+    {
+      type: "car",
+      title: "2014 Jeep Wrangler Unlimited",
+      description: "Hardtop and soft top both included. Some trail miles but mechanically solid — runs great.",
+      city: "Wiesbaden",
+      base: "Wiesbaden",
+      distance_to_base: "9 min to Clay Kaserne",
+      price_eur_month: 13500,
+      make: "Jeep",
+      model: "Wrangler Unlimited",
+      year: 2014,
+      mileage_km: 118000,
+    },
+    {
+      type: "car",
+      title: "2020 Honda CR-V EX",
+      description: "Family upgraded to a minivan — this CR-V has been nothing but reliable. AWD, all records available.",
+      city: "Ramstein-Miesenbach",
+      base: "Ramstein",
+      distance_to_base: "5 min to base",
+      price_eur_month: 19500,
+      make: "Honda",
+      model: "CR-V EX",
+      year: 2020,
+      mileage_km: 48000,
+    },
+    {
+      type: "car",
+      title: "2012 BMW 328i",
+      description: "Bought here, staying here — selling before we head stateside. Recent brakes and tires.",
+      city: "Grafenwöhr",
+      base: "Grafenwöhr",
+      distance_to_base: "7 min to Rose Barracks",
+      price_eur_month: 7200,
+      make: "BMW",
+      model: "328i",
+      year: 2012,
+      mileage_km: 145000,
+    },
+    {
+      type: "car",
+      title: "2021 Ford F-150 XLT",
+      description: "Imported for our tour, too big for our next assignment. Crew cab, tow package, low miles for the year.",
+      city: "Spangdahlem",
+      base: "Spangdahlem",
+      distance_to_base: "11 min to Spangdahlem AB",
+      price_eur_month: 32500,
+      make: "Ford",
+      model: "F-150 XLT",
+      year: 2021,
+      mileage_km: 35000,
+    },
+  ].map((listing) => ({
+    ...listing,
+    id: randomUUID(),
+    status: "active",
+    source: "self_listed",
+    owner_id: familyId,
+    photos: [],
+  }));
+
+  const allListings = [...listings, ...carListings];
+  console.log(`Inserting ${listings.length} demo rentals and ${carListings.length} demo car ads...`);
+  const { data, error } = await supabase.from("listings").insert(allListings).select("id, title");
   if (error) throw error;
 
   console.log("Done:");
