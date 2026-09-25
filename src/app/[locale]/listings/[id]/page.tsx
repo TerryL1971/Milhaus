@@ -8,10 +8,11 @@ import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { ListingPhotoGallery } from "@/components/listing-photo-gallery";
-import { getPathname, Link } from "@/i18n/navigation";
+import { SellerCard } from "@/components/seller-card";
+import { Link } from "@/i18n/navigation";
 import { AMENITY_LABELS, type AmenityKey } from "@/lib/amenities";
-import { getListingById, getOwnerContact } from "@/lib/listings";
-import { createClient } from "@/lib/supabase/server";
+import { NEARBY_AMENITY_LABELS, type NearbyAmenityKey } from "@/lib/nearby-amenities";
+import { getListingById, getSellerListings, getSellerProfile } from "@/lib/listings";
 import { SITE_URL } from "@/lib/site-url";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
@@ -66,18 +67,15 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
   const isRented = listing.status === "rented";
   const isHousingOffice = listing.source === "housing_office";
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  // null unless RLS actually allows it (signed in + owner has an active
-  // listing) — see getOwnerContact and its migration. A signed-out visitor,
-  // or a not-yet-migrated database, both just fall back to "sign in".
-  const ownerContact = user ? await getOwnerContact(listing.ownerId) : null;
-
-  // Locale-prefixed so signing in from the German page returns here in
-  // German too, not silently back to the English default.
-  const nextPath = getPathname({ href: `/listings/${listing.id}`, locale });
+  // Public — no sign-in wall, per Charlie's call (see SellerCard). Comes
+  // back null only if the owner has no active listing (the RLS policy's
+  // condition), which can't actually happen for the listing we're looking
+  // at right here, but the type stays nullable since getSellerProfile is
+  // shared with the standalone /sellers/[id] page.
+  const [seller, otherListings] = await Promise.all([
+    getSellerProfile(listing.ownerId),
+    getSellerListings(listing.ownerId, listing.id),
+  ]);
 
   // Structured data — helps both traditional search (rich results) and
   // AI answer engines (ChatGPT/Perplexity/Google AI Overviews lean on
@@ -146,14 +144,38 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
           </div>
         </div>
 
-        <div className="mt-6 flex gap-6 border-y border-canvas-deep py-4 font-mono text-sm text-charcoal/80">
+        <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 border-y border-canvas-deep py-4 font-mono text-sm text-charcoal/80">
           <span>{listing.bedrooms} {t("bed")}</span>
           <span>{listing.bathrooms} {t("bath")}</span>
           {listing.sizeSqm != null && <span>{listing.sizeSqm} m²</span>}
+          {listing.parkingSpaces != null && (
+            <span>{t("parking", { count: listing.parkingSpaces })}</span>
+          )}
           {listing.availableFrom && (
             <span>{t("available", { date: dateFormatter.format(new Date(listing.availableFrom)) })}</span>
           )}
         </div>
+
+        {(listing.internetType || listing.heatType || listing.stoveType) && (
+          <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-soft">
+            {listing.internetType && (
+              <span>
+                {t("internet")}: {t(`internetType.${listing.internetType}`)}
+                {listing.internetSpeedMbps != null ? ` · ${listing.internetSpeedMbps} Mbps` : ""}
+              </span>
+            )}
+            {listing.heatType && (
+              <span>
+                {t("heat")}: {t(`heatType.${listing.heatType}`)}
+              </span>
+            )}
+            {listing.stoveType && (
+              <span>
+                {t("stove")}: {t(`stoveType.${listing.stoveType}`)}
+              </span>
+            )}
+          </div>
+        )}
 
         {listing.description && (
           <p className="mt-6 whitespace-pre-line text-[0.98rem] leading-relaxed text-charcoal">
@@ -162,15 +184,38 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
         )}
 
         {listing.amenities.length > 0 && (
-          <div className="mt-6 flex flex-wrap gap-2">
-            {listing.amenities.map((key) => (
-              <span
-                key={key}
-                className="rounded-full border border-canvas-deep bg-canvas px-3 py-1 text-sm text-ink-soft"
-              >
-                {AMENITY_LABELS[key as AmenityKey] ?? key}
-              </span>
-            ))}
+          <div className="mt-6">
+            <p className="mb-2 font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
+              {t("featuresHeading")}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {listing.amenities.map((key) => (
+                <span
+                  key={key}
+                  className="rounded-full border border-canvas-deep bg-canvas px-3 py-1 text-sm text-ink-soft"
+                >
+                  {AMENITY_LABELS[key as AmenityKey] ?? key}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {listing.nearbyAmenities.length > 0 && (
+          <div className="mt-4">
+            <p className="mb-2 font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
+              {t("nearbyHeading")}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {listing.nearbyAmenities.map((key) => (
+                <span
+                  key={key}
+                  className="rounded-full border border-olive/40 bg-olive/10 px-3 py-1 text-sm text-olive-deep"
+                >
+                  {NEARBY_AMENITY_LABELS[key as NearbyAmenityKey] ?? key}
+                </span>
+              ))}
+            </div>
           </div>
         )}
 
@@ -183,41 +228,14 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
           {isHousingOffice ? t("housingOfficeListing") : t("listedByFamily")}
         </p>
 
-        <div className="mt-8 rounded-md border border-canvas-deep bg-paper p-5">
-          {ownerContact ? (
-            <>
-              <p className="mb-3 text-sm font-semibold text-ink">{t("interestedHeading")}</p>
-              <div className="flex flex-col gap-2 text-sm">
-                {ownerContact.contactEmail && (
-                  <a
-                    href={`mailto:${ownerContact.contactEmail}?subject=${encodeURIComponent(`About: ${listing.title}`)}`}
-                    className="inline-block w-fit rounded-md bg-brass px-5 py-2.5 font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
-                  >
-                    {t("emailButton", { name: ownerContact.displayName ?? t("theLister") })}
-                  </a>
-                )}
-                {ownerContact.contactPhone && (
-                  <a
-                    href={`tel:${ownerContact.contactPhone.replace(/[^+\d]/g, "")}`}
-                    className="text-ink-soft hover:text-ink"
-                  >
-                    {ownerContact.contactPhone}
-                  </a>
-                )}
-              </div>
-            </>
-          ) : (
-            <>
-              <p className="mb-3 text-sm text-ink-soft">{t("signInToContact")}</p>
-              <Link
-                href={`/sign-in?next=${nextPath}`}
-                className="inline-block rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
-              >
-                {t("signIn")}
-              </Link>
-            </>
-          )}
-        </div>
+        {seller && (
+          <SellerCard
+            seller={seller}
+            ownerId={listing.ownerId}
+            listingTitle={listing.title}
+            otherListings={otherListings}
+          />
+        )}
       </div>
     </main>
   );

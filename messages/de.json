@@ -15,6 +15,16 @@
     "dishwasher": "Spülmaschine",
     "basement_storage": "Keller/Abstellraum"
   },
+  "NearbyAmenities": {
+    "school": "Schule",
+    "grocery_store": "Supermarkt",
+    "movie_theater": "Kino",
+    "restaurant": "Restaurants",
+    "gym": "Fitnessstudio",
+    "public_transit": "Öffentliche Verkehrsmittel",
+    "park": "Park",
+    "pharmacy": "Apotheke"
+  },
   "SiteHeader": {
     "browseListings": "Angebote durchsuchen",
     "cars": "Autos",
@@ -32,6 +42,7 @@
     "forListersHeading": "Für Inserenten",
     "postAHome": "Zuhause inserieren",
     "forLandlords": "Für Vermieter",
+    "myListings": "Meine Anzeigen",
     "carsHeading": "Autos",
     "browseCars": "Autos durchsuchen",
     "sellYourCar": "Auto verkaufen",
@@ -120,6 +131,22 @@
     "sizeSqm": "Größe (m²)",
     "availableFrom": "Verfügbar ab",
     "features": "Ausstattung",
+    "parkingSpaces": "Parkplätze",
+    "parkingSpacesPlaceholder": "z. B. 1",
+    "nearbyAmenities": "In der Nähe",
+    "internetType": "Internet",
+    "internetTypeDsl": "DSL",
+    "internetTypeCable": "Kabel",
+    "internetTypeFiber": "Glasfaser",
+    "internetSpeedMbps": "Geschwindigkeit (Mbit/s)",
+    "heatType": "Heizung",
+    "heatTypeGas": "Gas",
+    "heatTypeOil": "Öl",
+    "heatTypeElectric": "Elektrisch",
+    "stoveType": "Herd",
+    "stoveTypeInduction": "Induktion",
+    "stoveTypeStandard": "Standard",
+    "notSpecified": "Keine Angabe",
     "year": "Baujahr",
     "make": "Marke",
     "makePlaceholder": "z. B. Volkswagen",
@@ -161,7 +188,27 @@
     "signInToContact": "Interesse an dieser Wohnung? Melden Sie sich an, um den Inserenten zu kontaktieren.",
     "signIn": "Anmelden",
     "emailButton": "E-Mail an {name}",
-    "theLister": "den Inserenten"
+    "theLister": "den Inserenten",
+    "parking": "{count, plural, =0 {Keine Parkplätze} =1 {1 Parkplatz} other {# Parkplätze}}",
+    "internet": "Internet",
+    "heat": "Heizung",
+    "stove": "Herd",
+    "internetType": {
+      "dsl": "DSL",
+      "cable": "Kabel",
+      "fiber": "Glasfaser"
+    },
+    "heatType": {
+      "gas": "Gas",
+      "oil": "Öl",
+      "electric": "Elektrisch"
+    },
+    "stoveType": {
+      "induction": "Induktion",
+      "standard": "Standard"
+    },
+    "featuresHeading": "Ausstattung",
+    "nearbyHeading": "In der Nähe"
   },
   "PostPage": {
     "heading": "Zuhause inserieren",
@@ -258,15 +305,59 @@
     "backToCars": "← Zurück zu den Autos",
     "sold": "Verkauft",
     "availableStatus": "Verfügbar",
-    "mileage": "{km} km",
-    "interestedHeading": "Interesse an diesem Auto?",
-    "signInToContact": "Interesse an diesem Auto? Melden Sie sich an, um den Verkäufer zu kontaktieren.",
-    "signIn": "Anmelden",
-    "emailButton": "E-Mail an {name}",
-    "theSeller": "den Verkäufer"
+    "mileage": "{km} km"
   },
   "PostCarPage": {
     "heading": "Auto verkaufen",
     "body": "Ein paar Details und einige Fotos — wir prüfen es, meist noch am selben Tag, dann geht es auf der Autos-Seite live."
+  },
+  "SellerCard": {
+    "postedBy": "Inseriert von",
+    "emailButton": "E-Mail an {name}",
+    "theSeller": "den Verkäufer",
+    "moreFromSeller": "Mehr von {name}"
+  },
+  "SellerProfilePage": {
+    "emailButton": "E-Mail an {name}",
+    "theSeller": "diesen Verkäufer",
+    "listingsHeading": "Anzeigen von {name}",
+    "noListings": "Gerade nichts gelistet.",
+    "backHome": "← Zurück zur Übersicht"
+  },
+  "ProfileEditor": {
+    "heading": "Ihr öffentliches Profil",
+    "body": "Wird bei jeder Ihrer Anzeigen angezeigt — Käufer sehen dies, bevor sie Sie kontaktieren.",
+    "changePhoto": "Foto ändern",
+    "uploadingPhoto": "Wird hochgeladen…",
+    "displayName": "Name",
+    "displayNamePlaceholder": "So sehen Käufer Sie",
+    "contactPhone": "Telefon",
+    "contactPhonePlaceholder": "Optional",
+    "bio": "Über Sie",
+    "bioPlaceholder": "Ein bis zwei Zeilen — wer Sie sind, was Sie anbieten, wie Sie helfen können",
+    "save": "Profil speichern",
+    "saving": "Wird gespeichert…",
+    "saved": "Gespeichert"
+  },
+  "MyListings": {
+    "heading": "Meine Anzeigen",
+    "subhead": "Alles, was Sie inseriert haben, an einem Ort.",
+    "postHome": "Zuhause inserieren",
+    "postCar": "Auto inserieren",
+    "pendingHeading": "Wird geprüft",
+    "pendingEmpty": "Nichts wird gerade geprüft.",
+    "activeHeading": "Live",
+    "activeEmpty": "Noch nichts live.",
+    "rentedHeading": "Vermietet / verkauft",
+    "rentedEmpty": "Nichts als vermietet oder verkauft markiert.",
+    "archivedHeading": "Archiviert",
+    "archivedEmpty": "Nichts archiviert.",
+    "draftHeading": "Unvollständige Einreichungen",
+    "perMonth": "/Monat",
+    "markRented": "Als vermietet markieren",
+    "markSold": "Als verkauft markieren",
+    "withdraw": "Zurückziehen",
+    "discard": "Verwerfen",
+    "postAgain": "Erneut inserieren"
   }
 }

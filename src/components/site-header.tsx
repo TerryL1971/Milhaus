@@ -66,7 +66,13 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
                   {t("admin")}
                 </NextLink>
               )}
-              <span className="hidden text-sm opacity-85 sm:inline">{user.email}</span>
+              {/* The email doubles as the way into /my-listings — a new,
+                  separately-styled nav pill would re-crowd the header
+                  (see the earlier gap-tightening fix); this adds the
+                  entry point with zero extra width. */}
+              <Link href="/my-listings" className="hidden text-sm opacity-85 hover:opacity-100 sm:inline">
+                {user.email}
+              </Link>
               <form action="/auth/sign-out" method="post">
                 <button
                   type="submit"

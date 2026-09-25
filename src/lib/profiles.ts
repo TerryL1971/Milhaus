@@ -12,6 +12,8 @@ export interface Profile {
   displayName: string | null;
   contactEmail: string | null;
   contactPhone: string | null;
+  photoUrl: string | null;
+  bio: string | null;
   createdAt: string;
 }
 
@@ -32,6 +34,8 @@ function mapProfileRow(row: Record<string, unknown>): Profile {
     displayName: (row.display_name as string | null) ?? null,
     contactEmail: (row.contact_email as string | null) ?? null,
     contactPhone: (row.contact_phone as string | null) ?? null,
+    photoUrl: (row.photo_url as string | null) ?? null,
+    bio: (row.bio as string | null) ?? null,
     createdAt: row.created_at as string,
   };
 }
@@ -43,7 +47,7 @@ export async function getAllProfiles(): Promise<Profile[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, role, display_name, contact_email, contact_phone, created_at")
+    .select("id, role, display_name, contact_email, contact_phone, photo_url, bio, created_at")
     .order("created_at");
 
   if (error) {
@@ -51,4 +55,19 @@ export async function getAllProfiles(): Promise<Profile[]> {
     return [];
   }
   return (data ?? []).map(mapProfileRow);
+}
+
+/** /my-listings' "your public profile" editor — the signed-in caller's
+ * own row. RLS ("read own row") scopes this; a mismatched id just comes
+ * back null rather than needing its own check. */
+export async function getProfile(id: string): Promise<Profile | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id, role, display_name, contact_email, contact_phone, photo_url, bio, created_at")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error || !data) return null;
+  return mapProfileRow(data);
 }

@@ -27,6 +27,7 @@ import { useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { AMENITY_KEYS } from "@/lib/amenities";
 import { BASE_NAMES } from "@/lib/bases";
+import { NEARBY_AMENITY_KEYS } from "@/lib/nearby-amenities";
 import { createClient } from "@/lib/supabase/client";
 import type { ListingSource } from "@/lib/types";
 
@@ -41,6 +42,7 @@ const inputClass =
 export function ListingForm({ variant, kind = "rental" }: { variant: Variant; kind?: Kind }) {
   const t = useTranslations("ListingForm");
   const tAmenities = useTranslations("Amenities");
+  const tNearbyAmenities = useTranslations("NearbyAmenities");
   const router = useRouter();
   const [status, setStatus] = useState<Status>("idle");
   const [progress, setProgress] = useState("");
@@ -102,6 +104,14 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
           size_sqm: formData.get("sizeSqm") ? Number(formData.get("sizeSqm")) : null,
           available_from: (formData.get("availableFrom") as string) || null,
           amenities: formData.getAll("amenities"),
+          parking_spaces: formData.get("parkingSpaces") ? Number(formData.get("parkingSpaces")) : null,
+          nearby_amenities: formData.getAll("nearbyAmenities"),
+          internet_type: formData.get("internetType") || null,
+          internet_speed_mbps: formData.get("internetSpeedMbps")
+            ? Number(formData.get("internetSpeedMbps"))
+            : null,
+          heat_type: formData.get("heatType") || null,
+          stove_type: formData.get("stoveType") || null,
         };
 
     const { data: created, error: insertError } = await supabase
@@ -393,6 +403,95 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
                 <span>{tAmenities(key)}</span>
               </label>
             ))}
+          </div>
+        </div>
+      )}
+
+      {!isCar && (
+        <div>
+          <label htmlFor="parkingSpaces" className={labelClass}>
+            {t("parkingSpaces")}
+          </label>
+          <input
+            id="parkingSpaces"
+            name="parkingSpaces"
+            type="number"
+            min="0"
+            placeholder={t("parkingSpacesPlaceholder")}
+            className={inputClass}
+          />
+        </div>
+      )}
+
+      {!isCar && (
+        <div>
+          <span className={labelClass}>{t("nearbyAmenities")}</span>
+          <div className="grid grid-cols-2 gap-2">
+            {NEARBY_AMENITY_KEYS.map((key) => (
+              <label key={key} className="flex min-w-0 items-center gap-2 text-sm text-charcoal">
+                <input
+                  type="checkbox"
+                  name="nearbyAmenities"
+                  value={key}
+                  className="h-4 w-4 flex-shrink-0 rounded border-canvas-deep text-olive focus:ring-olive"
+                />
+                <span>{tNearbyAmenities(key)}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {!isCar && (
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="internetType" className={labelClass}>
+              {t("internetType")}
+            </label>
+            <select id="internetType" name="internetType" className={inputClass} defaultValue="">
+              <option value="">{t("notSpecified")}</option>
+              <option value="dsl">{t("internetTypeDsl")}</option>
+              <option value="cable">{t("internetTypeCable")}</option>
+              <option value="fiber">{t("internetTypeFiber")}</option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="internetSpeedMbps" className={labelClass}>
+              {t("internetSpeedMbps")}
+            </label>
+            <input
+              id="internetSpeedMbps"
+              name="internetSpeedMbps"
+              type="number"
+              min="0"
+              className={inputClass}
+            />
+          </div>
+        </div>
+      )}
+
+      {!isCar && (
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="heatType" className={labelClass}>
+              {t("heatType")}
+            </label>
+            <select id="heatType" name="heatType" className={inputClass} defaultValue="">
+              <option value="">{t("notSpecified")}</option>
+              <option value="gas">{t("heatTypeGas")}</option>
+              <option value="oil">{t("heatTypeOil")}</option>
+              <option value="electric">{t("heatTypeElectric")}</option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="stoveType" className={labelClass}>
+              {t("stoveType")}
+            </label>
+            <select id="stoveType" name="stoveType" className={inputClass} defaultValue="">
+              <option value="">{t("notSpecified")}</option>
+              <option value="induction">{t("stoveTypeInduction")}</option>
+              <option value="standard">{t("stoveTypeStandard")}</option>
+            </select>
           </div>
         </div>
       )}

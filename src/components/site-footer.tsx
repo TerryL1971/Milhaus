@@ -22,6 +22,7 @@ export function SiteFooter() {
       links: [
         { label: t("postAHome"), href: "/post" },
         { label: t("forLandlords"), href: "/for-landlords" },
+        { label: t("myListings"), href: "/my-listings" },
       ],
     },
     {

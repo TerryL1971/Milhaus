@@ -26,6 +26,15 @@ export function mapRow(row: Record<string, unknown>): Listing {
     availableFrom: (row.available_from as string | null) ?? null,
     photos: (row.photos as string[]) ?? [],
     amenities: (row.amenities as string[]) ?? [],
+    parkingSpaces: row.parking_spaces === null || row.parking_spaces === undefined ? null : Number(row.parking_spaces),
+    nearbyAmenities: (row.nearby_amenities as string[]) ?? [],
+    internetType: (row.internet_type as Listing["internetType"]) ?? null,
+    internetSpeedMbps:
+      row.internet_speed_mbps === null || row.internet_speed_mbps === undefined
+        ? null
+        : Number(row.internet_speed_mbps),
+    heatType: (row.heat_type as Listing["heatType"]) ?? null,
+    stoveType: (row.stove_type as Listing["stoveType"]) ?? null,
     make: (row.make as string | null) ?? null,
     model: (row.model as string | null) ?? null,
     year: row.year === null || row.year === undefined ? null : Number(row.year),
@@ -111,20 +120,25 @@ export async function getListingById(id: string): Promise<Listing | null> {
   return data ? mapRow(data) : null;
 }
 
-/** Listing detail page's "contact the lister" box. Only returns data when
- * RLS actually allows it — the caller must be signed in, and the owner
- * must have at least one active listing (see the
- * profiles_contact_visible_for_active_listings migration). Anything else
- * (not signed in, listing not active, migration not yet applied) comes
- * back null and the page falls back to the "sign in" prompt instead of
- * throwing. */
-export async function getOwnerContact(
-  ownerId: string,
-): Promise<{ displayName: string | null; contactEmail: string | null; contactPhone: string | null } | null> {
+export interface SellerProfile {
+  displayName: string | null;
+  contactEmail: string | null;
+  contactPhone: string | null;
+  photoUrl: string | null;
+  bio: string | null;
+}
+
+/** The public seller card shown on every listing's detail page, and the
+ * standalone /sellers/[id] profile page. Public on purpose — Charlie's
+ * call, modeled on bookoo's own seller card, no sign-in wall — so this
+ * only returns null when the id doesn't match a profile that owns at
+ * least one active listing (the RLS policy's condition); a pending/
+ * rented-out/archived-only seller has nothing to show here. */
+export async function getSellerProfile(ownerId: string): Promise<SellerProfile | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("profiles")
-    .select("display_name, contact_email, contact_phone")
+    .select("display_name, contact_email, contact_phone, photo_url, bio")
     .eq("id", ownerId)
     .maybeSingle();
 
@@ -133,7 +147,52 @@ export async function getOwnerContact(
     displayName: data.display_name as string | null,
     contactEmail: data.contact_email as string | null,
     contactPhone: data.contact_phone as string | null,
+    photoUrl: data.photo_url as string | null,
+    bio: data.bio as string | null,
   };
+}
+
+/** A seller's active listings, any type — "more from this seller" on a
+ * listing detail page (pass excludeId to leave out the one on screen), or
+ * the full set on the standalone /sellers/[id] page (omit it). */
+export async function getSellerListings(
+  ownerId: string,
+  excludeId?: string,
+  limit = 4,
+): Promise<Listing[]> {
+  const supabase = await createClient();
+  let query = supabase
+    .from("listings")
+    .select("*")
+    .eq("owner_id", ownerId)
+    .eq("status", "active");
+  if (excludeId) query = query.neq("id", excludeId);
+  const { data, error } = await query.order("created_at", { ascending: false }).limit(limit);
+
+  if (error) {
+    console.error("getSellerListings failed:", error.message);
+    return [];
+  }
+  return (data ?? []).map(mapRow);
+}
+
+/** "My listings" dashboard — every listing the signed-in caller owns,
+ * any status, any type. RLS's "owner reads own listings" policy is what
+ * actually scopes this to the caller; a signed-out or mismatched-id call
+ * just comes back empty rather than needing its own check here. */
+export async function getMyListings(ownerId: string): Promise<Listing[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("listings")
+    .select("*")
+    .eq("owner_id", ownerId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("getMyListings failed:", error.message);
+    return [];
+  }
+  return (data ?? []).map(mapRow);
 }
 
 /** Admin dashboard: submissions waiting on review. RLS only lets an admin

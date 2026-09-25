@@ -15,6 +15,16 @@
     "dishwasher": "Dishwasher",
     "basement_storage": "Basement/storage"
   },
+  "NearbyAmenities": {
+    "school": "School",
+    "grocery_store": "Grocery store",
+    "movie_theater": "Movie theater",
+    "restaurant": "Restaurants",
+    "gym": "Gym",
+    "public_transit": "Public transit",
+    "park": "Park",
+    "pharmacy": "Pharmacy"
+  },
   "SiteHeader": {
     "browseListings": "Browse listings",
     "cars": "Cars",
@@ -32,6 +42,7 @@
     "forListersHeading": "For listers",
     "postAHome": "Post a home",
     "forLandlords": "For landlords",
+    "myListings": "My listings",
     "carsHeading": "Cars",
     "browseCars": "Browse cars",
     "sellYourCar": "Sell your car",
@@ -120,6 +131,22 @@
     "sizeSqm": "Size (m²)",
     "availableFrom": "Available from",
     "features": "Features",
+    "parkingSpaces": "Parking spaces",
+    "parkingSpacesPlaceholder": "e.g. 1",
+    "nearbyAmenities": "What's nearby",
+    "internetType": "Internet",
+    "internetTypeDsl": "DSL",
+    "internetTypeCable": "Cable",
+    "internetTypeFiber": "Fiber",
+    "internetSpeedMbps": "Speed (Mbps)",
+    "heatType": "Heat",
+    "heatTypeGas": "Gas",
+    "heatTypeOil": "Oil",
+    "heatTypeElectric": "Electric",
+    "stoveType": "Stove",
+    "stoveTypeInduction": "Induction",
+    "stoveTypeStandard": "Standard",
+    "notSpecified": "Not specified",
     "year": "Year",
     "make": "Make",
     "makePlaceholder": "e.g. Volkswagen",
@@ -161,7 +188,27 @@
     "signInToContact": "Interested in this home? Sign in to contact the lister.",
     "signIn": "Sign in",
     "emailButton": "Email {name}",
-    "theLister": "the lister"
+    "theLister": "the lister",
+    "parking": "{count, plural, =0 {No parking} =1 {1 parking space} other {# parking spaces}}",
+    "internet": "Internet",
+    "heat": "Heat",
+    "stove": "Stove",
+    "internetType": {
+      "dsl": "DSL",
+      "cable": "Cable",
+      "fiber": "Fiber"
+    },
+    "heatType": {
+      "gas": "Gas",
+      "oil": "Oil",
+      "electric": "Electric"
+    },
+    "stoveType": {
+      "induction": "Induction",
+      "standard": "Standard"
+    },
+    "featuresHeading": "Features",
+    "nearbyHeading": "Nearby"
   },
   "PostPage": {
     "heading": "List your home",
@@ -258,15 +305,59 @@
     "backToCars": "← Back to cars",
     "sold": "Sold",
     "availableStatus": "Available",
-    "mileage": "{km} km",
-    "interestedHeading": "Interested in this car?",
-    "signInToContact": "Interested in this car? Sign in to contact the seller.",
-    "signIn": "Sign in",
-    "emailButton": "Email {name}",
-    "theSeller": "the seller"
+    "mileage": "{km} km"
   },
   "PostCarPage": {
     "heading": "Sell your car",
     "body": "A few details and some photos — we'll review it, usually the same day, and it goes live on the Cars page."
+  },
+  "SellerCard": {
+    "postedBy": "Posted by",
+    "emailButton": "Email {name}",
+    "theSeller": "the seller",
+    "moreFromSeller": "More from {name}"
+  },
+  "SellerProfilePage": {
+    "emailButton": "Email {name}",
+    "theSeller": "this seller",
+    "listingsHeading": "{name}'s listings",
+    "noListings": "Nothing listed right now.",
+    "backHome": "← Back to browsing"
+  },
+  "ProfileEditor": {
+    "heading": "Your public profile",
+    "body": "Shown on every listing you post — buyers see this before they contact you.",
+    "changePhoto": "Change photo",
+    "uploadingPhoto": "Uploading…",
+    "displayName": "Name",
+    "displayNamePlaceholder": "How buyers will see you",
+    "contactPhone": "Phone",
+    "contactPhonePlaceholder": "Optional",
+    "bio": "About you",
+    "bioPlaceholder": "A line or two — who you are, what you're listing, how you can help",
+    "save": "Save profile",
+    "saving": "Saving…",
+    "saved": "Saved"
+  },
+  "MyListings": {
+    "heading": "My listings",
+    "subhead": "Everything you've posted, in one place.",
+    "postHome": "Post a home",
+    "postCar": "Post a car",
+    "pendingHeading": "Waiting on review",
+    "pendingEmpty": "Nothing waiting on review.",
+    "activeHeading": "Live",
+    "activeEmpty": "Nothing live yet.",
+    "rentedHeading": "Rented / sold",
+    "rentedEmpty": "Nothing marked rented or sold.",
+    "archivedHeading": "Archived",
+    "archivedEmpty": "Nothing archived.",
+    "draftHeading": "Incomplete submissions",
+    "perMonth": "/mo",
+    "markRented": "Mark rented",
+    "markSold": "Mark sold",
+    "withdraw": "Withdraw",
+    "discard": "Discard",
+    "postAgain": "Post again"
   }
 }

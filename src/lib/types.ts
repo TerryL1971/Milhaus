@@ -47,6 +47,22 @@ export interface Listing {
   /** Fixed set of property features — keys from AMENITY_LABELS in
    * src/lib/amenities.ts (e.g. "pet_friendly", "garage"). Rental only. */
   amenities: string[];
+  /** How many off-street parking spots come with the place — Americans
+   * here generally can't get a street parking permit, so this matters
+   * more than it would elsewhere. Rental only. */
+  parkingSpaces: number | null;
+  /** What's nearby — keys from NEARBY_AMENITY_LABELS in
+   * src/lib/nearby-amenities.ts (e.g. "school", "grocery_store"). Distinct
+   * from `amenities` (in-unit features vs. neighborhood context). Rental only. */
+  nearbyAmenities: string[];
+  /** Rental only — null on a car listing. */
+  internetType: "dsl" | "cable" | "fiber" | null;
+  /** Rental only — null on a car listing. */
+  internetSpeedMbps: number | null;
+  /** Rental only — null on a car listing. */
+  heatType: "gas" | "oil" | "electric" | null;
+  /** Rental only — null on a car listing. */
+  stoveType: "induction" | "standard" | null;
   /** Car only — null on a rental. */
   make: string | null;
   /** Car only — null on a rental. */

@@ -1,17 +1,16 @@
 // src/app/[locale]/cars/[id]/page.tsx
 // Car listing detail page — mirrors src/app/[locale]/listings/[id]/page.tsx
-// (same photo gallery, same "contact the lister" box and its RLS-gated
-// getOwnerContact, same sign-in redirect), swapped to car fields. No stamp
-// badge here: a car ad is always self_listed, there's no housing-office
-// equivalent for cars.
+// (same photo gallery, same public SellerCard), swapped to car fields. No
+// stamp badge here: a car ad is always self_listed, there's no
+// housing-office equivalent for cars.
 
 import type { Metadata } from "next";
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { ListingPhotoGallery } from "@/components/listing-photo-gallery";
-import { getPathname, Link } from "@/i18n/navigation";
-import { getListingById, getOwnerContact } from "@/lib/listings";
-import { createClient } from "@/lib/supabase/server";
+import { SellerCard } from "@/components/seller-card";
+import { Link } from "@/i18n/navigation";
+import { getListingById, getSellerListings, getSellerProfile } from "@/lib/listings";
 import { SITE_URL } from "@/lib/site-url";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
@@ -61,17 +60,13 @@ export default async function CarDetailPage({ params }: { params: Params }) {
   if (!listing || listing.type !== "car") notFound();
 
   const t = await getTranslations("CarDetail");
-  const locale = await getLocale();
 
   const isSold = listing.status === "rented";
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  const ownerContact = user ? await getOwnerContact(listing.ownerId) : null;
-
-  const nextPath = getPathname({ href: `/cars/${listing.id}`, locale });
+  const [seller, otherListings] = await Promise.all([
+    getSellerProfile(listing.ownerId),
+    getSellerListings(listing.ownerId, listing.id),
+  ]);
 
   // Structured data for search/AI answer engines — same reasoning as the
   // rental detail page's RealEstateListing block, Vehicle is schema.org's
@@ -145,41 +140,14 @@ export default async function CarDetailPage({ params }: { params: Params }) {
           </p>
         )}
 
-        <div className="mt-8 rounded-md border border-canvas-deep bg-paper p-5">
-          {ownerContact ? (
-            <>
-              <p className="mb-3 text-sm font-semibold text-ink">{t("interestedHeading")}</p>
-              <div className="flex flex-col gap-2 text-sm">
-                {ownerContact.contactEmail && (
-                  <a
-                    href={`mailto:${ownerContact.contactEmail}?subject=${encodeURIComponent(`About: ${listing.year} ${listing.make} ${listing.model}`)}`}
-                    className="inline-block w-fit rounded-md bg-brass px-5 py-2.5 font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
-                  >
-                    {t("emailButton", { name: ownerContact.displayName ?? t("theSeller") })}
-                  </a>
-                )}
-                {ownerContact.contactPhone && (
-                  <a
-                    href={`tel:${ownerContact.contactPhone.replace(/[^+\d]/g, "")}`}
-                    className="text-ink-soft hover:text-ink"
-                  >
-                    {ownerContact.contactPhone}
-                  </a>
-                )}
-              </div>
-            </>
-          ) : (
-            <>
-              <p className="mb-3 text-sm text-ink-soft">{t("signInToContact")}</p>
-              <Link
-                href={`/sign-in?next=${nextPath}`}
-                className="inline-block rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
-              >
-                {t("signIn")}
-              </Link>
-            </>
-          )}
-        </div>
+        {seller && (
+          <SellerCard
+            seller={seller}
+            ownerId={listing.ownerId}
+            listingTitle={`${listing.year} ${listing.make} ${listing.model}`}
+            otherListings={otherListings}
+          />
+        )}
       </div>
     </main>
   );
