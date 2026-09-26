@@ -9,6 +9,8 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { CarListingCard } from "@/components/car-listing-card";
 import { ListingCard } from "@/components/listing-card";
+import { ProductListingCard } from "@/components/product-listing-card";
+import { ServiceListingCard } from "@/components/service-listing-card";
 import { Link } from "@/i18n/navigation";
 import { getSellerListings, getSellerProfile } from "@/lib/listings";
 
@@ -86,21 +88,19 @@ export default async function SellerProfilePage({ params }: { params: Params }) 
           <p className="text-ink-soft">{t("noListings")}</p>
         ) : (
           <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
-            {listings.map((listing, index) =>
-              listing.type === "car" ? (
-                <CarListingCard
-                  key={listing.id}
-                  listing={listing}
-                  photoGradient={PHOTO_GRADIENTS[index % PHOTO_GRADIENTS.length]}
-                />
-              ) : (
-                <ListingCard
-                  key={listing.id}
-                  listing={listing}
-                  photoGradient={PHOTO_GRADIENTS[index % PHOTO_GRADIENTS.length]}
-                />
-              ),
-            )}
+            {listings.map((listing, index) => {
+              const photoGradient = PHOTO_GRADIENTS[index % PHOTO_GRADIENTS.length];
+              switch (listing.type) {
+                case "car":
+                  return <CarListingCard key={listing.id} listing={listing} photoGradient={photoGradient} />;
+                case "product":
+                  return <ProductListingCard key={listing.id} listing={listing} photoGradient={photoGradient} />;
+                case "service":
+                  return <ServiceListingCard key={listing.id} listing={listing} photoGradient={photoGradient} />;
+                default:
+                  return <ListingCard key={listing.id} listing={listing} photoGradient={photoGradient} />;
+              }
+            })}
           </div>
         )}
 

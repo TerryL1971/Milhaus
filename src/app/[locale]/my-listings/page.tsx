@@ -35,8 +35,15 @@ function listingLabel(listing: Listing): string {
   return listing.type === "car" ? `${listing.year} ${listing.make} ${listing.model}` : listing.title;
 }
 
+const LISTING_PATH: Record<Listing["type"], string> = {
+  rental: "/listings",
+  car: "/cars",
+  product: "/products",
+  service: "/services",
+};
+
 function listingHref(listing: Listing): string {
-  return listing.type === "car" ? `/cars/${listing.id}` : `/listings/${listing.id}`;
+  return `${LISTING_PATH[listing.type]}/${listing.id}`;
 }
 
 export default async function MyListingsPage() {
@@ -74,9 +81,21 @@ export default async function MyListingsPage() {
             </Link>
             <Link
               href="/post-car"
-              className="rounded-md bg-brass px-4 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+              className="rounded-md border border-canvas-deep px-4 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-olive hover:text-olive-deep"
             >
               {t("postCar")}
+            </Link>
+            <Link
+              href="/post-product"
+              className="rounded-md border border-canvas-deep px-4 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-olive hover:text-olive-deep"
+            >
+              {t("postProduct")}
+            </Link>
+            <Link
+              href="/post-service"
+              className="rounded-md bg-brass px-4 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+            >
+              {t("postService")}
             </Link>
           </div>
         </div>
@@ -129,7 +148,11 @@ export default async function MyListingsPage() {
                               type="submit"
                               className="rounded-md border border-canvas-deep px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-olive hover:text-olive-deep"
                             >
-                              {listing.type === "car" ? t("markSold") : t("markRented")}
+                              {listing.type === "car" || listing.type === "product"
+                                ? t("markSold")
+                                : listing.type === "service"
+                                  ? t("markUnavailable")
+                                  : t("markRented")}
                             </button>
                           </form>
                         )}

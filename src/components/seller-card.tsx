@@ -6,12 +6,14 @@
 // being visible, not gating the contact details behind an account.
 //
 // Kept as one shared component rather than duplicated per detail page —
-// a seller's "other listings" can mix rentals and cars, so it renders
-// whichever card type fits each one.
+// a seller's "other listings" can mix any of the four listing types, so
+// it renders whichever card type fits each one.
 
 import { useTranslations } from "next-intl";
 import { CarListingCard } from "@/components/car-listing-card";
 import { ListingCard } from "@/components/listing-card";
+import { ProductListingCard } from "@/components/product-listing-card";
+import { ServiceListingCard } from "@/components/service-listing-card";
 import { Link } from "@/i18n/navigation";
 import type { Listing } from "@/lib/types";
 import type { SellerProfile } from "@/lib/listings";
@@ -92,21 +94,19 @@ export function SellerCard({
             {t("moreFromSeller", { name })}
           </p>
           <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-4">
-            {otherListings.map((listing, index) =>
-              listing.type === "car" ? (
-                <CarListingCard
-                  key={listing.id}
-                  listing={listing}
-                  photoGradient={PHOTO_GRADIENTS[index % PHOTO_GRADIENTS.length]}
-                />
-              ) : (
-                <ListingCard
-                  key={listing.id}
-                  listing={listing}
-                  photoGradient={PHOTO_GRADIENTS[index % PHOTO_GRADIENTS.length]}
-                />
-              ),
-            )}
+            {otherListings.map((listing, index) => {
+              const photoGradient = PHOTO_GRADIENTS[index % PHOTO_GRADIENTS.length];
+              switch (listing.type) {
+                case "car":
+                  return <CarListingCard key={listing.id} listing={listing} photoGradient={photoGradient} />;
+                case "product":
+                  return <ProductListingCard key={listing.id} listing={listing} photoGradient={photoGradient} />;
+                case "service":
+                  return <ServiceListingCard key={listing.id} listing={listing} photoGradient={photoGradient} />;
+                default:
+                  return <ListingCard key={listing.id} listing={listing} photoGradient={photoGradient} />;
+              }
+            })}
           </div>
         </div>
       )}
