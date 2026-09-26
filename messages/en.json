@@ -34,7 +34,8 @@
     "signIn": "Sign in",
     "signOut": "Sign out",
     "languageToggle": "Switch to German",
-    "products": "Items for sale"
+    "products": "Items for sale",
+    "services": "Services"
   },
   "SiteFooter": {
     "forRentersHeading": "For renters",
@@ -50,6 +51,9 @@
     "productsHeading": "Items for sale",
     "browseProducts": "Browse items",
     "sellSomething": "Sell something",
+    "servicesHeading": "Services",
+    "browseServices": "Browse services",
+    "offerSomething": "Offer a service",
     "aboutHeading": "About",
     "contact": "Contact",
     "impressum": "Impressum",
@@ -166,6 +170,16 @@
     "submitAdminAddProduct": "Publish item",
     "successSelfListProductTitle": "Submitted for review",
     "successSelfListProductBody": "We'll take a look, usually the same day, and it'll go live on the Items for sale page.",
+    "serviceTitlePlaceholder": "e.g. Local moving help, PCS specialist",
+    "serviceDescriptionPlaceholder": "What do you offer, and what should someone know before booking?",
+    "servicePrice": "Price (€)",
+    "priceIsEstimate": "This is a starting price, not a fixed quote",
+    "pricingNotePlaceholder": "e.g. Final price depends on distance and how much you're moving",
+    "serviceCategory": "Category",
+    "submitSelfListService": "Post service",
+    "submitAdminAddService": "Publish service",
+    "successSelfListServiceTitle": "Submitted for review",
+    "successSelfListServiceBody": "We'll take a look, usually the same day, and it'll go live on the Services page.",
     "photos": "Photos",
     "submitSelfList": "Post home",
     "submitSelfListCar": "Post car ad",
@@ -347,6 +361,32 @@
   "PostProductPage": {
     "heading": "Sell an item",
     "body": "A few details and some photos — we'll review it, usually the same day, and it goes live on the Items for sale page."
+  },
+  "ServicesPage": {
+    "metaTitle": "Services",
+    "metaDescription": "Services offered by Americans in Germany — movers, mechanics, tutors, and more, all reviewed before they're listed.",
+    "eyebrow": "Services",
+    "heading": "Services",
+    "subhead": "Offering something the community needs — moving help, tutoring, repairs? Listed by the community, reviewed the same way every home on this site is.",
+    "offerSomething": "Offer a service",
+    "searchPlaceholder": "Search by title, city, or category…",
+    "emptyNone": "Nothing listed right now — check back soon, or be the first.",
+    "emptyNoMatch": "Nothing matches that search."
+  },
+  "ServiceCard": {
+    "available": "Available",
+    "unavailable": "Unavailable",
+    "from": "from"
+  },
+  "ServiceDetail": {
+    "backToServices": "← Back to services",
+    "unavailable": "Unavailable",
+    "availableStatus": "Available",
+    "from": "from"
+  },
+  "PostServicePage": {
+    "heading": "Offer a service",
+    "body": "A few details and some photos — we'll review it, usually the same day, and it goes live on the Services page."
   },
   "SellerCard": {
     "postedBy": "Posted by",

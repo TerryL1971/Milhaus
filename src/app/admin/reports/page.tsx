@@ -23,6 +23,7 @@ const LISTING_PATH: Record<string, string> = {
   rental: "/listings",
   car: "/cars",
   product: "/products",
+  service: "/services",
 };
 
 export default async function AdminReportsPage() {

@@ -9,9 +9,10 @@ import { createClient } from "@/lib/supabase/server";
 import type { Listing, ListingType } from "@/lib/types";
 
 // Every read below selects "*, rental_details(*), car_details(*),
-// product_details(*)" — PostgREST embeds each as a nested object (null
-// when the row isn't that type, since listing_id is that table's PK/FK).
-const LISTING_SELECT = "*, rental_details(*), car_details(*), product_details(*)";
+// product_details(*), service_details(*)" — PostgREST embeds each as a
+// nested object (null when the row isn't that type, since listing_id is
+// that table's PK/FK).
+const LISTING_SELECT = "*, rental_details(*), car_details(*), product_details(*), service_details(*)";
 
 // Supabase returns snake_case columns; the app's Listing type is camelCase.
 // The type-specific fields now live on a joined details row rather than
@@ -22,6 +23,7 @@ export function mapRow(row: Record<string, unknown>): Listing {
     (row.rental_details as Record<string, unknown> | null) ??
     (row.car_details as Record<string, unknown> | null) ??
     (row.product_details as Record<string, unknown> | null) ??
+    (row.service_details as Record<string, unknown> | null) ??
     {};
 
   return {
@@ -56,6 +58,9 @@ export function mapRow(row: Record<string, unknown>): Listing {
     mileageKm: details.mileage_km === null || details.mileage_km === undefined ? null : Number(details.mileage_km),
     productCategory: (details.product_category as string | null) ?? null,
     condition: (details.condition as string | null) ?? null,
+    serviceCategory: (details.service_category as string | null) ?? null,
+    priceIsEstimate: Boolean(details.price_is_estimate),
+    pricingNote: (details.pricing_note as string | null) ?? null,
     source: row.source as Listing["source"],
     status: row.status as Listing["status"],
     isFeatured: Boolean(row.is_featured),

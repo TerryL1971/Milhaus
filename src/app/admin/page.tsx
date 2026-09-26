@@ -103,7 +103,9 @@ export default async function AdminPage() {
               {pending.map((listing) => {
                 const isCar = listing.type === "car";
                 const isProduct = listing.type === "product";
-                const typeLabel = isCar ? "Car" : isProduct ? "Item" : "Rental";
+                const isService = listing.type === "service";
+                const isRental = listing.type === "rental";
+                const typeLabel = isCar ? "Car" : isProduct ? "Item" : isService ? "Service" : "Rental";
                 return (
                 <div
                   key={listing.id}
@@ -118,13 +120,14 @@ export default async function AdminPage() {
                         {isCar ? `${listing.year} ${listing.make} ${listing.model}` : listing.title}
                       </p>
                       <p className="text-sm text-ink-soft">
-                        {isCar || isProduct ? listing.city : `${listing.address}, ${listing.city}`}
+                        {isRental ? `${listing.address}, ${listing.city}` : listing.city}
                         {listing.base ? ` · ${listing.base}` : ""}
                       </p>
                       <div className="mt-1 flex flex-wrap gap-3 font-mono text-xs text-charcoal/80">
                         <span>
+                          {listing.priceIsEstimate ? "from " : ""}
                           {currencyFormatter.format(listing.priceEurMonth)}
-                          {isCar || isProduct ? "" : "/mo"}
+                          {isRental ? "/mo" : ""}
                         </span>
                         {isCar ? (
                           listing.mileageKm != null && <span>{listing.mileageKm.toLocaleString("en-US")} km</span>
@@ -132,6 +135,10 @@ export default async function AdminPage() {
                           <>
                             {listing.productCategory && <span>{listing.productCategory}</span>}
                             {listing.condition && <span>{listing.condition}</span>}
+                          </>
+                        ) : isService ? (
+                          <>
+                            {listing.serviceCategory && <span>{listing.serviceCategory}</span>}
                           </>
                         ) : (
                           <>
@@ -220,7 +227,7 @@ export default async function AdminPage() {
                           {listing.isFeatured && <span className="mr-1 text-brass">★</span>}
                           {listing.type !== "rental" && (
                             <span className="mr-1.5 rounded-full bg-canvas-deep px-1.5 py-0.5 align-middle font-mono text-[0.58rem] uppercase tracking-wider text-ink-soft">
-                              {listing.type === "car" ? "Car" : "Item"}
+                              {listing.type === "car" ? "Car" : listing.type === "service" ? "Service" : "Item"}
                             </span>
                           )}
                           {listing.title}

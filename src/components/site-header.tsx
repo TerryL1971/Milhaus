@@ -53,6 +53,9 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
           <Link href="/products" className="opacity-85 transition-opacity hover:opacity-100">
             {t("products")}
           </Link>
+          <Link href="/services" className="opacity-85 transition-opacity hover:opacity-100">
+            {t("services")}
+          </Link>
         </nav>
 
         <div className="flex flex-shrink-0 items-center gap-3">

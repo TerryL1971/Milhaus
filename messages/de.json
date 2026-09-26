@@ -34,7 +34,8 @@
     "signIn": "Anmelden",
     "signOut": "Abmelden",
     "languageToggle": "Auf Englisch umschalten",
-    "products": "Artikel"
+    "products": "Artikel",
+    "services": "Dienstleistungen"
   },
   "SiteFooter": {
     "forRentersHeading": "Für Mieter",
@@ -50,6 +51,9 @@
     "productsHeading": "Artikel",
     "browseProducts": "Artikel durchsuchen",
     "sellSomething": "Etwas verkaufen",
+    "servicesHeading": "Dienstleistungen",
+    "browseServices": "Dienstleistungen durchsuchen",
+    "offerSomething": "Dienstleistung anbieten",
     "aboutHeading": "Über uns",
     "contact": "Kontakt",
     "impressum": "Impressum",
@@ -166,6 +170,16 @@
     "submitAdminAddProduct": "Artikel veröffentlichen",
     "successSelfListProductTitle": "Zur Prüfung eingereicht",
     "successSelfListProductBody": "Wir schauen es uns an, meist noch am selben Tag, dann geht es auf der Artikel-Seite live.",
+    "serviceTitlePlaceholder": "z. B. Lokale Umzugshilfe, PCS-Spezialist",
+    "serviceDescriptionPlaceholder": "Was bieten Sie an, und was sollte man vor der Buchung wissen?",
+    "servicePrice": "Preis (€)",
+    "priceIsEstimate": "Dies ist ein Startpreis, kein Festpreis",
+    "pricingNotePlaceholder": "z. B. Endpreis hängt von Entfernung und Umzugsmenge ab",
+    "serviceCategory": "Kategorie",
+    "submitSelfListService": "Dienstleistung inserieren",
+    "submitAdminAddService": "Dienstleistung veröffentlichen",
+    "successSelfListServiceTitle": "Zur Prüfung eingereicht",
+    "successSelfListServiceBody": "Wir schauen es uns an, meist noch am selben Tag, dann geht es auf der Dienstleistungen-Seite live.",
     "photos": "Fotos",
     "submitSelfList": "Zuhause inserieren",
     "submitSelfListCar": "Auto inserieren",
@@ -347,6 +361,32 @@
   "PostProductPage": {
     "heading": "Artikel verkaufen",
     "body": "Ein paar Details und einige Fotos — wir prüfen es, meist noch am selben Tag, dann geht es auf der Artikel-Seite live."
+  },
+  "ServicesPage": {
+    "metaTitle": "Dienstleistungen",
+    "metaDescription": "Dienstleistungen von Amerikanern in Deutschland — Umzugshelfer, Mechaniker, Nachhilfelehrer und mehr, alle geprüft, bevor sie online gehen.",
+    "eyebrow": "Dienstleistungen",
+    "heading": "Dienstleistungen",
+    "subhead": "Bieten Sie etwas an, das die Community braucht — Umzugshilfe, Nachhilfe, Reparaturen? Von der Community inseriert, genauso geprüft wie jedes Zuhause auf dieser Seite.",
+    "offerSomething": "Dienstleistung anbieten",
+    "searchPlaceholder": "Suche nach Titel, Stadt oder Kategorie…",
+    "emptyNone": "Gerade nichts gelistet — schauen Sie bald wieder vorbei, oder seien Sie die/der Erste.",
+    "emptyNoMatch": "Nichts passt zu dieser Suche."
+  },
+  "ServiceCard": {
+    "available": "Verfügbar",
+    "unavailable": "Nicht verfügbar",
+    "from": "ab"
+  },
+  "ServiceDetail": {
+    "backToServices": "← Zurück zu den Dienstleistungen",
+    "unavailable": "Nicht verfügbar",
+    "availableStatus": "Verfügbar",
+    "from": "ab"
+  },
+  "PostServicePage": {
+    "heading": "Dienstleistung anbieten",
+    "body": "Ein paar Details und einige Fotos — wir prüfen es, meist noch am selben Tag, dann geht es auf der Dienstleistungen-Seite live."
   },
   "SellerCard": {
     "postedBy": "Inseriert von",

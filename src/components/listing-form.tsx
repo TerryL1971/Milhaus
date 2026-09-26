@@ -1,6 +1,7 @@
 // src/components/listing-form.tsx
-// Shared by the self-listing flow (/post, /post-car, /post-product) and the
-// admin "add a listing" flow (/admin/listings/new) — same three-round-trip
+// Shared by the self-listing flow (/post, /post-car, /post-product,
+// /post-service) and the admin "add a listing" flow
+// (/admin/listings/new) — same three-round-trip
 // submit (create a draft row for its id -> upload photos into ${id}/... ->
 // update with the photo URLs and the final status) for every listing type,
 // just the field set and the insert payload branch on `kind`:
@@ -10,9 +11,9 @@
 // - admin-add lets the admin pick the source (defaulting to
 //   housing_office for rentals — that's the actual reason this exists,
 //   Charlie entering a housing-office home directly) and goes straight to
-//   active: an admin adding it themselves *is* the review. Cars and
-//   products have no housing-office equivalent, so admin-add for either
-//   skips the source picker entirely and is always self_listed.
+//   active: an admin adding it themselves *is* the review. Cars, products,
+//   and services have no housing-office equivalent, so admin-add for any
+//   of them skips the source picker entirely and is always self_listed.
 //
 // Kept as one component with variant + kind props, not several near-
 // duplicates: the FormData/event.currentTarget bug found earlier this
@@ -29,12 +30,13 @@ import { AMENITY_KEYS } from "@/lib/amenities";
 import { BASE_NAMES } from "@/lib/bases";
 import { NEARBY_AMENITY_KEYS } from "@/lib/nearby-amenities";
 import { CONDITION_KEYS, CONDITION_LABELS, PRODUCT_CATEGORY_KEYS, PRODUCT_CATEGORY_LABELS } from "@/lib/product-categories";
+import { SERVICE_CATEGORY_KEYS, SERVICE_CATEGORY_LABELS } from "@/lib/service-categories";
 import { createClient } from "@/lib/supabase/client";
 import type { ListingSource } from "@/lib/types";
 
 type Status = "idle" | "submitting" | "success" | "error";
 type Variant = "self-list" | "admin-add";
-type Kind = "rental" | "car" | "product";
+type Kind = "rental" | "car" | "product" | "service";
 
 const labelClass = "mb-1 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75";
 const inputClass =
@@ -53,6 +55,7 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
   const isRental = kind === "rental";
   const isCar = kind === "car";
   const isProduct = kind === "product";
+  const isService = kind === "service";
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -124,6 +127,13 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
         product_category: formData.get("productCategory"),
         condition: formData.get("condition"),
       }));
+    } else if (isService) {
+      ({ error: detailsError } = await supabase.from("service_details").insert({
+        listing_id: listingId,
+        service_category: formData.get("serviceCategory"),
+        price_is_estimate: formData.get("priceIsEstimate") === "on",
+        pricing_note: formData.get("pricingNote") || null,
+      }));
     } else {
       ({ error: detailsError } = await supabase.from("rental_details").insert({
         listing_id: listingId,
@@ -190,7 +200,9 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
               ? t("successSelfListCarTitle")
               : isProduct
                 ? t("successSelfListProductTitle")
-                : t("successSelfListTitle")}
+                : isService
+                  ? t("successSelfListServiceTitle")
+                  : t("successSelfListTitle")}
         </p>
         <p className="mb-4 text-sm text-ink-soft">
           {isAdminAdd
@@ -199,7 +211,9 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
               ? t("successSelfListCarBody")
               : isProduct
                 ? t("successSelfListProductBody")
-                : t("successSelfListBody")}
+                : isService
+                  ? t("successSelfListServiceBody")
+                  : t("successSelfListBody")}
         </p>
         {isAdminAdd && (
           <Link href="/admin" className="text-sm font-semibold text-olive-deep hover:underline">
@@ -235,7 +249,15 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
           id="title"
           name="title"
           required
-          placeholder={isCar ? t("carTitlePlaceholder") : isProduct ? t("productTitlePlaceholder") : t("titlePlaceholder")}
+          placeholder={
+            isCar
+              ? t("carTitlePlaceholder")
+              : isProduct
+                ? t("productTitlePlaceholder")
+                : isService
+                  ? t("serviceTitlePlaceholder")
+                  : t("titlePlaceholder")
+          }
           className={inputClass}
         />
       </div>
@@ -253,7 +275,9 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
               ? t("carDescriptionPlaceholder")
               : isProduct
                 ? t("productDescriptionPlaceholder")
-                : t("descriptionPlaceholder")
+                : isService
+                  ? t("serviceDescriptionPlaceholder")
+                  : t("descriptionPlaceholder")
           }
           className={inputClass}
         />
@@ -331,6 +355,24 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
         </div>
       )}
 
+      {isService && (
+        <div>
+          <label htmlFor="serviceCategory" className={labelClass}>
+            {t("serviceCategory")}
+          </label>
+          <select id="serviceCategory" name="serviceCategory" required className={inputClass} defaultValue="">
+            <option value="" disabled>
+              {t("chooseOne")}
+            </option>
+            {SERVICE_CATEGORY_KEYS.map((key) => (
+              <option key={key} value={key}>
+                {SERVICE_CATEGORY_LABELS[key]}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       {isRental && (
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -389,7 +431,7 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
       {!isRental ? (
         <div>
           <label htmlFor="priceEurMonth" className={labelClass}>
-            {isCar ? t("carPrice") : t("productPrice")}
+            {isCar ? t("carPrice") : isService ? t("servicePrice") : t("productPrice")}
           </label>
           <input
             id="priceEurMonth"
@@ -399,6 +441,24 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
             required
             className={inputClass}
           />
+          {isService && (
+            <>
+              <label className="mt-2 flex items-center gap-2 text-sm text-charcoal">
+                <input
+                  type="checkbox"
+                  name="priceIsEstimate"
+                  className="h-4 w-4 rounded border-canvas-deep text-olive focus:ring-olive"
+                />
+                <span>{t("priceIsEstimate")}</span>
+              </label>
+              <textarea
+                name="pricingNote"
+                rows={2}
+                placeholder={t("pricingNotePlaceholder")}
+                className={`${inputClass} mt-2`}
+              />
+            </>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -591,12 +651,16 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
               ? t("submitAdminAddCar")
               : isProduct
                 ? t("submitAdminAddProduct")
-                : t("submitAdminAdd")
+                : isService
+                  ? t("submitAdminAddService")
+                  : t("submitAdminAdd")
             : isCar
               ? t("submitSelfListCar")
               : isProduct
                 ? t("submitSelfListProduct")
-                : t("submitSelfList")}
+                : isService
+                  ? t("submitSelfListService")
+                  : t("submitSelfList")}
       </button>
     </form>
   );

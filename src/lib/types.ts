@@ -3,7 +3,7 @@
 // data model in CLAUDE.md — kept in one place so the mock data used before
 // Supabase is wired up, and the real Supabase queries later, share a shape.
 
-export type ListingType = "rental" | "car" | "product";
+export type ListingType = "rental" | "car" | "product" | "service";
 
 export type ListingSource = "housing_office" | "self_listed";
 
@@ -82,6 +82,16 @@ export interface Listing {
   /** Product only — key from CONDITION_LABELS in
    * src/lib/product-categories.ts. */
   condition: string | null;
+  /** Service only — key from SERVICE_CATEGORY_LABELS in
+   * src/lib/service-categories.ts. */
+  serviceCategory: string | null;
+  /** Service only — when true, priceEurMonth is a "starting at" figure
+   * rather than a fixed price (services often can't quote a hard number
+   * up front). */
+  priceIsEstimate: boolean;
+  /** Service only — free text like "final price depends on square
+   * footage" or "contact for a custom quote". */
+  pricingNote: string | null;
   source: ListingSource;
   status: ListingStatus;
   /** Admin-controlled: whether this shows in the homepage hero's 3-card

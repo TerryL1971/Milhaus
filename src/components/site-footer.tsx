@@ -40,6 +40,13 @@ export function SiteFooter() {
       ],
     },
     {
+      heading: t("servicesHeading"),
+      links: [
+        { label: t("browseServices"), href: "/services" },
+        { label: t("offerSomething"), href: "/post-service" },
+      ],
+    },
+    {
       heading: t("aboutHeading"),
       links: [
         { label: t("contact"), href: "#" },
