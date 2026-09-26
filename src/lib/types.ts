@@ -3,7 +3,7 @@
 // data model in CLAUDE.md — kept in one place so the mock data used before
 // Supabase is wired up, and the real Supabase queries later, share a shape.
 
-export type ListingType = "rental" | "car";
+export type ListingType = "rental" | "car" | "product";
 
 export type ListingSource = "housing_office" | "self_listed";
 
@@ -71,6 +71,12 @@ export interface Listing {
   year: number | null;
   /** Car only — null on a rental. */
   mileageKm: number | null;
+  /** Product only — key from PRODUCT_CATEGORY_LABELS in
+   * src/lib/product-categories.ts. */
+  productCategory: string | null;
+  /** Product only — key from CONDITION_LABELS in
+   * src/lib/product-categories.ts. */
+  condition: string | null;
   source: ListingSource;
   status: ListingStatus;
   /** Admin-controlled: whether this shows in the homepage hero's 3-card

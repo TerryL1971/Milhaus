@@ -39,6 +39,8 @@ export function mapRow(row: Record<string, unknown>): Listing {
     model: (row.model as string | null) ?? null,
     year: row.year === null || row.year === undefined ? null : Number(row.year),
     mileageKm: row.mileage_km === null || row.mileage_km === undefined ? null : Number(row.mileage_km),
+    productCategory: (row.product_category as string | null) ?? null,
+    condition: (row.condition as string | null) ?? null,
     source: row.source as Listing["source"],
     status: row.status as Listing["status"],
     isFeatured: Boolean(row.is_featured),
