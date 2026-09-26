@@ -151,11 +151,6 @@ export default async function Home() {
                   </span>
                 </div>
 
-                <div className="mb-2 inline-flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-olive-deep">
-                  <span className="inline-block h-1.5 w-1.5 rotate-45 bg-olive" />
-                  {category.eyebrow}
-                </div>
-
                 <h1 className="mb-1.5 font-display text-xl font-semibold leading-[1.1] tracking-tight text-ink">
                   {category.heading}
                 </h1>
