@@ -60,38 +60,13 @@ export default async function Home() {
     getFeaturedListings("service", 2),
   ]);
 
-  const categoryCards = [
-    {
-      key: "cars",
-      eyebrow: tCars("eyebrow"),
-      heading: tCars("heading"),
-      subhead: tCars("subhead"),
-      searchPlaceholder: tCars("searchPlaceholder"),
-      action: getPathname({ href: "/cars", locale }),
-    },
-    {
-      key: "products",
-      eyebrow: tProducts("eyebrow"),
-      heading: tProducts("heading"),
-      subhead: tProducts("subhead"),
-      searchPlaceholder: tProducts("searchPlaceholder"),
-      action: getPathname({ href: "/products", locale }),
-    },
-    {
-      key: "services",
-      eyebrow: tServices("eyebrow"),
-      heading: tServices("heading"),
-      subhead: tServices("subhead"),
-      searchPlaceholder: tServices("searchPlaceholder"),
-      action: getPathname({ href: "/services", locale }),
-    },
-  ];
-
-  // The 4-column mini-hero row — Rentals keeps the punchy headline/
-  // emphasis split (headlineStart/Emphasis/End) it always had; the other
-  // three use their own page's eyebrow/heading/subhead so this copy isn't
-  // duplicated in a second place.
-  const categoryHeroes = [
+  // One card per category — hero content (eyebrow/heading/subhead/photo
+  // fan) and the search control merged into a single unit rather than two
+  // separate rows. Rentals keeps its punchy headline/emphasis split and a
+  // "near base" select (it has more filters than a single text box can
+  // hold — move-in date and bedrooms live in FilterModal instead); the
+  // other three reuse their own page's copy and a plain text search.
+  const categories = [
     {
       key: "rental",
       eyebrow: t("eyebrow"),
@@ -103,6 +78,7 @@ export default async function Home() {
       subhead: t("subhead"),
       featured: featuredRentals,
       hrefBase: "/listings",
+      search: { kind: "base-select" as const, action: "/#listings" },
     },
     {
       key: "cars",
@@ -111,6 +87,7 @@ export default async function Home() {
       subhead: tCars("subhead"),
       featured: featuredCars,
       hrefBase: "/cars",
+      search: { kind: "text" as const, action: getPathname({ href: "/cars", locale }), placeholder: tCars("searchPlaceholder") },
     },
     {
       key: "products",
@@ -119,6 +96,11 @@ export default async function Home() {
       subhead: tProducts("subhead"),
       featured: featuredProducts,
       hrefBase: "/products",
+      search: {
+        kind: "text" as const,
+        action: getPathname({ href: "/products", locale }),
+        placeholder: tProducts("searchPlaceholder"),
+      },
     },
     {
       key: "services",
@@ -127,6 +109,11 @@ export default async function Home() {
       subhead: tServices("subhead"),
       featured: featuredServices,
       hrefBase: "/services",
+      search: {
+        kind: "text" as const,
+        action: getPathname({ href: "/services", locale }),
+        placeholder: tServices("searchPlaceholder"),
+      },
     },
   ];
 
@@ -144,36 +131,46 @@ export default async function Home() {
   return (
     <main className="flex-1">
       {/* ---------- HERO ---------- */}
-      {/* All four categories get the same treatment side by side — a
-          headline/subhead plus a small "featured" photo fan of real
-          listings from that category — rather than rentals getting a
-          bigger, separate hero. Each fan card links straight to that
-          listing (same as the old single-category hero did). */}
-      <section className="py-14">
+      {/* All four categories in one card each — a reserved sponsored-spot
+          banner up top (not wired to real payment yet, see CLAUDE.md's
+          "not needed for MVP" call on Stripe — this is just the space),
+          then hero content (eyebrow/heading/subhead/photo fan), then the
+          search control, all merged into a single unit instead of a
+          separate hero row and search row. */}
+      <section className="bg-canvas-deep py-14">
         <div className="mx-auto max-w-[1400px] px-8">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {categoryHeroes.map((hero) => (
-              <div key={hero.key}>
-                <div className="mb-3 inline-flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-olive-deep">
-                  <span className="inline-block h-1.5 w-1.5 rotate-45 bg-olive" />
-                  {hero.eyebrow}
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {categories.map((category) => (
+              <div
+                key={category.key}
+                className="flex flex-col rounded-md border border-canvas-deep bg-paper p-5 shadow-[0_8px_24px_rgba(27,42,58,0.06)]"
+              >
+                <div className="mb-4 flex h-14 items-center justify-center rounded-md border border-dashed border-brass/50 bg-brass/8">
+                  <span className="font-mono text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-brass-deep">
+                    {t("sponsoredSpot")}
+                  </span>
                 </div>
 
-                <h1 className="mb-2.5 font-display text-2xl font-semibold leading-[1.1] tracking-tight text-ink">
-                  {hero.heading}
+                <div className="mb-2 inline-flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-olive-deep">
+                  <span className="inline-block h-1.5 w-1.5 rotate-45 bg-olive" />
+                  {category.eyebrow}
+                </div>
+
+                <h1 className="mb-1.5 font-display text-xl font-semibold leading-[1.1] tracking-tight text-ink">
+                  {category.heading}
                 </h1>
 
-                <p className="mb-5 text-sm text-ink-soft">{hero.subhead}</p>
+                <p className="mb-4 text-sm text-ink-soft">{category.subhead}</p>
 
-                {hero.featured.length > 0 && (
-                  <div className="relative h-[190px]">
-                    {hero.featured.map((listing, index) => (
+                {category.featured.length > 0 && (
+                  <div className="relative mb-5 h-[150px]">
+                    {category.featured.map((listing, index) => (
                       <Link
                         key={listing.id}
-                        href={`${hero.hrefBase}/${listing.id}`}
+                        href={`${category.hrefBase}/${listing.id}`}
                         className={`${MINI_FAN_STYLES[index]} overflow-hidden rounded-md border border-canvas-deep bg-paper shadow-[0_10px_26px_rgba(27,42,58,0.14)] transition-transform hover:-translate-y-1`}
                       >
-                        <div className="relative h-20">
+                        <div className="relative h-16">
                           {listing.photos[0] ? (
                             // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL, not worth next/image's config here
                             <img src={listing.photos[0]} alt="" className="h-full w-full object-cover" />
@@ -185,87 +182,57 @@ export default async function Home() {
                           )}
                           {listing.source === "housing_office" && <StampBadge className="right-2 top-2 scale-75" />}
                         </div>
-                        <div className="px-2.5 py-2">
-                          <div className="font-mono text-[0.86rem] font-semibold text-ink">
+                        <div className="px-2.5 py-1.5">
+                          <div className="font-mono text-[0.82rem] font-semibold text-ink">
                             {miniCardPrice(listing)}
                           </div>
-                          <div className="mt-0.5 truncate text-[0.72rem] text-ink-soft">{miniCardDetail(listing)}</div>
+                          <div className="mt-0.5 truncate text-[0.7rem] text-ink-soft">{miniCardDetail(listing)}</div>
                         </div>
                       </Link>
                     ))}
                   </div>
                 )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* ---------- BROWSE BY CATEGORY ---------- */}
-      {/* One row, all four categories, matching card chrome and the same
-          single-field-plus-button shape. Rentals genuinely has more
-          filters (move-in date, bedrooms) than a car or a service does,
-          but those live in FilterModal/the results page now rather than
-          making this card taller than its three siblings — "near base" is
-          the one filter distinctive enough to keep here. */}
-      <section className="bg-canvas-deep py-14">
-        <div className="mx-auto max-w-[1400px] px-8">
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="rounded-md border border-canvas-deep bg-paper p-5 shadow-[0_8px_24px_rgba(27,42,58,0.06)]">
-              <div className="mb-2 inline-flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-olive-deep">
-                <span className="inline-block h-1.5 w-1.5 rotate-45 bg-olive" />
-                {t("rentalCardEyebrow")}
-              </div>
-              <h2 className="mb-1.5 font-display text-xl font-semibold text-ink">{t("rentalCardHeading")}</h2>
-              <p className="mb-4 text-sm text-ink-soft">{t("rentalCardSubhead")}</p>
-              <form action="/#listings" className="flex gap-2">
-                <select
-                  name="base"
-                  defaultValue=""
-                  className="min-w-0 flex-1 rounded-md border border-canvas-deep bg-canvas px-3 py-2 text-sm text-charcoal focus:border-olive focus:outline-none"
-                >
-                  <option value="">{t("searchAnyBase")}</option>
-                  {BASE_NAMES.map((base) => (
-                    <option key={base} value={base}>
-                      {base}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  type="submit"
-                  className="flex-none whitespace-nowrap rounded-md bg-brass px-4 py-2 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
-                >
-                  {t("searchButton")}
-                </button>
-                <FilterModal />
-              </form>
-            </div>
-
-            {categoryCards.map((card) => (
-              <div
-                key={card.key}
-                className="rounded-md border border-canvas-deep bg-paper p-5 shadow-[0_8px_24px_rgba(27,42,58,0.06)]"
-              >
-                <div className="mb-2 inline-flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-olive-deep">
-                  <span className="inline-block h-1.5 w-1.5 rotate-45 bg-olive" />
-                  {card.eyebrow}
+                <div className="mt-auto">
+                  {category.search.kind === "base-select" ? (
+                    <form action={category.search.action} className="flex gap-2">
+                      <select
+                        name="base"
+                        defaultValue=""
+                        className="min-w-0 flex-1 rounded-md border border-canvas-deep bg-canvas px-3 py-2 text-sm text-charcoal focus:border-olive focus:outline-none"
+                      >
+                        <option value="">{t("searchAnyBase")}</option>
+                        {BASE_NAMES.map((base) => (
+                          <option key={base} value={base}>
+                            {base}
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        type="submit"
+                        className="flex-none whitespace-nowrap rounded-md bg-brass px-4 py-2 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+                      >
+                        {t("searchButton")}
+                      </button>
+                      <FilterModal />
+                    </form>
+                  ) : (
+                    <form action={category.search.action} className="flex gap-2">
+                      <input
+                        type="search"
+                        name="q"
+                        placeholder={category.search.placeholder}
+                        className="min-w-0 flex-1 rounded-md border border-canvas-deep bg-canvas px-3 py-2 text-sm text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none"
+                      />
+                      <button
+                        type="submit"
+                        className="flex-none whitespace-nowrap rounded-md bg-brass px-4 py-2 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+                      >
+                        {t("searchButton")}
+                      </button>
+                    </form>
+                  )}
                 </div>
-                <h2 className="mb-1.5 font-display text-xl font-semibold text-ink">{card.heading}</h2>
-                <p className="mb-4 text-sm text-ink-soft">{card.subhead}</p>
-                <form action={card.action} className="flex gap-2">
-                  <input
-                    type="search"
-                    name="q"
-                    placeholder={card.searchPlaceholder}
-                    className="min-w-0 flex-1 rounded-md border border-canvas-deep bg-canvas px-3 py-2 text-sm text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none"
-                  />
-                  <button
-                    type="submit"
-                    className="flex-none whitespace-nowrap rounded-md bg-brass px-4 py-2 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
-                  >
-                    {t("searchButton")}
-                  </button>
-                </form>
               </div>
             ))}
           </div>
