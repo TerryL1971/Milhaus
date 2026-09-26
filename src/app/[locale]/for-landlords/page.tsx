@@ -30,10 +30,6 @@ export default async function ForLandlordsPage() {
       {/* ---------- HERO ---------- */}
       <section className="py-16">
         <div className="mx-auto max-w-[720px] px-8 text-center">
-          <div className="mb-4.5 inline-flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-olive-deep">
-            <span className="inline-block h-1.5 w-1.5 rotate-45 bg-olive" />
-            {t("eyebrow")}
-          </div>
           <h1 className="mb-5 font-display text-4xl font-semibold leading-[1.05] tracking-tight text-ink lg:text-5xl">
             {t("heading")}
           </h1>
