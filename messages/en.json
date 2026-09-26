@@ -324,6 +324,8 @@
     "subhead": "PCSing out and selling your car, or just upgrading? Listed by the community, reviewed the same way every home on this site is.",
     "sellYourCar": "Sell your car",
     "searchPlaceholder": "Search by make, model, or city…",
+    "allBases": "All bases",
+    "allMakes": "All makes",
     "emptyNone": "No cars listed right now — check back soon, or be the first.",
     "emptyNoMatch": "No cars match that search."
   },
@@ -350,6 +352,9 @@
     "subhead": "PCSing out and selling what you can't take with you? Listed by the community, reviewed the same way every home on this site is.",
     "sellSomething": "Sell something",
     "searchPlaceholder": "Search by title, city, or category…",
+    "allBases": "All bases",
+    "allCategories": "All categories",
+    "allConditions": "All conditions",
     "emptyNone": "Nothing listed right now — check back soon, or be the first.",
     "emptyNoMatch": "Nothing matches that search."
   },
@@ -374,6 +379,8 @@
     "subhead": "Offering something the community needs — moving help, tutoring, repairs? Listed by the community, reviewed the same way every home on this site is.",
     "offerSomething": "Offer a service",
     "searchPlaceholder": "Search by title, city, or category…",
+    "allBases": "All bases",
+    "allCategories": "All categories",
     "emptyNone": "Nothing listed right now — check back soon, or be the first.",
     "emptyNoMatch": "Nothing matches that search."
   },
