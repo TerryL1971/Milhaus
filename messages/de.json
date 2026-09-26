@@ -396,5 +396,14 @@
     "withdraw": "Zurückziehen",
     "discard": "Verwerfen",
     "postAgain": "Erneut inserieren"
+  },
+  "ReportListing": {
+    "button": "Anzeige melden",
+    "reasonLabel": "Was stimmt mit dieser Anzeige nicht?",
+    "reasonPlaceholder": "z. B. Fotos passen nicht zur Beschreibung, Verkäufer bat um Zahlung außerhalb der Seite, Anzeige wirkt gefälscht…",
+    "submit": "Meldung senden",
+    "submitting": "Wird gesendet…",
+    "cancel": "Abbrechen",
+    "submitted": "Danke — wir schauen es uns an."
   }
 }

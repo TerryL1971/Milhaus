@@ -4,11 +4,20 @@
 // (profiles: admins read all rows), this just shapes the query.
 
 import { createClient } from "@/lib/supabase/server";
-import type { ProfileRole } from "@/lib/types";
+import type { ProfileRole, ProfileStatus } from "@/lib/types";
+
+// Human-readable labels for the status dropdown on the admin Users page —
+// same reasoning as ROLE_LABELS below.
+export const STATUS_LABELS: Record<ProfileStatus, string> = {
+  active: "Active",
+  suspended: "Suspended",
+  banned: "Banned",
+};
 
 export interface Profile {
   id: string;
   role: ProfileRole;
+  status: ProfileStatus;
   displayName: string | null;
   contactEmail: string | null;
   contactPhone: string | null;
@@ -31,6 +40,7 @@ function mapProfileRow(row: Record<string, unknown>): Profile {
   return {
     id: row.id as string,
     role: row.role as ProfileRole,
+    status: row.status as ProfileStatus,
     displayName: (row.display_name as string | null) ?? null,
     contactEmail: (row.contact_email as string | null) ?? null,
     contactPhone: (row.contact_phone as string | null) ?? null,
@@ -47,7 +57,7 @@ export async function getAllProfiles(): Promise<Profile[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, role, display_name, contact_email, contact_phone, photo_url, bio, created_at")
+    .select("id, role, status, display_name, contact_email, contact_phone, photo_url, bio, created_at")
     .order("created_at");
 
   if (error) {
@@ -64,7 +74,7 @@ export async function getProfile(id: string): Promise<Profile | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, role, display_name, contact_email, contact_phone, photo_url, bio, created_at")
+    .select("id, role, status, display_name, contact_email, contact_phone, photo_url, bio, created_at")
     .eq("id", id)
     .maybeSingle();
 

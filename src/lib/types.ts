@@ -21,6 +21,11 @@ export type ProfileRole =
   | "landlord"
   | "individual_lister";
 
+/** Suspended/banned only blocks *new* listing creation (see the "listings:
+ * authenticated users create their own listings" RLS policy) — sign-in,
+ * browsing, and existing listings are untouched. */
+export type ProfileStatus = "active" | "suspended" | "banned";
+
 export interface Listing {
   id: string;
   type: ListingType;

@@ -16,6 +16,7 @@ import {
   relistListing,
   setFeatured,
 } from "@/app/admin/actions";
+import { getOpenReports } from "@/lib/listing-reports";
 import { getArchivedListings, getLiveListings, getPendingListings } from "@/lib/listings";
 import { isAdminRole } from "@/lib/roles";
 import { createClient } from "@/lib/supabase/server";
@@ -43,10 +44,11 @@ export default async function AdminPage() {
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
   if (!isAdminRole(profile?.role)) redirect("/");
 
-  const [pending, live, archived] = await Promise.all([
+  const [pending, live, archived, reports] = await Promise.all([
     getPendingListings(),
     getLiveListings(),
     getArchivedListings(),
+    getOpenReports(),
   ]);
 
   return (
@@ -58,6 +60,17 @@ export default async function AdminPage() {
             <p className="text-ink-soft">Review submissions and manage what&apos;s live.</p>
           </div>
           <div className="flex gap-2">
+            <Link
+              href="/admin/reports"
+              className="relative rounded-md border border-canvas-deep px-5 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-ink hover:text-ink"
+            >
+              Reports
+              {reports.length > 0 && (
+                <span className="ml-1.5 rounded-full bg-rust px-2 py-0.5 align-middle font-mono text-xs font-semibold text-paper">
+                  {reports.length}
+                </span>
+              )}
+            </Link>
             <Link
               href="/admin/users"
               className="rounded-md border border-canvas-deep px-5 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-ink hover:text-ink"
@@ -94,63 +107,88 @@ export default async function AdminPage() {
                 return (
                 <div
                   key={listing.id}
-                  className="flex flex-wrap items-center justify-between gap-4 rounded-md border border-canvas-deep bg-paper p-4"
+                  className="flex flex-col gap-4 rounded-md border border-canvas-deep bg-paper p-4"
                 >
-                  <div>
-                    <p className="font-semibold text-ink">
-                      <span className="mr-2 rounded-full bg-canvas-deep px-2 py-0.5 align-middle font-mono text-[0.6rem] uppercase tracking-wider text-ink-soft">
-                        {typeLabel}
-                      </span>
-                      {isCar ? `${listing.year} ${listing.make} ${listing.model}` : listing.title}
-                    </p>
-                    <p className="text-sm text-ink-soft">
-                      {isCar || isProduct ? listing.city : `${listing.address}, ${listing.city}`}
-                      {listing.base ? ` · ${listing.base}` : ""}
-                    </p>
-                    <div className="mt-1 flex flex-wrap gap-3 font-mono text-xs text-charcoal/80">
-                      <span>
-                        {currencyFormatter.format(listing.priceEurMonth)}
-                        {isCar || isProduct ? "" : "/mo"}
-                      </span>
-                      {isCar ? (
-                        listing.mileageKm != null && <span>{listing.mileageKm.toLocaleString("en-US")} km</span>
-                      ) : isProduct ? (
-                        <>
-                          {listing.productCategory && <span>{listing.productCategory}</span>}
-                          {listing.condition && <span>{listing.condition}</span>}
-                        </>
-                      ) : (
-                        <>
-                          <span>{listing.bedrooms} bed</span>
-                          <span>{listing.bathrooms} bath</span>
-                        </>
-                      )}
-                      <span className="text-ink-soft">
-                        {listing.source === "housing_office" ? "Housing office" : "Self-listed"} · submitted{" "}
-                        {dateFormatter.format(new Date(listing.createdAt))}
-                      </span>
+                  <div className="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                      <p className="font-semibold text-ink">
+                        <span className="mr-2 rounded-full bg-canvas-deep px-2 py-0.5 align-middle font-mono text-[0.6rem] uppercase tracking-wider text-ink-soft">
+                          {typeLabel}
+                        </span>
+                        {isCar ? `${listing.year} ${listing.make} ${listing.model}` : listing.title}
+                      </p>
+                      <p className="text-sm text-ink-soft">
+                        {isCar || isProduct ? listing.city : `${listing.address}, ${listing.city}`}
+                        {listing.base ? ` · ${listing.base}` : ""}
+                      </p>
+                      <div className="mt-1 flex flex-wrap gap-3 font-mono text-xs text-charcoal/80">
+                        <span>
+                          {currencyFormatter.format(listing.priceEurMonth)}
+                          {isCar || isProduct ? "" : "/mo"}
+                        </span>
+                        {isCar ? (
+                          listing.mileageKm != null && <span>{listing.mileageKm.toLocaleString("en-US")} km</span>
+                        ) : isProduct ? (
+                          <>
+                            {listing.productCategory && <span>{listing.productCategory}</span>}
+                            {listing.condition && <span>{listing.condition}</span>}
+                          </>
+                        ) : (
+                          <>
+                            <span>{listing.bedrooms} bed</span>
+                            <span>{listing.bathrooms} bath</span>
+                          </>
+                        )}
+                        <span className="text-ink-soft">
+                          {listing.source === "housing_office" ? "Housing office" : "Self-listed"} · submitted{" "}
+                          {dateFormatter.format(new Date(listing.createdAt))}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <form action={approveListing}>
+                        <input type="hidden" name="id" value={listing.id} />
+                        <button
+                          type="submit"
+                          className="rounded-md bg-olive px-4 py-2 text-sm font-semibold text-paper transition-[transform] hover:-translate-y-px"
+                        >
+                          Approve
+                        </button>
+                      </form>
+                      <form action={rejectListing}>
+                        <input type="hidden" name="id" value={listing.id} />
+                        <button
+                          type="submit"
+                          className="rounded-md border border-canvas-deep px-4 py-2 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-rust hover:text-rust"
+                        >
+                          Reject
+                        </button>
+                      </form>
                     </div>
                   </div>
-                  <div className="flex gap-2">
-                    <form action={approveListing}>
-                      <input type="hidden" name="id" value={listing.id} />
-                      <button
-                        type="submit"
-                        className="rounded-md bg-olive px-4 py-2 text-sm font-semibold text-paper transition-[transform] hover:-translate-y-px"
-                      >
-                        Approve
-                      </button>
-                    </form>
-                    <form action={rejectListing}>
-                      <input type="hidden" name="id" value={listing.id} />
-                      <button
-                        type="submit"
-                        className="rounded-md border border-canvas-deep px-4 py-2 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-rust hover:text-rust"
-                      >
-                        Reject
-                      </button>
-                    </form>
-                  </div>
+
+                  {/* Full content, not just the summary fields above — an
+                      admin approving sight-unseen was the actual gap this
+                      closes: what if the photos or description don't match
+                      what the fields claim? */}
+                  {listing.photos.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {listing.photos.map((url, i) => (
+                        // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL
+                        <img
+                          key={url}
+                          src={url}
+                          alt={`Photo ${i + 1}`}
+                          className="h-24 w-24 rounded-md border border-canvas-deep object-cover"
+                        />
+                      ))}
+                    </div>
+                  )}
+                  {listing.description && (
+                    <p className="max-w-[70ch] whitespace-pre-line border-t border-canvas-deep pt-3 text-sm text-charcoal/90">
+                      {listing.description}
+                    </p>
+                  )}
                 </div>
                 );
               })}

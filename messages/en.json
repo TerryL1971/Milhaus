@@ -396,5 +396,14 @@
     "withdraw": "Withdraw",
     "discard": "Discard",
     "postAgain": "Post again"
+  },
+  "ReportListing": {
+    "button": "Report this listing",
+    "reasonLabel": "What's wrong with this listing?",
+    "reasonPlaceholder": "e.g. Photos don't match the description, seller asked for payment outside the site, listing looks fake…",
+    "submit": "Submit report",
+    "submitting": "Submitting…",
+    "cancel": "Cancel",
+    "submitted": "Thanks — we'll take a look."
   }
 }

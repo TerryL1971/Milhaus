@@ -7,6 +7,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { ListingPhotoGallery } from "@/components/listing-photo-gallery";
+import { ReportListingButton } from "@/components/report-listing-button";
 import { SellerCard } from "@/components/seller-card";
 import { Link } from "@/i18n/navigation";
 import { getListingById, getSellerListings, getSellerProfile } from "@/lib/listings";
@@ -130,6 +131,8 @@ export default async function ProductDetailPage({ params }: { params: Params }) 
             otherListings={otherListings}
           />
         )}
+
+        <ReportListingButton listingId={listing.id} returnPath={`/products/${listing.id}`} />
       </div>
     </main>
   );

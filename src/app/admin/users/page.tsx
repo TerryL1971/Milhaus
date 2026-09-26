@@ -6,11 +6,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { setUserRole } from "@/app/admin/users/actions";
-import { getAllProfiles, ROLE_LABELS } from "@/lib/profiles";
+import { setUserRole, setUserStatus } from "@/app/admin/users/actions";
+import { getAllProfiles, ROLE_LABELS, STATUS_LABELS } from "@/lib/profiles";
 import { isAdminRole } from "@/lib/roles";
 import { createClient } from "@/lib/supabase/server";
-import type { ProfileRole } from "@/lib/types";
+import type { ProfileRole, ProfileStatus } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Users",
@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 };
 
 const ROLE_OPTIONS = Object.entries(ROLE_LABELS) as [ProfileRole, string][];
+const STATUS_OPTIONS = Object.entries(STATUS_LABELS) as [ProfileStatus, string][];
 
 export default async function AdminUsersPage() {
   const supabase = await createClient();
@@ -40,7 +41,11 @@ export default async function AdminUsersPage() {
               ← Admin
             </Link>
             <h1 className="mb-1 font-display text-3xl font-semibold text-ink">Users</h1>
-            <p className="text-ink-soft">Change what someone can do — no need to remember the role names.</p>
+            <p className="text-ink-soft">
+              Change what someone can do, or suspend/ban an account — no need to remember the role
+              names. Suspending or banning only blocks new posts; it doesn&apos;t touch sign-in,
+              browsing, or listings already up.
+            </p>
           </div>
         </div>
 
@@ -50,6 +55,7 @@ export default async function AdminUsersPage() {
               <tr className="border-b border-canvas-deep text-left font-mono text-xs uppercase tracking-wider text-ink-soft/75">
                 <th className="px-4 py-3 font-medium">User</th>
                 <th className="px-4 py-3 font-medium">Role</th>
+                <th className="px-4 py-3 font-medium">Status</th>
                 <th className="px-4 py-3 font-medium"></th>
               </tr>
             </thead>
@@ -71,12 +77,17 @@ export default async function AdminUsersPage() {
                             {ROLE_LABELS[p.role]}
                           </span>
                         </td>
+                        <td className="px-4 py-3">
+                          <span className="rounded-[3px] bg-olive/15 px-2 py-0.5 font-mono text-[0.66rem] font-semibold uppercase tracking-wider text-olive-deep">
+                            {STATUS_LABELS[p.status]}
+                          </span>
+                        </td>
                         <td className="px-4 py-3 text-right text-xs text-ink-soft">You</td>
                       </>
                     ) : (
                       <>
-                        <td className="px-4 py-3" colSpan={2}>
-                          <form action={setUserRole} className="flex justify-end gap-2">
+                        <td className="px-4 py-3">
+                          <form action={setUserRole} className="flex gap-2">
                             <input type="hidden" name="id" value={p.id} />
                             {/* key={p.role} forces React to remount this
                                 select after Save — otherwise the server's
@@ -104,6 +115,34 @@ export default async function AdminUsersPage() {
                             </button>
                           </form>
                         </td>
+                        <td className="px-4 py-3">
+                          <form action={setUserStatus} className="flex gap-2">
+                            <input type="hidden" name="id" value={p.id} />
+                            <select
+                              key={p.status}
+                              name="status"
+                              defaultValue={p.status}
+                              className={`rounded-md border px-2 py-1.5 text-sm ${
+                                p.status === "active"
+                                  ? "border-canvas-deep text-charcoal"
+                                  : "border-rust/50 text-rust"
+                              }`}
+                            >
+                              {STATUS_OPTIONS.map(([value, label]) => (
+                                <option key={value} value={value}>
+                                  {label}
+                                </option>
+                              ))}
+                            </select>
+                            <button
+                              type="submit"
+                              className="rounded-md border border-canvas-deep px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-rust hover:text-rust"
+                            >
+                              Save
+                            </button>
+                          </form>
+                        </td>
+                        <td className="px-4 py-3"></td>
                       </>
                     )}
                   </tr>
