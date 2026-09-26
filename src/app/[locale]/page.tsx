@@ -26,7 +26,11 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
 // (admin-featured, or most recent active as a fallback), not hardcoded
 // content. z-10/20 only orders the 2 cards *within* their own fan; it
 // must stay below SiteHeader's z-50.
-const MINI_FAN_STYLES = ["absolute left-0 top-0 z-10 w-[78%] -rotate-3", "absolute left-[18%] top-7 z-20 w-[78%] rotate-2"];
+const MINI_FAN_STYLES = [
+  "absolute left-0 top-0 z-10 w-[70%] -rotate-6",
+  "absolute left-[16%] top-6 z-20 w-[70%] rotate-2",
+  "absolute left-[32%] top-2 z-30 w-[70%] -rotate-2",
+];
 
 function miniCardPrice(listing: Listing): string {
   const price = currencyFormatter.format(listing.priceEurMonth);
@@ -54,10 +58,10 @@ export default async function Home() {
   const locale = await getLocale();
   const [listings, featuredRentals, featuredCars, featuredProducts, featuredServices] = await Promise.all([
     getActiveListings(),
-    getFeaturedListings("rental", 2),
-    getFeaturedListings("car", 2),
-    getFeaturedListings("product", 2),
-    getFeaturedListings("service", 2),
+    getFeaturedListings("rental", 3),
+    getFeaturedListings("car", 3),
+    getFeaturedListings("product", 3),
+    getFeaturedListings("service", 3),
   ]);
 
   // One card per category — hero content (eyebrow/heading/subhead/photo
@@ -158,7 +162,7 @@ export default async function Home() {
                 <p className="mb-4 text-sm text-ink-soft">{category.subhead}</p>
 
                 {category.featured.length > 0 && (
-                  <div className="relative mb-5 h-[150px]">
+                  <div className="relative mb-5 h-[160px]">
                     {category.featured.map((listing, index) => (
                       <Link
                         key={listing.id}
