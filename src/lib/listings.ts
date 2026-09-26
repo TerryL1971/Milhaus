@@ -8,39 +8,54 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Listing, ListingType } from "@/lib/types";
 
+// Every read below selects "*, rental_details(*), car_details(*),
+// product_details(*)" — PostgREST embeds each as a nested object (null
+// when the row isn't that type, since listing_id is that table's PK/FK).
+const LISTING_SELECT = "*, rental_details(*), car_details(*), product_details(*)";
+
 // Supabase returns snake_case columns; the app's Listing type is camelCase.
+// The type-specific fields now live on a joined details row rather than
+// directly on `row` — mapRow flattens whichever of the three is present
+// back into the same flat shape the rest of the app already expects.
 export function mapRow(row: Record<string, unknown>): Listing {
+  const details =
+    (row.rental_details as Record<string, unknown> | null) ??
+    (row.car_details as Record<string, unknown> | null) ??
+    (row.product_details as Record<string, unknown> | null) ??
+    {};
+
   return {
     id: row.id as string,
     type: row.type as Listing["type"],
     title: row.title as string,
     description: row.description as string,
-    address: (row.address as string | null) ?? null,
+    address: (details.address as string | null) ?? null,
     city: row.city as string,
     base: (row.base as string | null) ?? null,
     distanceToBase: (row.distance_to_base as string | null) ?? null,
     priceEurMonth: Number(row.price_eur_month),
-    bedrooms: row.bedrooms === null ? null : Number(row.bedrooms),
-    bathrooms: row.bathrooms === null ? null : Number(row.bathrooms),
-    sizeSqm: row.size_sqm === null ? null : Number(row.size_sqm),
-    availableFrom: (row.available_from as string | null) ?? null,
+    bedrooms: details.bedrooms === null || details.bedrooms === undefined ? null : Number(details.bedrooms),
+    bathrooms: details.bathrooms === null || details.bathrooms === undefined ? null : Number(details.bathrooms),
+    sizeSqm: details.size_sqm === null || details.size_sqm === undefined ? null : Number(details.size_sqm),
+    availableFrom: (details.available_from as string | null) ?? null,
     photos: (row.photos as string[]) ?? [],
-    amenities: (row.amenities as string[]) ?? [],
-    parkingSpaces: row.parking_spaces === null || row.parking_spaces === undefined ? null : Number(row.parking_spaces),
-    nearbyAmenities: (row.nearby_amenities as string[]) ?? [],
-    internetType: (row.internet_type as Listing["internetType"]) ?? null,
+    amenities: (details.amenities as string[]) ?? [],
+    parkingSpaces:
+      details.parking_spaces === null || details.parking_spaces === undefined ? null : Number(details.parking_spaces),
+    nearbyAmenities: (details.nearby_amenities as string[]) ?? [],
+    internetType: (details.internet_type as Listing["internetType"]) ?? null,
     internetSpeedMbps:
-      row.internet_speed_mbps === null || row.internet_speed_mbps === undefined
+      details.internet_speed_mbps === null || details.internet_speed_mbps === undefined
         ? null
-        : Number(row.internet_speed_mbps),
-    heatType: (row.heat_type as Listing["heatType"]) ?? null,
-    stoveType: (row.stove_type as Listing["stoveType"]) ?? null,
-    make: (row.make as string | null) ?? null,
-    model: (row.model as string | null) ?? null,
-    year: row.year === null || row.year === undefined ? null : Number(row.year),
-    mileageKm: row.mileage_km === null || row.mileage_km === undefined ? null : Number(row.mileage_km),
-    productCategory: (row.product_category as string | null) ?? null,
-    condition: (row.condition as string | null) ?? null,
+        : Number(details.internet_speed_mbps),
+    heatType: (details.heat_type as Listing["heatType"]) ?? null,
+    stoveType: (details.stove_type as Listing["stoveType"]) ?? null,
+    make: (details.make as string | null) ?? null,
+    model: (details.model as string | null) ?? null,
+    year: details.year === null || details.year === undefined ? null : Number(details.year),
+    mileageKm: details.mileage_km === null || details.mileage_km === undefined ? null : Number(details.mileage_km),
+    productCategory: (details.product_category as string | null) ?? null,
+    condition: (details.condition as string | null) ?? null,
     source: row.source as Listing["source"],
     status: row.status as Listing["status"],
     isFeatured: Boolean(row.is_featured),
@@ -60,7 +75,7 @@ export async function getActiveListings(type: ListingType = "rental"): Promise<L
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("listings")
-    .select("*")
+    .select(LISTING_SELECT)
     .eq("status", "active")
     .eq("type", type)
     .order("created_at", { ascending: false });
@@ -81,7 +96,7 @@ export async function getFeaturedListings(limit = 3): Promise<Listing[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("listings")
-    .select("*")
+    .select(LISTING_SELECT)
     .eq("status", "active")
     .eq("type", "rental")
     .order("is_featured", { ascending: false })
@@ -111,7 +126,7 @@ export async function getListingById(id: string): Promise<Listing | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("listings")
-    .select("*")
+    .select(LISTING_SELECT)
     .eq("id", id)
     .maybeSingle();
 
@@ -165,7 +180,7 @@ export async function getSellerListings(
   const supabase = await createClient();
   let query = supabase
     .from("listings")
-    .select("*")
+    .select(LISTING_SELECT)
     .eq("owner_id", ownerId)
     .eq("status", "active");
   if (excludeId) query = query.neq("id", excludeId);
@@ -186,7 +201,7 @@ export async function getMyListings(ownerId: string): Promise<Listing[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("listings")
-    .select("*")
+    .select(LISTING_SELECT)
     .eq("owner_id", ownerId)
     .order("created_at", { ascending: false });
 
@@ -204,7 +219,7 @@ export async function getPendingListings(): Promise<Listing[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("listings")
-    .select("*")
+    .select(LISTING_SELECT)
     .eq("status", "pending_review")
     .order("created_at");
 
@@ -221,7 +236,7 @@ export async function getLiveListings(): Promise<Listing[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("listings")
-    .select("*")
+    .select(LISTING_SELECT)
     .in("status", ["active", "rented"])
     .order("status_changed_at", { ascending: false });
 
@@ -240,7 +255,7 @@ export async function getArchivedListings(): Promise<Listing[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("listings")
-    .select("*")
+    .select(LISTING_SELECT)
     .eq("status", "archived")
     .order("status_changed_at", { ascending: false });
 

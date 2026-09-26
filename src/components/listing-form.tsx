@@ -78,6 +78,7 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
 
     setProgress(t("progressSaving"));
     const basePayload = {
+      type: kind,
       title: formData.get("title"),
       description: formData.get("description") || "",
       city: formData.get("city"),
@@ -88,16 +89,33 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
       status: "draft",
       owner_id: user.id,
     };
-    const typePayload = isCar
-      ? {
-          type: "car" as const,
+
+    const { data: created, error: insertError } = await supabase
+      .from("listings")
+      .insert(basePayload)
+      .select("id")
+      .single();
+
+    if (insertError || !created) {
+      setStatus("error");
+      setErrorMessage(insertError?.message ?? t("saveFailed"));
+      return;
+    }
+    const listingId = created.id as string;
+
+    // Type-specific fields live on their own details table now (one row
+    // per listing, listing_id as the PK/FK) rather than on `listings`
+    // itself — see supabase/migrations/20260926180000_split_listing_types_and_trust_safety.sql.
+    const { error: detailsError } = isCar
+      ? await supabase.from("car_details").insert({
+          listing_id: listingId,
           make: formData.get("make"),
           model: formData.get("model"),
           year: Number(formData.get("year")),
           mileage_km: formData.get("mileageKm") ? Number(formData.get("mileageKm")) : null,
-        }
-      : {
-          type: "rental" as const,
+        })
+      : await supabase.from("rental_details").insert({
+          listing_id: listingId,
           address: formData.get("address"),
           bedrooms: Number(formData.get("bedrooms")),
           bathrooms: Number(formData.get("bathrooms")),
@@ -112,20 +130,12 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
             : null,
           heat_type: formData.get("heatType") || null,
           stove_type: formData.get("stoveType") || null,
-        };
-
-    const { data: created, error: insertError } = await supabase
-      .from("listings")
-      .insert({ ...basePayload, ...typePayload })
-      .select("id")
-      .single();
-
-    if (insertError || !created) {
+        });
+    if (detailsError) {
       setStatus("error");
-      setErrorMessage(insertError?.message ?? t("saveFailed"));
+      setErrorMessage(detailsError.message);
       return;
     }
-    const listingId = created.id as string;
 
     const photoUrls: string[] = [];
     for (const [index, file] of files.entries()) {
