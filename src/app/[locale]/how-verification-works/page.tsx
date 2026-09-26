@@ -75,7 +75,7 @@ export default async function HowVerificationWorksPage() {
 
       {/* ---------- CTA STRIP ---------- */}
       <section className="bg-rust py-11 text-center text-paper">
-        <div className="mx-auto max-w-[1180px] px-8">
+        <div className="mx-auto max-w-[1400px] px-8">
           <h2 className="mb-2.5 font-display text-[1.7rem] font-semibold text-paper">
             {t("ctaHeading")}
           </h2>

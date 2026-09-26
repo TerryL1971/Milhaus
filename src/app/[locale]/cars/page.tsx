@@ -25,7 +25,7 @@ export default async function CarsPage() {
 
   return (
     <main className="flex-1 py-14">
-      <div className="mx-auto max-w-[1180px] px-8">
+      <div className="mx-auto max-w-[1400px] px-8">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-5">
           <div>
             <div className="mb-2.5 inline-flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-olive-deep">

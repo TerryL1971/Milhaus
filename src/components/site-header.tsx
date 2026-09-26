@@ -31,13 +31,13 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
 
   return (
     <header className="sticky top-0 z-50 bg-ink text-paper">
-      <div className="mx-auto flex max-w-[1180px] items-center justify-between px-8 py-[18px]">
-        <HomeLink className="flex items-center gap-2.5 font-display text-2xl font-bold tracking-tight">
+      <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-6 px-8 py-[18px]">
+        <HomeLink className="flex flex-shrink-0 items-center gap-2.5 font-display text-2xl font-bold tracking-tight">
           <LogoIcon className="h-7 w-auto text-paper" />
           Milhaus<span className="text-brass">.</span>
         </HomeLink>
 
-        <nav className="hidden gap-5 text-[0.92rem] font-medium md:flex">
+        <nav className="hidden gap-6 whitespace-nowrap text-[0.92rem] font-medium md:flex">
           <Link href="/#listings" className="opacity-85 transition-opacity hover:opacity-100">
             {t("browseListings")}
           </Link>
@@ -76,7 +76,10 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
                   separately-styled nav pill would re-crowd the header
                   (see the earlier gap-tightening fix); this adds the
                   entry point with zero extra width. */}
-              <Link href="/my-listings" className="hidden text-sm opacity-85 hover:opacity-100 sm:inline">
+              <Link
+                href="/my-listings"
+                className="hidden max-w-[160px] truncate text-sm opacity-85 hover:opacity-100 sm:inline"
+              >
                 {user.email}
               </Link>
               <form action="/auth/sign-out" method="post">

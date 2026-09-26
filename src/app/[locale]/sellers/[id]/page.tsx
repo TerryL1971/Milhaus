@@ -43,7 +43,7 @@ export default async function SellerProfilePage({ params }: { params: Params }) 
 
   return (
     <main className="flex-1 py-14">
-      <div className="mx-auto max-w-[1180px] px-8">
+      <div className="mx-auto max-w-[1400px] px-8">
         <div className="mb-8 flex flex-wrap items-start gap-5 rounded-md border border-canvas-deep bg-paper p-6">
           {seller.photoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL

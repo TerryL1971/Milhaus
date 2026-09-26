@@ -50,7 +50,7 @@ export default async function Home() {
     <main className="flex-1">
       {/* ---------- HERO ---------- */}
       <section className="py-18 sm:py-16">
-        <div className="mx-auto grid max-w-[1180px] grid-cols-1 items-center gap-14 px-8 lg:grid-cols-[1.05fr_0.95fr]">
+        <div className="mx-auto grid max-w-[1400px] grid-cols-1 items-center gap-14 px-8 lg:grid-cols-[1.05fr_0.95fr]">
           <div>
             <div className="mb-4.5 inline-flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-olive-deep">
               <span className="inline-block h-1.5 w-1.5 rotate-45 bg-olive" />
@@ -166,7 +166,7 @@ export default async function Home() {
 
       {/* ---------- TRUST STRIP ---------- */}
       <section className="bg-ink py-8.5 text-paper">
-        <div className="mx-auto grid max-w-[1180px] grid-cols-1 gap-7 px-8 md:grid-cols-3">
+        <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-7 px-8 md:grid-cols-3">
           {trustItems.map((item, index) => (
             <div key={item.heading} className="flex gap-3.5">
               <div className="flex h-8.5 w-8.5 flex-none items-center justify-center rounded-full border-[1.5px] border-brass font-mono text-sm text-brass">
@@ -185,7 +185,7 @@ export default async function Home() {
 
       {/* ---------- LISTINGS ---------- */}
       <section id="listings" className="py-18">
-        <div className="mx-auto max-w-[1180px] px-8">
+        <div className="mx-auto max-w-[1400px] px-8">
           <Suspense fallback={null}>
             <ListingsGrid listings={listings} />
           </Suspense>
@@ -194,7 +194,7 @@ export default async function Home() {
 
       {/* ---------- HOW IT WORKS ---------- */}
       <section id="how" className="bg-canvas-deep py-18">
-        <div className="mx-auto max-w-[1180px] px-8">
+        <div className="mx-auto max-w-[1400px] px-8">
           <h2 className="font-display text-[2rem] font-semibold text-ink">{t("howHeading")}</h2>
           <div className="mt-8.5 grid grid-cols-1 gap-7.5 md:grid-cols-3">
             {howSteps.map((step) => (
@@ -214,7 +214,7 @@ export default async function Home() {
 
       {/* ---------- CTA STRIP ---------- */}
       <section className="bg-rust py-11 text-center text-paper">
-        <div className="mx-auto max-w-[1180px] px-8">
+        <div className="mx-auto max-w-[1400px] px-8">
           <h2 className="mb-2.5 font-display text-[1.7rem] font-semibold text-paper">
             {t("ctaHeading")}
           </h2>

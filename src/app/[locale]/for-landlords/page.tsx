@@ -83,7 +83,7 @@ export default async function ForLandlordsPage() {
 
       {/* ---------- TRUST STRIP ---------- */}
       <section className="bg-ink py-8.5 text-paper">
-        <div className="mx-auto grid max-w-[1180px] grid-cols-1 gap-7 px-8 md:grid-cols-3">
+        <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-7 px-8 md:grid-cols-3">
           {trustItems.map((item, index) => (
             <div key={item.heading} className="flex gap-3.5">
               <div className="flex h-8.5 w-8.5 flex-none items-center justify-center rounded-full border-[1.5px] border-brass font-mono text-sm text-brass">
@@ -102,7 +102,7 @@ export default async function ForLandlordsPage() {
 
       {/* ---------- CTA STRIP ---------- */}
       <section className="bg-rust py-11 text-center text-paper">
-        <div className="mx-auto max-w-[1180px] px-8">
+        <div className="mx-auto max-w-[1400px] px-8">
           <h2 className="mb-2.5 font-display text-[1.7rem] font-semibold text-paper">
             {t("ctaHeading")}
           </h2>
