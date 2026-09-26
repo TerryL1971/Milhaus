@@ -4,12 +4,12 @@
 // hero with the live listings grid, matching the mockup's single-page
 // structure. Listing data is read live from Supabase.
 
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { FilterModal } from "@/components/filter-modal";
 import { ListingsGrid } from "@/components/listings-grid";
 import { StampBadge } from "@/components/stamp-badge";
-import { Link } from "@/i18n/navigation";
+import { getPathname, Link } from "@/i18n/navigation";
 import { BASE_NAMES } from "@/lib/bases";
 import { getActiveListings, getFeaturedListings } from "@/lib/listings";
 
@@ -33,7 +33,38 @@ const HERO_CARD_STYLES = [
 
 export default async function Home() {
   const t = await getTranslations("HomePage");
+  const tCars = await getTranslations("CarsPage");
+  const tProducts = await getTranslations("ProductsPage");
+  const tServices = await getTranslations("ServicesPage");
+  const locale = await getLocale();
   const [listings, featured] = await Promise.all([getActiveListings(), getFeaturedListings(3)]);
+
+  const categoryCards = [
+    {
+      key: "cars",
+      eyebrow: tCars("eyebrow"),
+      heading: tCars("heading"),
+      subhead: tCars("subhead"),
+      searchPlaceholder: tCars("searchPlaceholder"),
+      action: getPathname({ href: "/cars", locale }),
+    },
+    {
+      key: "products",
+      eyebrow: tProducts("eyebrow"),
+      heading: tProducts("heading"),
+      subhead: tProducts("subhead"),
+      searchPlaceholder: tProducts("searchPlaceholder"),
+      action: getPathname({ href: "/products", locale }),
+    },
+    {
+      key: "services",
+      eyebrow: tServices("eyebrow"),
+      heading: tServices("heading"),
+      subhead: tServices("subhead"),
+      searchPlaceholder: tServices("searchPlaceholder"),
+      action: getPathname({ href: "/services", locale }),
+    },
+  ];
 
   const trustItems = [
     { heading: t("trust1Heading"), body: t("trust1Body") },
@@ -161,6 +192,47 @@ export default async function Home() {
               ))}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* ---------- BROWSE BY CATEGORY ---------- */}
+      {/* Rentals already own the main hero above; this is Cars/Items for
+          sale/Services' equivalent — a compact card each, not a full
+          fanned-photo hero (those need real listing photos to look right,
+          and not every mock listing has one yet). Each card's search
+          submits as a plain GET form straight to that category's browse
+          page with ?q=... pre-filled, no client JS required to work. */}
+      <section className="bg-canvas-deep py-14">
+        <div className="mx-auto max-w-[1400px] px-8">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+            {categoryCards.map((card) => (
+              <div
+                key={card.key}
+                className="rounded-md border border-canvas-deep bg-paper p-5 shadow-[0_8px_24px_rgba(27,42,58,0.06)]"
+              >
+                <div className="mb-2 inline-flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-olive-deep">
+                  <span className="inline-block h-1.5 w-1.5 rotate-45 bg-olive" />
+                  {card.eyebrow}
+                </div>
+                <h2 className="mb-1.5 font-display text-xl font-semibold text-ink">{card.heading}</h2>
+                <p className="mb-4 text-sm text-ink-soft">{card.subhead}</p>
+                <form action={card.action} className="flex gap-2">
+                  <input
+                    type="search"
+                    name="q"
+                    placeholder={card.searchPlaceholder}
+                    className="min-w-0 flex-1 rounded-md border border-canvas-deep bg-canvas px-3 py-2 text-sm text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none"
+                  />
+                  <button
+                    type="submit"
+                    className="flex-none whitespace-nowrap rounded-md bg-brass px-4 py-2 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+                  >
+                    {t("searchButton")}
+                  </button>
+                </form>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

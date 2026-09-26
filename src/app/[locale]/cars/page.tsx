@@ -19,8 +19,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("metaTitle"), description: t("metaDescription") };
 }
 
-export default async function CarsPage() {
+type SearchParams = Promise<{ q?: string }>;
+
+export default async function CarsPage({ searchParams }: { searchParams: SearchParams }) {
   const t = await getTranslations("CarsPage");
+  const { q } = await searchParams;
   const listings = await getActiveListings("car");
 
   return (
@@ -44,7 +47,7 @@ export default async function CarsPage() {
         </div>
 
         <Suspense fallback={null}>
-          <CarsGrid listings={listings} />
+          <CarsGrid listings={listings} initialQuery={q} />
         </Suspense>
       </div>
     </main>

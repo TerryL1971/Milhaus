@@ -19,9 +19,9 @@ const PHOTO_GRADIENTS = [
   "linear-gradient(135deg,#D3C6A6,#4B5A6B)",
 ];
 
-export function CarsGrid({ listings }: { listings: Listing[] }) {
+export function CarsGrid({ listings, initialQuery = "" }: { listings: Listing[]; initialQuery?: string }) {
   const t = useTranslations("CarsPage");
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
