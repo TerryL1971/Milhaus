@@ -12,6 +12,7 @@ import { StampBadge } from "@/components/stamp-badge";
 import { getPathname, Link } from "@/i18n/navigation";
 import { BASE_NAMES } from "@/lib/bases";
 import { getActiveListings, getFeaturedListings } from "@/lib/listings";
+import type { Listing } from "@/lib/types";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -19,17 +20,31 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 0,
 });
 
-// Position/rotation for the hero's 3-card fan, by index — the cards
-// themselves are real listings now (admin-featured, or the most recent
-// active ones as a fallback), not hardcoded content. The z-10/20/30 here
-// is only the fanned stacking *among the 3 cards* (later card in front,
-// matching the mockup) — it must stay below SiteHeader's z-50, or a card
-// renders on top of the sticky nav wherever they visually overlap.
-const HERO_CARD_STYLES = [
-  "absolute left-[10%] top-0 z-10 w-65 -rotate-6",
-  "absolute left-[32%] top-10 z-20 w-65 rotate-3",
-  "absolute left-[54%] top-2.5 z-30 w-65 -rotate-2",
-];
+// Position/rotation for each mini-hero's 2-card fan, by index — small
+// enough to fit a quarter-width column (4 categories side by side) rather
+// than the old single full-width hero's 3-card fan. Real listings
+// (admin-featured, or most recent active as a fallback), not hardcoded
+// content. z-10/20 only orders the 2 cards *within* their own fan; it
+// must stay below SiteHeader's z-50.
+const MINI_FAN_STYLES = ["absolute left-0 top-0 z-10 w-[78%] -rotate-3", "absolute left-[18%] top-7 z-20 w-[78%] rotate-2"];
+
+function miniCardPrice(listing: Listing): string {
+  const price = currencyFormatter.format(listing.priceEurMonth);
+  if (listing.type === "rental") return `${price} / mo`;
+  if (listing.type === "service" && listing.priceIsEstimate) return `from ${price}`;
+  return price;
+}
+
+function miniCardDetail(listing: Listing): string {
+  switch (listing.type) {
+    case "rental":
+      return `${listing.bedrooms} bed · ${listing.city}`;
+    case "car":
+      return `${listing.year} ${listing.make} · ${listing.city}`;
+    default:
+      return listing.city;
+  }
+}
 
 export default async function Home() {
   const t = await getTranslations("HomePage");
@@ -37,7 +52,13 @@ export default async function Home() {
   const tProducts = await getTranslations("ProductsPage");
   const tServices = await getTranslations("ServicesPage");
   const locale = await getLocale();
-  const [listings, featured] = await Promise.all([getActiveListings(), getFeaturedListings(3)]);
+  const [listings, featuredRentals, featuredCars, featuredProducts, featuredServices] = await Promise.all([
+    getActiveListings(),
+    getFeaturedListings("rental", 2),
+    getFeaturedListings("car", 2),
+    getFeaturedListings("product", 2),
+    getFeaturedListings("service", 2),
+  ]);
 
   const categoryCards = [
     {
@@ -66,6 +87,49 @@ export default async function Home() {
     },
   ];
 
+  // The 4-column mini-hero row — Rentals keeps the punchy headline/
+  // emphasis split (headlineStart/Emphasis/End) it always had; the other
+  // three use their own page's eyebrow/heading/subhead so this copy isn't
+  // duplicated in a second place.
+  const categoryHeroes = [
+    {
+      key: "rental",
+      eyebrow: t("eyebrow"),
+      heading: (
+        <>
+          {t("headlineStart")} <em className="italic text-rust">{t("headlineEmphasis")}</em> {t("headlineEnd")}
+        </>
+      ),
+      subhead: t("subhead"),
+      featured: featuredRentals,
+      hrefBase: "/listings",
+    },
+    {
+      key: "cars",
+      eyebrow: tCars("eyebrow"),
+      heading: tCars("heading"),
+      subhead: tCars("subhead"),
+      featured: featuredCars,
+      hrefBase: "/cars",
+    },
+    {
+      key: "products",
+      eyebrow: tProducts("eyebrow"),
+      heading: tProducts("heading"),
+      subhead: tProducts("subhead"),
+      featured: featuredProducts,
+      hrefBase: "/products",
+    },
+    {
+      key: "services",
+      eyebrow: tServices("eyebrow"),
+      heading: tServices("heading"),
+      subhead: tServices("subhead"),
+      featured: featuredServices,
+      hrefBase: "/services",
+    },
+  ];
+
   const trustItems = [
     { heading: t("trust1Heading"), body: t("trust1Body") },
     { heading: t("trust2Heading"), body: t("trust2Body") },
@@ -80,67 +144,70 @@ export default async function Home() {
   return (
     <main className="flex-1">
       {/* ---------- HERO ---------- */}
-      <section className="py-18 sm:py-16">
-        <div className="mx-auto grid max-w-[1400px] grid-cols-1 items-center gap-14 px-8 lg:grid-cols-[1.05fr_0.95fr]">
-          <div>
-            <div className="mb-4.5 inline-flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-olive-deep">
-              <span className="inline-block h-1.5 w-1.5 rotate-45 bg-olive" />
-              {t("eyebrow")}
-            </div>
+      {/* All four categories get the same treatment side by side — a
+          headline/subhead plus a small "featured" photo fan of real
+          listings from that category — rather than rentals getting a
+          bigger, separate hero. Each fan card links straight to that
+          listing (same as the old single-category hero did). */}
+      <section className="py-14">
+        <div className="mx-auto max-w-[1400px] px-8">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {categoryHeroes.map((hero) => (
+              <div key={hero.key}>
+                <div className="mb-3 inline-flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-olive-deep">
+                  <span className="inline-block h-1.5 w-1.5 rotate-45 bg-olive" />
+                  {hero.eyebrow}
+                </div>
 
-            <h1 className="mb-5 font-display text-4xl font-semibold leading-[1.05] tracking-tight text-ink lg:text-6xl">
-              {t("headlineStart")} <em className="italic text-rust">{t("headlineEmphasis")}</em>
-              <br />
-              {t("headlineEnd")}
-            </h1>
+                <h1 className="mb-2.5 font-display text-2xl font-semibold leading-[1.1] tracking-tight text-ink">
+                  {hero.heading}
+                </h1>
 
-            <p className="mb-8 max-w-[46ch] text-lg text-ink-soft">{t("subhead")}</p>
+                <p className="mb-5 text-sm text-ink-soft">{hero.subhead}</p>
+
+                {hero.featured.length > 0 && (
+                  <div className="relative h-[190px]">
+                    {hero.featured.map((listing, index) => (
+                      <Link
+                        key={listing.id}
+                        href={`${hero.hrefBase}/${listing.id}`}
+                        className={`${MINI_FAN_STYLES[index]} overflow-hidden rounded-md border border-canvas-deep bg-paper shadow-[0_10px_26px_rgba(27,42,58,0.14)] transition-transform hover:-translate-y-1`}
+                      >
+                        <div className="relative h-20">
+                          {listing.photos[0] ? (
+                            // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL, not worth next/image's config here
+                            <img src={listing.photos[0]} alt="" className="h-full w-full object-cover" />
+                          ) : (
+                            <div
+                              className="h-full w-full"
+                              style={{ background: "linear-gradient(135deg, #C9B896, #8E9B7A 60%, #6B7353)" }}
+                            />
+                          )}
+                          {listing.source === "housing_office" && <StampBadge className="right-2 top-2 scale-75" />}
+                        </div>
+                        <div className="px-2.5 py-2">
+                          <div className="font-mono text-[0.86rem] font-semibold text-ink">
+                            {miniCardPrice(listing)}
+                          </div>
+                          <div className="mt-0.5 truncate text-[0.72rem] text-ink-soft">{miniCardDetail(listing)}</div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
-
-          {featured.length > 0 && (
-            <div className="relative hidden h-[380px] lg:block">
-              {featured.map((listing, index) => (
-                <Link
-                  key={listing.id}
-                  href={`/listings/${listing.id}`}
-                  className={`${HERO_CARD_STYLES[index]} overflow-hidden rounded-md border border-canvas-deep bg-paper shadow-[0_14px_34px_rgba(27,42,58,0.16)] transition-transform hover:-translate-y-1`}
-                >
-                  <div className="relative h-33">
-                    {listing.photos[0] ? (
-                      // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL, not worth next/image's config here
-                      <img src={listing.photos[0]} alt="" className="h-full w-full object-cover" />
-                    ) : (
-                      <div
-                        className="h-full w-full"
-                        style={{ background: "linear-gradient(135deg, #C9B896, #8E9B7A 60%, #6B7353)" }}
-                      />
-                    )}
-                    {listing.source === "housing_office" && <StampBadge className="right-2.5 top-2.5" />}
-                  </div>
-                  <div className="px-3.5 py-3">
-                    <div className="font-mono text-[1.02rem] font-semibold text-ink">
-                      {currencyFormatter.format(listing.priceEurMonth)} / mo
-                    </div>
-                    <div className="mt-0.5 text-xs text-ink-soft">
-                      {listing.bedrooms} bed · {listing.city}
-                      {listing.distanceToBase ? ` · ${listing.distanceToBase}` : ""}
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
         </div>
       </section>
 
       {/* ---------- BROWSE BY CATEGORY ---------- */}
-      {/* One row, all four categories, same card chrome — Rentals' search
-          (near base/move-in/bedrooms, stacked to fit a quarter-width card
-          instead of the old side-by-side layout) joins Cars/Items for
-          sale/Services as an equal card rather than a separate, bigger
-          hero treatment. Each non-rental card's search submits as a plain
-          GET form straight to that category's browse page with ?q=...
-          pre-filled, no client JS required to work. */}
+      {/* One row, all four categories, matching card chrome and the same
+          single-field-plus-button shape. Rentals genuinely has more
+          filters (move-in date, bedrooms) than a car or a service does,
+          but those live in FilterModal/the results page now rather than
+          making this card taller than its three siblings — "near base" is
+          the one filter distinctive enough to keep here. */}
       <section className="bg-canvas-deep py-14">
         <div className="mx-auto max-w-[1400px] px-8">
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -151,63 +218,26 @@ export default async function Home() {
               </div>
               <h2 className="mb-1.5 font-display text-xl font-semibold text-ink">{t("rentalCardHeading")}</h2>
               <p className="mb-4 text-sm text-ink-soft">{t("rentalCardSubhead")}</p>
-              <form action="/#listings" className="flex flex-col gap-2.5">
-                <div>
-                  <label htmlFor="hero-base" className="mb-1 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
-                    {t("searchNearBase")}
-                  </label>
-                  <select
-                    id="hero-base"
-                    name="base"
-                    defaultValue=""
-                    className="w-full rounded-md border border-canvas-deep bg-canvas px-3 py-2 text-sm text-charcoal focus:border-olive focus:outline-none"
-                  >
-                    <option value="">{t("searchAnyBase")}</option>
-                    {BASE_NAMES.map((base) => (
-                      <option key={base} value={base}>
-                        {base}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="grid grid-cols-2 gap-2.5">
-                  <div>
-                    <label htmlFor="hero-movein" className="mb-1 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
-                      {t("searchMoveIn")}
-                    </label>
-                    <input
-                      id="hero-movein"
-                      name="movein"
-                      type="date"
-                      className="w-full rounded-md border border-canvas-deep bg-canvas px-3 py-2 text-sm text-charcoal focus:border-olive focus:outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="hero-bedrooms" className="mb-1 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
-                      {t("searchBedrooms")}
-                    </label>
-                    <select
-                      id="hero-bedrooms"
-                      name="bedrooms"
-                      defaultValue=""
-                      className="w-full rounded-md border border-canvas-deep bg-canvas px-3 py-2 text-sm text-charcoal focus:border-olive focus:outline-none"
-                    >
-                      <option value="">{t("searchAnyBedrooms")}</option>
-                      <option value="1">1+</option>
-                      <option value="2">2+</option>
-                      <option value="3">3+</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="submit"
-                    className="flex-1 whitespace-nowrap rounded-md bg-brass px-4 py-2 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
-                  >
-                    {t("searchButton")}
-                  </button>
-                  <FilterModal />
-                </div>
+              <form action="/#listings" className="flex gap-2">
+                <select
+                  name="base"
+                  defaultValue=""
+                  className="min-w-0 flex-1 rounded-md border border-canvas-deep bg-canvas px-3 py-2 text-sm text-charcoal focus:border-olive focus:outline-none"
+                >
+                  <option value="">{t("searchAnyBase")}</option>
+                  {BASE_NAMES.map((base) => (
+                    <option key={base} value={base}>
+                      {base}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="submit"
+                  className="flex-none whitespace-nowrap rounded-md bg-brass px-4 py-2 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+                >
+                  {t("searchButton")}
+                </button>
+                <FilterModal />
               </form>
             </div>
 

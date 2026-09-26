@@ -92,18 +92,19 @@ export async function getActiveListings(type: ListingType = "rental"): Promise<L
   return (data ?? []).map(mapRow);
 }
 
-/** Homepage hero's 3-card fan — rentals only (the hero's search bar is
- * rental-specific: near base, move-in date, bedrooms). Admin-featured
- * active listings first (most recently featured/added among them),
- * backfilled with the most recent active rentals so there are always up
- * to `limit` cards even before an admin has featured anything. */
-export async function getFeaturedListings(limit = 3): Promise<Listing[]> {
+/** Homepage hero's per-category featured fan — admin-featured active
+ * listings first (most recently featured/added among them), backfilled
+ * with the most recent active listings of that type so there are always
+ * up to `limit` cards even before an admin has featured anything for
+ * that category. Defaults to rentals for the original single-category
+ * caller; the 4-way homepage hero passes each type explicitly. */
+export async function getFeaturedListings(type: ListingType = "rental", limit = 3): Promise<Listing[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("listings")
     .select(LISTING_SELECT)
     .eq("status", "active")
-    .eq("type", "rental")
+    .eq("type", type)
     .order("is_featured", { ascending: false })
     .order("created_at", { ascending: false })
     .limit(limit);
@@ -114,7 +115,7 @@ export async function getFeaturedListings(limit = 3): Promise<Listing[]> {
     // returning nothing — a missing migration shouldn't take down the
     // entire hero, just the featuring behavior on top of it.
     if (error.code === "42703") {
-      const fallback = await getActiveListings("rental");
+      const fallback = await getActiveListings(type);
       return fallback.slice(0, limit);
     }
     console.error("getFeaturedListings failed:", error.message);
