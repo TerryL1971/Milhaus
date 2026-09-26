@@ -33,6 +33,13 @@ export function SiteFooter() {
       ],
     },
     {
+      heading: t("productsHeading"),
+      links: [
+        { label: t("browseProducts"), href: "/products" },
+        { label: t("sellSomething"), href: "/post-product" },
+      ],
+    },
+    {
       heading: t("aboutHeading"),
       links: [
         { label: t("contact"), href: "#" },

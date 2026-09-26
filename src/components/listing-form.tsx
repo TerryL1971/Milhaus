@@ -1,20 +1,20 @@
 // src/components/listing-form.tsx
-// Shared by the self-listing flow (/post, /post-car) and the admin "add a
-// listing" flow (/admin/listings/new) — same three-round-trip submit
-// (create a draft row for its id -> upload photos into ${id}/... -> update
-// with the photo URLs and the final status) for both listing types, just
-// the field set and the insert payload branch on `kind`:
+// Shared by the self-listing flow (/post, /post-car, /post-product) and the
+// admin "add a listing" flow (/admin/listings/new) — same three-round-trip
+// submit (create a draft row for its id -> upload photos into ${id}/... ->
+// update with the photo URLs and the final status) for every listing type,
+// just the field set and the insert payload branch on `kind`:
 //
 // - self-list always submits source="self_listed" and lands on
 //   pending_review, same as any other self-submitted listing.
 // - admin-add lets the admin pick the source (defaulting to
 //   housing_office for rentals — that's the actual reason this exists,
 //   Charlie entering a housing-office home directly) and goes straight to
-//   active: an admin adding it themselves *is* the review. Cars have no
-//   housing-office equivalent, so admin-add for a car skips the source
-//   picker entirely and is always self_listed.
+//   active: an admin adding it themselves *is* the review. Cars and
+//   products have no housing-office equivalent, so admin-add for either
+//   skips the source picker entirely and is always self_listed.
 //
-// Kept as one component with variant + kind props, not four near-
+// Kept as one component with variant + kind props, not several near-
 // duplicates: the FormData/event.currentTarget bug found earlier this
 // session was exactly the kind of thing that's easy to fix in one copy
 // and forget in another.
@@ -28,12 +28,13 @@ import { Link } from "@/i18n/navigation";
 import { AMENITY_KEYS } from "@/lib/amenities";
 import { BASE_NAMES } from "@/lib/bases";
 import { NEARBY_AMENITY_KEYS } from "@/lib/nearby-amenities";
+import { CONDITION_KEYS, CONDITION_LABELS, PRODUCT_CATEGORY_KEYS, PRODUCT_CATEGORY_LABELS } from "@/lib/product-categories";
 import { createClient } from "@/lib/supabase/client";
 import type { ListingSource } from "@/lib/types";
 
 type Status = "idle" | "submitting" | "success" | "error";
 type Variant = "self-list" | "admin-add";
-type Kind = "rental" | "car";
+type Kind = "rental" | "car" | "product";
 
 const labelClass = "mb-1 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75";
 const inputClass =
@@ -49,7 +50,9 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
   const [errorMessage, setErrorMessage] = useState("");
 
   const isAdminAdd = variant === "admin-add";
+  const isRental = kind === "rental";
   const isCar = kind === "car";
+  const isProduct = kind === "product";
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -71,10 +74,10 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
     }
 
     const files = (formData.getAll("photos") as File[]).filter((file) => file.size > 0);
-    // Cars have no housing-office equivalent — always self_listed,
-    // regardless of variant. Rentals keep the admin's source choice.
+    // Cars and products have no housing-office equivalent — always
+    // self_listed, regardless of variant. Rentals keep the admin's choice.
     const source: ListingSource =
-      isAdminAdd && !isCar ? ((formData.get("source") as ListingSource) ?? "housing_office") : "self_listed";
+      isAdminAdd && isRental ? ((formData.get("source") as ListingSource) ?? "housing_office") : "self_listed";
 
     setProgress(t("progressSaving"));
     const basePayload = {
@@ -106,31 +109,38 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
     // Type-specific fields live on their own details table now (one row
     // per listing, listing_id as the PK/FK) rather than on `listings`
     // itself — see supabase/migrations/20260926180000_split_listing_types_and_trust_safety.sql.
-    const { error: detailsError } = isCar
-      ? await supabase.from("car_details").insert({
-          listing_id: listingId,
-          make: formData.get("make"),
-          model: formData.get("model"),
-          year: Number(formData.get("year")),
-          mileage_km: formData.get("mileageKm") ? Number(formData.get("mileageKm")) : null,
-        })
-      : await supabase.from("rental_details").insert({
-          listing_id: listingId,
-          address: formData.get("address"),
-          bedrooms: Number(formData.get("bedrooms")),
-          bathrooms: Number(formData.get("bathrooms")),
-          size_sqm: formData.get("sizeSqm") ? Number(formData.get("sizeSqm")) : null,
-          available_from: (formData.get("availableFrom") as string) || null,
-          amenities: formData.getAll("amenities"),
-          parking_spaces: formData.get("parkingSpaces") ? Number(formData.get("parkingSpaces")) : null,
-          nearby_amenities: formData.getAll("nearbyAmenities"),
-          internet_type: formData.get("internetType") || null,
-          internet_speed_mbps: formData.get("internetSpeedMbps")
-            ? Number(formData.get("internetSpeedMbps"))
-            : null,
-          heat_type: formData.get("heatType") || null,
-          stove_type: formData.get("stoveType") || null,
-        });
+    let detailsError;
+    if (isCar) {
+      ({ error: detailsError } = await supabase.from("car_details").insert({
+        listing_id: listingId,
+        make: formData.get("make"),
+        model: formData.get("model"),
+        year: Number(formData.get("year")),
+        mileage_km: formData.get("mileageKm") ? Number(formData.get("mileageKm")) : null,
+      }));
+    } else if (isProduct) {
+      ({ error: detailsError } = await supabase.from("product_details").insert({
+        listing_id: listingId,
+        product_category: formData.get("productCategory"),
+        condition: formData.get("condition"),
+      }));
+    } else {
+      ({ error: detailsError } = await supabase.from("rental_details").insert({
+        listing_id: listingId,
+        address: formData.get("address"),
+        bedrooms: Number(formData.get("bedrooms")),
+        bathrooms: Number(formData.get("bathrooms")),
+        size_sqm: formData.get("sizeSqm") ? Number(formData.get("sizeSqm")) : null,
+        available_from: (formData.get("availableFrom") as string) || null,
+        amenities: formData.getAll("amenities"),
+        parking_spaces: formData.get("parkingSpaces") ? Number(formData.get("parkingSpaces")) : null,
+        nearby_amenities: formData.getAll("nearbyAmenities"),
+        internet_type: formData.get("internetType") || null,
+        internet_speed_mbps: formData.get("internetSpeedMbps") ? Number(formData.get("internetSpeedMbps")) : null,
+        heat_type: formData.get("heatType") || null,
+        stove_type: formData.get("stoveType") || null,
+      }));
+    }
     if (detailsError) {
       setStatus("error");
       setErrorMessage(detailsError.message);
@@ -178,14 +188,18 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
             ? t("successAdminAddTitle")
             : isCar
               ? t("successSelfListCarTitle")
-              : t("successSelfListTitle")}
+              : isProduct
+                ? t("successSelfListProductTitle")
+                : t("successSelfListTitle")}
         </p>
         <p className="mb-4 text-sm text-ink-soft">
           {isAdminAdd
             ? t("successAdminAddBody")
             : isCar
               ? t("successSelfListCarBody")
-              : t("successSelfListBody")}
+              : isProduct
+                ? t("successSelfListProductBody")
+                : t("successSelfListBody")}
         </p>
         {isAdminAdd && (
           <Link href="/admin" className="text-sm font-semibold text-olive-deep hover:underline">
@@ -201,7 +215,7 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
       onSubmit={handleSubmit}
       className="flex flex-col gap-5 rounded-md border border-canvas-deep bg-paper p-6 shadow-[0_8px_24px_rgba(27,42,58,0.08)]"
     >
-      {isAdminAdd && !isCar && (
+      {isAdminAdd && isRental && (
         <div>
           <label htmlFor="source" className={labelClass}>
             {t("source")}
@@ -221,7 +235,7 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
           id="title"
           name="title"
           required
-          placeholder={isCar ? t("carTitlePlaceholder") : t("titlePlaceholder")}
+          placeholder={isCar ? t("carTitlePlaceholder") : isProduct ? t("productTitlePlaceholder") : t("titlePlaceholder")}
           className={inputClass}
         />
       </div>
@@ -234,12 +248,18 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
           id="description"
           name="description"
           rows={4}
-          placeholder={isCar ? t("carDescriptionPlaceholder") : t("descriptionPlaceholder")}
+          placeholder={
+            isCar
+              ? t("carDescriptionPlaceholder")
+              : isProduct
+                ? t("productDescriptionPlaceholder")
+                : t("descriptionPlaceholder")
+          }
           className={inputClass}
         />
       </div>
 
-      {isCar ? (
+      {isCar && (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           <div>
             <label htmlFor="year" className={labelClass}>
@@ -274,7 +294,44 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
             <input id="mileageKm" name="mileageKm" type="number" min="0" className={inputClass} />
           </div>
         </div>
-      ) : (
+      )}
+
+      {isProduct && (
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="productCategory" className={labelClass}>
+              {t("productCategory")}
+            </label>
+            <select id="productCategory" name="productCategory" required className={inputClass} defaultValue="">
+              <option value="" disabled>
+                {t("chooseOne")}
+              </option>
+              {PRODUCT_CATEGORY_KEYS.map((key) => (
+                <option key={key} value={key}>
+                  {PRODUCT_CATEGORY_LABELS[key]}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="condition" className={labelClass}>
+              {t("condition")}
+            </label>
+            <select id="condition" name="condition" required className={inputClass} defaultValue="">
+              <option value="" disabled>
+                {t("chooseOne")}
+              </option>
+              {CONDITION_KEYS.map((key) => (
+                <option key={key} value={key}>
+                  {CONDITION_LABELS[key]}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      )}
+
+      {isRental && (
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label htmlFor="address" className={labelClass}>
@@ -291,7 +348,7 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
         </div>
       )}
 
-      {isCar && (
+      {!isRental && (
         <div>
           <label htmlFor="city" className={labelClass}>
             {t("city")}
@@ -329,10 +386,10 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
         </div>
       </div>
 
-      {isCar ? (
+      {!isRental ? (
         <div>
           <label htmlFor="priceEurMonth" className={labelClass}>
-            {t("carPrice")}
+            {isCar ? t("carPrice") : t("productPrice")}
           </label>
           <input
             id="priceEurMonth"
@@ -386,7 +443,7 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
         </div>
       )}
 
-      {!isCar && (
+      {isRental && (
         <div>
           <label htmlFor="availableFrom" className={labelClass}>
             {t("availableFrom")}
@@ -395,7 +452,7 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
         </div>
       )}
 
-      {!isCar && (
+      {isRental && (
         <div>
           <span className={labelClass}>{t("features")}</span>
           {/* Fixed at 2 columns, not 3 — German compounds ("Waschmaschine/
@@ -417,7 +474,7 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
         </div>
       )}
 
-      {!isCar && (
+      {isRental && (
         <div>
           <label htmlFor="parkingSpaces" className={labelClass}>
             {t("parkingSpaces")}
@@ -433,7 +490,7 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
         </div>
       )}
 
-      {!isCar && (
+      {isRental && (
         <div>
           <span className={labelClass}>{t("nearbyAmenities")}</span>
           <div className="grid grid-cols-2 gap-2">
@@ -452,7 +509,7 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
         </div>
       )}
 
-      {!isCar && (
+      {isRental && (
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label htmlFor="internetType" className={labelClass}>
@@ -480,7 +537,7 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
         </div>
       )}
 
-      {!isCar && (
+      {isRental && (
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label htmlFor="heatType" className={labelClass}>
@@ -532,10 +589,14 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
           : isAdminAdd
             ? isCar
               ? t("submitAdminAddCar")
-              : t("submitAdminAdd")
+              : isProduct
+                ? t("submitAdminAddProduct")
+                : t("submitAdminAdd")
             : isCar
               ? t("submitSelfListCar")
-              : t("submitSelfList")}
+              : isProduct
+                ? t("submitSelfListProduct")
+                : t("submitSelfList")}
       </button>
     </form>
   );

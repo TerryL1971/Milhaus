@@ -33,7 +33,8 @@
     "admin": "Admin",
     "signIn": "Sign in",
     "signOut": "Sign out",
-    "languageToggle": "Switch to German"
+    "languageToggle": "Switch to German",
+    "products": "Items for sale"
   },
   "SiteFooter": {
     "forRentersHeading": "For renters",
@@ -46,6 +47,9 @@
     "carsHeading": "Cars",
     "browseCars": "Browse cars",
     "sellYourCar": "Sell your car",
+    "productsHeading": "Items for sale",
+    "browseProducts": "Browse items",
+    "sellSomething": "Sell something",
     "aboutHeading": "About",
     "contact": "Contact",
     "impressum": "Impressum",
@@ -153,6 +157,15 @@
     "model": "Model",
     "modelPlaceholder": "e.g. Jetta",
     "mileageKm": "Mileage (km)",
+    "productTitlePlaceholder": "e.g. IKEA dining table, seats 6",
+    "productDescriptionPlaceholder": "Condition, dimensions, why you're selling — what should a buyer know?",
+    "productPrice": "Asking price (€)",
+    "productCategory": "Category",
+    "condition": "Condition",
+    "submitSelfListProduct": "Post item",
+    "submitAdminAddProduct": "Publish item",
+    "successSelfListProductTitle": "Submitted for review",
+    "successSelfListProductBody": "We'll take a look, usually the same day, and it'll go live on the Items for sale page.",
     "photos": "Photos",
     "submitSelfList": "Post home",
     "submitSelfListCar": "Post car ad",
@@ -310,6 +323,30 @@
   "PostCarPage": {
     "heading": "Sell your car",
     "body": "A few details and some photos — we'll review it, usually the same day, and it goes live on the Cars page."
+  },
+  "ProductsPage": {
+    "metaTitle": "Items for sale",
+    "metaDescription": "Items for sale from Americans in Germany — furniture, electronics, household goods, and more, all reviewed before they're listed.",
+    "eyebrow": "Items for sale",
+    "heading": "Items for sale",
+    "subhead": "PCSing out and selling what you can't take with you? Listed by the community, reviewed the same way every home on this site is.",
+    "sellSomething": "Sell something",
+    "searchPlaceholder": "Search by title, city, or category…",
+    "emptyNone": "Nothing listed right now — check back soon, or be the first.",
+    "emptyNoMatch": "Nothing matches that search."
+  },
+  "ProductCard": {
+    "available": "Available",
+    "sold": "Sold"
+  },
+  "ProductDetail": {
+    "backToProducts": "← Back to items for sale",
+    "sold": "Sold",
+    "availableStatus": "Available"
+  },
+  "PostProductPage": {
+    "heading": "Sell an item",
+    "body": "A few details and some photos — we'll review it, usually the same day, and it goes live on the Items for sale page."
   },
   "SellerCard": {
     "postedBy": "Posted by",

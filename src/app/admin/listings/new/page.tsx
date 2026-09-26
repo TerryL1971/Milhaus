@@ -1,10 +1,11 @@
 // src/app/admin/listings/new/page.tsx
 // Admin's own "add a listing" form — same fields as /post or /post-car,
 // but for entering a listing directly on someone's behalf (a
-// housing-office rental, or a car ad for someone who can't post it
-// themselves). Goes straight to `active`: the admin adding it is the
-// review. ?type=car switches ListingForm to the car field set — cars have
-// no housing-office equivalent, so that variant skips the source picker.
+// housing-office rental, a car ad, or an item for sale for someone who
+// can't post it themselves). Goes straight to `active`: the admin adding
+// it is the review. ?type=car / ?type=product switch ListingForm to that
+// field set — neither has a housing-office equivalent, so those variants
+// skip the source picker.
 
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
@@ -36,6 +37,8 @@ export default async function AdminNewListingPage({
 
   const { type } = await searchParams;
   const isCar = type === "car";
+  const isProduct = type === "product";
+  const kind = isCar ? "car" : isProduct ? "product" : "rental";
 
   return (
     <main className="flex-1 py-14">
@@ -44,7 +47,7 @@ export default async function AdminNewListingPage({
           ← Back to admin
         </Link>
         <h1 className="mb-2 font-display text-3xl font-semibold text-ink">
-          Add a {isCar ? "car ad" : "listing"}
+          Add a {isCar ? "car ad" : isProduct ? "item for sale" : "listing"}
         </h1>
         <p className="mb-4 text-ink-soft">
           Goes live immediately — no review step, since you&apos;re the reviewer.
@@ -53,7 +56,7 @@ export default async function AdminNewListingPage({
           <Link
             href="/admin/listings/new"
             className={`rounded-md border px-3.5 py-1.5 ${
-              !isCar ? "border-olive bg-olive/15 text-olive-deep" : "border-canvas-deep text-ink-soft"
+              kind === "rental" ? "border-olive bg-olive/15 text-olive-deep" : "border-canvas-deep text-ink-soft"
             }`}
           >
             Rental
@@ -66,8 +69,16 @@ export default async function AdminNewListingPage({
           >
             Car
           </Link>
+          <Link
+            href="/admin/listings/new?type=product"
+            className={`rounded-md border px-3.5 py-1.5 ${
+              isProduct ? "border-olive bg-olive/15 text-olive-deep" : "border-canvas-deep text-ink-soft"
+            }`}
+          >
+            Item for sale
+          </Link>
         </div>
-        <ListingForm variant="admin-add" kind={isCar ? "car" : "rental"} />
+        <ListingForm variant="admin-add" kind={kind} />
       </div>
     </main>
   );

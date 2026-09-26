@@ -89,6 +89,8 @@ export default async function AdminPage() {
             <div className="flex flex-col gap-3">
               {pending.map((listing) => {
                 const isCar = listing.type === "car";
+                const isProduct = listing.type === "product";
+                const typeLabel = isCar ? "Car" : isProduct ? "Item" : "Rental";
                 return (
                 <div
                   key={listing.id}
@@ -97,21 +99,26 @@ export default async function AdminPage() {
                   <div>
                     <p className="font-semibold text-ink">
                       <span className="mr-2 rounded-full bg-canvas-deep px-2 py-0.5 align-middle font-mono text-[0.6rem] uppercase tracking-wider text-ink-soft">
-                        {isCar ? "Car" : "Rental"}
+                        {typeLabel}
                       </span>
                       {isCar ? `${listing.year} ${listing.make} ${listing.model}` : listing.title}
                     </p>
                     <p className="text-sm text-ink-soft">
-                      {isCar ? listing.city : `${listing.address}, ${listing.city}`}
+                      {isCar || isProduct ? listing.city : `${listing.address}, ${listing.city}`}
                       {listing.base ? ` · ${listing.base}` : ""}
                     </p>
                     <div className="mt-1 flex flex-wrap gap-3 font-mono text-xs text-charcoal/80">
                       <span>
                         {currencyFormatter.format(listing.priceEurMonth)}
-                        {isCar ? "" : "/mo"}
+                        {isCar || isProduct ? "" : "/mo"}
                       </span>
                       {isCar ? (
                         listing.mileageKm != null && <span>{listing.mileageKm.toLocaleString("en-US")} km</span>
+                      ) : isProduct ? (
+                        <>
+                          {listing.productCategory && <span>{listing.productCategory}</span>}
+                          {listing.condition && <span>{listing.condition}</span>}
+                        </>
                       ) : (
                         <>
                           <span>{listing.bedrooms} bed</span>
@@ -173,9 +180,9 @@ export default async function AdminPage() {
                       <td className="px-4 py-3">
                         <p className="font-medium text-ink">
                           {listing.isFeatured && <span className="mr-1 text-brass">★</span>}
-                          {listing.type === "car" && (
+                          {listing.type !== "rental" && (
                             <span className="mr-1.5 rounded-full bg-canvas-deep px-1.5 py-0.5 align-middle font-mono text-[0.58rem] uppercase tracking-wider text-ink-soft">
-                              Car
+                              {listing.type === "car" ? "Car" : "Item"}
                             </span>
                           )}
                           {listing.title}

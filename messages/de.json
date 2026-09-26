@@ -33,7 +33,8 @@
     "admin": "Admin",
     "signIn": "Anmelden",
     "signOut": "Abmelden",
-    "languageToggle": "Auf Englisch umschalten"
+    "languageToggle": "Auf Englisch umschalten",
+    "products": "Artikel"
   },
   "SiteFooter": {
     "forRentersHeading": "Für Mieter",
@@ -46,6 +47,9 @@
     "carsHeading": "Autos",
     "browseCars": "Autos durchsuchen",
     "sellYourCar": "Auto verkaufen",
+    "productsHeading": "Artikel",
+    "browseProducts": "Artikel durchsuchen",
+    "sellSomething": "Etwas verkaufen",
     "aboutHeading": "Über uns",
     "contact": "Kontakt",
     "impressum": "Impressum",
@@ -153,6 +157,15 @@
     "model": "Modell",
     "modelPlaceholder": "z. B. Jetta",
     "mileageKm": "Kilometerstand (km)",
+    "productTitlePlaceholder": "z. B. IKEA Esstisch, 6 Plätze",
+    "productDescriptionPlaceholder": "Zustand, Maße, Verkaufsgrund — was sollte ein Käufer wissen?",
+    "productPrice": "Verkaufspreis (€)",
+    "productCategory": "Kategorie",
+    "condition": "Zustand",
+    "submitSelfListProduct": "Artikel inserieren",
+    "submitAdminAddProduct": "Artikel veröffentlichen",
+    "successSelfListProductTitle": "Zur Prüfung eingereicht",
+    "successSelfListProductBody": "Wir schauen es uns an, meist noch am selben Tag, dann geht es auf der Artikel-Seite live.",
     "photos": "Fotos",
     "submitSelfList": "Zuhause inserieren",
     "submitSelfListCar": "Auto inserieren",
@@ -310,6 +323,30 @@
   "PostCarPage": {
     "heading": "Auto verkaufen",
     "body": "Ein paar Details und einige Fotos — wir prüfen es, meist noch am selben Tag, dann geht es auf der Autos-Seite live."
+  },
+  "ProductsPage": {
+    "metaTitle": "Artikel zu verkaufen",
+    "metaDescription": "Artikel von Amerikanern in Deutschland — Möbel, Elektronik, Haushaltswaren und mehr, alle geprüft, bevor sie online gehen.",
+    "eyebrow": "Artikel zu verkaufen",
+    "heading": "Artikel zu verkaufen",
+    "subhead": "Ziehen Sie um und verkaufen, was Sie nicht mitnehmen können? Von der Community inseriert, genauso geprüft wie jedes Zuhause auf dieser Seite.",
+    "sellSomething": "Etwas verkaufen",
+    "searchPlaceholder": "Suche nach Titel, Stadt oder Kategorie…",
+    "emptyNone": "Gerade nichts gelistet — schauen Sie bald wieder vorbei, oder seien Sie die/der Erste.",
+    "emptyNoMatch": "Nichts passt zu dieser Suche."
+  },
+  "ProductCard": {
+    "available": "Verfügbar",
+    "sold": "Verkauft"
+  },
+  "ProductDetail": {
+    "backToProducts": "← Zurück zu den Artikeln",
+    "sold": "Verkauft",
+    "availableStatus": "Verfügbar"
+  },
+  "PostProductPage": {
+    "heading": "Artikel verkaufen",
+    "body": "Ein paar Details und einige Fotos — wir prüfen es, meist noch am selben Tag, dann geht es auf der Artikel-Seite live."
   },
   "SellerCard": {
     "postedBy": "Inseriert von",
