@@ -95,68 +95,6 @@ export default async function Home() {
             </h1>
 
             <p className="mb-8 max-w-[46ch] text-lg text-ink-soft">{t("subhead")}</p>
-
-            <form
-              action="/#listings"
-              className="rounded-md border border-canvas-deep bg-paper p-3.5 shadow-[0_8px_24px_rgba(27,42,58,0.08)]"
-            >
-              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-[1.2fr_1fr_0.9fr_auto] sm:items-center">
-                <div className="flex flex-col gap-1 border-b border-canvas-deep pb-2.5 sm:border-b-0 sm:border-r sm:pb-0 sm:pr-3.5">
-                  <label htmlFor="hero-base" className="font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
-                    {t("searchNearBase")}
-                  </label>
-                  <select
-                    id="hero-base"
-                    name="base"
-                    defaultValue=""
-                    className="bg-transparent py-1 text-[0.92rem] text-charcoal focus:outline-none"
-                  >
-                    <option value="">{t("searchAnyBase")}</option>
-                    {BASE_NAMES.map((base) => (
-                      <option key={base} value={base}>
-                        {base}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="flex flex-col gap-1 border-b border-canvas-deep pb-2.5 sm:border-b-0 sm:border-r sm:pb-0 sm:pr-3.5">
-                  <label htmlFor="hero-movein" className="font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
-                    {t("searchMoveIn")}
-                  </label>
-                  <input
-                    id="hero-movein"
-                    name="movein"
-                    type="date"
-                    className="bg-transparent py-1 text-[0.92rem] text-charcoal focus:outline-none"
-                  />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label htmlFor="hero-bedrooms" className="font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
-                    {t("searchBedrooms")}
-                  </label>
-                  <select
-                    id="hero-bedrooms"
-                    name="bedrooms"
-                    defaultValue=""
-                    className="bg-transparent py-1 text-[0.92rem] text-charcoal focus:outline-none"
-                  >
-                    <option value="">{t("searchAnyBedrooms")}</option>
-                    <option value="1">1+</option>
-                    <option value="2">2+</option>
-                    <option value="3">3+</option>
-                  </select>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="submit"
-                    className="flex-1 self-center whitespace-nowrap rounded-md bg-brass px-5 py-2.5 text-center text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep sm:flex-none"
-                  >
-                    {t("searchButton")}
-                  </button>
-                  <FilterModal />
-                </div>
-              </div>
-            </form>
           </div>
 
           {featured.length > 0 && (
@@ -196,15 +134,83 @@ export default async function Home() {
       </section>
 
       {/* ---------- BROWSE BY CATEGORY ---------- */}
-      {/* Rentals already own the main hero above; this is Cars/Items for
-          sale/Services' equivalent — a compact card each, not a full
-          fanned-photo hero (those need real listing photos to look right,
-          and not every mock listing has one yet). Each card's search
-          submits as a plain GET form straight to that category's browse
-          page with ?q=... pre-filled, no client JS required to work. */}
+      {/* One row, all four categories, same card chrome — Rentals' search
+          (near base/move-in/bedrooms, stacked to fit a quarter-width card
+          instead of the old side-by-side layout) joins Cars/Items for
+          sale/Services as an equal card rather than a separate, bigger
+          hero treatment. Each non-rental card's search submits as a plain
+          GET form straight to that category's browse page with ?q=...
+          pre-filled, no client JS required to work. */}
       <section className="bg-canvas-deep py-14">
         <div className="mx-auto max-w-[1400px] px-8">
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="rounded-md border border-canvas-deep bg-paper p-5 shadow-[0_8px_24px_rgba(27,42,58,0.06)]">
+              <div className="mb-2 inline-flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-olive-deep">
+                <span className="inline-block h-1.5 w-1.5 rotate-45 bg-olive" />
+                {t("rentalCardEyebrow")}
+              </div>
+              <h2 className="mb-1.5 font-display text-xl font-semibold text-ink">{t("rentalCardHeading")}</h2>
+              <p className="mb-4 text-sm text-ink-soft">{t("rentalCardSubhead")}</p>
+              <form action="/#listings" className="flex flex-col gap-2.5">
+                <div>
+                  <label htmlFor="hero-base" className="mb-1 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
+                    {t("searchNearBase")}
+                  </label>
+                  <select
+                    id="hero-base"
+                    name="base"
+                    defaultValue=""
+                    className="w-full rounded-md border border-canvas-deep bg-canvas px-3 py-2 text-sm text-charcoal focus:border-olive focus:outline-none"
+                  >
+                    <option value="">{t("searchAnyBase")}</option>
+                    {BASE_NAMES.map((base) => (
+                      <option key={base} value={base}>
+                        {base}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div>
+                    <label htmlFor="hero-movein" className="mb-1 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
+                      {t("searchMoveIn")}
+                    </label>
+                    <input
+                      id="hero-movein"
+                      name="movein"
+                      type="date"
+                      className="w-full rounded-md border border-canvas-deep bg-canvas px-3 py-2 text-sm text-charcoal focus:border-olive focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="hero-bedrooms" className="mb-1 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
+                      {t("searchBedrooms")}
+                    </label>
+                    <select
+                      id="hero-bedrooms"
+                      name="bedrooms"
+                      defaultValue=""
+                      className="w-full rounded-md border border-canvas-deep bg-canvas px-3 py-2 text-sm text-charcoal focus:border-olive focus:outline-none"
+                    >
+                      <option value="">{t("searchAnyBedrooms")}</option>
+                      <option value="1">1+</option>
+                      <option value="2">2+</option>
+                      <option value="3">3+</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="submit"
+                    className="flex-1 whitespace-nowrap rounded-md bg-brass px-4 py-2 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+                  >
+                    {t("searchButton")}
+                  </button>
+                  <FilterModal />
+                </div>
+              </form>
+            </div>
+
             {categoryCards.map((card) => (
               <div
                 key={card.key}
