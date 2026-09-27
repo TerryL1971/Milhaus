@@ -10,6 +10,7 @@
 // it renders whichever card type fits each one.
 
 import { useTranslations } from "next-intl";
+import { Avatar } from "@/components/avatar";
 import { CarListingCard } from "@/components/car-listing-card";
 import { ListingCard } from "@/components/listing-card";
 import { ProductListingCard } from "@/components/product-listing-card";
@@ -42,18 +43,7 @@ export function SellerCard({
   return (
     <div className="mt-8 rounded-md border border-canvas-deep bg-paper p-5">
       <div className="flex flex-wrap items-start gap-4">
-        {seller.photoUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL
-          <img
-            src={seller.photoUrl}
-            alt=""
-            className="h-16 w-16 flex-none rounded-full border border-canvas-deep object-cover"
-          />
-        ) : (
-          <div className="flex h-16 w-16 flex-none items-center justify-center rounded-full border border-canvas-deep bg-canvas font-display text-xl font-semibold text-ink-soft">
-            {name.slice(0, 1).toUpperCase()}
-          </div>
-        )}
+        <Avatar name={name} photoUrl={seller.photoUrl} size="md" />
 
         <div className="min-w-0 flex-1">
           <p className="font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">

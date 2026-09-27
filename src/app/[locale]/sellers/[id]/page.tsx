@@ -7,6 +7,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { Avatar } from "@/components/avatar";
 import { CarListingCard } from "@/components/car-listing-card";
 import { ListingCard } from "@/components/listing-card";
 import { ProductListingCard } from "@/components/product-listing-card";
@@ -45,18 +46,7 @@ export default async function SellerProfilePage({ params }: { params: Params }) 
     <main className="flex-1 py-14">
       <div className="mx-auto max-w-[1400px] px-8">
         <div className="mb-8 flex flex-wrap items-start gap-5 rounded-md border border-canvas-deep bg-paper p-6">
-          {seller.photoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL
-            <img
-              src={seller.photoUrl}
-              alt=""
-              className="h-20 w-20 flex-none rounded-full border border-canvas-deep object-cover"
-            />
-          ) : (
-            <div className="flex h-20 w-20 flex-none items-center justify-center rounded-full border border-canvas-deep bg-canvas font-display text-2xl font-semibold text-ink-soft">
-              {name.slice(0, 1).toUpperCase()}
-            </div>
-          )}
+          <Avatar name={name} photoUrl={seller.photoUrl} size="lg" />
           <div className="min-w-0 flex-1">
             <h1 className="font-display text-2xl font-semibold text-ink">{name}</h1>
             {seller.bio && <p className="mt-1.5 text-ink-soft">{seller.bio}</p>}

@@ -10,6 +10,7 @@
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
+import { Avatar } from "@/components/avatar";
 import { createClient } from "@/lib/supabase/client";
 import type { Profile } from "@/lib/profiles";
 
@@ -91,14 +92,7 @@ export function ProfileEditor({ profile }: { profile: Profile }) {
       <p className="mb-5 text-sm text-ink-soft">{t("body")}</p>
 
       <div className="mb-5 flex items-center gap-4">
-        {photoUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL
-          <img src={photoUrl} alt="" className="h-16 w-16 rounded-full border border-canvas-deep object-cover" />
-        ) : (
-          <div className="flex h-16 w-16 items-center justify-center rounded-full border border-canvas-deep bg-canvas font-display text-xl font-semibold text-ink-soft">
-            {(profile.displayName ?? profile.contactEmail ?? "?").slice(0, 1).toUpperCase()}
-          </div>
-        )}
+        <Avatar name={profile.displayName ?? profile.contactEmail ?? "?"} photoUrl={photoUrl} size="md" />
         <div>
           <button
             type="button"

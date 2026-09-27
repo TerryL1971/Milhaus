@@ -6,6 +6,7 @@
 
 import { getTranslations } from "next-intl/server";
 import NextLink from "next/link";
+import { Avatar } from "@/components/avatar";
 import { HomeLink } from "@/components/home-link";
 import { LanguageToggle } from "@/components/language-toggle";
 import { LogoIcon } from "@/components/logo-icon";
@@ -24,9 +25,17 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
   } = await supabase.auth.getUser();
 
   let isAdmin = false;
+  let accountName = "";
+  let accountPhotoUrl: string | null = null;
   if (user) {
-    const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role, display_name, photo_url")
+      .eq("id", user.id)
+      .single();
     isAdmin = isAdminRole(profile?.role);
+    accountName = profile?.display_name ?? user.email ?? "?";
+    accountPhotoUrl = profile?.photo_url ?? null;
   }
 
   return (
@@ -72,15 +81,12 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
                   {t("admin")}
                 </NextLink>
               )}
-              {/* The email doubles as the way into /my-listings — a new,
-                  separately-styled nav pill would re-crowd the header
-                  (see the earlier gap-tightening fix); this adds the
-                  entry point with zero extra width. */}
-              <Link
-                href="/my-listings"
-                className="hidden max-w-[160px] truncate text-sm opacity-85 hover:opacity-100 sm:inline"
-              >
-                {user.email}
+              {/* The avatar doubles as the way into /my-listings — a
+                  compact circle instead of the email text this replaced,
+                  so it also works as the "click the poster" affordance
+                  pattern used elsewhere (SellerCard, /sellers/[id]). */}
+              <Link href="/my-listings" title={accountName} className="opacity-85 hover:opacity-100">
+                <Avatar name={accountName} photoUrl={accountPhotoUrl} size="sm" />
               </Link>
               <form action="/auth/sign-out" method="post">
                 <button
