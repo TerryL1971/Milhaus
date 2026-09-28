@@ -37,7 +37,8 @@ export default async function PostListingPage() {
       <div className="mx-auto max-w-[640px] px-8">
         <h1 className="mb-2 font-display text-3xl font-semibold text-ink">{t("heading")}</h1>
         <p className="mb-8 text-ink-soft">{t("body")}</p>
-        {gatePrice !== null ? <DealerPaymentNotice priceEur={gatePrice} /> : <ListingForm variant="self-list" />}
+        {gatePrice !== null && <DealerPaymentNotice priceEur={gatePrice} />}
+        <ListingForm variant="self-list" dealerPriceEur={gatePrice} />
       </div>
     </main>
   );

@@ -42,7 +42,19 @@ const labelClass = "mb-1 block font-mono text-[0.68rem] uppercase tracking-wider
 const inputClass =
   "w-full rounded-md border border-canvas-deep bg-paper px-3 py-2 text-[0.95rem] text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none";
 
-export function ListingForm({ variant, kind = "rental" }: { variant: Variant; kind?: Kind }) {
+export function ListingForm({
+  variant,
+  kind = "rental",
+  dealerPriceEur = null,
+}: {
+  variant: Variant;
+  kind?: Kind;
+  /** Set when the signed-in poster is a dealer and this category
+   * currently costs something (see getDealerGatePrice) — instead of
+   * submitting straight to pending_review, the listing is saved as a
+   * draft and the poster is sent to pay before it goes to review. */
+  dealerPriceEur?: number | null;
+}) {
   const t = useTranslations("ListingForm");
   const tAmenities = useTranslations("Amenities");
   const tNearbyAmenities = useTranslations("NearbyAmenities");
@@ -174,15 +186,26 @@ export function ListingForm({ variant, kind = "rental" }: { variant: Variant; ki
       photoUrls.push(publicUrlData.publicUrl);
     }
 
-    setProgress(isAdminAdd ? t("progressPublishing") : t("progressReview"));
+    const needsPayment = !isAdminAdd && !!dealerPriceEur && dealerPriceEur > 0;
+    setProgress(
+      isAdminAdd ? t("progressPublishing") : needsPayment ? t("progressPaymentRedirect") : t("progressReview"),
+    );
     const { error: updateError } = await supabase
       .from("listings")
-      .update({ photos: photoUrls, status: isAdminAdd ? "active" : "pending_review" })
+      // A dealer owing a listing fee stays in draft — ListingForm's job
+      // ends at "saved and ready," /checkout/[listingId] is what moves
+      // it to pending_review once payment actually goes through.
+      .update({ photos: photoUrls, status: needsPayment ? "draft" : isAdminAdd ? "active" : "pending_review" })
       .eq("id", listingId);
 
     if (updateError) {
       setStatus("error");
       setErrorMessage(updateError.message);
+      return;
+    }
+
+    if (needsPayment) {
+      router.push(`/checkout/${listingId}`);
       return;
     }
 
