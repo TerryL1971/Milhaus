@@ -10,7 +10,7 @@
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 type Params = Promise<{ listingId: string }>;
@@ -32,7 +32,7 @@ export default async function CheckoutSuccessPage({
 
   if (!sessionId) notFound();
 
-  const session = await stripe.checkout.sessions.retrieve(sessionId);
+  const session = await getStripe().checkout.sessions.retrieve(sessionId);
   if (session.client_reference_id !== listingId || session.payment_status !== "paid") {
     return (
       <main className="flex-1 py-14">

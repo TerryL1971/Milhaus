@@ -13,7 +13,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { capturePaypalOrder, createPaypalOrder } from "@/lib/paypal";
 import { getListingPrice } from "@/lib/listing-prices";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { SITE_URL } from "@/lib/site-url";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -51,7 +51,7 @@ async function getPayableListing(listingId: string) {
 export async function startStripeCheckout(listingId: string) {
   const { listing, priceEur } = await getPayableListing(listingId);
 
-  const session = await stripe.checkout.sessions.create({
+  const session = await getStripe().checkout.sessions.create({
     mode: "payment",
     client_reference_id: listing.id,
     metadata: { listingId: listing.id },
