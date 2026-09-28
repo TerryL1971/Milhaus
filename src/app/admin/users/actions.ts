@@ -13,6 +13,7 @@ const VALID_ROLES: ProfileRole[] = [
   "housing_office_partner",
   "landlord",
   "individual_lister",
+  "dealer",
 ];
 
 const VALID_STATUSES: ProfileStatus[] = ["active", "suspended", "banned"];

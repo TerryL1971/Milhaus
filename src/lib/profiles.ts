@@ -34,6 +34,7 @@ export const ROLE_LABELS: Record<ProfileRole, string> = {
   housing_office_partner: "Housing office partner",
   landlord: "Landlord",
   individual_lister: "Individual lister",
+  dealer: "Dealer (pays to post)",
 };
 
 function mapProfileRow(row: Record<string, unknown>): Profile {

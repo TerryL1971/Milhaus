@@ -19,7 +19,8 @@ export type ProfileRole =
   | "admin"
   | "housing_office_partner"
   | "landlord"
-  | "individual_lister";
+  | "individual_lister"
+  | "dealer";
 
 /** Suspended/banned only blocks *new* listing creation (see the "listings:
  * authenticated users create their own listings" RLS policy) — sign-in,
