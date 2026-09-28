@@ -149,11 +149,14 @@ export default async function Home() {
                 key={category.key}
                 className="flex flex-col rounded-md border border-canvas-deep bg-paper p-5 shadow-[0_8px_24px_rgba(27,42,58,0.06)]"
               >
-                <div className="mb-4 flex h-14 items-center justify-center rounded-md border border-dashed border-brass/50 bg-brass/8">
+                <a
+                  href="mailto:hello@example.com?subject=Advertising%20on%20Milhaus"
+                  className="mb-4 flex h-14 items-center justify-center rounded-md border border-dashed border-brass/50 bg-brass/8 transition-colors hover:border-brass hover:bg-brass/15"
+                >
                   <span className="font-mono text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-brass-deep">
                     {t("sponsoredSpot")}
                   </span>
-                </div>
+                </a>
 
                 <h1 className="mb-1.5 font-display text-xl font-semibold leading-[1.1] tracking-tight text-ink">
                   {category.heading}
