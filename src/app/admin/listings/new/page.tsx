@@ -11,12 +11,23 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ListingForm } from "@/components/listing-form";
+import { getListingPrices } from "@/lib/listing-prices";
 import { isAdminRole } from "@/lib/roles";
 import { createClient } from "@/lib/supabase/server";
+import type { ListingType } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Add a listing",
   robots: { index: false, follow: false },
+};
+
+const currencyFormatter = new Intl.NumberFormat("en-US", { style: "currency", currency: "EUR" });
+
+const TYPE_LABELS: Record<ListingType, string> = {
+  rental: "Rental",
+  car: "Car",
+  product: "Item for sale",
+  service: "Service",
 };
 
 type SearchParams = Promise<{ type?: string }>;
@@ -40,6 +51,7 @@ export default async function AdminNewListingPage({
   const isProduct = type === "product";
   const isService = type === "service";
   const kind = isCar ? "car" : isProduct ? "product" : isService ? "service" : "rental";
+  const prices = await getListingPrices();
 
   return (
     <main className="flex-1 py-14">
@@ -87,6 +99,25 @@ export default async function AdminNewListingPage({
             Service
           </Link>
         </div>
+
+        {/* This is what a dealer account pays to post in each category —
+            not relevant to this admin-add flow itself (it always goes
+            straight to active, no payment), just a reference so Charlie
+            can see current pricing while he's here. */}
+        <div className="mb-8 flex flex-wrap items-center gap-x-5 gap-y-1.5 rounded-md border border-canvas-deep bg-canvas px-4 py-3 text-sm">
+          <span className="font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
+            Dealer pricing
+          </span>
+          {(Object.keys(TYPE_LABELS) as ListingType[]).map((t) => (
+            <span key={t} className={t === kind ? "font-semibold text-ink" : "text-ink-soft"}>
+              {TYPE_LABELS[t]}: {currencyFormatter.format(prices[t])}
+            </span>
+          ))}
+          <Link href="/admin/pricing" className="ml-auto text-xs font-semibold text-olive-deep hover:underline">
+            Edit prices
+          </Link>
+        </div>
+
         <ListingForm variant="admin-add" kind={kind} />
       </div>
     </main>
