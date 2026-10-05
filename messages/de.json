@@ -27,6 +27,9 @@
   },
   "SiteHeader": {
     "browseListings": "Angebote durchsuchen",
+    "homes": "Wohnen",
+    "buySell": "Kaufen & Verkaufen",
+    "postAd": "Anzeige aufgeben",
     "cars": "Autos",
     "listYourHome": "Zuhause inserieren",
     "forLandlords": "Für Vermieter",
@@ -65,6 +68,21 @@
     "headlineEmphasis": "bevor",
     "headlineEnd": "Sie landen.",
     "subhead": "Angebote des Housing Office und Wohnungen von Familien im PCS-Umzug – geprüft, klar beschrieben und noch am Tag der Vermietung von der Seite genommen.",
+    "heroSearchPlaceholder": "Wonach suchen Sie?",
+    "heroAllCategories": "Alle Kategorien",
+    "heroCategoryRentals": "Mietobjekte",
+    "heroCategoryCars": "Autos",
+    "heroCategoryItems": "Artikel",
+    "heroCategoryServices": "Dienstleistungen",
+    "heroTagline": "Eine stärkere Community. Ein leichteres Leben im Ausland.",
+    "__searchpage__": {
+      "metaTitle": "Suche",
+      "heading": "Suchergebnisse",
+      "subhead": "Über alle Kategorien hinweg — Wohnungen, Autos, Artikel und Dienstleistungen.",
+      "searchPlaceholder": "Suche verfeinern…",
+      "emptyNone": "Noch nichts passend — versuchen Sie eine andere Suche.",
+      "emptyNoMatch": "Nichts passt zu dieser Suche."
+    },
     "rentalCardEyebrow": "Wohnen",
     "rentalCardHeading": "Mietobjekte",
     "rentalCardSubhead": "Angebote vom Housing Office und von Familien selbst inseriert, geprüft bevor sie online gehen.",
@@ -460,5 +478,26 @@
     "submitting": "Wird gesendet…",
     "cancel": "Abbrechen",
     "submitted": "Danke — wir schauen es uns an."
+  },
+  "SearchPage": {
+    "metaTitle": "Suche",
+    "heading": "Suchergebnisse",
+    "subhead": "Über alle Kategorien hinweg — Wohnungen, Autos, Artikel und Dienstleistungen.",
+    "searchPlaceholder": "Suche verfeinern…",
+    "emptyNone": "Noch nichts passend — versuchen Sie eine andere Suche.",
+    "emptyNoMatch": "Nichts passt zu dieser Suche."
+  },
+  "PostAdPage": {
+    "metaTitle": "Anzeige aufgeben",
+    "heading": "Was möchten Sie inserieren?",
+    "subhead": "Wählen Sie eine Kategorie, um loszulegen.",
+    "rentalHeading": "Ein Zuhause",
+    "rentalBody": "Inserieren Sie einen Ort, aus dem Sie ausziehen.",
+    "carHeading": "Ein Auto",
+    "carBody": "PCS-Umzug oder einfach ein Upgrade.",
+    "productHeading": "Einen Artikel",
+    "productBody": "Möbel, Elektronik, alles andere.",
+    "serviceHeading": "Eine Dienstleistung",
+    "serviceBody": "Umzugshilfe, Nachhilfe, Reparaturen und mehr."
   }
 }

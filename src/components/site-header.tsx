@@ -46,21 +46,19 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
           Milhaus<span className="text-brass">.</span>
         </HomeLink>
 
+        {/* Trimmed from 6 items to 4 — "List your home" and "For
+            landlords" moved to the footer only. Fewer, clearer choices is
+            itself a discoverability win, on top of the hero's unified
+            search being the primary way to find something now. */}
         <nav className="hidden gap-6 whitespace-nowrap text-[0.92rem] font-medium md:flex">
           <Link href="/#listings" className="opacity-85 transition-opacity hover:opacity-100">
-            {t("browseListings")}
-          </Link>
-          <Link href="/post" className="opacity-85 transition-opacity hover:opacity-100">
-            {t("listYourHome")}
-          </Link>
-          <Link href="/for-landlords" className="opacity-85 transition-opacity hover:opacity-100">
-            {t("forLandlords")}
+            {t("homes")}
           </Link>
           <Link href="/cars" className="opacity-85 transition-opacity hover:opacity-100">
             {t("cars")}
           </Link>
           <Link href="/products" className="opacity-85 transition-opacity hover:opacity-100">
-            {t("products")}
+            {t("buySell")}
           </Link>
           <Link href="/services" className="opacity-85 transition-opacity hover:opacity-100">
             {t("services")}
@@ -105,11 +103,16 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
               {t("signIn")}
             </Link>
           )}
+          {/* "Browse listings" is now covered by the nav's "Homes" link
+              (and the hero's own unified search); this slot is a single
+              prominent CTA instead — one click to a chooser between the
+              four post flows, matching the "Post an Ad" button Charlie
+              asked for. */}
           <Link
-            href="/#listings"
-            className="rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+            href="/post-ad"
+            className="rounded-md bg-rust px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-rust/90"
           >
-            {t("browseListings")}
+            {t("postAd")}
           </Link>
         </div>
       </div>

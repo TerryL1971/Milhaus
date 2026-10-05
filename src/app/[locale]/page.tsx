@@ -73,13 +73,9 @@ export default async function Home() {
   const categories = [
     {
       key: "rental",
-      eyebrow: t("eyebrow"),
-      heading: (
-        <>
-          {t("headlineStart")} <em className="italic text-rust">{t("headlineEmphasis")}</em> {t("headlineEnd")}
-        </>
-      ),
-      subhead: t("subhead"),
+      eyebrow: t("rentalCardEyebrow"),
+      heading: t("rentalCardHeading"),
+      subhead: t("rentalCardSubhead"),
       featured: featuredRentals,
       hrefBase: "/listings",
       search: { kind: "base-select" as const, action: "/#listings" },
@@ -132,9 +128,82 @@ export default async function Home() {
     { num: "03", heading: t("how3Heading"), body: t("how3Body") },
   ];
 
+  const heroImageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/listing-photos/_site/hero-home.jpg`;
+  const searchAction = getPathname({ href: "/search", locale });
+
   return (
     <main className="flex-1">
-      {/* ---------- HERO ---------- */}
+      {/* ---------- PHOTO HERO + UNIFIED SEARCH ---------- */}
+      {/* One search box across all four categories, not four separate
+          ones — the actual fix for "how would someone even know Items
+          for sale is where a baby crib would be." Submits to /search,
+          which fans out across every type unless a specific category is
+          picked. */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0">
+          {/* eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL, not worth next/image's config here */}
+          <img src={heroImageUrl} alt="" className="h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/75 to-ink/35" />
+        </div>
+
+        <div className="relative mx-auto max-w-[1400px] px-8 py-20 sm:py-28">
+          <div className="mb-3 inline-flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-brass">
+            <span className="inline-block h-1.5 w-1.5 rotate-45 bg-brass" />
+            {t("eyebrow")}
+          </div>
+
+          <h1 className="mb-4 max-w-[20ch] font-display text-4xl font-semibold leading-[1.05] tracking-tight text-paper lg:text-6xl">
+            {t("headlineStart")} <em className="italic text-brass">{t("headlineEmphasis")}</em> {t("headlineEnd")}
+          </h1>
+
+          <p className="mb-8 max-w-[52ch] text-lg text-paper/85">{t("subhead")}</p>
+
+          <form
+            action={searchAction}
+            className="flex flex-col gap-2.5 rounded-md bg-paper p-3.5 shadow-[0_14px_34px_rgba(0,0,0,0.3)] sm:flex-row sm:items-center"
+          >
+            <input
+              type="search"
+              name="q"
+              placeholder={t("heroSearchPlaceholder")}
+              className="min-w-0 flex-[1.4] rounded-md border border-canvas-deep bg-canvas px-4 py-2.5 text-[0.95rem] text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none"
+            />
+            <select
+              name="category"
+              defaultValue=""
+              className="rounded-md border border-canvas-deep bg-canvas px-3 py-2.5 text-sm text-charcoal focus:border-olive focus:outline-none"
+            >
+              <option value="">{t("heroAllCategories")}</option>
+              <option value="rental">{t("heroCategoryRentals")}</option>
+              <option value="car">{t("heroCategoryCars")}</option>
+              <option value="product">{t("heroCategoryItems")}</option>
+              <option value="service">{t("heroCategoryServices")}</option>
+            </select>
+            <select
+              name="base"
+              defaultValue=""
+              className="rounded-md border border-canvas-deep bg-canvas px-3 py-2.5 text-sm text-charcoal focus:border-olive focus:outline-none"
+            >
+              <option value="">{t("searchAnyBase")}</option>
+              {BASE_NAMES.map((base) => (
+                <option key={base} value={base}>
+                  {base}
+                </option>
+              ))}
+            </select>
+            <button
+              type="submit"
+              className="flex-none whitespace-nowrap rounded-md bg-rust px-6 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-rust/90"
+            >
+              {t("searchButton")}
+            </button>
+          </form>
+
+          <p className="mt-4 font-mono text-xs uppercase tracking-[0.1em] text-paper/70">{t("heroTagline")}</p>
+        </div>
+      </section>
+
+      {/* ---------- FEATURED BY CATEGORY ---------- */}
       {/* All four categories in one card each — a reserved sponsored-spot
           banner up top (not wired to real payment yet, see CLAUDE.md's
           "not needed for MVP" call on Stripe — this is just the space),
@@ -158,9 +227,9 @@ export default async function Home() {
                   </span>
                 </a>
 
-                <h1 className="mb-1.5 font-display text-xl font-semibold leading-[1.1] tracking-tight text-ink">
+                <h2 className="mb-1.5 font-display text-xl font-semibold leading-[1.1] tracking-tight text-ink">
                   {category.heading}
-                </h1>
+                </h2>
 
                 <p className="mb-4 text-sm text-ink-soft">{category.subhead}</p>
 

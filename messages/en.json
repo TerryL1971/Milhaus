@@ -27,6 +27,9 @@
   },
   "SiteHeader": {
     "browseListings": "Browse listings",
+    "homes": "Homes",
+    "buySell": "Buy & sell",
+    "postAd": "Post an ad",
     "cars": "Cars",
     "listYourHome": "List your home",
     "forLandlords": "For landlords",
@@ -65,9 +68,24 @@
     "headlineEmphasis": "before",
     "headlineEnd": "you land.",
     "subhead": "Housing Agents listings and homes from families rotating out — verified, in plain English, and taken down the day they're gone.",
+    "heroSearchPlaceholder": "What are you looking for?",
+    "heroAllCategories": "All categories",
+    "heroCategoryRentals": "Rentals",
+    "heroCategoryCars": "Cars",
+    "heroCategoryItems": "Items for sale",
+    "heroCategoryServices": "Services",
+    "heroTagline": "A stronger community. A smoother life abroad.",
+    "__searchpage__": {
+      "metaTitle": "Search",
+      "heading": "Search results",
+      "subhead": "Across every category — homes, cars, items for sale, and services.",
+      "searchPlaceholder": "Refine your search…",
+      "emptyNone": "Nothing matches yet — try a different search.",
+      "emptyNoMatch": "Nothing matches that search."
+    },
     "rentalCardEyebrow": "Housing",
     "rentalCardHeading": "Rentals",
-    "rentalCardSubhead": "Housing Agents listings and self-listed homes, reviewed before they go live.",
+    "rentalCardSubhead": "Housing-office listings and self-listed homes, reviewed before they go live.",
     "searchNearBase": "Near base",
     "searchAnyBase": "Any base",
     "searchMoveIn": "Move-in",
@@ -460,5 +478,26 @@
     "submitting": "Submitting…",
     "cancel": "Cancel",
     "submitted": "Thanks — we'll take a look."
+  },
+  "SearchPage": {
+    "metaTitle": "Search",
+    "heading": "Search results",
+    "subhead": "Across every category — homes, cars, items for sale, and services.",
+    "searchPlaceholder": "Refine your search…",
+    "emptyNone": "Nothing matches yet — try a different search.",
+    "emptyNoMatch": "Nothing matches that search."
+  },
+  "PostAdPage": {
+    "metaTitle": "Post an ad",
+    "heading": "What are you posting?",
+    "subhead": "Pick a category to get started.",
+    "rentalHeading": "A home",
+    "rentalBody": "List a place you're moving out of.",
+    "carHeading": "A car",
+    "carBody": "PCSing out, or just upgrading.",
+    "productHeading": "An item",
+    "productBody": "Furniture, electronics, anything else.",
+    "serviceHeading": "A service",
+    "serviceBody": "Moving help, tutoring, repairs, and more."
   }
 }
