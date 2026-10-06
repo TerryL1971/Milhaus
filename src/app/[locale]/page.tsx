@@ -6,7 +6,6 @@
 
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
-import { FilterModal } from "@/components/filter-modal";
 import { ListingsGrid } from "@/components/listings-grid";
 import { SponsorBannerCarousel } from "@/components/sponsor-banner-carousel";
 import { StampBadge } from "@/components/stamp-badge";
@@ -68,9 +67,9 @@ export default async function Home() {
   // One card per category — hero content (eyebrow/heading/subhead/photo
   // fan) and the search control merged into a single unit rather than two
   // separate rows. Rentals keeps its punchy headline/emphasis split and a
-  // "near base" select (it has more filters than a single text box can
-  // hold — move-in date and bedrooms live in FilterModal instead); the
-  // other three reuse their own page's copy and a plain text search.
+  // "near base" select; move-in date and bedrooms live in the "Open right
+  // now" section's Filters dropdown below, not here. The other three
+  // categories reuse their own page's copy and a plain text search.
   const categories = [
     {
       key: "rental",
@@ -283,7 +282,6 @@ export default async function Home() {
                       >
                         {t("searchButton")}
                       </button>
-                      <FilterModal />
                     </form>
                   ) : (
                     <form action={category.search.action} className="flex gap-2">

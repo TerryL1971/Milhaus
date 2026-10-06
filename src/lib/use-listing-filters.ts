@@ -1,9 +1,8 @@
 // src/lib/use-listing-filters.ts
-// Shared filter state for the browse page — used by both ListingsGrid (the
-// base/amenity chips) and FilterModal (the hero's filter icon). Both write
-// to the same URL search params, so extracted once rather than duplicated
-// in two places that could quietly drift out of sync — e.g. an amenity key
-// getting validated one way in one place and another way in the other.
+// Filter state for the Homes browse page's Filters dropdown
+// (FilterDropdown, next to the "Open right now" heading) — base,
+// amenities, bedrooms, and move-in all read/write the same URL search
+// params through this one hook rather than each owning its own state.
 
 "use client";
 
@@ -18,15 +17,18 @@ export function useListingFilters() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // Sentinel for "no base filter" — locale-aware, but harmless: it never
-  // leaks into the URL (selecting it deletes the param, never sets it to
-  // this value), it's only ever compared against itself.
+  // Sentinel kept for callers that still want a single "no base filter"
+  // label (e.g. the hero's plain-HTML search-by-base <select>, a
+  // different control than the checkbox filter below).
   const ALL_BASES = t("allBases");
 
-  // `|| ` on purpose, not `??` — an unselected <select name="base"> in the
-  // hero form submits as an empty string, not an absent param, and that
-  // must also mean "no filter."
-  const activeBase = searchParams.get("base") || ALL_BASES;
+  // Bases are a multi-select (0 to all) now, same comma-joined-param
+  // pattern as amenities below — an empty selection means "no filter",
+  // not "show nothing."
+  const activeBases = useMemo(
+    () => (searchParams.get("base") ?? "").split(",").filter(Boolean),
+    [searchParams],
+  );
   const minBedrooms = Number(searchParams.get("bedrooms")) || 0;
   // moveIn stays a plain "YYYY-MM-DD" string — exactly what
   // <input type="date"> submits and what availableFrom is stored as, so
@@ -50,8 +52,9 @@ export function useListingFilters() {
     router.replace(`${pathname}${query ? `?${query}` : ""}#listings`, { scroll: false });
   }
 
-  function setActiveBase(base: string) {
-    updateParams({ base: base === ALL_BASES ? null : base });
+  function toggleBase(base: string) {
+    const next = activeBases.includes(base) ? activeBases.filter((b) => b !== base) : [...activeBases, base];
+    updateParams({ base: next.length > 0 ? next.join(",") : null });
   }
 
   function setBedrooms(count: number) {
@@ -74,19 +77,16 @@ export function useListingFilters() {
   }
 
   const activeCount =
-    (activeBase !== ALL_BASES ? 1 : 0) +
-    (minBedrooms > 0 ? 1 : 0) +
-    (moveIn ? 1 : 0) +
-    activeAmenities.length;
+    activeBases.length + (minBedrooms > 0 ? 1 : 0) + (moveIn ? 1 : 0) + activeAmenities.length;
 
   return {
     ALL_BASES,
-    activeBase,
+    activeBases,
     minBedrooms,
     moveIn,
     activeAmenities,
     activeCount,
-    setActiveBase,
+    toggleBase,
     setBedrooms,
     setMoveIn,
     toggleAmenity,

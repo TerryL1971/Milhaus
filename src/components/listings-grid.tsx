@@ -1,19 +1,19 @@
 // src/components/listings-grid.tsx
-// The "Open right now" section — filter chips + listing grid, ported from
-// the ".listings-section" rules in
-// /design-reference/milhaus-landing-mockup.html.
+// The "Open right now" section — a single Filters dropdown (base,
+// amenities, bedrooms, move-in) plus the listing grid. Replaced the
+// earlier pair of base/amenity pill-chip rows and the separate
+// FilterModal popup on the hero's Rentals mini-card — one control
+// instead of two UIs quietly driving the same filter state.
 //
 // Filter state lives in the URL (?base=...&bedrooms=...), not just local
-// component state, so the hero search form (a plain HTML GET form, no JS),
-// FilterModal (the hero's filter icon), and these chips all drive the same
-// filter instead of being disconnected UIs that silently don't affect each
-// other. The read/write logic itself lives in useListingFilters, shared
-// with FilterModal.
+// component state — useListingFilters is the read/write logic, shared
+// with nothing else now that FilterModal is gone.
 
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
 import { useMemo } from "react";
+import { FilterDropdown } from "@/components/filter-dropdown";
 import { ListingCard } from "@/components/listing-card";
 import { Link } from "@/i18n/navigation";
 import { AMENITY_KEYS } from "@/lib/amenities";
@@ -62,23 +62,27 @@ function PlaceholderCard({ variant }: { variant: 0 | 1 | 2 }) {
 
 export function ListingsGrid({ listings }: { listings: Listing[] }) {
   const t = useTranslations("ListingsGrid");
+  const tHome = useTranslations("HomePage");
   const tAmenities = useTranslations("Amenities");
+  const tFilter = useTranslations("FilterModal");
   const locale = useLocale();
   const {
-    ALL_BASES,
-    activeBase,
+    activeBases,
     minBedrooms,
     moveIn,
     activeAmenities,
-    setActiveBase,
+    activeCount,
+    toggleBase,
+    setBedrooms,
+    setMoveIn,
     toggleAmenity,
+    clearAll,
   } = useListingFilters();
-  const BASES = [ALL_BASES, ...BASE_NAMES];
 
   const filtered = useMemo(
     () =>
       listings.filter((listing) => {
-        if (activeBase !== ALL_BASES && listing.base !== activeBase) return false;
+        if (activeBases.length > 0 && (!listing.base || !activeBases.includes(listing.base))) return false;
         if (minBedrooms > 0 && listing.bedrooms != null && listing.bedrooms < minBedrooms) return false;
         // "I need to move in by this date" — a listing works if it's
         // already available, or becomes available on/before that date.
@@ -91,11 +95,10 @@ export function ListingsGrid({ listings }: { listings: Listing[] }) {
         if (activeAmenities.some((key) => !listing.amenities.includes(key))) return false;
         return true;
       }),
-    [listings, activeBase, minBedrooms, moveIn, activeAmenities, ALL_BASES],
+    [listings, activeBases, minBedrooms, moveIn, activeAmenities],
   );
 
-  const hasActiveFilters =
-    activeBase !== ALL_BASES || minBedrooms > 0 || !!moveIn || activeAmenities.length > 0;
+  const hasActiveFilters = activeCount > 0;
   // Only pad the *unfiltered* view — see PlaceholderCard's comment for why.
   const placeholderCount = hasActiveFilters ? 0 : Math.max(0, 3 - filtered.length);
 
@@ -103,45 +106,65 @@ export function ListingsGrid({ listings }: { listings: Listing[] }) {
     <>
       <div className="mb-7 flex flex-wrap items-end justify-between gap-5">
         <h2 className="font-display text-[2rem] font-semibold text-ink">{t("heading")}</h2>
-        <div className="flex flex-wrap gap-2">
-          {BASES.map((base) => (
-            <button
-              key={base}
-              type="button"
-              onClick={() => setActiveBase(base)}
-              className={`rounded-full border px-3.5 py-1.5 font-mono text-[0.74rem] tracking-wide transition-colors ${
-                activeBase === base
-                  ? "border-olive bg-olive text-paper"
-                  : "border-canvas-deep bg-paper text-ink-soft hover:border-olive/50"
-              }`}
-            >
-              {base}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="mb-7 flex flex-wrap gap-2">
-        {AMENITY_KEYS.map((key) => (
-          <button
-            key={key}
-            type="button"
-            onClick={() => toggleAmenity(key)}
-            className={`rounded-full border px-3.5 py-1.5 font-mono text-[0.74rem] tracking-wide transition-colors ${
-              activeAmenities.includes(key)
-                ? "border-brass bg-brass/15 text-brass-deep"
-                : "border-canvas-deep bg-paper text-ink-soft hover:border-brass/50"
-            }`}
-          >
-            {tAmenities(key)}
-          </button>
-        ))}
+        <FilterDropdown
+          label={tFilter("title")}
+          clearLabel={tFilter("clearAll")}
+          activeCount={activeCount}
+          onClearAll={clearAll}
+          align="right"
+          extra={
+            <div className="mb-4 flex flex-col gap-3 border-b border-canvas-deep pb-4">
+              <div>
+                <label htmlFor="filter-movein" className="mb-1 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
+                  {tHome("searchMoveIn")}
+                </label>
+                <input
+                  id="filter-movein"
+                  type="date"
+                  value={moveIn}
+                  onChange={(event) => setMoveIn(event.target.value)}
+                  className="w-full rounded-md border border-canvas-deep bg-paper px-3 py-2 text-[0.95rem] text-charcoal focus:border-olive focus:outline-none"
+                />
+              </div>
+              <div>
+                <label htmlFor="filter-bedrooms" className="mb-1 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
+                  {tHome("searchBedrooms")}
+                </label>
+                <select
+                  id="filter-bedrooms"
+                  value={minBedrooms || ""}
+                  onChange={(event) => setBedrooms(Number(event.target.value))}
+                  className="w-full rounded-md border border-canvas-deep bg-paper px-3 py-2 text-[0.95rem] text-charcoal focus:border-olive focus:outline-none"
+                >
+                  <option value="">{tHome("searchAnyBedrooms")}</option>
+                  <option value="1">1+</option>
+                  <option value="2">2+</option>
+                  <option value="3">3+</option>
+                </select>
+              </div>
+            </div>
+          }
+          groups={[
+            {
+              label: t("filterBase"),
+              options: BASE_NAMES.map((base) => ({ value: base, label: base })),
+              selected: activeBases,
+              onToggle: toggleBase,
+            },
+            {
+              label: t("filterAmenities"),
+              options: AMENITY_KEYS.map((key) => ({ value: key, label: tAmenities(key) })),
+              selected: activeAmenities,
+              onToggle: (value) => toggleAmenity(value as (typeof AMENITY_KEYS)[number]),
+            },
+          ]}
+        />
       </div>
 
       {filtered.length === 0 && hasActiveFilters ? (
         <p className="text-ink-soft">
           {t("emptyPrefix")}
-          {activeBase !== ALL_BASES ? ` ${t("emptyNear", { base: activeBase })}` : ""}
+          {activeBases.length > 0 ? ` ${t("emptyNear", { base: activeBases.join(", ") })}` : ""}
           {minBedrooms > 0 ? ` ${t("emptyBedrooms", { count: minBedrooms })}` : ""}
           {moveIn
             ? ` ${t("emptyMoveIn", { date: new Date(`${moveIn}T00:00:00`).toLocaleDateString(locale, { month: "long", day: "numeric" }) })}`

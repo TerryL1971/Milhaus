@@ -132,6 +132,8 @@ export function ListingForm({
         model: formData.get("model"),
         year: Number(formData.get("year")),
         mileage_km: formData.get("mileageKm") ? Number(formData.get("mileageKm")) : null,
+        transmission: formData.get("transmission") || null,
+        us_spec: formData.get("usSpec") ? formData.get("usSpec") === "yes" : null,
       }));
     } else if (isProduct) {
       ({ error: detailsError } = await supabase.from("product_details").insert({
@@ -339,6 +341,26 @@ export function ListingForm({
               {t("mileageKm")}
             </label>
             <input id="mileageKm" name="mileageKm" type="number" min="0" className={inputClass} />
+          </div>
+          <div>
+            <label htmlFor="transmission" className={labelClass}>
+              {t("transmission")}
+            </label>
+            <select id="transmission" name="transmission" className={inputClass} defaultValue="">
+              <option value="">{t("notSpecified")}</option>
+              <option value="automatic">{t("transmissionAutomatic")}</option>
+              <option value="manual">{t("transmissionManual")}</option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="usSpec" className={labelClass}>
+              {t("usSpec")}
+            </label>
+            <select id="usSpec" name="usSpec" className={inputClass} defaultValue="">
+              <option value="">{t("notSpecified")}</option>
+              <option value="yes">{t("usSpecYes")}</option>
+              <option value="no">{t("usSpecNo")}</option>
+            </select>
           </div>
         </div>
       )}

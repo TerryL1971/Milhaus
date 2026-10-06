@@ -77,6 +77,13 @@ export interface Listing {
   year: number | null;
   /** Car only — null on a rental. */
   mileageKm: number | null;
+  /** Car only — null on a rental, and nullable even on a car (optional
+   * field; a lot of real listings won't specify it). */
+  transmission: "automatic" | "manual" | null;
+  /** Car only — whether this is a US-market car vs. a German/EU-market
+   * one, which matters a lot to this audience (re-registration hassle).
+   * Nullable/optional, same reasoning as transmission. */
+  usSpec: boolean | null;
   /** Product only — key from PRODUCT_CATEGORY_LABELS in
    * src/lib/product-categories.ts. */
   productCategory: string | null;
