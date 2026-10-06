@@ -44,3 +44,17 @@ body {
   color: var(--charcoal);
   font-family: var(--font-body);
 }
+
+/* Continuous horizontal scroll for the sponsor banner carousel (see
+   src/components/sponsor-banner-carousel.tsx) — the track renders its
+   slide list twice back to back and animates from 0 to -50%, so the
+   loop point is invisible: by the time the first copy scrolls fully
+   offscreen, the second copy is exactly where the first one started. */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}

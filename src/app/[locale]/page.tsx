@@ -8,6 +8,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { FilterModal } from "@/components/filter-modal";
 import { ListingsGrid } from "@/components/listings-grid";
+import { SponsorBannerCarousel } from "@/components/sponsor-banner-carousel";
 import { StampBadge } from "@/components/stamp-badge";
 import { getPathname, Link } from "@/i18n/navigation";
 import { BASE_NAMES } from "@/lib/bases";
@@ -133,6 +134,11 @@ export default async function Home() {
 
   return (
     <main className="flex-1">
+      {/* One site-wide scrolling banner instead of the four separate
+          per-card "Sponsored spot" boxes this replaced — sits above the
+          hero on purpose, the most prominent position on the page. */}
+      <SponsorBannerCarousel />
+
       {/* ---------- PHOTO HERO + UNIFIED SEARCH ---------- */}
       {/* One search box across all four categories, not four separate
           ones — the actual fix for "how would someone even know Items
@@ -204,12 +210,12 @@ export default async function Home() {
       </section>
 
       {/* ---------- FEATURED BY CATEGORY ---------- */}
-      {/* All four categories in one card each — a reserved sponsored-spot
-          banner up top (not wired to real payment yet, see CLAUDE.md's
-          "not needed for MVP" call on Stripe — this is just the space),
-          then hero content (eyebrow/heading/subhead/photo fan), then the
-          search control, all merged into a single unit instead of a
-          separate hero row and search row. */}
+      {/* All four categories in one card each — hero content (eyebrow/
+          heading/subhead/photo fan), then the search control, merged
+          into a single unit instead of a separate hero row and search
+          row. The per-card sponsored banner that used to sit above this
+          content moved to one site-wide carousel at the top of the
+          page. */}
       <section className="bg-canvas-deep py-14">
         <div className="mx-auto max-w-[1400px] px-8">
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -218,15 +224,6 @@ export default async function Home() {
                 key={category.key}
                 className="flex flex-col rounded-md border border-canvas-deep bg-paper p-5 shadow-[0_8px_24px_rgba(27,42,58,0.06)]"
               >
-                <a
-                  href="mailto:hello@example.com?subject=Advertising%20on%20Milhaus"
-                  className="mb-4 flex h-14 items-center justify-center rounded-md border border-dashed border-brass/50 bg-brass/8 transition-colors hover:border-brass hover:bg-brass/15"
-                >
-                  <span className="font-mono text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-brass-deep">
-                    {t("sponsoredSpot")}
-                  </span>
-                </a>
-
                 <h2 className="mb-1.5 font-display text-xl font-semibold leading-[1.1] tracking-tight text-ink">
                   {category.heading}
                 </h2>
