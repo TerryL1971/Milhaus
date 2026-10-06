@@ -134,11 +134,6 @@ export default async function Home() {
 
   return (
     <main className="flex-1">
-      {/* One site-wide scrolling banner instead of the four separate
-          per-card "Sponsored spot" boxes this replaced — sits above the
-          hero on purpose, the most prominent position on the page. */}
-      <SponsorBannerCarousel />
-
       {/* ---------- PHOTO HERO + UNIFIED SEARCH ---------- */}
       {/* One search box across all four categories, not four separate
           ones — the actual fix for "how would someone even know Items
@@ -150,6 +145,23 @@ export default async function Home() {
           {/* eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL, not worth next/image's config here */}
           <img src={heroImageUrl} alt="" className="h-full w-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/75 to-ink/35" />
+          {/* The gradient above is lightest at the very top (so the photo
+              reads through near the header), which isn't reliable
+              contrast for the sponsor banner's text/logo regardless of
+              which photo is in use — this extra scrim is just for that
+              strip. */}
+          <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-ink/85 to-transparent" />
+        </div>
+
+        {/* One site-wide scrolling banner instead of the four separate
+            per-card "Sponsored spot" boxes this replaced. Lives here,
+            floating on the hero photo/scrim, rather than as its own row
+            between the header and the hero — a dedicated row had no
+            background of its own to sit on other than the page's cream
+            body color, which read as a stray horizontal bar the full
+            width of the screen regardless of how thin it was made. */}
+        <div className="relative pt-3">
+          <SponsorBannerCarousel />
         </div>
 
         <div className="relative mx-auto max-w-[1400px] px-8 py-20 sm:py-28">
