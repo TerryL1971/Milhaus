@@ -42,13 +42,17 @@ const SLIDES: Slide[] = [
     kind: "text",
     heading: "Kaiserslautern Auto Detailing",
     body: "Full details & PCS prep — mention Milhaus for 10% off",
-    href: "#",
+    // Invented business, no real site to link to — example.com (reserved
+    // by IANA for exactly this, never a real/registrable business
+    // domain) so clicking still goes somewhere instead of a dead "#",
+    // without risking linking to someone else's actual website.
+    href: "https://example.com/kaiserslautern-auto-detailing",
   },
   {
     kind: "text",
     heading: "Ramstein Movers Express",
     body: "Door to door, stateside to Germany",
-    href: "#",
+    href: "https://example.com/ramstein-movers-express",
   },
   {
     kind: "text",
@@ -97,8 +101,8 @@ export function SponsorBannerCarousel() {
             <a
               key={index}
               href={slide.href}
-              target={slide.kind === "image" ? "_blank" : undefined}
-              rel={slide.kind === "image" ? "noopener noreferrer" : undefined}
+              target={slide.href.startsWith("http") ? "_blank" : undefined}
+              rel={slide.href.startsWith("http") ? "noopener noreferrer" : undefined}
               style={
                 animated
                   ? {
