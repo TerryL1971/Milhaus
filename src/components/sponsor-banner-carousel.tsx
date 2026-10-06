@@ -30,7 +30,11 @@ type Slide =
 const SLIDES: Slide[] = [
   {
     kind: "image",
-    imageUrl: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/listing-photos/_site/banners/ucg-logo.png`,
+    // Cropped tight to the lockup (trims the wide white margin the
+    // source file had above/below it) so it fills more of the slot —
+    // a bare logo still won't go edge to edge like a real 728×90
+    // creative, but this gets it a lot closer.
+    imageUrl: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/listing-photos/_site/banners/ucg-logo-cropped.png`,
     alt: "UCG Used Car Guys — usedcarguys.net",
     href: "https://www.usedcarguys.net",
   },
@@ -65,12 +69,17 @@ export function SponsorBannerCarousel() {
   const animated = SLIDES.length > 1;
 
   return (
-    <div className="w-full border-b border-canvas-deep bg-canvas py-3">
-      {/* aspect-[728/90] keeps the real Leaderboard proportions at any
-          screen width, capped at the actual 728px the standard calls
-          for so it never scales up past that on a wide desktop. Padding
-          lives on this outer div, not the `relative` one below — an
-          absolutely positioned child measures `inset-0` from its
+    <div className="w-full py-3">
+      {/* No background/border on this wrapper on purpose — an earlier
+          version had one, and against the page's own canvas-colored
+          background it read as a second, much wider "banner" with the
+          actual 728×90 ad box floating lost in the middle of it. The
+          dashed box below is the only thing that should look like the
+          ad slot. aspect-[728/90] keeps the real Leaderboard proportions
+          at any screen width, capped at the actual 728px the standard
+          calls for so it never scales up past that on a wide desktop.
+          Padding lives on this outer div, not the `relative` one below —
+          an absolutely positioned child measures `inset-0` from its
           ancestor's padding edge, not its content edge, so padding on
           the `relative` element itself wouldn't actually inset anything. */}
       <div className="mx-auto max-w-[728px] px-8">
