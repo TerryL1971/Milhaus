@@ -1,13 +1,16 @@
 // src/components/services-grid.tsx
-// The /services browse grid — base + category filter chips (URL-driven,
-// same pattern as ListingsGrid's chips on the rental page) plus the
-// existing free-text search box, all combined with AND logic.
+// The /services browse grid — a single Filters dropdown (base, category)
+// next to the search box, replacing what used to be two separate
+// pill-chip rows above the search input. Every filter is multi-select
+// (0 to all), same comma-joined-URL-param pattern as the Homes page's
+// FilterDropdown.
 
 "use client";
 
 import { useTranslations } from "next-intl";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
+import { FilterDropdown } from "@/components/filter-dropdown";
 import { ServiceListingCard } from "@/components/service-listing-card";
 import { BASE_NAMES } from "@/lib/bases";
 import { SERVICE_CATEGORY_KEYS, SERVICE_CATEGORY_LABELS, type ServiceCategoryKey } from "@/lib/service-categories";
@@ -20,90 +23,80 @@ const PHOTO_GRADIENTS = [
   "linear-gradient(135deg,#C3BFA6,#79835F)",
 ];
 
-const chipClass = (active: boolean) =>
-  `rounded-full border px-3.5 py-1.5 font-mono text-[0.74rem] tracking-wide transition-colors ${
-    active
-      ? "border-olive bg-olive text-paper"
-      : "border-canvas-deep bg-paper text-ink-soft hover:border-olive/50"
-  }`;
-
-export function ServicesGrid({ listings, initialQuery = "" }: { listings: Listing[]; initialQuery?: string }) {
-  const t = useTranslations("ServicesPage");
-  const [query, setQuery] = useState(initialQuery);
+function useMultiParam(key: string) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const values = useMemo(() => (searchParams.get(key) ?? "").split(",").filter(Boolean), [searchParams, key]);
 
-  const ALL_BASES = t("allBases");
-  const ALL_CATEGORIES = t("allCategories");
-  const activeBase = searchParams.get("base") || ALL_BASES;
-  const activeCategory = searchParams.get("category") || ALL_CATEGORIES;
-
-  function setParam(key: string, value: string, allValue: string) {
+  function toggle(value: string) {
     const params = new URLSearchParams(searchParams.toString());
-    if (value === allValue) params.delete(key);
-    else params.set(key, value);
+    const next = values.includes(value) ? values.filter((v) => v !== value) : [...values, value];
+    if (next.length > 0) params.set(key, next.join(","));
+    else params.delete(key);
     const qs = params.toString();
     router.replace(`${pathname}${qs ? `?${qs}` : ""}`, { scroll: false });
+  }
+
+  return { values, toggle };
+}
+
+export function ServicesGrid({ listings, initialQuery = "" }: { listings: Listing[]; initialQuery?: string }) {
+  const t = useTranslations("ServicesPage");
+  const tFilter = useTranslations("FilterModal");
+  const [query, setQuery] = useState(initialQuery);
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const base = useMultiParam("base");
+  const category = useMultiParam("category");
+  const activeCount = base.values.length + category.values.length;
+
+  function clearAll() {
+    router.replace(pathname, { scroll: false });
   }
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return listings.filter((listing) => {
-      if (activeBase !== ALL_BASES && listing.base !== activeBase) return false;
-      if (activeCategory !== ALL_CATEGORIES && listing.serviceCategory !== activeCategory) return false;
+      if (base.values.length > 0 && (!listing.base || !base.values.includes(listing.base))) return false;
+      if (category.values.length > 0 && (!listing.serviceCategory || !category.values.includes(listing.serviceCategory)))
+        return false;
       if (!q) return true;
-      const category = listing.serviceCategory
+      const categoryLabel = listing.serviceCategory
         ? SERVICE_CATEGORY_LABELS[listing.serviceCategory as ServiceCategoryKey]
         : null;
-      return [listing.title, listing.city, category].filter(Boolean).some((field) =>
+      return [listing.title, listing.city, categoryLabel].filter(Boolean).some((field) =>
         field!.toLowerCase().includes(q),
       );
     });
-  }, [listings, query, activeBase, activeCategory, ALL_BASES, ALL_CATEGORIES]);
+  }, [listings, query, base.values, category.values]);
 
   return (
     <>
-      <div className="mb-3 flex flex-wrap gap-2">
-        {[ALL_BASES, ...BASE_NAMES].map((base) => (
-          <button
-            key={base}
-            type="button"
-            onClick={() => setParam("base", base, ALL_BASES)}
-            className={chipClass(activeBase === base)}
-          >
-            {base}
-          </button>
-        ))}
-      </div>
-
-      <div className="mb-5 flex flex-wrap gap-2">
-        <button
-          type="button"
-          onClick={() => setParam("category", ALL_CATEGORIES, ALL_CATEGORIES)}
-          className={chipClass(activeCategory === ALL_CATEGORIES)}
-        >
-          {ALL_CATEGORIES}
-        </button>
-        {SERVICE_CATEGORY_KEYS.map((key) => (
-          <button
-            key={key}
-            type="button"
-            onClick={() => setParam("category", key, ALL_CATEGORIES)}
-            className={chipClass(activeCategory === key)}
-          >
-            {SERVICE_CATEGORY_LABELS[key]}
-          </button>
-        ))}
-      </div>
-
-      <div className="mb-7">
+      <div className="mb-7 flex flex-wrap gap-2">
         <input
           type="search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder={t("searchPlaceholder")}
-          className="w-full max-w-md rounded-md border border-canvas-deep bg-paper px-4 py-2.5 text-[0.95rem] text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none"
+          className="min-w-0 flex-1 rounded-md border border-canvas-deep bg-paper px-4 py-2.5 text-[0.95rem] text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none"
+        />
+        <FilterDropdown
+          label={t("filtersLabel")}
+          clearLabel={tFilter("clearAll")}
+          activeCount={activeCount}
+          onClearAll={clearAll}
+          align="right"
+          groups={[
+            { label: t("filterBase"), options: BASE_NAMES.map((b) => ({ value: b, label: b })), selected: base.values, onToggle: base.toggle },
+            {
+              label: t("filterCategory"),
+              options: SERVICE_CATEGORY_KEYS.map((key) => ({ value: key, label: SERVICE_CATEGORY_LABELS[key] })),
+              selected: category.values,
+              onToggle: category.toggle,
+            },
+          ]}
         />
       </div>
 
