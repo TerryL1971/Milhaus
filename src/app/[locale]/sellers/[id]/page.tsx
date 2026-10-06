@@ -54,7 +54,7 @@ export default async function SellerProfilePage({ params }: { params: Params }) 
               {seller.contactEmail && (
                 <a
                   href={`mailto:${seller.contactEmail}`}
-                  className="inline-block rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+                  className="inline-block rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
                 >
                   {t("emailButton", { name })}
                 </a>

@@ -278,7 +278,7 @@ export default async function Home() {
                       </select>
                       <button
                         type="submit"
-                        className="flex-none whitespace-nowrap rounded-md bg-brass px-4 py-2 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+                        className="flex-none whitespace-nowrap rounded-md bg-brass px-4 py-2 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
                       >
                         {t("searchButton")}
                       </button>
@@ -293,7 +293,7 @@ export default async function Home() {
                       />
                       <button
                         type="submit"
-                        className="flex-none whitespace-nowrap rounded-md bg-brass px-4 py-2 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+                        className="flex-none whitespace-nowrap rounded-md bg-brass px-4 py-2 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
                       >
                         {t("searchButton")}
                       </button>
@@ -363,7 +363,7 @@ export default async function Home() {
           <p className="mb-5.5 text-[0.96rem] opacity-90">{t("ctaBody")}</p>
           <Link
             href="/#listings"
-            className="inline-block rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+            className="inline-block rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
           >
             {t("ctaButton")}
           </Link>

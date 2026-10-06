@@ -50,7 +50,7 @@ export default async function ForLandlordsPage() {
             <p className="mb-6 flex-1 text-sm text-ink-soft">{t("onePropertyBody")}</p>
             <Link
               href="/post"
-              className="inline-block w-fit rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+              className="inline-block w-fit rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
             >
               {t("onePropertyCta")}
             </Link>
@@ -106,7 +106,7 @@ export default async function ForLandlordsPage() {
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link
               href="/post"
-              className="inline-block rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+              className="inline-block rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
             >
               {t("ctaListButton")}
             </Link>

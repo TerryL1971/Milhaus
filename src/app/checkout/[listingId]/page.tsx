@@ -71,7 +71,7 @@ export default async function CheckoutPage({ params }: { params: Params }) {
           <form action={startStripeCheckout.bind(null, listing.id)}>
             <button
               type="submit"
-              className="w-full rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+              className="w-full rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
             >
               Pay with card ({currencyFormatter.format(priceEur)})
             </button>

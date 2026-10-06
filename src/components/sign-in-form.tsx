@@ -114,7 +114,7 @@ export function SignInForm({ next }: { next: string }) {
           <button
             type="submit"
             disabled={codeStatus === "verifying" || code.trim().length < 6}
-            className="w-full rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep disabled:cursor-not-allowed disabled:opacity-60"
           >
             {codeStatus === "verifying" ? t("verifying") : t("verifyCode")}
           </button>
@@ -150,7 +150,7 @@ export function SignInForm({ next }: { next: string }) {
       <button
         type="submit"
         disabled={status === "sending"}
-        className="w-full rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep disabled:cursor-not-allowed disabled:opacity-60"
+        className="w-full rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep disabled:cursor-not-allowed disabled:opacity-60"
       >
         {status === "sending" ? t("sending") : t("sendLink")}
       </button>

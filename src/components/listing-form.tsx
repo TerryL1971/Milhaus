@@ -687,7 +687,7 @@ export function ListingForm({
       <button
         type="submit"
         disabled={status === "submitting"}
-        className="rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep disabled:cursor-not-allowed disabled:opacity-60"
+        className="rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep disabled:cursor-not-allowed disabled:opacity-60"
       >
         {status === "submitting"
           ? progress || t("submitting")

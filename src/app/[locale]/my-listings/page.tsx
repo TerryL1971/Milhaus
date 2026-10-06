@@ -93,7 +93,7 @@ export default async function MyListingsPage() {
             </Link>
             <Link
               href="/post-service"
-              className="rounded-md bg-brass px-4 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+              className="rounded-md bg-brass px-4 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
             >
               {t("postService")}
             </Link>

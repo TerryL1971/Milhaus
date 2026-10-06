@@ -85,7 +85,7 @@ export default async function AdminPage() {
             </Link>
             <Link
               href="/admin/listings/new"
-              className="rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+              className="rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
             >
               + Add listing
             </Link>
@@ -96,7 +96,7 @@ export default async function AdminPage() {
           <h2 className="mb-4 font-display text-xl font-semibold text-ink">
             Needs review
             {pending.length > 0 && (
-              <span className="ml-2 rounded-full bg-brass px-2.5 py-0.5 align-middle font-mono text-xs font-semibold text-ink">
+              <span className="ml-2 rounded-full bg-brass px-2.5 py-0.5 align-middle font-mono text-xs font-semibold text-paper">
                 {pending.length}
               </span>
             )}
