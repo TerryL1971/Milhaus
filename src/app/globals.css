@@ -14,8 +14,11 @@
   --olive: #6b7353;
   --olive-deep: #545a41;
   --rust: #b5502f;
-  --brass: #c89b3c;
-  --brass-deep: #ad8530;
+  /* Repointed to the red accent from Charlie's latest mockup (was gold,
+     #c89b3c) — the variable name stays "brass" rather than a mechanical
+     rename across every component that references bg-brass/text-brass/etc. */
+  --brass: #c0392b;
+  --brass-deep: #9e2e20;
   --charcoal: #22201b;
   --paper: #fbfaf6;
 }

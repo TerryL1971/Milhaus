@@ -26,7 +26,8 @@ A static design mockup already exists at `/design-reference/milhaus-landing-mock
 --olive:      #6B7353   verified/trust accent, "housing office" stamp
 --olive-deep: #545A41
 --rust:       #B5502F   status: rented, CTA strip
---brass:      #C89B3C   primary action/CTA color
+--brass:      #C0392B   primary action/CTA color (red accent, updated 2026-10-06 from Charlie's navy+red mockup; variable name kept as "brass" for historical/legacy reasons — it's red now, not gold)
+--brass-deep: #9E2E20
 --charcoal:   #22201B   body text
 --paper:      #FBFAF6   card backgrounds
 
