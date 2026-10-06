@@ -69,11 +69,11 @@ export function SponsorBannerCarousel() {
   const animated = SLIDES.length > 1;
 
   return (
-    <div className="w-full">
-      {/* No background/border on this wrapper on purpose — the slot has
-          no chrome of its own, and it now floats on the hero photo/scrim
-          (see page.tsx) rather than owning a dedicated row, so there's
-          nothing here to paint a background onto in the first place.
+    <div className="w-full bg-canvas py-2">
+      {/* bg-canvas is explicit here on purpose — floating this row on the
+          hero photo (tried that) meant no background of its own, but
+          Terry wanted the small cream strip back. py-2 keeps that strip
+          tight to the ad's own height rather than a tall band.
           aspect-[468/60] is the IAB "Full Banner" standard (confirmed
           against BooKoo's own ad slot), capped at the actual 468px so
           it never scales up past that on a wide desktop. Padding lives
@@ -117,7 +117,7 @@ export function SponsorBannerCarousel() {
                 // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL
                 <img src={slide.imageUrl} alt={slide.alt} className="h-full w-full object-contain py-0.5" />
               ) : (
-                <span className="font-mono text-xs font-semibold uppercase tracking-[0.12em] text-paper">
+                <span className="font-mono text-xs font-semibold uppercase tracking-[0.12em] text-ink-soft">
                   {slide.heading}
                   {slide.body && <span className="block normal-case tracking-normal opacity-75">{slide.body}</span>}
                 </span>
