@@ -7,6 +7,15 @@
 // breakpoints are computed here (not hardcoded) so the timing stays
 // correct regardless of how many slides exist.
 //
+// Sized to the IAB "Leaderboard" standard, 728×90px — the industry-
+// standard size for exactly this placement (a banner across the top of
+// a page), in use for 20+ years. Real advertisers should design their
+// creative AT that canvas size; it'll fill the slot edge to edge with no
+// letterboxing. A bare logo (like the UCG one below) is a stand-in for a
+// real creative, not one itself — some empty space around it here is
+// expected and fine for a mock-up, but a submitted ad should be the full
+// 728×90 image, not just a logo file.
+//
 // SLIDES below is a mock-up for Charlie to see the carousel effect, not
 // real paid placements yet: UCG (Used Car Guys) is a real logo Terry
 // provided directly for this demo; the other two businesses are
@@ -57,46 +66,57 @@ export function SponsorBannerCarousel() {
 
   return (
     <div className="w-full border-b border-canvas-deep bg-canvas py-3">
-      <div className="group relative mx-auto h-16 max-w-[640px] px-8">
-        {animated && (
-          <style>{`
-            @keyframes sponsor-carousel-fade {
-              0% { opacity: 1; pointer-events: auto; }
-              ${visiblePercent}% { opacity: 1; pointer-events: auto; }
-              ${fadeEndPercent}% { opacity: 0; pointer-events: none; }
-              100% { opacity: 0; pointer-events: none; }
-            }
-          `}</style>
-        )}
-        {SLIDES.map((slide, index) => (
-          <a
-            key={index}
-            href={slide.href}
-            target={slide.kind === "image" ? "_blank" : undefined}
-            rel={slide.kind === "image" ? "noopener noreferrer" : undefined}
-            style={
-              animated
-                ? {
-                    animation: `sponsor-carousel-fade ${totalSeconds}s ease-in-out infinite`,
-                    animationDelay: `${-(index * perSlideSeconds)}s`,
-                  }
-                : undefined
-            }
-            className={`flex h-16 items-center justify-center rounded-md border border-dashed border-brass/50 bg-brass/8 px-4 text-center transition-colors hover:border-brass hover:bg-brass/15 ${
-              animated ? "absolute inset-x-0 group-hover:[animation-play-state:paused]" : ""
-            }`}
-          >
-            {slide.kind === "image" ? (
-              // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL
-              <img src={slide.imageUrl} alt={slide.alt} className="h-full w-auto object-contain" />
-            ) : (
-              <span className="font-mono text-[0.68rem] font-semibold uppercase tracking-[0.1em] text-brass-deep">
-                {slide.heading}
-                {slide.body && <span className="block normal-case tracking-normal text-ink-soft">{slide.body}</span>}
-              </span>
-            )}
-          </a>
-        ))}
+      {/* aspect-[728/90] keeps the real Leaderboard proportions at any
+          screen width, capped at the actual 728px the standard calls
+          for so it never scales up past that on a wide desktop. Padding
+          lives on this outer div, not the `relative` one below — an
+          absolutely positioned child measures `inset-0` from its
+          ancestor's padding edge, not its content edge, so padding on
+          the `relative` element itself wouldn't actually inset anything. */}
+      <div className="mx-auto max-w-[728px] px-8">
+        <div className="group relative aspect-[728/90] w-full">
+          {animated && (
+            <style>{`
+              @keyframes sponsor-carousel-fade {
+                0% { opacity: 1; pointer-events: auto; }
+                ${visiblePercent}% { opacity: 1; pointer-events: auto; }
+                ${fadeEndPercent}% { opacity: 0; pointer-events: none; }
+                100% { opacity: 0; pointer-events: none; }
+              }
+            `}</style>
+          )}
+          {SLIDES.map((slide, index) => (
+            <a
+              key={index}
+              href={slide.href}
+              target={slide.kind === "image" ? "_blank" : undefined}
+              rel={slide.kind === "image" ? "noopener noreferrer" : undefined}
+              style={
+                animated
+                  ? {
+                      animation: `sponsor-carousel-fade ${totalSeconds}s ease-in-out infinite`,
+                      animationDelay: `${-(index * perSlideSeconds)}s`,
+                    }
+                  : undefined
+              }
+              className={`absolute inset-0 flex items-center justify-center overflow-hidden rounded-md border border-dashed border-brass/50 bg-brass/8 px-4 text-center transition-colors hover:border-brass hover:bg-brass/15 ${
+                animated ? "group-hover:[animation-play-state:paused]" : ""
+              }`}
+            >
+              {slide.kind === "image" ? (
+                // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL
+                <img src={slide.imageUrl} alt={slide.alt} className="h-full w-full object-contain p-1.5" />
+              ) : (
+                <span className="font-mono text-[0.68rem] font-semibold uppercase tracking-[0.1em] text-brass-deep">
+                  {slide.heading}
+                  {slide.body && (
+                    <span className="block normal-case tracking-normal text-ink-soft">{slide.body}</span>
+                  )}
+                </span>
+              )}
+            </a>
+          ))}
+        </div>
       </div>
     </div>
   );
