@@ -9,7 +9,6 @@ import NextLink from "next/link";
 import { Avatar } from "@/components/avatar";
 import { HomeLink } from "@/components/home-link";
 import { LanguageToggle } from "@/components/language-toggle";
-import { LogoIcon } from "@/components/logo-icon";
 import { Link } from "@/i18n/navigation";
 import { isAdminRole } from "@/lib/roles";
 import { createClient } from "@/lib/supabase/server";
@@ -41,9 +40,9 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
   return (
     <header className="sticky top-0 z-50 bg-ink text-paper">
       <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-6 px-8 py-[18px]">
-        <HomeLink className="flex flex-shrink-0 items-center gap-2.5 font-display text-2xl font-bold tracking-tight">
-          <LogoIcon className="h-7 w-auto text-paper" />
-          Milhaus<span className="text-brass">.</span>
+        <HomeLink className="flex flex-shrink-0 items-center">
+          {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset, not worth next/image's config here */}
+          <img src="/brand/milhaus-logo-cream-red-horizontal.png" alt="Milhaus" className="h-9 w-auto" />
         </HomeLink>
 
         {/* Trimmed from 6 items to 4 — "List your home" and "For

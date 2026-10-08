@@ -4,7 +4,6 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { LogoIcon } from "@/components/logo-icon";
 
 export function SiteFooter() {
   const t = useTranslations("SiteFooter");
@@ -59,9 +58,9 @@ export function SiteFooter() {
     <footer className="bg-ink text-paper">
       <div className="mx-auto max-w-[1400px] px-8 pb-7 pt-11">
         <div className="mb-4.5 flex flex-wrap justify-between gap-6 border-b border-paper/15 pb-7">
-          <div className="flex items-center gap-2.5 font-display text-2xl font-bold tracking-tight text-paper">
-            <LogoIcon className="h-7 w-auto text-paper" />
-            Milhaus<span className="text-brass">.</span>
+          <div className="flex items-center">
+            {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset, not worth next/image's config here */}
+            <img src="/brand/milhaus-logo-cream-red-horizontal.png" alt="Milhaus" className="h-9 w-auto" />
           </div>
 
           <div className="flex flex-wrap gap-12">
