@@ -8,7 +8,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { deleteBusiness, toggleBusinessActive, toggleBusinessFeatured } from "@/app/admin/businesses/actions";
-import { BUSINESS_CATEGORY_LABELS, getAllBusinesses, type BusinessCategoryKey } from "@/lib/businesses";
+import { BUSINESS_CATEGORY_LABELS, type BusinessCategoryKey } from "@/lib/businesses";
+import { getAllBusinesses } from "@/lib/businesses-queries";
 import { isAdminRole } from "@/lib/roles";
 import { createClient } from "@/lib/supabase/server";
 

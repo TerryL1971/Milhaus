@@ -42,7 +42,7 @@ export function SiteFooter() {
       heading: t("servicesHeading"),
       links: [
         { label: t("browseServices"), href: "/services" },
-        { label: t("offerSomething"), href: "/post-service" },
+        { label: t("suggestBusiness"), href: "mailto:hello@example.com?subject=Business%20suggestion%20for%20Milhaus" },
       ],
     },
     {
@@ -69,15 +69,28 @@ export function SiteFooter() {
                 <h4 className="mb-3 font-mono text-[0.7rem] font-semibold uppercase tracking-[0.1em] text-brass">
                   {col.heading}
                 </h4>
-                {col.links.map((link) => (
-                  <Link
-                    key={link.label}
-                    href={link.href}
-                    className="mb-2 block text-[0.86rem] opacity-80 transition-opacity last:mb-0 hover:opacity-100"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
+                {col.links.map((link) =>
+                  // mailto: links aren't an internal route — the i18n Link
+                  // below assumes a pathname and would wrongly prefix one
+                  // with the locale segment.
+                  link.href.startsWith("mailto:") ? (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      className="mb-2 block text-[0.86rem] opacity-80 transition-opacity last:mb-0 hover:opacity-100"
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link
+                      key={link.label}
+                      href={link.href}
+                      className="mb-2 block text-[0.86rem] opacity-80 transition-opacity last:mb-0 hover:opacity-100"
+                    >
+                      {link.label}
+                    </Link>
+                  ),
+                )}
               </div>
             ))}
           </div>

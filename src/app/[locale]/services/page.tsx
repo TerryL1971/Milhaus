@@ -1,15 +1,15 @@
 // src/app/[locale]/services/page.tsx
-// Browse services — the fourth listing type (docs/marketplace-vision.md:
-// Services last, after Products). Same review pipeline and admin
-// dashboard as every other type; this and /post-service are the only
-// service-specific additions to the shared engine.
+// Browse services — now the Military-Friendly Businesses directory
+// (per Terry: "The Services category is the Military-Friendly
+// Businesses"), not the self-listed individual-services feature this
+// replaced. Charlie hand-enters each business from /admin/businesses;
+// there's no post-a-service flow here anymore.
 
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
-import { ServicesGrid } from "@/components/services-grid";
-import { Link } from "@/i18n/navigation";
-import { getActiveListings } from "@/lib/listings";
+import { BusinessesGrid } from "@/components/businesses-grid";
+import { getActiveBusinesses } from "@/lib/businesses-queries";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("ServicesPage");
@@ -21,7 +21,7 @@ type SearchParams = Promise<{ q?: string }>;
 export default async function ServicesPage({ searchParams }: { searchParams: SearchParams }) {
   const t = await getTranslations("ServicesPage");
   const { q } = await searchParams;
-  const listings = await getActiveListings("service");
+  const businesses = await getActiveBusinesses();
 
   return (
     <main className="flex-1 py-14">
@@ -31,16 +31,16 @@ export default async function ServicesPage({ searchParams }: { searchParams: Sea
             <h1 className="font-display text-[2rem] font-semibold text-ink">{t("heading")}</h1>
             <p className="mt-1 max-w-[52ch] text-ink-soft">{t("subhead")}</p>
           </div>
-          <Link
-            href="/post-service"
+          <a
+            href="mailto:hello@example.com?subject=Business%20suggestion%20for%20Milhaus"
             className="whitespace-nowrap rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
           >
             {t("offerSomething")}
-          </Link>
+          </a>
         </div>
 
         <Suspense fallback={null}>
-          <ServicesGrid listings={listings} initialQuery={q} />
+          <BusinessesGrid businesses={businesses} initialQuery={q} />
         </Suspense>
       </div>
     </main>
