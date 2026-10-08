@@ -40,7 +40,7 @@ export default async function Home() {
     getFeaturedListings("rental", 3),
     getFeaturedListings("car", 3),
     getFeaturedListings("product", 3),
-    getFeaturedBusinesses(4),
+    getFeaturedBusinesses(3),
   ]);
 
   const howSteps = [
@@ -196,7 +196,7 @@ export default async function Home() {
                 {t("businessesViewAll")} →
               </Link>
             </div>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {featuredBusinesses.map((business) => (
                 <BusinessCard key={business.id} business={business} />
               ))}
