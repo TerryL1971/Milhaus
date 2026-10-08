@@ -6,6 +6,7 @@
 // readable, and this way the working rental card is untouched.
 
 import { useTranslations } from "next-intl";
+import { FavoriteButton } from "@/components/favorite-button";
 import { Link } from "@/i18n/navigation";
 import type { Listing } from "@/lib/types";
 
@@ -21,6 +22,7 @@ export function CarListingCard({
   listing,
   photoGradient,
   aspectClassName = "aspect-[16/9]",
+  isFavorited,
 }: {
   listing: Listing;
   photoGradient: string;
@@ -29,15 +31,19 @@ export function CarListingCard({
    * Cars/Buy & Sell; the dedicated /cars page doesn't pass this, so it
    * keeps 16:9. */
   aspectClassName?: string;
+  /** undefined = don't render the heart at all. */
+  isFavorited?: boolean;
 }) {
   const t = useTranslations("CarCard");
   const isSold = listing.status === "rented"; // same status column as rentals; "rented" means "off the market" either way
 
   return (
-    <Link
-      href={`/cars/${listing.id}`}
-      className="group block overflow-hidden rounded-md border border-canvas-deep bg-paper transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(27,42,58,0.12)]"
-    >
+    <div className="group relative">
+      {isFavorited !== undefined && <FavoriteButton listingId={listing.id} isFavorited={isFavorited} />}
+      <Link
+        href={`/cars/${listing.id}`}
+        className="block overflow-hidden rounded-md border border-canvas-deep bg-paper transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(27,42,58,0.12)]"
+      >
       {listing.photos[0] ? (
         // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL
         <img src={listing.photos[0]} alt="" className={`${aspectClassName} w-full object-cover`} />
@@ -99,6 +105,7 @@ export function CarListingCard({
           </div>
         )}
       </div>
-    </Link>
+      </Link>
+    </div>
   );
 }

@@ -13,7 +13,9 @@ import { Suspense } from "react";
 import { CarsGrid } from "@/components/cars-grid";
 import { SponsorBannerCarousel } from "@/components/sponsor-banner-carousel";
 import { Link } from "@/i18n/navigation";
+import { getFavoriteListingIds } from "@/lib/favorites-queries";
 import { getActiveListings } from "@/lib/listings";
+import { createClient } from "@/lib/supabase/server";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("CarsPage");
@@ -25,7 +27,11 @@ type SearchParams = Promise<{ q?: string }>;
 export default async function CarsPage({ searchParams }: { searchParams: SearchParams }) {
   const t = await getTranslations("CarsPage");
   const { q } = await searchParams;
-  const listings = await getActiveListings("car");
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const [listings, favoriteIds] = await Promise.all([getActiveListings("car"), getFavoriteListingIds(user?.id)]);
 
   return (
     <main className="flex-1">
@@ -48,7 +54,7 @@ export default async function CarsPage({ searchParams }: { searchParams: SearchP
         </div>
 
         <Suspense fallback={null}>
-          <CarsGrid listings={listings} initialQuery={q} />
+          <CarsGrid listings={listings} initialQuery={q} favoriteIds={user ? Array.from(favoriteIds) : null} />
         </Suspense>
       </div>
     </main>

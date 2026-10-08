@@ -13,7 +13,9 @@ import { SponsorBannerCarousel } from "@/components/sponsor-banner-carousel";
 import { getPathname, Link } from "@/i18n/navigation";
 import { BASE_NAMES } from "@/lib/bases";
 import { getFeaturedBusinesses } from "@/lib/businesses-queries";
+import { getFavoriteListingIds } from "@/lib/favorites-queries";
 import { getFeaturedListings } from "@/lib/listings";
+import { createClient } from "@/lib/supabase/server";
 
 // Same fallback-when-no-photo treatment as ListingsGrid/CarsGrid, just a
 // local copy sized to 3 (these "Featured X" sections never show more).
@@ -42,11 +44,16 @@ const FEATURED_CARD_ASPECT = "aspect-[4/3]";
 export default async function Home() {
   const t = await getTranslations("HomePage");
   const locale = await getLocale();
-  const [featuredRentals, featuredCars, featuredProducts, featuredBusinesses] = await Promise.all([
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const [featuredRentals, featuredCars, featuredProducts, featuredBusinesses, favoriteIds] = await Promise.all([
     getFeaturedListings("rental", 3),
     getFeaturedListings("car", 3),
     getFeaturedListings("product", 3),
     getFeaturedBusinesses(3),
+    getFavoriteListingIds(user?.id),
   ]);
 
   const howSteps = [
@@ -164,7 +171,7 @@ export default async function Home() {
             </div>
             <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
               {featuredRentals.map((listing, index) => (
-                <ListingCard key={listing.id} listing={listing} photoGradient={RENTAL_PHOTO_GRADIENTS[index % RENTAL_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} />
+                <ListingCard key={listing.id} listing={listing} photoGradient={RENTAL_PHOTO_GRADIENTS[index % RENTAL_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} />
               ))}
             </div>
           </div>
@@ -182,7 +189,7 @@ export default async function Home() {
             </div>
             <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
               {featuredCars.map((listing, index) => (
-                <CarListingCard key={listing.id} listing={listing} photoGradient={CAR_PHOTO_GRADIENTS[index % CAR_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} />
+                <CarListingCard key={listing.id} listing={listing} photoGradient={CAR_PHOTO_GRADIENTS[index % CAR_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} />
               ))}
             </div>
           </div>

@@ -16,7 +16,9 @@ import { Suspense } from "react";
 import { ListingsGrid } from "@/components/listings-grid";
 import { SponsorBannerCarousel } from "@/components/sponsor-banner-carousel";
 import { Link } from "@/i18n/navigation";
+import { getFavoriteListingIds } from "@/lib/favorites-queries";
 import { getActiveListings } from "@/lib/listings";
+import { createClient } from "@/lib/supabase/server";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("ListingsPage");
@@ -25,7 +27,14 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ListingsPage() {
   const t = await getTranslations("ListingsPage");
-  const listings = await getActiveListings("rental");
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const [listings, favoriteIds] = await Promise.all([
+    getActiveListings("rental"),
+    getFavoriteListingIds(user?.id),
+  ]);
 
   return (
     <main className="flex-1">
@@ -45,7 +54,7 @@ export default async function ListingsPage() {
         </div>
 
         <Suspense fallback={null}>
-          <ListingsGrid listings={listings} />
+          <ListingsGrid listings={listings} favoriteIds={user ? Array.from(favoriteIds) : null} />
         </Suspense>
       </div>
     </main>

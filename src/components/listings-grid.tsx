@@ -67,7 +67,16 @@ function PlaceholderCard({ variant }: { variant: 0 | 1 | 2 }) {
   );
 }
 
-export function ListingsGrid({ listings }: { listings: Listing[] }) {
+export function ListingsGrid({
+  listings,
+  favoriteIds,
+}: {
+  listings: Listing[];
+  /** null = signed-out visitor (no hearts at all); array (possibly
+   * empty) = signed in, these listing IDs are favorited. */
+  favoriteIds: string[] | null;
+}) {
+  const favoriteIdSet = useMemo(() => new Set(favoriteIds ?? []), [favoriteIds]);
   const t = useTranslations("ListingsGrid");
   const tHome = useTranslations("HomePage");
   const tAmenities = useTranslations("Amenities");
@@ -149,6 +158,14 @@ export function ListingsGrid({ listings }: { listings: Listing[] }) {
       );
     });
   }, [listings, keyword, activeBases, minBedrooms, moveIn, activeAmenities, priceMin, priceMax, housingOfficeOnly]);
+
+  // Favorited listings first — a stable sort (Array.prototype.sort is
+  // stable per spec) so everything else keeps its existing relative
+  // order, just with favorites pulled to the front.
+  const sorted = useMemo(
+    () => [...filtered].sort((a, b) => Number(favoriteIdSet.has(b.id)) - Number(favoriteIdSet.has(a.id))),
+    [filtered, favoriteIdSet],
+  );
 
   const hasActiveFilters = activeCount > 0;
   // Only pad the *unfiltered* view — see PlaceholderCard's comment for why.
@@ -264,7 +281,7 @@ export function ListingsGrid({ listings }: { listings: Listing[] }) {
         )}
       </FilterBar>
 
-      {filtered.length === 0 && (hasActiveFilters || keyword) ? (
+      {sorted.length === 0 && (hasActiveFilters || keyword) ? (
         <p className="text-ink-soft">
           {t("emptyPrefix")}
           {activeBases.length > 0 ? ` ${t("emptyNear", { base: activeBases.join(", ") })}` : ""}
@@ -279,11 +296,12 @@ export function ListingsGrid({ listings }: { listings: Listing[] }) {
         </p>
       ) : (
         <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((listing, index) => (
+          {sorted.map((listing, index) => (
             <ListingCard
               key={listing.id}
               listing={listing}
               photoGradient={PHOTO_GRADIENTS[index % PHOTO_GRADIENTS.length]}
+              isFavorited={favoriteIds ? favoriteIdSet.has(listing.id) : undefined}
             />
           ))}
           {Array.from({ length: placeholderCount }).map((_, index) => (

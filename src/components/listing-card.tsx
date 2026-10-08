@@ -3,6 +3,7 @@
 // /design-reference/milhaus-landing-mockup.html.
 
 import { useTranslations } from "next-intl";
+import { FavoriteButton } from "@/components/favorite-button";
 import { Link } from "@/i18n/navigation";
 import type { AmenityKey } from "@/lib/amenities";
 import type { Listing } from "@/lib/types";
@@ -22,6 +23,7 @@ export function ListingCard({
   listing,
   photoGradient,
   aspectClassName = "aspect-[4/3]",
+  isFavorited,
 }: {
   listing: Listing;
   photoGradient: string;
@@ -30,6 +32,10 @@ export function ListingCard({
    * Cars/Buy & Sell so those three rows look like the same card size;
    * the dedicated /listings page doesn't pass this, so it keeps 4:3. */
   aspectClassName?: string;
+  /** undefined = don't render the heart at all (e.g. my-listings, a
+   * seller's own profile — favoriting your own listing isn't a thing);
+   * a real boolean = render it, filled or not. */
+  isFavorited?: boolean;
 }) {
   const t = useTranslations("ListingCard");
   const tAmenities = useTranslations("Amenities");
@@ -37,10 +43,12 @@ export function ListingCard({
   const isHousingOffice = listing.source === "housing_office";
 
   return (
-    <Link
-      href={`/listings/${listing.id}`}
-      className="group block overflow-hidden rounded-md border border-canvas-deep bg-paper transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(27,42,58,0.12)]"
-    >
+    <div className="group relative">
+      {isFavorited !== undefined && <FavoriteButton listingId={listing.id} isFavorited={isFavorited} />}
+      <Link
+        href={`/listings/${listing.id}`}
+        className="block overflow-hidden rounded-md border border-canvas-deep bg-paper transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(27,42,58,0.12)]"
+      >
       <div className="relative">
         {listing.photos[0] ? (
           // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL, not worth next/image's config for a placeholder SVG
@@ -131,6 +139,7 @@ export function ListingCard({
           {isHousingOffice ? t("housingOfficeListing") : t("listedByFamily")}
         </p>
       </div>
-    </Link>
+      </Link>
+    </div>
   );
 }

@@ -49,10 +49,21 @@ function toggleIn<T>(list: T[], value: T): T[] {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
 }
 
-export function CarsGrid({ listings, initialQuery = "" }: { listings: Listing[]; initialQuery?: string }) {
+export function CarsGrid({
+  listings,
+  initialQuery = "",
+  favoriteIds,
+}: {
+  listings: Listing[];
+  initialQuery?: string;
+  /** null = signed-out visitor (no hearts at all); array (possibly
+   * empty) = signed in, these listing IDs are favorited. */
+  favoriteIds: string[] | null;
+}) {
   const t = useTranslations("CarsPage");
   const tFilter = useTranslations("FilterModal");
   const [query, setQuery] = useState(initialQuery);
+  const favoriteIdSet = useMemo(() => new Set(favoriteIds ?? []), [favoriteIds]);
 
   const [applied, setApplied] = useState<Applied>(EMPTY_APPLIED);
   const [pending, setPending] = useState<Applied>(EMPTY_APPLIED);
@@ -107,6 +118,13 @@ export function CarsGrid({ listings, initialQuery = "" }: { listings: Listing[];
         .some((field) => field!.toLowerCase().includes(q));
     });
   }, [listings, query, applied]);
+
+  // Favorited listings first — stable sort, so everything else keeps
+  // its existing relative order.
+  const sorted = useMemo(
+    () => [...filtered].sort((a, b) => Number(favoriteIdSet.has(b.id)) - Number(favoriteIdSet.has(a.id))),
+    [filtered, favoriteIdSet],
+  );
 
   return (
     <>
@@ -217,7 +235,7 @@ export function CarsGrid({ listings, initialQuery = "" }: { listings: Listing[];
         )}
       </FilterBar>
 
-      {filtered.length === 0 ? (
+      {sorted.length === 0 ? (
         <p className="text-ink-soft">
           {listings.length === 0 ? t("emptyNone") : t("emptyNoMatch")}
         </p>
@@ -225,11 +243,12 @@ export function CarsGrid({ listings, initialQuery = "" }: { listings: Listing[];
         // 4 columns, not 3 — on its own page, Cars should read as
         // smaller cards than Homes (which stays at 3), per Terry.
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {filtered.map((listing, index) => (
+          {sorted.map((listing, index) => (
             <CarListingCard
               key={listing.id}
               listing={listing}
               photoGradient={PHOTO_GRADIENTS[index % PHOTO_GRADIENTS.length]}
+              isFavorited={favoriteIds ? favoriteIdSet.has(listing.id) : undefined}
             />
           ))}
         </div>
