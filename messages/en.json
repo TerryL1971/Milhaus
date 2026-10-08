@@ -67,9 +67,9 @@
     "headlineStart": "Find your home",
     "headlineEmphasis": "before",
     "headlineEnd": "you land.",
-    "subhead": "Housing Agents listings and homes from families rotating out — verified, in plain English, and taken down the day they're gone.",
+    "subhead": "Homes • Cars • Buy & Sell • Services — Local for the U.S. military community.",
     "heroSearchPlaceholder": "What are you looking for?",
-    "heroAllCategories": "All categories",
+    "heroAllCategories": "All Categories",
     "heroCategoryRentals": "Rentals",
     "heroCategoryCars": "Cars",
     "heroCategoryItems": "Items for sale",
@@ -114,7 +114,11 @@
     "featuredHomesHeading": "Featured Homes",
     "featuredHomesViewAll": "View all homes",
     "featuredCarsHeading": "Featured Cars",
-    "featuredCarsViewAll": "View all cars"
+    "featuredCarsViewAll": "View all cars",
+    "headlineLine1": "Everything you need",
+    "headlineLine2": "for life in Germany.",
+    "heroLocationPlaceholder": "Location / Garrison / Base (e.g., Ramstein)",
+    "scriptTagline": "Germany Feels Like Home"
   },
   "ListingsGrid": {
     "heading": "Open right now",

@@ -67,7 +67,7 @@
     "headlineStart": "Finden Sie Ihr Zuhause,",
     "headlineEmphasis": "bevor",
     "headlineEnd": "Sie landen.",
-    "subhead": "Angebote des Housing Office und Wohnungen von Familien im PCS-Umzug – geprüft, klar beschrieben und noch am Tag der Vermietung von der Seite genommen.",
+    "subhead": "Wohnen • Autos • Kaufen & Verkaufen • Services — Lokal für die US-Militärgemeinschaft.",
     "heroSearchPlaceholder": "Wonach suchen Sie?",
     "heroAllCategories": "Alle Kategorien",
     "heroCategoryRentals": "Mietobjekte",
@@ -114,7 +114,11 @@
     "featuredHomesHeading": "Empfohlene Wohnungen",
     "featuredHomesViewAll": "Alle Wohnungen ansehen",
     "featuredCarsHeading": "Empfohlene Autos",
-    "featuredCarsViewAll": "Alle Autos ansehen"
+    "featuredCarsViewAll": "Alle Autos ansehen",
+    "headlineLine1": "Alles, was du brauchst,",
+    "headlineLine2": "für das Leben in Deutschland.",
+    "heroLocationPlaceholder": "Standort / Garnison / Stützpunkt (z. B. Ramstein)",
+    "scriptTagline": "Germany Feels Like Home"
   },
   "ListingsGrid": {
     "heading": "Gerade verfügbar",

@@ -9,7 +9,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
-import { IBM_Plex_Mono, Work_Sans, Libre_Baskerville } from "next/font/google";
+import { Dancing_Script, IBM_Plex_Mono, Work_Sans, Libre_Baskerville } from "next/font/google";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { routing } from "@/i18n/routing";
@@ -33,6 +33,16 @@ const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   variable: "--font-ibm-plex-mono",
+});
+
+// Just for the homepage hero's "Germany Feels Like Home" script tagline
+// (Charlie's frontpage mockup) — not used anywhere else, so it isn't
+// wired into globals.css as a --font-* theme variable like the other
+// three; the one place it's used sets font-family directly.
+const dancingScript = Dancing_Script({
+  subsets: ["latin"],
+  weight: ["600"],
+  variable: "--font-script",
 });
 
 type Params = Promise<{ locale: string }>;
@@ -83,7 +93,7 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
-      className={`${libreBaskerville.variable} ${workSans.variable} ${ibmPlexMono.variable} h-full antialiased`}
+      className={`${libreBaskerville.variable} ${workSans.variable} ${ibmPlexMono.variable} ${dancingScript.variable} h-full antialiased`}
       // Browser extensions (screen recorders, password managers, etc.) can
       // inject attributes onto <html> before React hydrates — a genuine
       // client/server mismatch, but not one caused by this app, and not
