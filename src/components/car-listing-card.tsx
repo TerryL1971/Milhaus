@@ -34,9 +34,9 @@ export function CarListingCard({
     >
       {listing.photos[0] ? (
         // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL
-        <img src={listing.photos[0]} alt="" className="h-40 w-full object-cover" />
+        <img src={listing.photos[0]} alt="" className="aspect-[16/9] w-full object-cover" />
       ) : (
-        <div className="h-40" style={{ background: photoGradient }} />
+        <div className="aspect-[16/9]" style={{ background: photoGradient }} />
       )}
       <div className="px-4 pb-4 pt-3.5">
         <div className="mb-1 flex items-start justify-between">
@@ -56,12 +56,37 @@ export function CarListingCard({
           {listing.year} {listing.make} {listing.model}
         </p>
 
-        <div className="flex flex-wrap gap-3 font-mono text-[0.76rem] text-charcoal/80">
+        <div className="mb-2 flex flex-wrap gap-3 font-mono text-[0.76rem] text-charcoal/80">
           {listing.mileageKm != null && (
             <span>{t("mileage", { km: mileageFormatter.format(listing.mileageKm) })}</span>
           )}
           <span>{listing.city}{listing.distanceToBase ? ` · ${listing.distanceToBase}` : ""}</span>
         </div>
+
+        {(listing.usSpec != null || listing.transmission) && (
+          <div className="flex flex-wrap gap-1.5">
+            {listing.usSpec === true && (
+              <span className="rounded-[3px] bg-ink px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
+                {t("usSpec")}
+              </span>
+            )}
+            {listing.usSpec === false && (
+              <span className="rounded-[3px] bg-canvas-deep px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-ink-soft">
+                {t("euSpec")}
+              </span>
+            )}
+            {listing.transmission === "automatic" && (
+              <span className="rounded-[3px] bg-canvas-deep px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-ink-soft">
+                {t("automatic")}
+              </span>
+            )}
+            {listing.transmission === "manual" && (
+              <span className="rounded-[3px] bg-canvas-deep px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-ink-soft">
+                {t("manual")}
+              </span>
+            )}
+          </div>
+        )}
       </div>
     </Link>
   );

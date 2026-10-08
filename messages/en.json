@@ -140,7 +140,8 @@
     "bath": "bath",
     "moreAmenities": "+{count} more",
     "housingOfficeListing": "Housing office listing",
-    "listedByFamily": "Listed by outgoing family"
+    "listedByFamily": "Listed by outgoing family",
+    "housingApprovedBadge": "Housing Approved"
   },
   "ListingForm": {
     "source": "Source",
@@ -371,7 +372,11 @@
   "CarCard": {
     "available": "Available",
     "sold": "Sold",
-    "mileage": "{km} km"
+    "mileage": "{km} km",
+    "usSpec": "US Spec",
+    "euSpec": "EU Spec",
+    "automatic": "Automatic",
+    "manual": "Manual"
   },
   "CarDetail": {
     "backToCars": "← Back to cars",

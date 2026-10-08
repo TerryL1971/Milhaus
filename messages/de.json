@@ -140,7 +140,8 @@
     "bath": "Bad",
     "moreAmenities": "+{count} weitere",
     "housingOfficeListing": "Vom Housing Office",
-    "listedByFamily": "Von ausziehender Familie"
+    "listedByFamily": "Von ausziehender Familie",
+    "housingApprovedBadge": "Housing-Office genehmigt"
   },
   "ListingForm": {
     "source": "Quelle",
@@ -371,7 +372,11 @@
   "CarCard": {
     "available": "Verfügbar",
     "sold": "Verkauft",
-    "mileage": "{km} km"
+    "mileage": "{km} km",
+    "usSpec": "US-Ausführung",
+    "euSpec": "EU-Ausführung",
+    "automatic": "Automatik",
+    "manual": "Schaltgetriebe"
   },
   "CarDetail": {
     "backToCars": "← Zurück zu den Autos",

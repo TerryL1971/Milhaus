@@ -32,9 +32,9 @@ export function ProductListingCard({
     >
       {listing.photos[0] ? (
         // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL
-        <img src={listing.photos[0]} alt="" className="h-40 w-full object-cover" />
+        <img src={listing.photos[0]} alt="" className="aspect-square w-full object-cover" />
       ) : (
-        <div className="h-40" style={{ background: photoGradient }} />
+        <div className="aspect-square" style={{ background: photoGradient }} />
       )}
       <div className="px-4 pb-4 pt-3.5">
         <div className="mb-1 flex items-start justify-between">
