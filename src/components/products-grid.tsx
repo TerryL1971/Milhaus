@@ -1,16 +1,19 @@
 // src/components/products-grid.tsx
-// The /products browse grid — a single Filters dropdown (base, category,
-// condition) next to the search box, replacing what used to be three
-// separate pill-chip rows above the search input. Every filter is
-// multi-select (0 to all), same comma-joined-URL-param pattern as the
-// Homes page's FilterDropdown.
+// The /products browse grid — the Unified Category UX spec's top filter
+// bar: Base 📍, Category Specifics 🏷 (category), Price 💰, Features/
+// Badges ⭐ (condition) dropdown clusters, a keyword box, and an explicit
+// Apply Filters button. Plain local state, not URL params — see
+// cars-grid.tsx's header comment for why (an explicit Apply button
+// doesn't fit the old per-click-writes-the-URL model).
 
 "use client";
 
 import { useTranslations } from "next-intl";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
-import { FilterDropdown } from "@/components/filter-dropdown";
+import { FilterBar } from "@/components/filter-bar";
+import { FilterCheckboxList } from "@/components/filter-checkbox-list";
+import { FilterCluster } from "@/components/filter-cluster";
+import { PriceRangeFields } from "@/components/price-range-fields";
 import { ProductListingCard } from "@/components/product-listing-card";
 import { BASE_NAMES } from "@/lib/bases";
 import {
@@ -30,48 +33,54 @@ const PHOTO_GRADIENTS = [
   "linear-gradient(135deg,#D3C6A6,#9AA37E)",
 ];
 
-function useMultiParam(key: string) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const values = useMemo(() => (searchParams.get(key) ?? "").split(",").filter(Boolean), [searchParams, key]);
+type Applied = {
+  base: string[];
+  category: string[];
+  condition: string[];
+  priceMin: number | null;
+  priceMax: number | null;
+};
 
-  function toggle(value: string) {
-    const params = new URLSearchParams(searchParams.toString());
-    const next = values.includes(value) ? values.filter((v) => v !== value) : [...values, value];
-    if (next.length > 0) params.set(key, next.join(","));
-    else params.delete(key);
-    const qs = params.toString();
-    router.replace(`${pathname}${qs ? `?${qs}` : ""}`, { scroll: false });
-  }
+const EMPTY_APPLIED: Applied = { base: [], category: [], condition: [], priceMin: null, priceMax: null };
 
-  return { values, toggle };
+function toggleIn<T>(list: T[], value: T): T[] {
+  return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
 }
 
 export function ProductsGrid({ listings, initialQuery = "" }: { listings: Listing[]; initialQuery?: string }) {
   const t = useTranslations("ProductsPage");
   const tFilter = useTranslations("FilterModal");
   const [query, setQuery] = useState(initialQuery);
-  const router = useRouter();
-  const pathname = usePathname();
 
-  const base = useMultiParam("base");
-  const category = useMultiParam("category");
-  const condition = useMultiParam("condition");
-  const activeCount = base.values.length + category.values.length + condition.values.length;
+  const [applied, setApplied] = useState<Applied>(EMPTY_APPLIED);
+  const [pending, setPending] = useState<Applied>(EMPTY_APPLIED);
 
-  function clearAll() {
-    router.replace(pathname, { scroll: false });
+  const activeCount =
+    applied.base.length +
+    applied.category.length +
+    applied.condition.length +
+    (applied.priceMin != null ? 1 : 0) +
+    (applied.priceMax != null ? 1 : 0);
+
+  function handleApply() {
+    setApplied(pending);
+  }
+
+  function handleClearAll() {
+    setPending(EMPTY_APPLIED);
+    setApplied(EMPTY_APPLIED);
   }
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return listings.filter((listing) => {
-      if (base.values.length > 0 && (!listing.base || !base.values.includes(listing.base))) return false;
-      if (category.values.length > 0 && (!listing.productCategory || !category.values.includes(listing.productCategory)))
+      if (applied.base.length > 0 && (!listing.base || !applied.base.includes(listing.base))) return false;
+      if (applied.category.length > 0 && (!listing.productCategory || !applied.category.includes(listing.productCategory)))
         return false;
-      if (condition.values.length > 0 && (!listing.condition || !condition.values.includes(listing.condition)))
+      if (applied.condition.length > 0 && (!listing.condition || !applied.condition.includes(listing.condition)))
         return false;
+      if (applied.priceMin != null && listing.priceEurMonth < applied.priceMin) return false;
+      if (applied.priceMax != null && listing.priceEurMonth > applied.priceMax) return false;
       if (!q) return true;
       const categoryLabel = listing.productCategory
         ? PRODUCT_CATEGORY_LABELS[listing.productCategory as ProductCategoryKey]
@@ -80,41 +89,64 @@ export function ProductsGrid({ listings, initialQuery = "" }: { listings: Listin
         field!.toLowerCase().includes(q),
       );
     });
-  }, [listings, query, base.values, category.values, condition.values]);
+  }, [listings, query, applied]);
 
   return (
     <>
-      <div className="mb-7 flex flex-wrap gap-2">
-        <input
-          type="search"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder={t("searchPlaceholder")}
-          className="min-w-0 flex-1 rounded-md border border-canvas-deep bg-paper px-4 py-2.5 text-[0.95rem] text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none"
-        />
-        <FilterDropdown
-          label={t("filtersLabel")}
-          clearLabel={tFilter("clearAll")}
-          activeCount={activeCount}
-          onClearAll={clearAll}
-          align="right"
-          groups={[
-            { label: t("filterBase"), options: BASE_NAMES.map((b) => ({ value: b, label: b })), selected: base.values, onToggle: base.toggle },
-            {
-              label: t("filterCategory"),
-              options: PRODUCT_CATEGORY_KEYS.map((key) => ({ value: key, label: PRODUCT_CATEGORY_LABELS[key] })),
-              selected: category.values,
-              onToggle: category.toggle,
-            },
-            {
-              label: t("filterCondition"),
-              options: CONDITION_KEYS.map((key) => ({ value: key, label: CONDITION_LABELS[key as ConditionKey] })),
-              selected: condition.values,
-              onToggle: condition.toggle,
-            },
-          ]}
-        />
-      </div>
+      <FilterBar
+        keyword={query}
+        onKeywordChange={setQuery}
+        keywordPlaceholder={t("searchPlaceholder")}
+        activeCount={activeCount}
+        activeLabel={(count) => tFilter("activeFiltersLabel", { count })}
+        onApply={handleApply}
+        applyLabel={tFilter("applyFilters")}
+      >
+        <FilterCluster label={t("filterBase")} icon="📍" badge={pending.base.length || undefined}>
+          <FilterCheckboxList
+            options={BASE_NAMES.map((b) => ({ value: b, label: b }))}
+            selected={pending.base}
+            onToggle={(value) => setPending((p) => ({ ...p, base: toggleIn(p.base, value) }))}
+          />
+        </FilterCluster>
+
+        <FilterCluster label={tFilter("filterCategorySpecifics")} icon="🏷" badge={pending.category.length || undefined}>
+          <FilterCheckboxList
+            options={PRODUCT_CATEGORY_KEYS.map((key) => ({ value: key, label: PRODUCT_CATEGORY_LABELS[key] }))}
+            selected={pending.category}
+            onToggle={(value) => setPending((p) => ({ ...p, category: toggleIn(p.category, value) }))}
+          />
+        </FilterCluster>
+
+        <FilterCluster
+          label={tFilter("filterPrice")}
+          icon="💰"
+          badge={(pending.priceMin != null ? 1 : 0) + (pending.priceMax != null ? 1 : 0) || undefined}
+        >
+          <PriceRangeFields
+            min={pending.priceMin}
+            max={pending.priceMax}
+            onMinChange={(value) => setPending((p) => ({ ...p, priceMin: value }))}
+            onMaxChange={(value) => setPending((p) => ({ ...p, priceMax: value }))}
+            minLabel={tFilter("priceMin")}
+            maxLabel={tFilter("priceMax")}
+          />
+        </FilterCluster>
+
+        <FilterCluster label={tFilter("filterFeatures")} icon="⭐" badge={pending.condition.length || undefined}>
+          <FilterCheckboxList
+            options={CONDITION_KEYS.map((key) => ({ value: key, label: CONDITION_LABELS[key as ConditionKey] }))}
+            selected={pending.condition}
+            onToggle={(value) => setPending((p) => ({ ...p, condition: toggleIn(p.condition, value) }))}
+          />
+        </FilterCluster>
+
+        {activeCount > 0 && (
+          <button type="button" onClick={handleClearAll} className="text-sm font-semibold text-ink-soft hover:text-rust">
+            {tFilter("clearAll")}
+          </button>
+        )}
+      </FilterBar>
 
       {filtered.length === 0 ? (
         <p className="text-ink-soft">{listings.length === 0 ? t("emptyNone") : t("emptyNoMatch")}</p>

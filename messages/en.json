@@ -446,7 +446,9 @@
     "filterCategory": "Category",
     "filtersLabel": "Filters",
     "emptyNone": "Nothing listed right now — check back soon, or be the first.",
-    "emptyNoMatch": "Nothing matches that search."
+    "emptyNoMatch": "Nothing matches that search.",
+    "filterMinRating": "Minimum rating",
+    "filterAnyRating": "Any rating"
   },
   "ServiceCard": {
     "available": "Available",

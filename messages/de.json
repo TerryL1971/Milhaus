@@ -446,7 +446,9 @@
     "filterCategory": "Kategorie",
     "filtersLabel": "Filter",
     "emptyNone": "Gerade nichts gelistet — schauen Sie bald wieder vorbei, oder seien Sie die/der Erste.",
-    "emptyNoMatch": "Nichts passt zu dieser Suche."
+    "emptyNoMatch": "Nichts passt zu dieser Suche.",
+    "filterMinRating": "Mindestbewertung",
+    "filterAnyRating": "Beliebige Bewertung"
   },
   "ServiceCard": {
     "available": "Verfügbar",
