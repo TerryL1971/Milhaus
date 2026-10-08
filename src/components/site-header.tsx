@@ -95,24 +95,36 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
               </form>
             </>
           ) : (
+            <>
+              {/* "Browse listings" is now covered by the nav's "Homes" link
+                  (and the hero's own unified search); this slot is a single
+                  prominent CTA instead — one click to a chooser between the
+                  four post flows, matching the "Post an Ad" button Charlie
+                  asked for. Outlined, not solid — the mockup's solid-red
+                  treatment is reserved for "Log In", the one action that
+                  should draw the eye most when logged out. */}
+              <Link
+                href="/post-ad"
+                className="rounded-md border border-paper/35 px-5 py-2.5 text-sm font-semibold transition-[transform,box-shadow] hover:-translate-y-px hover:border-paper/70"
+              >
+                {t("postAd")}
+              </Link>
+              <Link
+                href="/sign-in"
+                className="rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+              >
+                {t("signIn")}
+              </Link>
+            </>
+          )}
+          {user && (
             <Link
-              href="/sign-in"
+              href="/post-ad"
               className="rounded-md border border-paper/35 px-5 py-2.5 text-sm font-semibold transition-[transform,box-shadow] hover:-translate-y-px hover:border-paper/70"
             >
-              {t("signIn")}
+              {t("postAd")}
             </Link>
           )}
-          {/* "Browse listings" is now covered by the nav's "Homes" link
-              (and the hero's own unified search); this slot is a single
-              prominent CTA instead — one click to a chooser between the
-              four post flows, matching the "Post an Ad" button Charlie
-              asked for. */}
-          <Link
-            href="/post-ad"
-            className="rounded-md bg-rust px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-rust/90"
-          >
-            {t("postAd")}
-          </Link>
         </div>
       </div>
     </header>
