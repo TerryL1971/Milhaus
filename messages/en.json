@@ -110,7 +110,11 @@
     "ctaBody": "Start looking before you've even packed a box.",
     "ctaButton": "Browse open listings",
     "businessesHeading": "Military-friendly businesses",
-    "businessesViewAll": "View all businesses"
+    "businessesViewAll": "View all businesses",
+    "featuredHomesHeading": "Featured Homes",
+    "featuredHomesViewAll": "View all homes",
+    "featuredCarsHeading": "Featured Cars",
+    "featuredCarsViewAll": "View all cars"
   },
   "ListingsGrid": {
     "heading": "Open right now",

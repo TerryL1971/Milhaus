@@ -110,7 +110,11 @@
     "ctaBody": "Fangen Sie an zu suchen, bevor Sie überhaupt eine Kiste gepackt haben.",
     "ctaButton": "Offene Angebote ansehen",
     "businessesHeading": "Militärfreundliche Unternehmen",
-    "businessesViewAll": "Alle Unternehmen ansehen"
+    "businessesViewAll": "Alle Unternehmen ansehen",
+    "featuredHomesHeading": "Empfohlene Wohnungen",
+    "featuredHomesViewAll": "Alle Wohnungen ansehen",
+    "featuredCarsHeading": "Empfohlene Autos",
+    "featuredCarsViewAll": "Alle Autos ansehen"
   },
   "ListingsGrid": {
     "heading": "Gerade verfügbar",

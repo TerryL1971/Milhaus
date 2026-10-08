@@ -7,6 +7,8 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { BusinessCard } from "@/components/business-card";
+import { CarListingCard } from "@/components/car-listing-card";
+import { ListingCard } from "@/components/listing-card";
 import { ListingsGrid } from "@/components/listings-grid";
 import { SponsorBannerCarousel } from "@/components/sponsor-banner-carousel";
 import { StampBadge } from "@/components/stamp-badge";
@@ -21,6 +23,19 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   currency: "EUR",
   maximumFractionDigits: 0,
 });
+
+// Same fallback-when-no-photo treatment as ListingsGrid/CarsGrid, just a
+// local copy sized to 3 (these "Featured X" sections never show more).
+const RENTAL_PHOTO_GRADIENTS = [
+  "linear-gradient(135deg,#D8C9A8,#A9AE83)",
+  "linear-gradient(135deg,#C3B79D,#8C9873)",
+  "linear-gradient(135deg,#CBBBA0,#8E7C63)",
+];
+const CAR_PHOTO_GRADIENTS = [
+  "linear-gradient(135deg,#B9C4D0,#5C6B7A)",
+  "linear-gradient(135deg,#C7B8A0,#3E4A57)",
+  "linear-gradient(135deg,#A9B4A0,#2C4053)",
+];
 
 // Position/rotation for each mini-hero's 2-card fan, by index — small
 // enough to fit a quarter-width column (4 categories side by side) rather
@@ -329,12 +344,54 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* ---------- FEATURED HOMES / FEATURED CARS ---------- */}
+      {/* Per Charlie's frontpage mockup — dedicated rows with the full
+          card treatment (photo, badges, price/specs), distinct from the
+          hero's small mini-card fan above. Same "don't show an empty
+          section" rule as Military-Friendly Businesses below: only
+          renders once there's at least one featured item of that type. */}
+      {featuredRentals.length > 0 && (
+        <section className="py-14">
+          <div className="mx-auto max-w-[1400px] px-8">
+            <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+              <h2 className="font-display text-[2rem] font-semibold text-ink">{t("featuredHomesHeading")}</h2>
+              <Link href="/#listings" className="text-sm font-semibold text-olive-deep hover:underline">
+                {t("featuredHomesViewAll")} →
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
+              {featuredRentals.map((listing, index) => (
+                <ListingCard key={listing.id} listing={listing} photoGradient={RENTAL_PHOTO_GRADIENTS[index % RENTAL_PHOTO_GRADIENTS.length]} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {featuredCars.length > 0 && (
+        <section className="bg-canvas-deep py-14">
+          <div className="mx-auto max-w-[1400px] px-8">
+            <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+              <h2 className="font-display text-[2rem] font-semibold text-ink">{t("featuredCarsHeading")}</h2>
+              <Link href="/cars" className="text-sm font-semibold text-olive-deep hover:underline">
+                {t("featuredCarsViewAll")} →
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
+              {featuredCars.map((listing, index) => (
+                <CarListingCard key={listing.id} listing={listing} photoGradient={CAR_PHOTO_GRADIENTS[index % CAR_PHOTO_GRADIENTS.length]} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ---------- MILITARY-FRIENDLY BUSINESSES ---------- */}
       {/* Charlie hand-enters these from /admin/businesses — only shows
           up at all once he's featured at least one, same "don't show an
           empty/fake section" rule the rest of the homepage follows. */}
       {featuredBusinesses.length > 0 && (
-        <section className="bg-canvas-deep py-14">
+        <section className="py-14">
           <div className="mx-auto max-w-[1400px] px-8">
             <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
               <h2 className="font-display text-[2rem] font-semibold text-ink">{t("businessesHeading")}</h2>
