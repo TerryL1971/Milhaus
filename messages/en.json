@@ -108,7 +108,9 @@
     "how3Body": "One tap and it's off the site — no one calls about a place that's already gone.",
     "ctaHeading": "PCSing to Germany soon?",
     "ctaBody": "Start looking before you've even packed a box.",
-    "ctaButton": "Browse open listings"
+    "ctaButton": "Browse open listings",
+    "businessesHeading": "Military-friendly businesses",
+    "businessesViewAll": "View all businesses"
   },
   "ListingsGrid": {
     "heading": "Open right now",

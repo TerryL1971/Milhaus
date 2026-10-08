@@ -6,11 +6,13 @@
 
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
+import { BusinessCard } from "@/components/business-card";
 import { ListingsGrid } from "@/components/listings-grid";
 import { SponsorBannerCarousel } from "@/components/sponsor-banner-carousel";
 import { StampBadge } from "@/components/stamp-badge";
 import { getPathname, Link } from "@/i18n/navigation";
 import { BASE_NAMES } from "@/lib/bases";
+import { getFeaturedBusinesses } from "@/lib/businesses-queries";
 import { getActiveListings, getFeaturedListings } from "@/lib/listings";
 import type { Listing } from "@/lib/types";
 
@@ -56,13 +58,15 @@ export default async function Home() {
   const tProducts = await getTranslations("ProductsPage");
   const tServices = await getTranslations("ServicesPage");
   const locale = await getLocale();
-  const [listings, featuredRentals, featuredCars, featuredProducts, featuredServices] = await Promise.all([
-    getActiveListings(),
-    getFeaturedListings("rental", 3),
-    getFeaturedListings("car", 3),
-    getFeaturedListings("product", 3),
-    getFeaturedListings("service", 3),
-  ]);
+  const [listings, featuredRentals, featuredCars, featuredProducts, featuredServices, featuredBusinesses] =
+    await Promise.all([
+      getActiveListings(),
+      getFeaturedListings("rental", 3),
+      getFeaturedListings("car", 3),
+      getFeaturedListings("product", 3),
+      getFeaturedListings("service", 3),
+      getFeaturedBusinesses(4),
+    ]);
 
   // One card per category — hero content (eyebrow/heading/subhead/photo
   // fan) and the search control merged into a single unit rather than two
@@ -324,6 +328,28 @@ export default async function Home() {
           ))}
         </div>
       </section>
+
+      {/* ---------- MILITARY-FRIENDLY BUSINESSES ---------- */}
+      {/* Charlie hand-enters these from /admin/businesses — only shows
+          up at all once he's featured at least one, same "don't show an
+          empty/fake section" rule the rest of the homepage follows. */}
+      {featuredBusinesses.length > 0 && (
+        <section className="bg-canvas-deep py-14">
+          <div className="mx-auto max-w-[1400px] px-8">
+            <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+              <h2 className="font-display text-[2rem] font-semibold text-ink">{t("businessesHeading")}</h2>
+              <Link href="/services" className="text-sm font-semibold text-olive-deep hover:underline">
+                {t("businessesViewAll")} →
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {featuredBusinesses.map((business) => (
+                <BusinessCard key={business.id} business={business} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ---------- LISTINGS ---------- */}
       <section id="listings" className="py-18">
