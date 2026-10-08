@@ -58,9 +58,23 @@ export function ProductListingCard({
 
         <p className="mb-2 truncate text-[0.95rem] font-medium text-charcoal">{listing.title}</p>
 
-        <div className="flex flex-wrap gap-3 font-mono text-[0.76rem] text-charcoal/80">
+        <div className="mb-2 flex flex-wrap gap-3 font-mono text-[0.76rem] text-charcoal/80">
           {listing.condition && <span>{CONDITION_LABELS[listing.condition as ConditionKey] ?? listing.condition}</span>}
           <span>{listing.city}</span>
+        </div>
+
+        <div className="flex flex-wrap gap-1.5">
+          {listing.condition === "like_new" && (
+            <span className="rounded-[3px] bg-brass px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
+              {t("likeNew")}
+            </span>
+          )}
+          {/* Always shown, not conditional on any field — every item for
+              sale here is self-listed with no shipping flow, so pickup
+              is just a fact about every listing of this type. */}
+          <span className="rounded-[3px] bg-canvas-deep px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-ink-soft">
+            {t("pickUp")}
+          </span>
         </div>
       </div>
     </Link>

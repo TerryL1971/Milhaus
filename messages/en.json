@@ -152,7 +152,8 @@
     "moreAmenities": "+{count} more",
     "housingOfficeListing": "Housing office listing",
     "listedByFamily": "Listed by outgoing family",
-    "housingApprovedBadge": "Housing Approved"
+    "housingApprovedBadge": "Housing Approved",
+    "newBadge": "New"
   },
   "ListingForm": {
     "source": "Source",
@@ -244,7 +245,9 @@
     "backToAdmin": "← Back to admin",
     "sessionExpired": "Your session expired — please sign in again.",
     "saveFailed": "Could not save the listing.",
-    "photoUploadFailed": "Photo upload failed: {message}"
+    "photoUploadFailed": "Photo upload failed: {message}",
+    "lowMileageLabel": "Mark as Low Mileage",
+    "isNewLabel": "Mark as a New listing"
   },
   "ListingDetail": {
     "backToListings": "← Back to listings",
@@ -395,7 +398,8 @@
     "usSpec": "US Spec",
     "euSpec": "EU Spec",
     "automatic": "Automatic",
-    "manual": "Manual"
+    "manual": "Manual",
+    "lowMileage": "Low Mileage"
   },
   "CarDetail": {
     "backToCars": "← Back to cars",
@@ -427,7 +431,9 @@
   },
   "ProductCard": {
     "available": "Available",
-    "sold": "Sold"
+    "sold": "Sold",
+    "likeNew": "Like New",
+    "pickUp": "Pick Up"
   },
   "ProductDetail": {
     "backToProducts": "← Back to items for sale",

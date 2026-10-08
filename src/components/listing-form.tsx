@@ -134,6 +134,7 @@ export function ListingForm({
         mileage_km: formData.get("mileageKm") ? Number(formData.get("mileageKm")) : null,
         transmission: formData.get("transmission") || null,
         us_spec: formData.get("usSpec") ? formData.get("usSpec") === "yes" : null,
+        low_mileage: formData.get("lowMileage") === "on",
       }));
     } else if (isProduct) {
       ({ error: detailsError } = await supabase.from("product_details").insert({
@@ -163,6 +164,7 @@ export function ListingForm({
         internet_speed_mbps: formData.get("internetSpeedMbps") ? Number(formData.get("internetSpeedMbps")) : null,
         heat_type: formData.get("heatType") || null,
         stove_type: formData.get("stoveType") || null,
+        is_new: formData.get("isNew") === "on",
       }));
     }
     if (detailsError) {
@@ -363,6 +365,13 @@ export function ListingForm({
             </select>
           </div>
         </div>
+      )}
+
+      {isCar && (
+        <label className="flex items-center gap-2 text-sm text-charcoal">
+          <input type="checkbox" name="lowMileage" className="h-4 w-4 rounded border-canvas-deep text-olive focus:ring-olive" />
+          <span>{t("lowMileageLabel")}</span>
+        </label>
       )}
 
       {isProduct && (
@@ -666,6 +675,13 @@ export function ListingForm({
             </select>
           </div>
         </div>
+      )}
+
+      {isRental && (
+        <label className="flex items-center gap-2 text-sm text-charcoal">
+          <input type="checkbox" name="isNew" className="h-4 w-4 rounded border-canvas-deep text-olive focus:ring-olive" />
+          <span>{t("isNewLabel")}</span>
+        </label>
       )}
 
       <div>

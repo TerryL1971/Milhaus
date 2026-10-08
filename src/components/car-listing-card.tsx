@@ -69,8 +69,13 @@ export function CarListingCard({
           <span>{listing.city}{listing.distanceToBase ? ` · ${listing.distanceToBase}` : ""}</span>
         </div>
 
-        {(listing.usSpec != null || listing.transmission) && (
+        {(listing.usSpec != null || listing.transmission || listing.lowMileage) && (
           <div className="flex flex-wrap gap-1.5">
+            {listing.lowMileage && (
+              <span className="rounded-[3px] bg-brass px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
+                {t("lowMileage")}
+              </span>
+            )}
             {listing.usSpec === true && (
               <span className="rounded-[3px] bg-ink px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
                 {t("usSpec")}

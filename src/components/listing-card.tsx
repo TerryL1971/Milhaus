@@ -52,10 +52,29 @@ export function ListingCard({
         ) : (
           <div className={aspectClassName} style={{ background: photoGradient }} />
         )}
-        {isHousingOffice && (
-          <span className="absolute left-2.5 top-2.5 rounded-[3px] bg-ink px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
-            {t("housingApprovedBadge")}
-          </span>
+        {(isHousingOffice || listing.isNew || listing.amenities.includes("furnished") || listing.amenities.includes("pet_friendly")) && (
+          <div className="absolute left-2.5 top-2.5 flex flex-wrap gap-1.5">
+            {isHousingOffice && (
+              <span className="rounded-[3px] bg-ink px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
+                {t("housingApprovedBadge")}
+              </span>
+            )}
+            {listing.isNew && (
+              <span className="rounded-[3px] bg-brass px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
+                {t("newBadge")}
+              </span>
+            )}
+            {listing.amenities.includes("furnished") && (
+              <span className="rounded-[3px] bg-ink px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
+                {tAmenities("furnished")}
+              </span>
+            )}
+            {listing.amenities.includes("pet_friendly") && (
+              <span className="rounded-[3px] bg-ink px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
+                {tAmenities("pet_friendly")}
+              </span>
+            )}
+          </div>
         )}
       </div>
       <div className="px-4 pb-4 pt-3.5">

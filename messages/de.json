@@ -152,7 +152,8 @@
     "moreAmenities": "+{count} weitere",
     "housingOfficeListing": "Vom Housing Office",
     "listedByFamily": "Von ausziehender Familie",
-    "housingApprovedBadge": "Housing-Office genehmigt"
+    "housingApprovedBadge": "Housing-Office genehmigt",
+    "newBadge": "Neu"
   },
   "ListingForm": {
     "source": "Quelle",
@@ -244,7 +245,9 @@
     "backToAdmin": "← Zurück zum Admin-Bereich",
     "sessionExpired": "Ihre Sitzung ist abgelaufen — bitte melden Sie sich erneut an.",
     "saveFailed": "Das Angebot konnte nicht gespeichert werden.",
-    "photoUploadFailed": "Foto-Upload fehlgeschlagen: {message}"
+    "photoUploadFailed": "Foto-Upload fehlgeschlagen: {message}",
+    "lowMileageLabel": "Als niedrige Laufleistung markieren",
+    "isNewLabel": "Als neues Angebot markieren"
   },
   "ListingDetail": {
     "backToListings": "← Zurück zu den Angeboten",
@@ -395,7 +398,8 @@
     "usSpec": "US-Ausführung",
     "euSpec": "EU-Ausführung",
     "automatic": "Automatik",
-    "manual": "Schaltgetriebe"
+    "manual": "Schaltgetriebe",
+    "lowMileage": "Niedrige Laufleistung"
   },
   "CarDetail": {
     "backToCars": "← Zurück zu den Autos",
@@ -427,7 +431,9 @@
   },
   "ProductCard": {
     "available": "Verfügbar",
-    "sold": "Verkauft"
+    "sold": "Verkauft",
+    "likeNew": "Wie neu",
+    "pickUp": "Abholung"
   },
   "ProductDetail": {
     "backToProducts": "← Zurück zu den Artikeln",

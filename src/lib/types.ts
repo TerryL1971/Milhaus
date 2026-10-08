@@ -69,6 +69,9 @@ export interface Listing {
   heatType: "gas" | "oil" | "electric" | null;
   /** Rental only — null on a car listing. */
   stoveType: "induction" | "standard" | null;
+  /** Rental only — a "New" badge, set by the lister themselves (not
+   * computed from created_at). Defaults false. */
+  isNew: boolean;
   /** Car only — null on a rental. */
   make: string | null;
   /** Car only — null on a rental. */
@@ -84,6 +87,9 @@ export interface Listing {
    * one, which matters a lot to this audience (re-registration hassle).
    * Nullable/optional, same reasoning as transmission. */
   usSpec: boolean | null;
+  /** Car only — a "Low Mileage" badge, set by the lister themselves
+   * (not computed from mileageKm). Defaults false. */
+  lowMileage: boolean;
   /** Product only — key from PRODUCT_CATEGORY_LABELS in
    * src/lib/product-categories.ts. */
   productCategory: string | null;
