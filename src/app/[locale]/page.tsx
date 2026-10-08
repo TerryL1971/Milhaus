@@ -8,6 +8,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { BusinessCard } from "@/components/business-card";
 import { CarListingCard } from "@/components/car-listing-card";
 import { ListingCard } from "@/components/listing-card";
+import { ProductListingCard } from "@/components/product-listing-card";
 import { SponsorBannerCarousel } from "@/components/sponsor-banner-carousel";
 import { getPathname, Link } from "@/i18n/navigation";
 import { BASE_NAMES } from "@/lib/bases";
@@ -25,6 +26,11 @@ const CAR_PHOTO_GRADIENTS = [
   "linear-gradient(135deg,#B9C4D0,#5C6B7A)",
   "linear-gradient(135deg,#C7B8A0,#3E4A57)",
   "linear-gradient(135deg,#A9B4A0,#2C4053)",
+];
+const PRODUCT_PHOTO_GRADIENTS = [
+  "linear-gradient(135deg,#D8C9A8,#A9AE83)",
+  "linear-gradient(135deg,#C3B79D,#8C9873)",
+  "linear-gradient(135deg,#CBBBA0,#8E7C67)",
 ];
 
 export default async function Home() {
@@ -193,6 +199,25 @@ export default async function Home() {
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {featuredBusinesses.map((business) => (
                 <BusinessCard key={business.id} business={business} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ---------- FEATURED BUY & SELL ---------- */}
+      {featuredProducts.length > 0 && (
+        <section className="py-14">
+          <div className="mx-auto max-w-[1400px] px-8">
+            <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+              <h2 className="font-display text-[2rem] font-semibold text-ink">{t("featuredProductsHeading")}</h2>
+              <Link href="/products" className="text-sm font-semibold text-olive-deep hover:underline">
+                {t("featuredProductsViewAll")} →
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
+              {featuredProducts.map((listing, index) => (
+                <ProductListingCard key={listing.id} listing={listing} photoGradient={PRODUCT_PHOTO_GRADIENTS[index % PRODUCT_PHOTO_GRADIENTS.length]} />
               ))}
             </div>
           </div>

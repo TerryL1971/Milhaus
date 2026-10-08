@@ -118,7 +118,9 @@
     "headlineLine1": "Everything you need",
     "headlineLine2": "for life in Germany.",
     "heroLocationPlaceholder": "Location / Garrison / Base (e.g., Ramstein)",
-    "scriptTagline": "Germany Feels Like Home"
+    "scriptTagline": "Germany Feels Like Home",
+    "featuredProductsHeading": "Featured Buy & Sell",
+    "featuredProductsViewAll": "View all items"
   },
   "ListingsGrid": {
     "heading": "Open right now",

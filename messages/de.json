@@ -118,7 +118,9 @@
     "headlineLine1": "Alles, was du brauchst,",
     "headlineLine2": "für das Leben in Deutschland.",
     "heroLocationPlaceholder": "Standort / Garnison / Stützpunkt (z. B. Ramstein)",
-    "scriptTagline": "Germany Feels Like Home"
+    "scriptTagline": "Germany Feels Like Home",
+    "featuredProductsHeading": "Empfohlenes Kaufen & Verkaufen",
+    "featuredProductsViewAll": "Alle Artikel ansehen"
   },
   "ListingsGrid": {
     "heading": "Gerade verfügbar",
