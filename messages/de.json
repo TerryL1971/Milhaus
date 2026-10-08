@@ -134,7 +134,8 @@
     "placeholder2Cta": "Zuhause inserieren",
     "placeholder3Heading": "Vom Housing Office?",
     "placeholder3Body": "Wir richten Ihre Angebote direkt für Sie ein.",
-    "placeholder3Cta": "Kontakt aufnehmen"
+    "placeholder3Cta": "Kontakt aufnehmen",
+    "searchPlaceholder": "Suche nach Stadt oder Adresse…"
   },
   "ListingCard": {
     "perMonth": "/ Monat",
@@ -341,7 +342,15 @@
     "title": "Filter",
     "close": "Schließen",
     "clearAll": "Alle Filter zurücksetzen",
-    "done": "Fertig"
+    "done": "Fertig",
+    "applyFilters": "Filter anwenden",
+    "activeFiltersLabel": "{count} aktive Filter angewendet",
+    "priceMin": "Mindestpreis (€)",
+    "priceMax": "Höchstpreis (€)",
+    "filterPrice": "Preis",
+    "filterCategorySpecifics": "Kategoriespezifisch",
+    "filterFeatures": "Merkmale / Badges",
+    "housingApprovedOnly": "Nur Housing-Office genehmigt"
   },
   "StampBadge": {
     "line1": "Housing",

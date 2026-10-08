@@ -134,7 +134,8 @@
     "placeholder2Cta": "List your home",
     "placeholder3Heading": "From the housing office?",
     "placeholder3Body": "We'll set your listings up directly.",
-    "placeholder3Cta": "Get in touch"
+    "placeholder3Cta": "Get in touch",
+    "searchPlaceholder": "Search by city or address…"
   },
   "ListingCard": {
     "perMonth": "/ mo",
@@ -341,7 +342,15 @@
     "title": "Filters",
     "close": "Close",
     "clearAll": "Clear all filters",
-    "done": "Done"
+    "done": "Done",
+    "applyFilters": "Apply Filters",
+    "activeFiltersLabel": "{count} active filters applied",
+    "priceMin": "Min price (€)",
+    "priceMax": "Max price (€)",
+    "filterPrice": "Price",
+    "filterCategorySpecifics": "Category Specifics",
+    "filterFeatures": "Features / Badges",
+    "housingApprovedOnly": "Housing Approved only"
   },
   "StampBadge": {
     "line1": "Housing",

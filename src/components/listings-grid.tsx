@@ -1,22 +1,29 @@
 // src/components/listings-grid.tsx
-// The "Open right now" section — a single Filters dropdown (base,
-// amenities, bedrooms, move-in) plus the listing grid. Replaced the
-// earlier pair of base/amenity pill-chip rows and the separate
-// FilterModal popup on the hero's Rentals mini-card — one control
-// instead of two UIs quietly driving the same filter state.
+// The "Open right now" section — the Unified Category UX spec's top
+// filter bar (Base / Category Specifics / Price / Features dropdown
+// clusters, a keyword box, and an explicit Apply Filters button) plus
+// the listing grid. Each dropdown cluster holds its own *pending*
+// selections locally; nothing actually re-filters the grid until Apply
+// is clicked — that's the one behavioral difference from the single
+// "Filters" dropdown this replaced, which applied each checkbox
+// instantly. Keyword search is the exception: it filters live, since
+// gating a text box behind a button click isn't how search boxes work
+// anywhere else on this site.
 //
-// Filter state lives in the URL (?base=...&bedrooms=...), not just local
-// component state — useListingFilters is the read/write logic, shared
-// with nothing else now that FilterModal is gone.
+// Filter state lives in the URL (?base=...&bedrooms=...) once Applied —
+// useListingFilters is the read/write logic for that "applied" layer.
 
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { useMemo } from "react";
-import { FilterDropdown } from "@/components/filter-dropdown";
+import { useMemo, useState } from "react";
+import { FilterBar } from "@/components/filter-bar";
+import { FilterCheckboxList } from "@/components/filter-checkbox-list";
+import { FilterCluster } from "@/components/filter-cluster";
 import { ListingCard } from "@/components/listing-card";
+import { PriceRangeFields } from "@/components/price-range-fields";
 import { Link } from "@/i18n/navigation";
-import { AMENITY_KEYS } from "@/lib/amenities";
+import { AMENITY_KEYS, type AmenityKey } from "@/lib/amenities";
 import { BASE_NAMES } from "@/lib/bases";
 import type { Listing } from "@/lib/types";
 import { useListingFilters } from "@/lib/use-listing-filters";
@@ -71,97 +78,193 @@ export function ListingsGrid({ listings }: { listings: Listing[] }) {
     minBedrooms,
     moveIn,
     activeAmenities,
+    priceMin,
+    priceMax,
+    housingOfficeOnly,
     activeCount,
-    toggleBase,
-    setBedrooms,
-    setMoveIn,
-    toggleAmenity,
+    applyFilters,
     clearAll,
   } = useListingFilters();
 
-  const filtered = useMemo(
-    () =>
-      listings.filter((listing) => {
-        if (activeBases.length > 0 && (!listing.base || !activeBases.includes(listing.base))) return false;
-        if (minBedrooms > 0 && listing.bedrooms != null && listing.bedrooms < minBedrooms) return false;
-        // "I need to move in by this date" — a listing works if it's
-        // already available, or becomes available on/before that date.
-        // A listing with no availableFrom set stays in rather than getting
-        // hidden by missing data.
-        if (moveIn && listing.availableFrom && listing.availableFrom > moveIn) return false;
-        // AND, not OR — "garage + garden" means both, matching how real
-        // estate filters usually read (each additional check narrows the
-        // results further, rather than broadening them).
-        if (activeAmenities.some((key) => !listing.amenities.includes(key))) return false;
-        return true;
-      }),
-    [listings, activeBases, minBedrooms, moveIn, activeAmenities],
-  );
+  const [keyword, setKeyword] = useState("");
+
+  // Pending — what's checked/typed in the (still-open or just-closed)
+  // dropdowns, not yet applied to the grid. Re-synced from the applied
+  // values whenever Apply or Clear actually changes them.
+  const [pendingBases, setPendingBases] = useState(activeBases);
+  const [pendingAmenities, setPendingAmenities] = useState<AmenityKey[]>(activeAmenities);
+  const [pendingBedrooms, setPendingBedrooms] = useState(minBedrooms);
+  const [pendingMoveIn, setPendingMoveIn] = useState(moveIn);
+  const [pendingPriceMin, setPendingPriceMin] = useState(priceMin);
+  const [pendingPriceMax, setPendingPriceMax] = useState(priceMax);
+  const [pendingHousingOnly, setPendingHousingOnly] = useState(housingOfficeOnly);
+
+  function handleApply() {
+    applyFilters({
+      bases: pendingBases,
+      amenities: pendingAmenities,
+      minBedrooms: pendingBedrooms,
+      moveIn: pendingMoveIn,
+      priceMin: pendingPriceMin,
+      priceMax: pendingPriceMax,
+      housingOfficeOnly: pendingHousingOnly,
+    });
+  }
+
+  function handleClearAll() {
+    setPendingBases([]);
+    setPendingAmenities([]);
+    setPendingBedrooms(0);
+    setPendingMoveIn("");
+    setPendingPriceMin(null);
+    setPendingPriceMax(null);
+    setPendingHousingOnly(false);
+    clearAll();
+  }
+
+  function toggleIn<T>(list: T[], value: T): T[] {
+    return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
+  }
+
+  const filtered = useMemo(() => {
+    const q = keyword.trim().toLowerCase();
+    return listings.filter((listing) => {
+      if (activeBases.length > 0 && (!listing.base || !activeBases.includes(listing.base))) return false;
+      if (minBedrooms > 0 && listing.bedrooms != null && listing.bedrooms < minBedrooms) return false;
+      // "I need to move in by this date" — a listing works if it's
+      // already available, or becomes available on/before that date.
+      // A listing with no availableFrom set stays in rather than getting
+      // hidden by missing data.
+      if (moveIn && listing.availableFrom && listing.availableFrom > moveIn) return false;
+      // AND, not OR — "garage + garden" means both, matching how real
+      // estate filters usually read (each additional check narrows the
+      // results further, rather than broadening them).
+      if (activeAmenities.some((key) => !listing.amenities.includes(key))) return false;
+      if (priceMin != null && listing.priceEurMonth < priceMin) return false;
+      if (priceMax != null && listing.priceEurMonth > priceMax) return false;
+      if (housingOfficeOnly && listing.source !== "housing_office") return false;
+      if (!q) return true;
+      return [listing.title, listing.city, listing.address].filter(Boolean).some((field) =>
+        field!.toLowerCase().includes(q),
+      );
+    });
+  }, [listings, keyword, activeBases, minBedrooms, moveIn, activeAmenities, priceMin, priceMax, housingOfficeOnly]);
 
   const hasActiveFilters = activeCount > 0;
   // Only pad the *unfiltered* view — see PlaceholderCard's comment for why.
-  const placeholderCount = hasActiveFilters ? 0 : Math.max(0, 3 - filtered.length);
+  const placeholderCount = hasActiveFilters || keyword ? 0 : Math.max(0, 3 - filtered.length);
 
   return (
     <>
-      <div className="mb-7 flex flex-wrap items-end justify-between gap-5">
+      <div className="mb-5">
         <h2 className="font-display text-[2rem] font-semibold text-ink">{t("heading")}</h2>
-        <FilterDropdown
-          label={tFilter("title")}
-          clearLabel={tFilter("clearAll")}
-          activeCount={activeCount}
-          onClearAll={clearAll}
-          align="right"
-          extra={
-            <div className="mb-4 flex flex-col gap-3 border-b border-canvas-deep pb-4">
-              <div>
-                <label htmlFor="filter-movein" className="mb-1 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
-                  {tHome("searchMoveIn")}
-                </label>
-                <input
-                  id="filter-movein"
-                  type="date"
-                  value={moveIn}
-                  onChange={(event) => setMoveIn(event.target.value)}
-                  className="w-full rounded-md border border-canvas-deep bg-paper px-3 py-2 text-[0.95rem] text-charcoal focus:border-olive focus:outline-none"
-                />
-              </div>
-              <div>
-                <label htmlFor="filter-bedrooms" className="mb-1 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
-                  {tHome("searchBedrooms")}
-                </label>
-                <select
-                  id="filter-bedrooms"
-                  value={minBedrooms || ""}
-                  onChange={(event) => setBedrooms(Number(event.target.value))}
-                  className="w-full rounded-md border border-canvas-deep bg-paper px-3 py-2 text-[0.95rem] text-charcoal focus:border-olive focus:outline-none"
-                >
-                  <option value="">{tHome("searchAnyBedrooms")}</option>
-                  <option value="1">1+</option>
-                  <option value="2">2+</option>
-                  <option value="3">3+</option>
-                </select>
-              </div>
-            </div>
-          }
-          groups={[
-            {
-              label: t("filterBase"),
-              options: BASE_NAMES.map((base) => ({ value: base, label: base })),
-              selected: activeBases,
-              onToggle: toggleBase,
-            },
-            {
-              label: t("filterAmenities"),
-              options: AMENITY_KEYS.map((key) => ({ value: key, label: tAmenities(key) })),
-              selected: activeAmenities,
-              onToggle: (value) => toggleAmenity(value as (typeof AMENITY_KEYS)[number]),
-            },
-          ]}
-        />
       </div>
 
-      {filtered.length === 0 && hasActiveFilters ? (
+      <FilterBar
+        keyword={keyword}
+        onKeywordChange={setKeyword}
+        keywordPlaceholder={t("searchPlaceholder")}
+        activeCount={activeCount}
+        activeLabel={(count) => tFilter("activeFiltersLabel", { count })}
+        onApply={handleApply}
+        applyLabel={tFilter("applyFilters")}
+      >
+        <FilterCluster label={t("filterBase")} icon="📍" badge={pendingBases.length || undefined}>
+          <FilterCheckboxList
+            options={BASE_NAMES.map((base) => ({ value: base, label: base }))}
+            selected={pendingBases}
+            onToggle={(value) => setPendingBases((prev) => toggleIn(prev, value))}
+          />
+        </FilterCluster>
+
+        <FilterCluster
+          label={tFilter("filterCategorySpecifics")}
+          icon="🏷"
+          badge={(pendingBedrooms > 0 ? 1 : 0) + (pendingMoveIn ? 1 : 0) || undefined}
+        >
+          <div className="flex flex-col gap-3">
+            <div>
+              <label htmlFor="filter-movein" className="mb-1 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
+                {tHome("searchMoveIn")}
+              </label>
+              <input
+                id="filter-movein"
+                type="date"
+                value={pendingMoveIn}
+                onChange={(event) => setPendingMoveIn(event.target.value)}
+                className="w-full rounded-md border border-canvas-deep bg-paper px-3 py-2 text-[0.95rem] text-charcoal focus:border-olive focus:outline-none"
+              />
+            </div>
+            <div>
+              <label htmlFor="filter-bedrooms" className="mb-1 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
+                {tHome("searchBedrooms")}
+              </label>
+              <select
+                id="filter-bedrooms"
+                value={pendingBedrooms || ""}
+                onChange={(event) => setPendingBedrooms(Number(event.target.value))}
+                className="w-full rounded-md border border-canvas-deep bg-paper px-3 py-2 text-[0.95rem] text-charcoal focus:border-olive focus:outline-none"
+              >
+                <option value="">{tHome("searchAnyBedrooms")}</option>
+                <option value="1">1+</option>
+                <option value="2">2+</option>
+                <option value="3">3+</option>
+              </select>
+            </div>
+          </div>
+        </FilterCluster>
+
+        <FilterCluster
+          label={tFilter("filterPrice")}
+          icon="💰"
+          badge={(pendingPriceMin != null ? 1 : 0) + (pendingPriceMax != null ? 1 : 0) || undefined}
+        >
+          <PriceRangeFields
+            min={pendingPriceMin}
+            max={pendingPriceMax}
+            onMinChange={setPendingPriceMin}
+            onMaxChange={setPendingPriceMax}
+            minLabel={tFilter("priceMin")}
+            maxLabel={tFilter("priceMax")}
+          />
+        </FilterCluster>
+
+        <FilterCluster
+          label={tFilter("filterFeatures")}
+          icon="⭐"
+          badge={pendingAmenities.length + (pendingHousingOnly ? 1 : 0) || undefined}
+        >
+          <div className="flex flex-col gap-4">
+            <label className="flex items-center gap-2 text-sm text-charcoal">
+              <input
+                type="checkbox"
+                checked={pendingHousingOnly}
+                onChange={(event) => setPendingHousingOnly(event.target.checked)}
+                className="h-4 w-4 rounded border-canvas-deep text-olive focus:ring-olive"
+              />
+              <span>{tFilter("housingApprovedOnly")}</span>
+            </label>
+            <div>
+              <span className="mb-1.5 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
+                {t("filterAmenities")}
+              </span>
+              <FilterCheckboxList
+                options={AMENITY_KEYS.map((key) => ({ value: key, label: tAmenities(key) }))}
+                selected={pendingAmenities}
+                onToggle={(value) => setPendingAmenities((prev) => toggleIn(prev, value as AmenityKey))}
+              />
+            </div>
+          </div>
+        </FilterCluster>
+
+        {activeCount > 0 && (
+          <button type="button" onClick={handleClearAll} className="text-sm font-semibold text-ink-soft hover:text-rust">
+            {tFilter("clearAll")}
+          </button>
+        )}
+      </FilterBar>
+
+      {filtered.length === 0 && (hasActiveFilters || keyword) ? (
         <p className="text-ink-soft">
           {t("emptyPrefix")}
           {activeBases.length > 0 ? ` ${t("emptyNear", { base: activeBases.join(", ") })}` : ""}
