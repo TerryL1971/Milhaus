@@ -2,23 +2,28 @@
 @import "tailwindcss";
 
 /*
- * Design tokens — from the approved mockup at
- * /design-reference/milhaus-landing-mockup.html. Keep these two in sync;
- * this is the single source of truth for the Tailwind theme.
+ * Design tokens — from Charlie's exact color/font spec
+ * (Milaus_Layout-Frontpage.pdf, 2026-10-08): creme #F8F7F2, red #7B101A,
+ * blue #101842. Keep this file and tailwind usage in sync; this is the
+ * single source of truth for the Tailwind theme. --ink-soft/olive/
+ * canvas-deep/charcoal aren't in that 3-color spec — kept as derived/
+ * supporting shades around the three named colors rather than guessed
+ * independently.
  */
 :root {
-  --ink: #1b2a3a;
-  --ink-soft: #2c4053;
-  --canvas: #f0ede4;
+  --ink: #101842;
+  --ink-soft: #2c345e;
+  --canvas: #f8f7f2;
   --canvas-deep: #e6e1d2;
   --olive: #6b7353;
   --olive-deep: #545a41;
-  --rust: #b5502f;
-  /* Repointed to the red accent from Charlie's latest mockup (was gold,
-     #c89b3c) — the variable name stays "brass" rather than a mechanical
-     rename across every component that references bg-brass/text-brass/etc. */
-  --brass: #c0392b;
-  --brass-deep: #9e2e20;
+  /* Variable names "rust"/"brass" predate this spec (rust = status/CTA
+     strip, brass = primary action) — both now point at the same single
+     red the spec defines, rather than two different reds no longer
+     backed by the brief. */
+  --rust: #7b101a;
+  --brass: #7b101a;
+  --brass-deep: #5c0c14;
   --charcoal: #22201b;
   --paper: #fbfaf6;
 }
