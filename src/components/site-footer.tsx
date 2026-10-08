@@ -60,7 +60,7 @@ export function SiteFooter() {
         <div className="mb-4.5 flex flex-wrap justify-between gap-6 border-b border-paper/15 pb-7">
           <div className="flex items-center">
             {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset, not worth next/image's config here */}
-            <img src="/brand/milhaus-logo-cream-red-horizontal.png" alt="Milhaus" className="h-9 w-auto" />
+            <img src="/brand/milhaus-logo-cream-red-horizontal.png" alt="Milhaus" className="h-10 w-auto" />
           </div>
 
           <div className="flex flex-wrap gap-12">

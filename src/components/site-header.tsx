@@ -42,7 +42,7 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
       <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-6 px-8 py-[18px]">
         <HomeLink className="flex flex-shrink-0 items-center">
           {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset, not worth next/image's config here */}
-          <img src="/brand/milhaus-logo-cream-red-horizontal.png" alt="Milhaus" className="h-9 w-auto" />
+          <img src="/brand/milhaus-logo-cream-red-horizontal.png" alt="Milhaus" className="h-10 w-auto" />
         </HomeLink>
 
         {/* Trimmed from 6 items to 4 — "List your home" and "For
