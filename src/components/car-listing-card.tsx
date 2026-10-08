@@ -20,9 +20,15 @@ const mileageFormatter = new Intl.NumberFormat("en-US");
 export function CarListingCard({
   listing,
   photoGradient,
+  aspectClassName = "aspect-[16/9]",
 }: {
   listing: Listing;
   photoGradient: string;
+  /** Cars' own category spec is 16:9 — the default. The homepage's
+   * Featured sections override this to one shared ratio across Homes/
+   * Cars/Buy & Sell; the dedicated /cars page doesn't pass this, so it
+   * keeps 16:9. */
+  aspectClassName?: string;
 }) {
   const t = useTranslations("CarCard");
   const isSold = listing.status === "rented"; // same status column as rentals; "rented" means "off the market" either way
@@ -34,9 +40,9 @@ export function CarListingCard({
     >
       {listing.photos[0] ? (
         // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL
-        <img src={listing.photos[0]} alt="" className="aspect-[16/9] w-full object-cover" />
+        <img src={listing.photos[0]} alt="" className={`${aspectClassName} w-full object-cover`} />
       ) : (
-        <div className="aspect-[16/9]" style={{ background: photoGradient }} />
+        <div className={aspectClassName} style={{ background: photoGradient }} />
       )}
       <div className="px-4 pb-4 pt-3.5">
         <div className="mb-1 flex items-start justify-between">

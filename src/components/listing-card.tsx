@@ -21,9 +21,15 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
 export function ListingCard({
   listing,
   photoGradient,
+  aspectClassName = "aspect-[4/3]",
 }: {
   listing: Listing;
   photoGradient: string;
+  /** Homes' own category spec is 4:3 — the default. The homepage's
+   * Featured sections override this to one shared ratio across Homes/
+   * Cars/Buy & Sell so those three rows look like the same card size;
+   * the dedicated /listings page doesn't pass this, so it keeps 4:3. */
+  aspectClassName?: string;
 }) {
   const t = useTranslations("ListingCard");
   const tAmenities = useTranslations("Amenities");
@@ -41,10 +47,10 @@ export function ListingCard({
           <img
             src={listing.photos[0]}
             alt=""
-            className="aspect-[4/3] w-full object-cover"
+            className={`${aspectClassName} w-full object-cover`}
           />
         ) : (
-          <div className="aspect-[4/3]" style={{ background: photoGradient }} />
+          <div className={aspectClassName} style={{ background: photoGradient }} />
         )}
         {isHousingOffice && (
           <span className="absolute left-2.5 top-2.5 rounded-[3px] bg-ink px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">

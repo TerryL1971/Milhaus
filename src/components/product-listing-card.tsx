@@ -18,9 +18,15 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
 export function ProductListingCard({
   listing,
   photoGradient,
+  aspectClassName = "aspect-square",
 }: {
   listing: Listing;
   photoGradient: string;
+  /** Buy & Sell's own category spec is 1:1 — the default. The
+   * homepage's Featured sections override this to one shared ratio
+   * across Homes/Cars/Buy & Sell; the dedicated /products page doesn't
+   * pass this, so it keeps 1:1. */
+  aspectClassName?: string;
 }) {
   const t = useTranslations("ProductCard");
   const isSold = listing.status === "rented"; // same status column as every listing type; "rented" means "off the market"
@@ -32,9 +38,9 @@ export function ProductListingCard({
     >
       {listing.photos[0] ? (
         // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL
-        <img src={listing.photos[0]} alt="" className="aspect-square w-full object-cover" />
+        <img src={listing.photos[0]} alt="" className={`${aspectClassName} w-full object-cover`} />
       ) : (
-        <div className="aspect-square" style={{ background: photoGradient }} />
+        <div className={aspectClassName} style={{ background: photoGradient }} />
       )}
       <div className="px-4 pb-4 pt-3.5">
         <div className="mb-1 flex items-start justify-between">

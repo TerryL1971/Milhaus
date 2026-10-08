@@ -222,7 +222,9 @@ export function CarsGrid({ listings, initialQuery = "" }: { listings: Listing[];
           {listings.length === 0 ? t("emptyNone") : t("emptyNoMatch")}
         </p>
       ) : (
-        <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
+        // 4 columns, not 3 — on its own page, Cars should read as
+        // smaller cards than Homes (which stays at 3), per Terry.
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {filtered.map((listing, index) => (
             <CarListingCard
               key={listing.id}

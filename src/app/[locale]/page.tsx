@@ -33,6 +33,12 @@ const PRODUCT_PHOTO_GRADIENTS = [
   "linear-gradient(135deg,#CBBBA0,#8E7C67)",
 ];
 
+// Homes/Cars/Buy & Sell each have their own category-spec aspect ratio
+// (4:3 / 16:9 / 1:1) on their own dedicated browse pages — but on the
+// homepage, all three "Featured X" rows should read as the same card
+// size, so every card here overrides to this one shared ratio instead.
+const FEATURED_CARD_ASPECT = "aspect-[4/3]";
+
 export default async function Home() {
   const t = await getTranslations("HomePage");
   const locale = await getLocale();
@@ -158,7 +164,7 @@ export default async function Home() {
             </div>
             <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
               {featuredRentals.map((listing, index) => (
-                <ListingCard key={listing.id} listing={listing} photoGradient={RENTAL_PHOTO_GRADIENTS[index % RENTAL_PHOTO_GRADIENTS.length]} />
+                <ListingCard key={listing.id} listing={listing} photoGradient={RENTAL_PHOTO_GRADIENTS[index % RENTAL_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} />
               ))}
             </div>
           </div>
@@ -176,7 +182,7 @@ export default async function Home() {
             </div>
             <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
               {featuredCars.map((listing, index) => (
-                <CarListingCard key={listing.id} listing={listing} photoGradient={CAR_PHOTO_GRADIENTS[index % CAR_PHOTO_GRADIENTS.length]} />
+                <CarListingCard key={listing.id} listing={listing} photoGradient={CAR_PHOTO_GRADIENTS[index % CAR_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} />
               ))}
             </div>
           </div>
@@ -207,7 +213,7 @@ export default async function Home() {
 
       {/* ---------- FEATURED BUY & SELL ---------- */}
       {featuredProducts.length > 0 && (
-        <section className="py-14">
+        <section className="bg-canvas-deep py-14">
           <div className="mx-auto max-w-[1400px] px-8">
             <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
               <h2 className="font-display text-[2rem] font-semibold text-ink">{t("featuredProductsHeading")}</h2>
@@ -217,7 +223,7 @@ export default async function Home() {
             </div>
             <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
               {featuredProducts.map((listing, index) => (
-                <ProductListingCard key={listing.id} listing={listing} photoGradient={PRODUCT_PHOTO_GRADIENTS[index % PRODUCT_PHOTO_GRADIENTS.length]} />
+                <ProductListingCard key={listing.id} listing={listing} photoGradient={PRODUCT_PHOTO_GRADIENTS[index % PRODUCT_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} />
               ))}
             </div>
           </div>
@@ -225,7 +231,7 @@ export default async function Home() {
       )}
 
       {/* ---------- HOW IT WORKS ---------- */}
-      <section id="how" className="bg-canvas-deep py-18">
+      <section id="how" className="py-18">
         <div className="mx-auto max-w-[1400px] px-8">
           <h2 className="font-display text-[2rem] font-semibold text-ink">{t("howHeading")}</h2>
           <div className="mt-8.5 grid grid-cols-1 gap-7.5 md:grid-cols-3">
