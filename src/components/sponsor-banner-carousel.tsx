@@ -7,17 +7,17 @@
 // breakpoints are computed here (not hardcoded) so the timing stays
 // correct regardless of how many slides exist.
 //
-// Sized to the IAB "Full Banner" standard, 468×60px — confirmed against
-// BooKoo's own ad slot (inspected via devtools: their image renders at
-// exactly 468×60, 39:5). Real advertisers design their creative AT that
-// canvas size and supply it as a single image; the slot itself has no
-// background, border, or other chrome of its own — whatever the
-// advertiser's image looks like (solid background baked in, or
-// transparent) is exactly what shows. Earlier versions composited a
-// headline/CTA around the bare UCG logo and put every slide on a
-// dashed-border or solid-color box — both were us inventing ad design
-// that isn't ours to invent; a real placement is just the advertiser's
-// own image, nothing added.
+// Full width of the page's own content container (max-w-[1400px], same
+// as the nav/hero/grid everywhere else on the site) with a fixed height
+// — per Charlie's frontpage mockup, where the ad spans edge to edge the
+// same as everything else on the page, not a small centered box (an
+// earlier version sized this to the IAB "Full Banner" standard, 468px
+// wide; that's the right size for a small sidebar-style unit, not a
+// full-width banner like the mockup shows). Real advertisers design
+// their creative at roughly this shape and supply it as a single image;
+// the slot itself has no background, border, or other chrome of its
+// own — whatever the advertiser's image looks like (solid background
+// baked in, or transparent) is exactly what shows.
 //
 // SLIDES below is a mock-up for Charlie to see the carousel effect, not
 // real paid placements yet: UCG (Used Car Guys) is a real logo Terry
@@ -78,15 +78,16 @@ export function SponsorBannerCarousel() {
           hero photo (tried that) meant no background of its own, but
           Terry wanted the small cream strip back. py-2 keeps that strip
           tight to the ad's own height rather than a tall band.
-          aspect-[468/60] is the IAB "Full Banner" standard (confirmed
-          against BooKoo's own ad slot), capped at the actual 468px so
-          it never scales up past that on a wide desktop. Padding lives
-          on this outer div, not the `relative` one below — an
-          absolutely positioned child measures `inset-0` from its
-          ancestor's padding edge, not its content edge, so padding on
-          the `relative` element itself wouldn't actually inset anything. */}
-      <div className="mx-auto max-w-[468px] px-8">
-        <div className="group relative aspect-[468/60] w-full">
+          max-w-[1400px] matches the content container everywhere else on
+          the site, so the banner spans the full page width; h-20/h-24
+          (not an aspect-ratio lock) keeps the height modest and fixed
+          regardless of how wide the container gets. Padding lives on
+          this outer div, not the `relative` one below — an absolutely
+          positioned child measures `inset-0` from its ancestor's padding
+          edge, not its content edge, so padding on the `relative`
+          element itself wouldn't actually inset anything. */}
+      <div className="mx-auto max-w-[1400px] px-8">
+        <div className="group relative h-20 w-full sm:h-24">
           {animated && (
             <style>{`
               @keyframes sponsor-carousel-fade {
