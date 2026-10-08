@@ -77,7 +77,7 @@ export default async function HowVerificationWorksPage() {
           </h2>
           <p className="mb-5.5 text-[0.96rem] opacity-90">{t("ctaBody")}</p>
           <Link
-            href="/#listings"
+            href="/listings"
             className="inline-block rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
           >
             {t("ctaButton")}

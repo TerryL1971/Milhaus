@@ -94,7 +94,7 @@ export default async function SellerProfilePage({ params }: { params: Params }) 
           </div>
         )}
 
-        <Link href="/#listings" className="mt-8 inline-block text-sm text-ink-soft hover:text-ink">
+        <Link href="/listings" className="mt-8 inline-block text-sm text-ink-soft hover:text-ink">
           {t("backHome")}
         </Link>
       </div>

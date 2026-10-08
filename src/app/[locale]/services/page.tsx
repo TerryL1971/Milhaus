@@ -9,6 +9,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { BusinessesGrid } from "@/components/businesses-grid";
+import { SponsorBannerCarousel } from "@/components/sponsor-banner-carousel";
 import { getActiveBusinesses } from "@/lib/businesses-queries";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -24,8 +25,9 @@ export default async function ServicesPage({ searchParams }: { searchParams: Sea
   const businesses = await getActiveBusinesses();
 
   return (
-    <main className="flex-1 py-14">
-      <div className="mx-auto max-w-[1400px] px-8">
+    <main className="flex-1">
+      <SponsorBannerCarousel />
+      <div className="mx-auto max-w-[1400px] px-8 py-14">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-5">
           <div>
             <h1 className="font-display text-[2rem] font-semibold text-ink">{t("heading")}</h1>

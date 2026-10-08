@@ -5,16 +5,14 @@
 // structure. Listing data is read live from Supabase.
 
 import { getLocale, getTranslations } from "next-intl/server";
-import { Suspense } from "react";
 import { BusinessCard } from "@/components/business-card";
 import { CarListingCard } from "@/components/car-listing-card";
 import { ListingCard } from "@/components/listing-card";
-import { ListingsGrid } from "@/components/listings-grid";
 import { SponsorBannerCarousel } from "@/components/sponsor-banner-carousel";
 import { getPathname, Link } from "@/i18n/navigation";
 import { BASE_NAMES } from "@/lib/bases";
 import { getFeaturedBusinesses } from "@/lib/businesses-queries";
-import { getActiveListings, getFeaturedListings } from "@/lib/listings";
+import { getFeaturedListings } from "@/lib/listings";
 
 // Same fallback-when-no-photo treatment as ListingsGrid/CarsGrid, just a
 // local copy sized to 3 (these "Featured X" sections never show more).
@@ -32,8 +30,7 @@ const CAR_PHOTO_GRADIENTS = [
 export default async function Home() {
   const t = await getTranslations("HomePage");
   const locale = await getLocale();
-  const [listings, featuredRentals, featuredCars, featuredProducts, featuredBusinesses] = await Promise.all([
-    getActiveListings(),
+  const [featuredRentals, featuredCars, featuredProducts, featuredBusinesses] = await Promise.all([
     getFeaturedListings("rental", 3),
     getFeaturedListings("car", 3),
     getFeaturedListings("product", 3),
@@ -149,7 +146,7 @@ export default async function Home() {
           <div className="mx-auto max-w-[1400px] px-8">
             <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
               <h2 className="font-display text-[2rem] font-semibold text-ink">{t("featuredHomesHeading")}</h2>
-              <Link href="/#listings" className="text-sm font-semibold text-olive-deep hover:underline">
+              <Link href="/listings" className="text-sm font-semibold text-olive-deep hover:underline">
                 {t("featuredHomesViewAll")} →
               </Link>
             </div>
@@ -202,15 +199,6 @@ export default async function Home() {
         </section>
       )}
 
-      {/* ---------- LISTINGS ---------- */}
-      <section id="listings" className="py-18">
-        <div className="mx-auto max-w-[1400px] px-8">
-          <Suspense fallback={null}>
-            <ListingsGrid listings={listings} />
-          </Suspense>
-        </div>
-      </section>
-
       {/* ---------- HOW IT WORKS ---------- */}
       <section id="how" className="bg-canvas-deep py-18">
         <div className="mx-auto max-w-[1400px] px-8">
@@ -239,7 +227,7 @@ export default async function Home() {
           </h2>
           <p className="mb-5.5 text-[0.96rem] opacity-90">{t("ctaBody")}</p>
           <Link
-            href="/#listings"
+            href="/listings"
             className="inline-block rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
           >
             {t("ctaButton")}

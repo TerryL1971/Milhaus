@@ -50,7 +50,7 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
             itself a discoverability win, on top of the hero's unified
             search being the primary way to find something now. */}
         <nav className="hidden gap-6 whitespace-nowrap text-[0.92rem] font-medium md:flex">
-          <Link href="/#listings" className="opacity-85 transition-opacity hover:opacity-100">
+          <Link href="/listings" className="opacity-85 transition-opacity hover:opacity-100">
             {t("homes")}
           </Link>
           <Link href="/cars" className="opacity-85 transition-opacity hover:opacity-100">

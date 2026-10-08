@@ -550,5 +550,12 @@
     "productBody": "Möbel, Elektronik, alles andere.",
     "serviceHeading": "Eine Dienstleistung",
     "serviceBody": "Umzugshilfe, Nachhilfe, Reparaturen und mehr."
+  },
+  "ListingsPage": {
+    "metaTitle": "Wohnungen zur Miete",
+    "metaDescription": "Mietwohnungen vom Housing Office und von ausziehenden Familien in Deutschland — geprüft und am Tag der Vermietung entfernt.",
+    "heading": "Wohnungen zur Miete",
+    "subhead": "Angebote vom Housing Office und selbst eingestellte Wohnungen, geprüft bevor sie live gehen.",
+    "postAHome": "Wohnung inserieren"
   }
 }

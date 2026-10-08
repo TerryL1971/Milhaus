@@ -11,6 +11,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { CarsGrid } from "@/components/cars-grid";
+import { SponsorBannerCarousel } from "@/components/sponsor-banner-carousel";
 import { Link } from "@/i18n/navigation";
 import { getActiveListings } from "@/lib/listings";
 
@@ -27,8 +28,12 @@ export default async function CarsPage({ searchParams }: { searchParams: SearchP
   const listings = await getActiveListings("car");
 
   return (
-    <main className="flex-1 py-14">
-      <div className="mx-auto max-w-[1400px] px-8">
+    <main className="flex-1">
+      {/* Same site-wide sponsor banner as every other category page —
+          "Top Navigation → Sponsored Banner → Top Horizontal Filter Bar
+          → Item Grid" per the Unified Category UX spec. */}
+      <SponsorBannerCarousel />
+      <div className="mx-auto max-w-[1400px] px-8 py-14">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-5">
           <div>
             <h1 className="font-display text-[2rem] font-semibold text-ink">{t("heading")}</h1>

@@ -550,5 +550,12 @@
     "productBody": "Furniture, electronics, anything else.",
     "serviceHeading": "A service",
     "serviceBody": "Moving help, tutoring, repairs, and more."
+  },
+  "ListingsPage": {
+    "metaTitle": "Homes for rent",
+    "metaDescription": "Rentals from the base housing office and outgoing families in Germany — verified, reviewed, and taken down the day they're gone.",
+    "heading": "Homes for rent",
+    "subhead": "Housing-office listings and self-listed homes, reviewed before they go live.",
+    "postAHome": "List your home"
   }
 }
