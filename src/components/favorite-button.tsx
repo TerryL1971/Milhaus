@@ -27,7 +27,7 @@ export function FavoriteButton({ listingId, isFavorited }: { listingId: string; 
           fill={isFavorited ? "currentColor" : "none"}
           stroke="currentColor"
           strokeWidth="2"
-          className={isFavorited ? "text-rust" : "text-paper"}
+          className="text-paper"
           aria-hidden="true"
         >
           <path d="M12 21s-7.5-4.6-10-9.1C.6 8.8 1.8 5 5.3 4 7.6 3.3 9.8 4.3 12 7c2.2-2.7 4.4-3.7 6.7-3 3.5 1 4.7 4.8 3.3 7.9C19.5 16.4 12 21 12 21z" />
