@@ -8,14 +8,14 @@ import { Link } from "@/i18n/navigation";
 import type { AmenityKey } from "@/lib/amenities";
 import type { Listing } from "@/lib/types";
 
-// en-US formatting reads "€1,180" (matching the mockup) rather than the
-// de-DE "1.180 €" — the audience is English-speaking Americans, even
-// though the currency is Euros. Kept as en-US in both languages on
-// purpose, for the same reason: the price format isn't part of what
-// changes with the language toggle.
+// Listing prices show in USD (Terry's ask — the audience is American
+// relocators) even though the posting fee charged to list something
+// stays in EUR (see getPostingPrice). Kept as en-US formatting in both
+// languages on purpose: the price format isn't part of what changes
+// with the language toggle.
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
-  currency: "EUR",
+  currency: "USD",
   maximumFractionDigits: 0,
 });
 

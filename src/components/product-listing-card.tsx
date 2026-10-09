@@ -12,7 +12,7 @@ import type { Listing } from "@/lib/types";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
-  currency: "EUR",
+  currency: "USD",
   maximumFractionDigits: 0,
 });
 

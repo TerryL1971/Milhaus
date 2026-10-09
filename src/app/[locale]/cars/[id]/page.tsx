@@ -16,7 +16,7 @@ import { SITE_URL } from "@/lib/site-url";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
-  currency: "EUR",
+  currency: "USD",
   maximumFractionDigits: 0,
 });
 const mileageFormatter = new Intl.NumberFormat("en-US");
@@ -89,7 +89,7 @@ export default async function CarDetailPage({ params }: { params: Params }) {
     offers: {
       "@type": "Offer",
       price: listing.priceEurMonth,
-      priceCurrency: "EUR",
+      priceCurrency: "USD",
       availability: isSold ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
     },
   };
