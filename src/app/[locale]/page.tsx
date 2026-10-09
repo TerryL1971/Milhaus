@@ -163,7 +163,7 @@ export default async function Home() {
           section" rule as Military-Friendly Businesses below: only
           renders once there's at least one featured item of that type. */}
       {featuredRentals.length > 0 && (
-        <section className="py-14">
+        <section className="py-11">
           <div className="mx-auto max-w-[1400px] px-8">
             <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
               <h2 className="font-display text-[2rem] font-semibold text-ink">{t("featuredHomesHeading")}</h2>
@@ -181,7 +181,7 @@ export default async function Home() {
       )}
 
       {featuredCars.length > 0 && (
-        <section className="bg-canvas-deep py-14">
+        <section className="bg-canvas-deep py-11">
           <div className="mx-auto max-w-[1400px] px-8">
             <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
               <h2 className="font-display text-[2rem] font-semibold text-ink">{t("featuredCarsHeading")}</h2>
@@ -203,7 +203,7 @@ export default async function Home() {
           up at all once he's featured at least one, same "don't show an
           empty/fake section" rule the rest of the homepage follows. */}
       {featuredBusinesses.length > 0 && (
-        <section className="py-14">
+        <section className="py-11">
           <div className="mx-auto max-w-[1400px] px-8">
             <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
               <h2 className="font-display text-[2rem] font-semibold text-ink">{t("businessesHeading")}</h2>
@@ -222,7 +222,7 @@ export default async function Home() {
 
       {/* ---------- FEATURED BUY & SELL ---------- */}
       {featuredProducts.length > 0 && (
-        <section className="bg-canvas-deep py-14">
+        <section className="bg-canvas-deep py-11">
           <div className="mx-auto max-w-[1400px] px-8">
             <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
               <h2 className="font-display text-[2rem] font-semibold text-ink">{t("featuredProductsHeading")}</h2>
