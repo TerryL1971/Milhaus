@@ -44,6 +44,24 @@ export async function createBusiness(formData: FormData) {
   redirect("/admin/businesses");
 }
 
+/** A self-serve submission (status='pending_review', is_active=false)
+ * becomes visible and marked active in one step — the admin approval
+ * equivalent of ListingForm's admin-add going straight to active. */
+export async function approveBusiness(formData: FormData) {
+  const id = formData.get("id") as string;
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("businesses")
+    .update({ status: "active", is_active: true })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/admin/businesses");
+  revalidatePath("/services");
+  revalidatePath("/");
+}
+
 export async function toggleBusinessActive(formData: FormData) {
   const id = formData.get("id") as string;
   const isActive = formData.get("isActive") === "true";

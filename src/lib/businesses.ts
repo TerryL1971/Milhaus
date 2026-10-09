@@ -30,6 +30,8 @@ export const BUSINESS_TAG_LABELS = {
 export type BusinessTagKey = keyof typeof BUSINESS_TAG_LABELS;
 export const BUSINESS_TAG_KEYS = Object.keys(BUSINESS_TAG_LABELS) as BusinessTagKey[];
 
+export type BusinessStatus = "draft" | "pending_review" | "active" | "archived";
+
 export interface Business {
   id: string;
   name: string;
@@ -44,6 +46,12 @@ export interface Business {
   phone: string | null;
   isActive: boolean;
   isFeatured: boolean;
+  /** null = one of Charlie's original hand-entered rows, not a
+   * self-serve submission. */
+  ownerId: string | null;
+  /** The same draft -> pending_review -> active pipeline every other
+   * listing type has. Existing hand-entered rows default to 'active'. */
+  status: BusinessStatus;
   createdAt: string;
   updatedAt: string;
 }

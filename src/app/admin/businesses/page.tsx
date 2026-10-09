@@ -1,13 +1,21 @@
 // src/app/admin/businesses/page.tsx
 // Admin's Businesses page — the Military-Friendly Businesses directory
-// that the public /services page now shows. Charlie adds/edits/removes
-// each one by hand here; there's no self-registration flow and no real
-// review system, so rating/review count are plain numbers he types in.
+// that the public /services page shows. Charlie still adds his own
+// entries directly here, but it's also a real review queue now:
+// self-serve submissions from /post-business land as
+// status='pending_review', is_active=false until he approves one.
+// Rating/review count stay plain numbers he types in — there's no real
+// review system behind them.
 
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { deleteBusiness, toggleBusinessActive, toggleBusinessFeatured } from "@/app/admin/businesses/actions";
+import {
+  approveBusiness,
+  deleteBusiness,
+  toggleBusinessActive,
+  toggleBusinessFeatured,
+} from "@/app/admin/businesses/actions";
 import { BUSINESS_CATEGORY_LABELS, type BusinessCategoryKey } from "@/lib/businesses";
 import { getAllBusinesses } from "@/lib/businesses-queries";
 import { isAdminRole } from "@/lib/roles";
@@ -28,7 +36,13 @@ export default async function AdminBusinessesPage() {
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
   if (!isAdminRole(profile?.role)) redirect("/");
 
-  const businesses = await getAllBusinesses();
+  const allBusinesses = await getAllBusinesses();
+  // Pending submissions need Charlie's attention first — sort them to
+  // the top rather than mixed in by date among everything already live.
+  const businesses = [...allBusinesses].sort(
+    (a, b) => Number(b.status === "pending_review") - Number(a.status === "pending_review"),
+  );
+  const pendingCount = businesses.filter((b) => b.status === "pending_review").length;
 
   return (
     <main className="flex-1 py-12">
@@ -40,10 +54,16 @@ export default async function AdminBusinessesPage() {
             </Link>
             <h1 className="mb-1 font-display text-3xl font-semibold text-ink">
               Military-Friendly Businesses
+              {pendingCount > 0 && (
+                <span className="ml-2 rounded-full bg-rust px-2.5 py-0.5 align-middle font-mono text-xs font-semibold text-paper">
+                  {pendingCount} pending
+                </span>
+              )}
             </h1>
             <p className="max-w-[60ch] text-ink-soft">
-              What the public Services page shows — you add these by hand, there's no
-              self-registration. Featured ones also show in the homepage's 4-card strip.
+              What the public Services page shows — you can add one by hand, or a business submits
+              itself from /post-business and waits here for your approval. Featured ones also show
+              in the homepage's 4-card strip.
             </p>
           </div>
           <Link
@@ -85,22 +105,44 @@ export default async function AdminBusinessesPage() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex flex-wrap gap-1.5">
-                        <span
-                          className={`rounded-[3px] px-2 py-0.5 font-mono text-[0.66rem] font-semibold uppercase tracking-wider ${
-                            b.isActive ? "bg-olive/15 text-olive-deep" : "bg-rust/15 text-rust"
-                          }`}
-                        >
-                          {b.isActive ? "Active" : "Hidden"}
-                        </span>
+                        {b.status === "pending_review" ? (
+                          <span className="rounded-[3px] bg-rust/15 px-2 py-0.5 font-mono text-[0.66rem] font-semibold uppercase tracking-wider text-rust">
+                            Pending review
+                          </span>
+                        ) : (
+                          <span
+                            className={`rounded-[3px] px-2 py-0.5 font-mono text-[0.66rem] font-semibold uppercase tracking-wider ${
+                              b.isActive ? "bg-olive/15 text-olive-deep" : "bg-rust/15 text-rust"
+                            }`}
+                          >
+                            {b.isActive ? "Active" : "Hidden"}
+                          </span>
+                        )}
                         {b.isFeatured && (
                           <span className="rounded-[3px] bg-brass/15 px-2 py-0.5 font-mono text-[0.66rem] font-semibold uppercase tracking-wider text-brass-deep">
                             Featured
+                          </span>
+                        )}
+                        {b.ownerId && (
+                          <span className="rounded-[3px] bg-canvas-deep px-2 py-0.5 font-mono text-[0.66rem] font-semibold uppercase tracking-wider text-ink-soft">
+                            Self-submitted
                           </span>
                         )}
                       </div>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex justify-end gap-2">
+                        {b.status === "pending_review" && (
+                          <form action={approveBusiness}>
+                            <input type="hidden" name="id" value={b.id} />
+                            <button
+                              type="submit"
+                              className="rounded-md bg-olive px-3 py-1.5 text-xs font-semibold text-paper hover:bg-olive-deep"
+                            >
+                              Approve
+                            </button>
+                          </form>
+                        )}
                         <form action={toggleBusinessActive}>
                           <input type="hidden" name="id" value={b.id} />
                           <input type="hidden" name="isActive" value={String(b.isActive)} />

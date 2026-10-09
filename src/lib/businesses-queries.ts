@@ -23,6 +23,8 @@ function mapRow(row: Record<string, unknown>): Business {
     phone: (row.phone as string | null) ?? null,
     isActive: Boolean(row.is_active),
     isFeatured: Boolean(row.is_featured),
+    ownerId: (row.owner_id as string | null) ?? null,
+    status: (row.status as Business["status"]) ?? "active",
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
   };
