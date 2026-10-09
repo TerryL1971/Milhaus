@@ -5,6 +5,7 @@
 // stay readable in one component).
 
 import { useTranslations } from "next-intl";
+import { FavoriteButton } from "@/components/favorite-button";
 import { Link } from "@/i18n/navigation";
 import { CONDITION_LABELS, type ConditionKey } from "@/lib/product-categories";
 import type { Listing } from "@/lib/types";
@@ -19,6 +20,7 @@ export function ProductListingCard({
   listing,
   photoGradient,
   aspectClassName = "aspect-square",
+  isFavorited,
 }: {
   listing: Listing;
   photoGradient: string;
@@ -27,15 +29,19 @@ export function ProductListingCard({
    * across Homes/Cars/Buy & Sell; the dedicated /products page doesn't
    * pass this, so it keeps 1:1. */
   aspectClassName?: string;
+  /** undefined = don't render the heart at all. */
+  isFavorited?: boolean;
 }) {
   const t = useTranslations("ProductCard");
   const isSold = listing.status === "rented"; // same status column as every listing type; "rented" means "off the market"
 
   return (
-    <Link
-      href={`/products/${listing.id}`}
-      className="group block overflow-hidden rounded-md border border-canvas-deep bg-paper transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(27,42,58,0.12)]"
-    >
+    <div className="group relative">
+      {isFavorited !== undefined && <FavoriteButton listingId={listing.id} isFavorited={isFavorited} />}
+      <Link
+        href={`/products/${listing.id}`}
+        className="block overflow-hidden rounded-md border border-canvas-deep bg-paper transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(27,42,58,0.12)]"
+      >
       {listing.photos[0] ? (
         // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL
         <img src={listing.photos[0]} alt="" className={`${aspectClassName} w-full object-cover`} />
@@ -77,6 +83,7 @@ export function ProductListingCard({
           </span>
         </div>
       </div>
-    </Link>
+      </Link>
+    </div>
   );
 }

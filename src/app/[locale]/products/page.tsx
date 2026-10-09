@@ -10,7 +10,9 @@ import { Suspense } from "react";
 import { ProductsGrid } from "@/components/products-grid";
 import { SponsorBannerCarousel } from "@/components/sponsor-banner-carousel";
 import { Link } from "@/i18n/navigation";
+import { getFavoriteListingIds } from "@/lib/favorites-queries";
 import { getActiveListings } from "@/lib/listings";
+import { createClient } from "@/lib/supabase/server";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("ProductsPage");
@@ -22,7 +24,14 @@ type SearchParams = Promise<{ q?: string }>;
 export default async function ProductsPage({ searchParams }: { searchParams: SearchParams }) {
   const t = await getTranslations("ProductsPage");
   const { q } = await searchParams;
-  const listings = await getActiveListings("product");
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const [listings, favoriteIds] = await Promise.all([
+    getActiveListings("product"),
+    getFavoriteListingIds(user?.id),
+  ]);
 
   return (
     <main className="flex-1">
@@ -42,7 +51,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
         </div>
 
         <Suspense fallback={null}>
-          <ProductsGrid listings={listings} initialQuery={q} />
+          <ProductsGrid listings={listings} initialQuery={q} favoriteIds={user ? Array.from(favoriteIds) : null} />
         </Suspense>
       </div>
     </main>
