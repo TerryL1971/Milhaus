@@ -556,8 +556,9 @@
     "carBody": "PCS-Umzug oder einfach ein Upgrade.",
     "productHeading": "Einen Artikel",
     "productBody": "Möbel, Elektronik, alles andere.",
-    "serviceHeading": "Eine Dienstleistung",
-    "serviceBody": "Umzugshilfe, Nachhilfe, Reparaturen und mehr."
+    "serviceHeading": "Ein Unternehmen",
+    "serviceBody": "Schlage ein örtliches Unternehmen für das Verzeichnis vor.",
+    "freeLabel": "Kostenlos"
   },
   "ListingsPage": {
     "metaTitle": "Wohnungen zur Miete",

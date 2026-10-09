@@ -556,8 +556,9 @@
     "carBody": "PCSing out, or just upgrading.",
     "productHeading": "An item",
     "productBody": "Furniture, electronics, anything else.",
-    "serviceHeading": "A service",
-    "serviceBody": "Moving help, tutoring, repairs, and more."
+    "serviceHeading": "A business",
+    "serviceBody": "Suggest a local business for the directory.",
+    "freeLabel": "Free"
   },
   "ListingsPage": {
     "metaTitle": "Homes for rent",

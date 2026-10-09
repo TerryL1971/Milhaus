@@ -10,6 +10,7 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { BusinessesGrid } from "@/components/businesses-grid";
 import { SponsorBannerCarousel } from "@/components/sponsor-banner-carousel";
+import { Link } from "@/i18n/navigation";
 import { getActiveBusinesses } from "@/lib/businesses-queries";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -33,12 +34,12 @@ export default async function ServicesPage({ searchParams }: { searchParams: Sea
             <h1 className="font-display text-[2rem] font-semibold text-ink">{t("heading")}</h1>
             <p className="mt-1 max-w-[52ch] text-ink-soft">{t("subhead")}</p>
           </div>
-          <a
-            href="mailto:hello@example.com?subject=Business%20suggestion%20for%20Milhaus"
+          <Link
+            href="/post-business"
             className="whitespace-nowrap rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
           >
             {t("offerSomething")}
-          </a>
+          </Link>
         </div>
 
         <Suspense fallback={null}>

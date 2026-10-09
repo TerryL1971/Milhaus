@@ -2,24 +2,36 @@
 // Ported from the "FOOTER" section of
 // /design-reference/milhaus-landing-mockup.html.
 
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { getListingPrices } from "@/lib/listing-prices";
 
-export function SiteFooter() {
-  const t = useTranslations("SiteFooter");
+const currencyFormatter = new Intl.NumberFormat("en-US", { style: "currency", currency: "EUR" });
+
+/** "List your home" -> "List your home — €10" — Terry's ask: these four
+ * links are a direct, one-click path to a paid posting flow, so the
+ * price needs to show before the click, not just once the form opens
+ * (PostingPriceNotice handles that half already). */
+function withPrice(label: string, priceEur: number): string {
+  return priceEur > 0 ? `${label} — ${currencyFormatter.format(priceEur)}` : label;
+}
+
+export async function SiteFooter() {
+  const t = await getTranslations("SiteFooter");
+  const prices = await getListingPrices();
 
   const columns = [
     {
       heading: t("forRentersHeading"),
       links: [
-        { label: t("browseListings"), href: "/#listings" },
+        { label: t("browseListings"), href: "/listings" },
         { label: t("howVerificationWorks"), href: "/how-verification-works" },
       ],
     },
     {
       heading: t("forListersHeading"),
       links: [
-        { label: t("postAHome"), href: "/post" },
+        { label: withPrice(t("postAHome"), prices.rental), href: "/post" },
         { label: t("forLandlords"), href: "/for-landlords" },
         { label: t("myListings"), href: "/my-listings" },
       ],
@@ -28,21 +40,21 @@ export function SiteFooter() {
       heading: t("carsHeading"),
       links: [
         { label: t("browseCars"), href: "/cars" },
-        { label: t("sellYourCar"), href: "/post-car" },
+        { label: withPrice(t("sellYourCar"), prices.car), href: "/post-car" },
       ],
     },
     {
       heading: t("productsHeading"),
       links: [
         { label: t("browseProducts"), href: "/products" },
-        { label: t("sellSomething"), href: "/post-product" },
+        { label: withPrice(t("sellSomething"), prices.product), href: "/post-product" },
       ],
     },
     {
       heading: t("servicesHeading"),
       links: [
         { label: t("browseServices"), href: "/services" },
-        { label: t("suggestBusiness"), href: "mailto:hello@example.com?subject=Business%20suggestion%20for%20Milhaus" },
+        { label: withPrice(t("suggestBusiness"), prices.business), href: "/post-business" },
       ],
     },
     {
