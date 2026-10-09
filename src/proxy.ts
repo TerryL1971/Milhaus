@@ -14,15 +14,17 @@ import { routing } from "@/i18n/routing";
 const handleI18nRouting = createMiddleware(routing);
 
 // Everything under src/app that isn't inside src/app/[locale] — /admin,
-// /auth's route handlers, and the generated files — sits outside the
-// locale segment entirely (see src/app/admin/layout.tsx). next-intl
+// /auth's route handlers, /cart, and the generated files — sits outside
+// the locale segment entirely (see src/app/admin/layout.tsx). next-intl
 // doesn't know that: its "as-needed" rewrite treats every unprefixed path
 // as belonging to the default locale's [locale] tree regardless. Caught
 // this by hand for each one as they were added (first /admin 404ing, then
-// sitemap.xml and robots.txt, now /icon and /apple-icon once those
-// existed) rather than all at once — worth listing explicitly here
-// instead of a prefix guess, so a future addition outside [locale]
-// doesn't silently hit the same bug again.
+// sitemap.xml and robots.txt, then /icon and /apple-icon, now /cart —
+// this exact bug is also why the old /checkout/[listingId] route this
+// replaced silently 404'd; it was never added here either, and never
+// actually browser-tested) rather than all at once — worth listing
+// explicitly here instead of a prefix guess, so a future addition
+// outside [locale] doesn't silently hit the same bug again.
 const ROUTES_OUTSIDE_LOCALE = ["/sitemap.xml", "/robots.txt", "/icon", "/apple-icon"];
 
 function isOutsideLocaleRouting(pathname: string): boolean {
@@ -30,6 +32,8 @@ function isOutsideLocaleRouting(pathname: string): boolean {
     pathname === "/admin" ||
     pathname.startsWith("/admin/") ||
     pathname.startsWith("/auth/") ||
+    pathname === "/cart" ||
+    pathname.startsWith("/cart/") ||
     ROUTES_OUTSIDE_LOCALE.includes(pathname)
   );
 }
