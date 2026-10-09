@@ -39,7 +39,9 @@ const PRODUCT_PHOTO_GRADIENTS = [
 // (4:3 / 16:9 / 1:1) on their own dedicated browse pages — but on the
 // homepage, all three "Featured X" rows should read as the same card
 // size, so every card here overrides to this one shared ratio instead.
-const FEATURED_CARD_ASPECT = "aspect-[4/3]";
+// 16:9, matching Charlie's frontpage mockup (and Cars' own page, which
+// already used this) rather than the 4:3 originally guessed here.
+const FEATURED_CARD_ASPECT = "aspect-[16/9]";
 
 export default async function Home() {
   const t = await getTranslations("HomePage");
