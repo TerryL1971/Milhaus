@@ -43,7 +43,22 @@ export default function CartLayout({ children }: { children: React.ReactNode }) 
       className={`${libreBaskerville.variable} ${workSans.variable} ${ibmPlexMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="flex min-h-full flex-col font-body">{children}</body>
+      <body className="flex min-h-full flex-col font-body">
+        {/* No SiteHeader here — it relies on next-intl's Link/translations,
+            which this layout doesn't provide (see the file-top comment on
+            why /cart sits outside [locale] at all). A plain link back to
+            "/" is enough: unlike /auth's brief interstitials, /cart is a
+            page people land on mid-browse and need a way out of. */}
+        <div className="border-b border-canvas-deep bg-ink">
+          <div className="mx-auto max-w-[1400px] px-8 py-[18px]">
+            <a href="/" className="inline-flex items-center">
+              {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset, not worth next/image's config here */}
+              <img src="/brand/milhaus-logo-cream-red-horizontal.png" alt="Milhaus" className="h-10 w-auto" />
+            </a>
+          </div>
+        </div>
+        {children}
+      </body>
     </html>
   );
 }
