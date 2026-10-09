@@ -565,5 +565,24 @@
     "heading": "Homes for rent",
     "subhead": "Housing-office listings and self-listed homes, reviewed before they go live.",
     "postAHome": "List your home"
+  },
+  "PostBusinessPage": {
+    "heading": "Suggest a business",
+    "body": "Submit a local business for the Military-Friendly Businesses directory. Charlie reviews every submission before it goes live.",
+    "name": "Business name",
+    "category": "Category",
+    "chooseOne": "Choose one",
+    "nearestBase": "Nearest base (optional)",
+    "notBaseSpecific": "Not specific to one base",
+    "city": "City",
+    "tags": "Tags",
+    "logoUrl": "Logo URL (optional)",
+    "websiteUrl": "Website (optional)",
+    "phone": "Phone (optional)",
+    "submit": "Submit for review",
+    "submitWithPrice": "Submit and pay (€{price})",
+    "successTitle": "Submitted",
+    "successBody": "Thanks — we'll take a look and get it listed, usually the same day.",
+    "successCta": "View the directory"
   }
 }

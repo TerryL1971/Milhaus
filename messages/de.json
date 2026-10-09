@@ -565,5 +565,24 @@
     "heading": "Wohnungen zur Miete",
     "subhead": "Angebote vom Housing Office und selbst eingestellte Wohnungen, geprüft bevor sie live gehen.",
     "postAHome": "Wohnung inserieren"
+  },
+  "PostBusinessPage": {
+    "heading": "Unternehmen vorschlagen",
+    "body": "Schlage ein örtliches Unternehmen für das Verzeichnis militärfreundlicher Unternehmen vor. Charlie prüft jede Einreichung, bevor sie veröffentlicht wird.",
+    "name": "Firmenname",
+    "category": "Kategorie",
+    "chooseOne": "Bitte auswählen",
+    "nearestBase": "Nächster Stützpunkt (optional)",
+    "notBaseSpecific": "Nicht an einen bestimmten Stützpunkt gebunden",
+    "city": "Stadt",
+    "tags": "Merkmale",
+    "logoUrl": "Logo-URL (optional)",
+    "websiteUrl": "Website (optional)",
+    "phone": "Telefon (optional)",
+    "submit": "Zur Prüfung einreichen",
+    "submitWithPrice": "Einreichen und bezahlen (€{price})",
+    "successTitle": "Eingereicht",
+    "successBody": "Danke — wir schauen es uns an und veröffentlichen es, meist noch am selben Tag.",
+    "successCta": "Verzeichnis ansehen"
   }
 }
