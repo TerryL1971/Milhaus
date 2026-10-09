@@ -18,7 +18,10 @@ type PaypalButtonsConfig = {
 declare global {
   interface Window {
     paypal?: {
-      Buttons: (config: PaypalButtonsConfig) => { render: (container: HTMLElement) => void };
+      Buttons: (config: PaypalButtonsConfig) => {
+        render: (container: HTMLElement) => void;
+        close?: () => Promise<void>;
+      };
     };
   }
 }
@@ -35,30 +38,41 @@ export function PaypalCartCheckoutButton() {
       return;
     }
 
+    let cancelled = false;
+    // zoid (PayPal's component renderer) needs to be told to close before
+    // its container disappears — unmounting out from under it (e.g. the
+    // cart hitting 0 items and swapping to the empty state) without this
+    // makes it throw "zoid destroyed all components" into the console.
+    let buttonsInstance: ReturnType<NonNullable<Window["paypal"]>["Buttons"]> | undefined;
+
     const script = document.createElement("script");
     script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=EUR`;
     script.async = true;
     script.onload = () => {
-      if (!window.paypal || !containerRef.current) return;
-      window.paypal
-        .Buttons({
-          createOrder: () => createPaypalOrderForCart(),
-          onApprove: async (data) => {
-            const result = await capturePaypalOrderForCart(data.orderID);
-            if (result.ok) {
-              router.push("/cart/success?provider=paypal");
-            } else {
-              setError("Payment didn't go through. Try again or use a different method.");
-            }
-          },
-          onError: () => setError("Something went wrong with PayPal. Try again."),
-        })
-        .render(containerRef.current);
+      if (cancelled || !window.paypal || !containerRef.current) return;
+      buttonsInstance = window.paypal.Buttons({
+        createOrder: () => createPaypalOrderForCart(),
+        onApprove: async (data) => {
+          const result = await capturePaypalOrderForCart(data.orderID);
+          if (result.ok) {
+            router.push("/cart/success?provider=paypal");
+          } else {
+            setError("Payment didn't go through. Try again or use a different method.");
+          }
+        },
+        onError: () => setError("Something went wrong with PayPal. Try again."),
+      });
+      buttonsInstance.render(containerRef.current);
     };
     document.body.appendChild(script);
 
     return () => {
-      document.body.removeChild(script);
+      cancelled = true;
+      // Best-effort: let zoid tear itself down gracefully first. Either
+      // call can fail (instance never finished mounting, script already
+      // gone via HMR, etc.) — none of that should surface as a crash.
+      buttonsInstance?.close?.().catch(() => {});
+      if (script.parentNode) script.parentNode.removeChild(script);
     };
   }, [router]);
 
