@@ -9,6 +9,11 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { capturePaypalOrderForCart, createPaypalOrderForCart } from "@/app/cart/actions";
 
+type PaypalButtonsInstance = {
+  render: (container: HTMLElement) => void;
+  close?: () => Promise<void>;
+};
+
 type PaypalButtonsConfig = {
   createOrder: () => Promise<string>;
   onApprove: (data: { orderID: string }) => Promise<void>;
@@ -18,12 +23,36 @@ type PaypalButtonsConfig = {
 declare global {
   interface Window {
     paypal?: {
-      Buttons: (config: PaypalButtonsConfig) => {
-        render: (container: HTMLElement) => void;
-        close?: () => Promise<void>;
-      };
+      Buttons: (config: PaypalButtonsConfig) => PaypalButtonsInstance;
     };
   }
+}
+
+// Module-scoped, not component state: React dev-mode Strict Mode double-
+// invokes effects (mount -> cleanup -> mount) on first render, and this
+// component can also remount across cart updates. Without a shared,
+// one-time load, each mount injected its own <script>, re-executing
+// PayPal's SDK mid-session — which is exactly what zoid (its component
+// renderer) reports as "destroyed all components", and left no buttons
+// rendered at all.
+let sdkLoadPromise: Promise<void> | null = null;
+
+function loadPaypalSdk(clientId: string): Promise<void> {
+  if (window.paypal) return Promise.resolve();
+  if (!sdkLoadPromise) {
+    sdkLoadPromise = new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=EUR`;
+      script.async = true;
+      script.onload = () => resolve();
+      script.onerror = () => {
+        sdkLoadPromise = null;
+        reject(new Error("Failed to load the PayPal SDK"));
+      };
+      document.body.appendChild(script);
+    });
+  }
+  return sdkLoadPromise;
 }
 
 export function PaypalCartCheckoutButton() {
@@ -39,40 +68,33 @@ export function PaypalCartCheckoutButton() {
     }
 
     let cancelled = false;
-    // zoid (PayPal's component renderer) needs to be told to close before
-    // its container disappears — unmounting out from under it (e.g. the
-    // cart hitting 0 items and swapping to the empty state) without this
-    // makes it throw "zoid destroyed all components" into the console.
-    let buttonsInstance: ReturnType<NonNullable<Window["paypal"]>["Buttons"]> | undefined;
+    let buttonsInstance: PaypalButtonsInstance | undefined;
 
-    const script = document.createElement("script");
-    script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=EUR`;
-    script.async = true;
-    script.onload = () => {
-      if (cancelled || !window.paypal || !containerRef.current) return;
-      buttonsInstance = window.paypal.Buttons({
-        createOrder: () => createPaypalOrderForCart(),
-        onApprove: async (data) => {
-          const result = await capturePaypalOrderForCart(data.orderID);
-          if (result.ok) {
-            router.push("/cart/success?provider=paypal");
-          } else {
-            setError("Payment didn't go through. Try again or use a different method.");
-          }
-        },
-        onError: () => setError("Something went wrong with PayPal. Try again."),
-      });
-      buttonsInstance.render(containerRef.current);
-    };
-    document.body.appendChild(script);
+    loadPaypalSdk(clientId)
+      .then(() => {
+        if (cancelled || !window.paypal || !containerRef.current) return;
+        buttonsInstance = window.paypal.Buttons({
+          createOrder: () => createPaypalOrderForCart(),
+          onApprove: async (data) => {
+            const result = await capturePaypalOrderForCart(data.orderID);
+            if (result.ok) {
+              router.push("/cart/success?provider=paypal");
+            } else {
+              setError("Payment didn't go through. Try again or use a different method.");
+            }
+          },
+          onError: () => setError("Something went wrong with PayPal. Try again."),
+        });
+        buttonsInstance.render(containerRef.current);
+      })
+      .catch(() => setError("Couldn't load PayPal. Try again or use a different method."));
 
     return () => {
       cancelled = true;
-      // Best-effort: let zoid tear itself down gracefully first. Either
-      // call can fail (instance never finished mounting, script already
-      // gone via HMR, etc.) — none of that should surface as a crash.
+      // Only tears down this mount's rendered button via zoid's own close
+      // path — the SDK script itself is never removed, so a later remount
+      // (cart updates, dev Strict Mode) reuses it instead of reloading it.
       buttonsInstance?.close?.().catch(() => {});
-      if (script.parentNode) script.parentNode.removeChild(script);
     };
   }, [router]);
 
