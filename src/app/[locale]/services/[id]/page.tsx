@@ -17,7 +17,7 @@ import { SITE_URL } from "@/lib/site-url";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
-  currency: "USD",
+  currency: "EUR",
   maximumFractionDigits: 0,
 });
 
@@ -71,7 +71,7 @@ export default async function ServiceDetailPage({ params }: { params: Params }) 
     offers: {
       "@type": "Offer",
       price: listing.priceEurMonth,
-      priceCurrency: "USD",
+      priceCurrency: "EUR",
       availability: isUnavailable ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
     },
   };

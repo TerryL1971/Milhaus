@@ -25,11 +25,24 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const currencyFormatter = new Intl.NumberFormat("en-US", {
+// Homes and services price in EUR, cars and items for sale price in
+// USD (Terry's split) — this dashboard lists all four types together,
+// so the formatter has to be picked per row instead of once up top.
+const usdFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
   maximumFractionDigits: 0,
 });
+const eurFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "EUR",
+  maximumFractionDigits: 0,
+});
+
+function formatListingPrice(listing: Listing): string {
+  const formatter = listing.type === "car" || listing.type === "product" ? usdFormatter : eurFormatter;
+  return formatter.format(listing.priceEurMonth);
+}
 
 function listingLabel(listing: Listing): string {
   return listing.type === "car" ? `${listing.year} ${listing.make} ${listing.model}` : listing.title;
@@ -136,7 +149,7 @@ export default async function MyListingsPage() {
                           {listingLabel(listing)}
                         </Link>
                         <p className="font-mono text-xs text-ink-soft">
-                          {currencyFormatter.format(listing.priceEurMonth)}
+                          {formatListingPrice(listing)}
                           {listing.type === "rental" ? t("perMonth") : ""} · {listing.city}
                         </p>
                       </div>

@@ -20,17 +20,31 @@ import { getOpenReports } from "@/lib/listing-reports";
 import { getArchivedListings, getLiveListings, getPendingListings } from "@/lib/listings";
 import { isAdminRole } from "@/lib/roles";
 import { createClient } from "@/lib/supabase/server";
+import type { Listing } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Admin",
   robots: { index: false, follow: false },
 };
 
-const currencyFormatter = new Intl.NumberFormat("en-US", {
+// Homes and services price in EUR, cars and items for sale price in
+// USD (Terry's split) — this dashboard lists all four types together,
+// so the formatter has to be picked per row instead of once up top.
+const usdFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
   maximumFractionDigits: 0,
 });
+const eurFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "EUR",
+  maximumFractionDigits: 0,
+});
+
+function formatListingPrice(listing: Pick<Listing, "type" | "priceEurMonth">): string {
+  const formatter = listing.type === "car" || listing.type === "product" ? usdFormatter : eurFormatter;
+  return formatter.format(listing.priceEurMonth);
+}
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" });
 
@@ -138,7 +152,7 @@ export default async function AdminPage() {
                       <div className="mt-1 flex flex-wrap gap-3 font-mono text-xs text-charcoal/80">
                         <span>
                           {listing.priceIsEstimate ? "from " : ""}
-                          {currencyFormatter.format(listing.priceEurMonth)}
+                          {formatListingPrice(listing)}
                           {isRental ? "/mo" : ""}
                         </span>
                         {isCar ? (
@@ -250,7 +264,7 @@ export default async function AdminPage() {
                         </p>
                       </td>
                       <td className="px-4 py-3 font-mono">
-                        {currencyFormatter.format(listing.priceEurMonth)}
+                        {formatListingPrice(listing)}
                         {listing.type === "rental" ? "/mo" : ""}
                       </td>
                       <td className="px-4 py-3">
@@ -343,7 +357,7 @@ export default async function AdminPage() {
                         </p>
                       </td>
                       <td className="px-4 py-3 font-mono">
-                        {currencyFormatter.format(listing.priceEurMonth)}
+                        {formatListingPrice(listing)}
                       </td>
                       <td className="px-4 py-3 text-xs text-ink-soft">
                         {dateFormatter.format(new Date(listing.statusChangedAt))}

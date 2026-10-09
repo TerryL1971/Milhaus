@@ -188,8 +188,8 @@ export function CarsGrid({
             max={pending.priceMax}
             onMinChange={(value) => setPending((p) => ({ ...p, priceMin: value }))}
             onMaxChange={(value) => setPending((p) => ({ ...p, priceMax: value }))}
-            minLabel={tFilter("priceMin")}
-            maxLabel={tFilter("priceMax")}
+            minLabel={tFilter("priceMinUsd")}
+            maxLabel={tFilter("priceMaxUsd")}
           />
         </FilterCluster>
 

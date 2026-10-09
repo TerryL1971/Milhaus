@@ -8,14 +8,15 @@ import { Link } from "@/i18n/navigation";
 import type { AmenityKey } from "@/lib/amenities";
 import type { Listing } from "@/lib/types";
 
-// Listing prices show in USD (Terry's ask — the audience is American
-// relocators) even though the posting fee charged to list something
-// stays in EUR (see getPostingPrice). Kept as en-US formatting in both
-// languages on purpose: the price format isn't part of what changes
-// with the language toggle.
+// Homes and services price in EUR (actual German rents/quotes); cars and
+// items for sale price in USD (Terry's split — see ListingCard's sibling
+// car/product card components). The posting fee charged to list
+// something is separate again and always EUR (see getPostingPrice).
+// Kept as en-US formatting in both languages on purpose: the price
+// format isn't part of what changes with the language toggle.
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
-  currency: "USD",
+  currency: "EUR",
   maximumFractionDigits: 0,
 });
 
