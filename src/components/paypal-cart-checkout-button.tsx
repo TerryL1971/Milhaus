@@ -1,15 +1,13 @@
-// src/components/paypal-checkout-button.tsx
-// Renders PayPal's own Smart Button via their JS SDK (loaded client-side
-// with the public NEXT_PUBLIC_PAYPAL_CLIENT_ID) alongside the Stripe
-// "pay with card" button on the checkout page. Order creation and capture
-// both happen server-side (src/app/checkout/[listingId]/actions.ts) —
-// this component only drives the SDK's UI and hands it those two calls.
+// src/components/paypal-cart-checkout-button.tsx
+// Same pattern as paypal-checkout-button.tsx (PayPal's own Smart Button
+// via their JS SDK), generalized to pay for the whole cart in one order
+// instead of a single listing.
 
 "use client";
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { capturePaypalOrderAction, createPaypalOrderAction } from "@/app/checkout/[listingId]/actions";
+import { capturePaypalOrderForCart, createPaypalOrderForCart } from "@/app/cart/actions";
 
 type PaypalButtonsConfig = {
   createOrder: () => Promise<string>;
@@ -25,7 +23,7 @@ declare global {
   }
 }
 
-export function PaypalCheckoutButton({ listingId }: { listingId: string }) {
+export function PaypalCartCheckoutButton() {
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const [error, setError] = useState("");
@@ -44,11 +42,11 @@ export function PaypalCheckoutButton({ listingId }: { listingId: string }) {
       if (!window.paypal || !containerRef.current) return;
       window.paypal
         .Buttons({
-          createOrder: () => createPaypalOrderAction(listingId),
+          createOrder: () => createPaypalOrderForCart(),
           onApprove: async (data) => {
-            const result = await capturePaypalOrderAction(listingId, data.orderID);
+            const result = await capturePaypalOrderForCart(data.orderID);
             if (result.ok) {
-              router.push(`/checkout/${listingId}/success?provider=paypal`);
+              router.push("/cart/success?provider=paypal");
             } else {
               setError("Payment didn't go through. Try again or use a different method.");
             }
@@ -62,7 +60,7 @@ export function PaypalCheckoutButton({ listingId }: { listingId: string }) {
     return () => {
       document.body.removeChild(script);
     };
-  }, [listingId, router]);
+  }, [router]);
 
   return (
     <div>

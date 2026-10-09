@@ -45,15 +45,15 @@ const inputClass =
 export function ListingForm({
   variant,
   kind = "rental",
-  dealerPriceEur = null,
+  priceEur = null,
 }: {
   variant: Variant;
   kind?: Kind;
-  /** Set when the signed-in poster is a dealer and this category
-   * currently costs something (see getDealerGatePrice) — instead of
-   * submitting straight to pending_review, the listing is saved as a
-   * draft and the poster is sent to pay before it goes to review. */
-  dealerPriceEur?: number | null;
+  /** Set when this category currently costs something to post (see
+   * getPostingPrice) — instead of submitting straight to
+   * pending_review, the listing is saved as a draft and added to the
+   * poster's cart instead. */
+  priceEur?: number | null;
 }) {
   const t = useTranslations("ListingForm");
   const tAmenities = useTranslations("Amenities");
@@ -190,15 +190,15 @@ export function ListingForm({
       photoUrls.push(publicUrlData.publicUrl);
     }
 
-    const needsPayment = !isAdminAdd && !!dealerPriceEur && dealerPriceEur > 0;
+    const needsPayment = !isAdminAdd && !!priceEur && priceEur > 0;
     setProgress(
-      isAdminAdd ? t("progressPublishing") : needsPayment ? t("progressPaymentRedirect") : t("progressReview"),
+      isAdminAdd ? t("progressPublishing") : needsPayment ? t("progressCartRedirect") : t("progressReview"),
     );
     const { error: updateError } = await supabase
       .from("listings")
-      // A dealer owing a listing fee stays in draft — ListingForm's job
-      // ends at "saved and ready," /checkout/[listingId] is what moves
-      // it to pending_review once payment actually goes through.
+      // A listing with a fee owing stays in draft — ListingForm's job
+      // ends at "saved and added to your cart," /cart is what moves it
+      // to pending_review once payment actually goes through.
       .update({ photos: photoUrls, status: needsPayment ? "draft" : isAdminAdd ? "active" : "pending_review" })
       .eq("id", listingId);
 
@@ -209,7 +209,15 @@ export function ListingForm({
     }
 
     if (needsPayment) {
-      router.push(`/checkout/${listingId}`);
+      const { error: cartError } = await supabase
+        .from("cart_items")
+        .insert({ user_id: user.id, listing_id: listingId, price_eur: priceEur });
+      if (cartError) {
+        setStatus("error");
+        setErrorMessage(cartError.message);
+        return;
+      }
+      router.push("/cart");
       return;
     }
 

@@ -5,10 +5,10 @@
 
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
-import { DealerPaymentNotice } from "@/components/dealer-payment-notice";
 import { ListingForm } from "@/components/listing-form";
+import { PostingPriceNotice } from "@/components/posting-price-notice";
 import { getPathname, redirect } from "@/i18n/navigation";
-import { getDealerGatePrice } from "@/lib/listing-prices";
+import { getPostingPrice } from "@/lib/listing-prices";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -29,16 +29,15 @@ export default async function PostCarPage() {
     redirect({ href: `/sign-in?next=${nextPath}`, locale });
   }
 
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user!.id).single();
-  const gatePrice = await getDealerGatePrice(profile?.role, "car");
+  const priceEur = await getPostingPrice("car");
 
   return (
     <main className="flex-1 py-14">
       <div className="mx-auto max-w-[640px] px-8">
         <h1 className="mb-2 font-display text-3xl font-semibold text-ink">{t("heading")}</h1>
         <p className="mb-8 text-ink-soft">{t("body")}</p>
-        {gatePrice !== null && <DealerPaymentNotice priceEur={gatePrice} />}
-        <ListingForm variant="self-list" kind="car" dealerPriceEur={gatePrice} />
+        {priceEur !== null && <PostingPriceNotice priceEur={priceEur} />}
+        <ListingForm variant="self-list" kind="car" priceEur={priceEur} />
       </div>
     </main>
   );

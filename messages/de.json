@@ -235,7 +235,7 @@
     "progressUploading": "Foto {current} von {total} wird hochgeladen…",
     "progressPublishing": "Wird veröffentlicht…",
     "progressReview": "Wird zur Prüfung eingereicht…",
-    "progressPaymentRedirect": "Wird gespeichert — Weiterleitung zur Zahlung…",
+    "progressCartRedirect": "Wird gespeichert – wird zum Warenkorb hinzugefügt…",
     "successSelfListTitle": "Zur Prüfung eingereicht",
     "successSelfListBody": "Wir schauen es uns an, meist noch am selben Tag. Es erscheint auf der Seite, sobald es freigegeben ist.",
     "successSelfListCarTitle": "Zur Prüfung eingereicht",

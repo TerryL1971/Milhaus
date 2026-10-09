@@ -100,13 +100,13 @@ export default async function AdminNewListingPage({
           </Link>
         </div>
 
-        {/* This is what a dealer account pays to post in each category —
-            not relevant to this admin-add flow itself (it always goes
-            straight to active, no payment), just a reference so Charlie
-            can see current pricing while he's here. */}
+        {/* What everyone pays to post in each category — not relevant to
+            this admin-add flow itself (it always goes straight to
+            active, no payment), just a reference so Charlie can see
+            current pricing while he's here. */}
         <div className="mb-8 flex flex-wrap items-center gap-x-5 gap-y-1.5 rounded-md border border-canvas-deep bg-canvas px-4 py-3 text-sm">
           <span className="font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
-            Dealer pricing
+            Posting prices
           </span>
           {(Object.keys(TYPE_LABELS) as ListingType[]).map((t) => (
             <span key={t} className={t === kind ? "font-semibold text-ink" : "text-ink-soft"}>

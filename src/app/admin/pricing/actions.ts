@@ -1,20 +1,19 @@
 // src/app/admin/pricing/actions.ts
-// Setting the per-category dealer posting price from the admin Pricing
-// page.
+// Setting the per-category posting price from the admin Pricing page.
 
 "use server";
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import type { ListingType } from "@/lib/types";
+import type { PriceableType } from "@/lib/listing-prices";
 
-const VALID_TYPES: ListingType[] = ["rental", "car", "product", "service"];
+const VALID_TYPES: PriceableType[] = ["rental", "car", "product", "service", "business"];
 
 export async function setListingPrice(formData: FormData) {
   const type = formData.get("type") as string;
   const priceEur = Number(formData.get("priceEur"));
 
-  if (!VALID_TYPES.includes(type as ListingType)) {
+  if (!VALID_TYPES.includes(type as PriceableType)) {
     throw new Error(`Not a real listing type: "${type}"`);
   }
   if (!Number.isFinite(priceEur) || priceEur < 0) {

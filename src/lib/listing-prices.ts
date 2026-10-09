@@ -1,22 +1,23 @@
 // src/lib/listing-prices.ts
-// Reads for the per-category posting price a dealer account pays (see
-// supabase/migrations/20260928120100_listing_prices_and_payments.sql).
+// Reads for the per-category posting price (see
+// supabase/migrations/20260928120100_listing_prices_and_payments.sql
+// and 20261009120000_universal_pricing_business_posting_and_cart.sql).
 // Every price defaults to 0 (free) until Charlie sets real numbers from
-// /admin/pricing — a self-listing family posting their own home, car, or
-// item is never charged regardless of these prices; only a `dealer`
-// account is.
+// /admin/pricing. Originally gated to dealer accounts only — Terry's
+// call, reversed: everyone posting pays the listed price now, "business"
+// included as a 5th priced category alongside the original four.
 
 import { createClient } from "@/lib/supabase/server";
-import type { ListingType } from "@/lib/types";
 
-export type ListingPrices = Record<ListingType, number>;
+export type PriceableType = "rental" | "car" | "product" | "service" | "business";
+export type ListingPrices = Record<PriceableType, number>;
 
-const DEFAULT_PRICES: ListingPrices = { rental: 0, car: 0, product: 0, service: 0 };
+const DEFAULT_PRICES: ListingPrices = { rental: 0, car: 0, product: 0, service: 0, business: 0 };
 
 function mapRows(rows: { type: string; price_eur: string | number }[]): ListingPrices {
   const prices = { ...DEFAULT_PRICES };
   for (const row of rows) {
-    if (row.type in prices) prices[row.type as ListingType] = Number(row.price_eur);
+    if (row.type in prices) prices[row.type as PriceableType] = Number(row.price_eur);
   }
   return prices;
 }
@@ -32,20 +33,19 @@ export async function getListingPrices(): Promise<ListingPrices> {
   return mapRows(data ?? []);
 }
 
-/** The posting flow only needs one type's price to decide whether a
- * dealer has to pay before this listing can go live. */
-export async function getListingPrice(type: ListingType): Promise<number> {
+/** The posting flow only needs one type's price to decide whether this
+ * listing needs to be paid for before it goes live. */
+export async function getListingPrice(type: PriceableType): Promise<number> {
   const prices = await getListingPrices();
   return prices[type];
 }
 
-/** The one check every /post-* page needs before rendering ListingForm:
- * is this signed-in poster a dealer, and does this category currently
- * cost something? Returns the price to show a "pay to post" gate for, or
- * null if they should just see the normal form (everyone who isn't a
- * dealer, and a dealer posting a category Charlie's left free). */
-export async function getDealerGatePrice(role: string | undefined, type: ListingType): Promise<number | null> {
-  if (role !== "dealer") return null;
+/** The one check every /post-* page needs before rendering its form:
+ * does this category currently cost something? Returns the price to
+ * show a "pay to post" gate for, or null if Charlie's left this
+ * category free (price is 0) and the form should just submit straight
+ * to pending_review like it always did. */
+export async function getPostingPrice(type: PriceableType): Promise<number | null> {
   const price = await getListingPrice(type);
   return price > 0 ? price : null;
 }

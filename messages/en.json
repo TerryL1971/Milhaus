@@ -235,7 +235,7 @@
     "progressUploading": "Uploading photo {current} of {total}…",
     "progressPublishing": "Publishing…",
     "progressReview": "Submitting for review…",
-    "progressPaymentRedirect": "Saving — redirecting to payment…",
+    "progressCartRedirect": "Saving — adding to your cart…",
     "successSelfListTitle": "Submitted for review",
     "successSelfListBody": "We'll take a look, usually the same day. It'll show up on the site as soon as it's approved.",
     "successSelfListCarTitle": "Submitted for review",

@@ -1,30 +1,28 @@
 // src/app/admin/pricing/page.tsx
-// Admin's Pricing page — what a dealer account pays to post, per
-// category. Doesn't touch anyone self-listing their own home, car, or
-// item; only a `dealer`-role account (set from /admin/users) is charged,
-// and only once checkout is actually wired up (still pending Stripe/
-// PayPal test-mode API keys — see the payment ledger table this reads
-// from for that status). Prices default to €0 (free) until set here.
+// Admin's Pricing page — what everyone pays to post, per category.
+// Originally gated to dealer accounts only; Terry's call, reversed:
+// every poster (individual or dealer) pays the listed price now.
+// Prices default to €0 (free) until set here.
 
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { setListingPrice } from "@/app/admin/pricing/actions";
-import { getListingPrices } from "@/lib/listing-prices";
+import { getListingPrices, type PriceableType } from "@/lib/listing-prices";
 import { isAdminRole } from "@/lib/roles";
 import { createClient } from "@/lib/supabase/server";
-import type { ListingType } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Pricing",
   robots: { index: false, follow: false },
 };
 
-const TYPE_LABELS: Record<ListingType, string> = {
+const TYPE_LABELS: Record<PriceableType, string> = {
   rental: "Rentals",
   car: "Cars",
   product: "Items for sale",
   service: "Services",
+  business: "Business listings",
 };
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
@@ -52,19 +50,9 @@ export default async function AdminPricingPage() {
         </Link>
         <h1 className="mb-1 font-display text-3xl font-semibold text-ink">Pricing</h1>
         <p className="mb-8 text-ink-soft">
-          What a dealer account pays to post, per category. Nobody self-listing their own home, car,
-          or item is ever charged — this only applies to accounts you've set to{" "}
-          <span className="font-semibold text-ink">Dealer</span> on the{" "}
-          <Link href="/admin/users" className="text-olive-deep hover:underline">
-            Users
-          </Link>{" "}
-          page. Set a price to €0 to make that category free for dealers too.
+          What everyone pays to post, per category — a family listing their own home, car, or item
+          pays the same price as anyone else. Set a price to €0 to make that category free.
         </p>
-
-        <div className="rounded-md border border-brass/40 bg-brass/8 p-4 text-sm text-ink-soft">
-          Checkout isn&apos;t wired up yet — setting a price here won&apos;t charge anyone until
-          Stripe/PayPal are connected. Safe to set real numbers now; they&apos;ll just sit ready.
-        </div>
 
         <div className="mt-6 overflow-x-auto rounded-md border border-canvas-deep bg-paper">
           <table className="w-full border-collapse text-sm">
@@ -76,7 +64,7 @@ export default async function AdminPricingPage() {
               </tr>
             </thead>
             <tbody>
-              {(Object.keys(TYPE_LABELS) as ListingType[]).map((type) => (
+              {(Object.keys(TYPE_LABELS) as PriceableType[]).map((type) => (
                 <tr key={type} className="border-b border-canvas-deep last:border-0">
                   <td className="px-4 py-3 font-medium text-ink">{TYPE_LABELS[type]}</td>
                   <td className="px-4 py-3 font-mono text-ink-soft">
