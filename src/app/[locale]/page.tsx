@@ -85,24 +85,29 @@ export default async function Home() {
         <div className="absolute inset-0">
           {/* eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL, not worth next/image's config here */}
           <img src={heroImageUrl} alt="" className="h-full w-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/75 to-ink/35" />
+          {/* Much lighter than the first pass — Terry: it was drowning
+              Charlie's photo in navy. Just enough at the bottom for the
+              tagline strip to read; the headline/search area now leans on
+              its own drop-shadow and the search box's solid white card for
+              contrast instead of a dark scrim over the whole image. */}
+          <div className="absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/20 to-transparent" />
         </div>
 
-        <div className="relative mx-auto max-w-[1400px] px-8 py-20 sm:py-28">
+        <div className="relative mx-auto max-w-[1400px] px-8 py-12 sm:py-16">
           {/* Charlie's new hero photo has its visual interest (the house,
               flag) on the left — per his annotated mockup, the text and
               search bar move to the right half on larger screens so they
               sit over open sky instead of competing with the photo.
               Unconstrained (full-width, left-aligned) below lg, same as
               before. */}
-          <div className="lg:ml-auto lg:max-w-[560px]">
-            <h1 className="mb-3 max-w-[20ch] font-display text-4xl font-bold leading-[1.1] tracking-tight text-paper lg:text-6xl">
-              {t("headlineLine1")}
-              <br />
-              {t("headlineLine2")}
+          <div className="lg:ml-auto lg:max-w-[620px]">
+            <h1 className="mb-3 font-display text-4xl font-bold leading-[1.1] tracking-tight text-paper drop-shadow-[0_2px_16px_rgba(0,0,0,0.55)] lg:text-5xl">
+              {t("headlineLine1")} {t("headlineLine2")}
             </h1>
 
-            <p className="mb-8 max-w-[56ch] text-lg text-paper/90">{t("subhead")}</p>
+            <p className="mb-6 max-w-[56ch] text-lg text-paper/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)]">
+              {t("subhead")}
+            </p>
 
             <form
               action={searchAction}
