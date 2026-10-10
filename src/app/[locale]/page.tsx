@@ -81,10 +81,17 @@ export default async function Home() {
           for sale is where a baby crib would be." Submits to /search,
           which fans out across every type unless a specific category is
           picked. */}
-      <section className="relative overflow-hidden">
+      <section className="relative min-h-[420px] overflow-hidden sm:min-h-[480px] lg:min-h-[620px] xl:min-h-[680px]">
         <div className="absolute inset-0">
           {/* eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL, not worth next/image's config here */}
-          <img src={heroImageUrl} alt="" className="h-full w-full object-cover" />
+          {/* object-top, not the object-cover default (center): shrinking
+              the section's height (the previous pass) made it wider-than-
+              tall relative to this ~2.5:1 photo, so object-cover was
+              cropping top and bottom to fill — centered, that ate into
+              the flag/roofline at the top. Anchoring to the top instead
+              crops only from the bottom, which is Terry's "image needs to
+              be moved down" (down = reveal more of the top). */}
+          <img src={heroImageUrl} alt="" className="h-full w-full object-cover object-top" />
           {/* Much lighter than the first pass — Terry: it was drowning
               Charlie's photo in navy. Just enough at the bottom for the
               tagline strip to read; the headline/search area now leans on
@@ -93,7 +100,7 @@ export default async function Home() {
           <div className="absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/20 to-transparent" />
         </div>
 
-        <div className="relative mx-auto max-w-[1400px] px-8 py-12 sm:py-16">
+        <div className="relative mx-auto flex min-h-[420px] max-w-[1400px] flex-col justify-start px-8 pb-12 pt-8 sm:min-h-[480px] sm:pb-16 sm:pt-10 lg:min-h-[620px] xl:min-h-[680px]">
           {/* Charlie's new hero photo has its visual interest (the house,
               flag) on the left — per his annotated mockup, the text and
               search bar move to the right half on larger screens so they
