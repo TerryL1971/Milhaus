@@ -8,6 +8,7 @@
 
 type SendEmailInput = {
   to: string;
+  bcc?: string[];
   subject: string;
   html: string;
 };
@@ -16,7 +17,7 @@ type SendEmailInput = {
  * isn't configured yet, or when Resend rejects the request. A failed
  * receipt email shouldn't undo a payment that already succeeded or block
  * the page that reports it. */
-export async function sendEmail({ to, subject, html }: SendEmailInput): Promise<boolean> {
+export async function sendEmail({ to, bcc, subject, html }: SendEmailInput): Promise<boolean> {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.EMAIL_FROM;
 
@@ -36,7 +37,7 @@ export async function sendEmail({ to, subject, html }: SendEmailInput): Promise<
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ from, to, subject, html }),
+      body: JSON.stringify({ from, to, bcc: bcc && bcc.length > 0 ? bcc : undefined, subject, html }),
     });
 
     if (!response.ok) {

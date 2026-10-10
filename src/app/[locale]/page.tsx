@@ -89,69 +89,77 @@ export default async function Home() {
         </div>
 
         <div className="relative mx-auto max-w-[1400px] px-8 py-20 sm:py-28">
-          <h1 className="mb-3 max-w-[20ch] font-display text-4xl font-bold leading-[1.1] tracking-tight text-paper lg:text-6xl">
-            {t("headlineLine1")}
-            <br />
-            {t("headlineLine2")}
-          </h1>
+          {/* Charlie's new hero photo has its visual interest (the house,
+              flag) on the left — per his annotated mockup, the text and
+              search bar move to the right half on larger screens so they
+              sit over open sky instead of competing with the photo.
+              Unconstrained (full-width, left-aligned) below lg, same as
+              before. */}
+          <div className="lg:ml-auto lg:max-w-[560px]">
+            <h1 className="mb-3 max-w-[20ch] font-display text-4xl font-bold leading-[1.1] tracking-tight text-paper lg:text-6xl">
+              {t("headlineLine1")}
+              <br />
+              {t("headlineLine2")}
+            </h1>
 
-          <p className="mb-8 max-w-[56ch] text-lg text-paper/90">{t("subhead")}</p>
+            <p className="mb-8 max-w-[56ch] text-lg text-paper/90">{t("subhead")}</p>
 
-          <form
-            action={searchAction}
-            className="flex flex-col gap-2.5 rounded-md bg-paper p-3.5 shadow-[0_14px_34px_rgba(0,0,0,0.3)] sm:flex-row sm:items-center"
-          >
-            <input
-              type="search"
-              name="q"
-              placeholder={t("heroSearchPlaceholder")}
-              className="min-w-0 flex-[1.4] rounded-md border border-canvas-deep bg-canvas px-4 py-2.5 text-[0.95rem] text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none"
-            />
-            <select
-              name="category"
-              defaultValue=""
-              className="rounded-md border border-canvas-deep bg-canvas px-3 py-2.5 text-sm text-charcoal focus:border-olive focus:outline-none"
+            <form
+              action={searchAction}
+              className="flex flex-col gap-2.5 rounded-md bg-paper p-3.5 shadow-[0_14px_34px_rgba(0,0,0,0.3)] sm:flex-row sm:items-center"
             >
-              <option value="">{t("heroAllCategories")}</option>
-              <option value="rental">{t("heroCategoryRentals")}</option>
-              <option value="car">{t("heroCategoryCars")}</option>
-              <option value="product">{t("heroCategoryItems")}</option>
-              <option value="service">{t("heroCategoryServices")}</option>
-            </select>
-            {/* A fixed-list <select> rather than free-text — "Location /
-                Garrison / Base" in the mockup reads like it could be
-                freeform/autocomplete, but this site only ever filters by
-                the same fixed set of bases everywhere else, so a select
-                keeps this consistent rather than accepting text that
-                wouldn't actually match anything. */}
-            <span className="relative flex-1">
-              <span aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft/60">
-                📍
-              </span>
+              <input
+                type="search"
+                name="q"
+                placeholder={t("heroSearchPlaceholder")}
+                className="min-w-0 flex-[1.4] rounded-md border border-canvas-deep bg-canvas px-4 py-2.5 text-[0.95rem] text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none"
+              />
               <select
-                name="base"
+                name="category"
                 defaultValue=""
-                className="w-full rounded-md border border-canvas-deep bg-canvas py-2.5 pl-8 pr-3 text-sm text-charcoal focus:border-olive focus:outline-none"
+                className="rounded-md border border-canvas-deep bg-canvas px-3 py-2.5 text-sm text-charcoal focus:border-olive focus:outline-none"
               >
-                <option value="">{t("heroLocationPlaceholder")}</option>
-                {BASE_NAMES.map((base) => (
-                  <option key={base} value={base}>
-                    {base}
-                  </option>
-                ))}
+                <option value="">{t("heroAllCategories")}</option>
+                <option value="rental">{t("heroCategoryRentals")}</option>
+                <option value="car">{t("heroCategoryCars")}</option>
+                <option value="product">{t("heroCategoryItems")}</option>
+                <option value="service">{t("heroCategoryServices")}</option>
               </select>
-            </span>
-            <button
-              type="submit"
-              className="flex-none whitespace-nowrap rounded-md bg-brass px-6 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
-            >
-              {t("searchButton")}
-            </button>
-          </form>
+              {/* A fixed-list <select> rather than free-text — "Location /
+                  Garrison / Base" in the mockup reads like it could be
+                  freeform/autocomplete, but this site only ever filters by
+                  the same fixed set of bases everywhere else, so a select
+                  keeps this consistent rather than accepting text that
+                  wouldn't actually match anything. */}
+              <span className="relative flex-1">
+                <span aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft/60">
+                  📍
+                </span>
+                <select
+                  name="base"
+                  defaultValue=""
+                  className="w-full rounded-md border border-canvas-deep bg-canvas py-2.5 pl-8 pr-3 text-sm text-charcoal focus:border-olive focus:outline-none"
+                >
+                  <option value="">{t("heroLocationPlaceholder")}</option>
+                  {BASE_NAMES.map((base) => (
+                    <option key={base} value={base}>
+                      {base}
+                    </option>
+                  ))}
+                </select>
+              </span>
+              <button
+                type="submit"
+                className="flex-none whitespace-nowrap rounded-md bg-brass px-6 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+              >
+                {t("searchButton")}
+              </button>
+            </form>
 
-          <div className="mt-4 flex flex-wrap items-end justify-between gap-3">
-            <p className="font-mono text-xs uppercase tracking-[0.1em] text-paper/70">{t("heroTagline")}</p>
-            <p className="font-[family-name:var(--font-script)] text-2xl text-brass">{t("scriptTagline")}</p>
+            <div className="mt-4 flex flex-wrap items-end justify-between gap-3">
+              <p className="font-mono text-xs uppercase tracking-[0.1em] text-paper/70">{t("heroTagline")}</p>
+              <p className="font-[family-name:var(--font-script)] text-2xl text-brass">{t("scriptTagline")}</p>
+            </div>
           </div>
         </div>
       </section>

@@ -221,11 +221,12 @@ async function sendSettlementInvoice({
 }) {
   const admin = createAdminClient();
 
-  const [{ data: authUser }, { data: profile }, { data: listings }, { data: businesses }] = await Promise.all([
+  const [{ data: authUser }, { data: profile }, { data: listings }, { data: businesses }, adminEmails] = await Promise.all([
     admin.auth.admin.getUserById(ownerId),
     admin.from("profiles").select("display_name").eq("id", ownerId).single(),
     listingIds.length > 0 ? admin.from("listings").select("id, title").in("id", listingIds) : Promise.resolve({ data: [] }),
     businessIds.length > 0 ? admin.from("businesses").select("id, name").in("id", businessIds) : Promise.resolve({ data: [] }),
+    getAdminEmails(),
   ]);
 
   const email = authUser?.user?.email;
@@ -240,11 +241,27 @@ async function sendSettlementInvoice({
 
   await sendInvoiceEmail({
     to: email,
+    // Charlie's ask: he wants a copy of every receipt for his own tax
+    // records — BCC every admin/owner profile rather than a hardcoded
+    // address, so it stays correct if who's an admin ever changes.
+    adminBcc: adminEmails,
     buyerName: profile?.display_name || email,
     invoiceNumber: providerReference.slice(-10).toUpperCase(),
     provider: payments[0].provider === "stripe" ? "stripe" : "paypal",
     items,
   });
+}
+
+/** Supabase's admin API has no "get users by id list" call, just
+ * getUserById one at a time — fine here since there are only ever a
+ * handful of admin/owner accounts. */
+async function getAdminEmails(): Promise<string[]> {
+  const admin = createAdminClient();
+  const { data: admins } = await admin.from("profiles").select("id").in("role", ["admin", "owner"]);
+  if (!admins || admins.length === 0) return [];
+
+  const results = await Promise.all(admins.map((a) => admin.auth.admin.getUserById(a.id)));
+  return results.map((r) => r.data.user?.email).filter((email): email is string => !!email);
 }
 
 async function findPaymentOwner(listingIds: string[], businessIds: string[]): Promise<string | null> {

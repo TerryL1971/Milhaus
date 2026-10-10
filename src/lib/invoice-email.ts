@@ -19,6 +19,7 @@ export type InvoiceLineItem = {
 
 type SendInvoiceEmailInput = {
   to: string;
+  adminBcc?: string[];
   buyerName: string;
   invoiceNumber: string;
   provider: "stripe" | "paypal";
@@ -27,6 +28,7 @@ type SendInvoiceEmailInput = {
 
 export async function sendInvoiceEmail({
   to,
+  adminBcc,
   buyerName,
   invoiceNumber,
   provider,
@@ -78,6 +80,7 @@ export async function sendInvoiceEmail({
 
   await sendEmail({
     to,
+    bcc: adminBcc,
     subject: `Milhaus receipt — invoice #${invoiceNumber}`,
     html,
   });
