@@ -12,6 +12,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { sendInvoiceEmail } from "@/lib/invoice-email";
 import { capturePaypalOrder, createPaypalOrder } from "@/lib/paypal";
 import { getStripe } from "@/lib/stripe";
 import { SITE_URL } from "@/lib/site-url";
@@ -160,9 +161,14 @@ export async function settleCartPayment(providerReference: string) {
 
   const { data: payments } = await admin
     .from("listing_payments")
-    .select("listing_id, business_id")
+    .select("listing_id, business_id, amount_eur, provider")
     .eq("provider_reference", providerReference)
     .eq("status", "pending");
+
+  // Nothing pending under this reference — either already settled by an
+  // earlier call (a refreshed success page) or not a real payment. Either
+  // way there's no invoice to (re-)send.
+  if (!payments || payments.length === 0) return;
 
   await admin
     .from("listing_payments")
@@ -170,8 +176,8 @@ export async function settleCartPayment(providerReference: string) {
     .eq("provider_reference", providerReference)
     .eq("status", "pending");
 
-  const listingIds = (payments ?? []).filter((p) => p.listing_id).map((p) => p.listing_id as string);
-  const businessIds = (payments ?? []).filter((p) => p.business_id).map((p) => p.business_id as string);
+  const listingIds = payments.filter((p) => p.listing_id).map((p) => p.listing_id as string);
+  const businessIds = payments.filter((p) => p.business_id).map((p) => p.business_id as string);
 
   if (listingIds.length > 0) {
     await admin
@@ -193,7 +199,52 @@ export async function settleCartPayment(providerReference: string) {
   const ownerId = await findPaymentOwner(listingIds, businessIds);
   if (ownerId) {
     await admin.from("cart_items").delete().eq("user_id", ownerId);
+    await sendSettlementInvoice({ ownerId, listingIds, businessIds, payments, providerReference });
   }
+}
+
+/** Best-effort: a failed invoice email should never undo a settlement
+ * that already happened (the listing is already pending_review, the
+ * payment already succeeded). sendInvoiceEmail itself never throws. */
+async function sendSettlementInvoice({
+  ownerId,
+  listingIds,
+  businessIds,
+  payments,
+  providerReference,
+}: {
+  ownerId: string;
+  listingIds: string[];
+  businessIds: string[];
+  payments: { listing_id: string | null; business_id: string | null; amount_eur: number; provider: string }[];
+  providerReference: string;
+}) {
+  const admin = createAdminClient();
+
+  const [{ data: authUser }, { data: profile }, { data: listings }, { data: businesses }] = await Promise.all([
+    admin.auth.admin.getUserById(ownerId),
+    admin.from("profiles").select("display_name").eq("id", ownerId).single(),
+    listingIds.length > 0 ? admin.from("listings").select("id, title").in("id", listingIds) : Promise.resolve({ data: [] }),
+    businessIds.length > 0 ? admin.from("businesses").select("id, name").in("id", businessIds) : Promise.resolve({ data: [] }),
+  ]);
+
+  const email = authUser?.user?.email;
+  if (!email) return;
+
+  const items = payments.map((payment) => ({
+    name: payment.listing_id
+      ? (listings?.find((l) => l.id === payment.listing_id)?.title ?? "Listing fee")
+      : (businesses?.find((b) => b.id === payment.business_id)?.name ?? "Business listing fee"),
+    priceEur: Number(payment.amount_eur),
+  }));
+
+  await sendInvoiceEmail({
+    to: email,
+    buyerName: profile?.display_name || email,
+    invoiceNumber: providerReference.slice(-10).toUpperCase(),
+    provider: payments[0].provider === "stripe" ? "stripe" : "paypal",
+    items,
+  });
 }
 
 async function findPaymentOwner(listingIds: string[], businessIds: string[]): Promise<string | null> {
