@@ -169,8 +169,17 @@ export default async function Home() {
             </form>
 
             <div className="mt-4 flex flex-wrap items-end justify-between gap-3">
-              <p className="font-mono text-xs uppercase tracking-[0.1em] text-paper/70">{t("heroTagline")}</p>
-              <p className="font-[family-name:var(--font-script)] text-2xl text-brass">{t("scriptTagline")}</p>
+              {/* Both were sitting right over the photo's brightest part
+                  (sunset sky) with no backing — same drop-shadow fix as
+                  the headline/subhead above, plus full opacity instead of
+                  /70 on the mono line, which read as barely-there against
+                  that bright a background. */}
+              <p className="font-mono text-xs uppercase tracking-[0.1em] text-paper drop-shadow-[0_1px_6px_rgba(0,0,0,0.65)]">
+                {t("heroTagline")}
+              </p>
+              <p className="font-[family-name:var(--font-script)] text-2xl text-brass drop-shadow-[0_1px_6px_rgba(0,0,0,0.5)]">
+                {t("scriptTagline")}
+              </p>
             </div>
           </div>
         </div>
