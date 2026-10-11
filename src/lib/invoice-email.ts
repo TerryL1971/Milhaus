@@ -11,7 +11,7 @@ import { SITE_URL } from "@/lib/site-url";
 // photo) — fine for this, since email clients fetch it from the live
 // site's domain same as a browser would, and it never needs to be
 // swapped out independently of a deploy the way listing photos do.
-const LOGO_URL = `${SITE_URL}/brand/milhaus-logo-full-color-horizontal.png`;
+const LOGO_URL = `${SITE_URL}/brand/milhaus-logo-stacked-full-color.png`;
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -58,7 +58,7 @@ export async function sendInvoiceEmail({
   const html = `
     <div style="background:#F0EDE4;padding:32px 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
       <div style="max-width:480px;margin:0 auto;background:#FBFAF6;border-radius:8px;padding:32px;">
-        <img src="${LOGO_URL}" alt="Milhaus" width="150" height="18" style="display:block;width:150px;height:18px;margin:0 0 16px;" />
+        <img src="${LOGO_URL}" alt="Milhaus" width="110" height="72" style="display:block;width:110px;height:72px;margin:0 0 12px;" />
         <p style="margin:0 0 24px;color:#2C4053;font-size:14px;">Posting fee receipt</p>
 
         <p style="margin:0 0 4px;color:#22201B;">Hi ${escapeHtml(buyerName)},</p>
