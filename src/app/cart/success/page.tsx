@@ -1,25 +1,18 @@
 // src/app/cart/success/page.tsx
-// Landing page after a cart checkout. Two arrivals, same split as the
-// original single-listing version (src/app/checkout/[listingId]/success):
-// - Stripe redirects here with ?session_id=... — this route confirms the
-//   session directly with Stripe (doesn't trust the redirect alone) and
-//   settles every item tied to it.
-// - PayPal's capture already happened server-side before the button
-//   pushed here with ?provider=paypal, so this just displays success.
+// Landing page after a cart checkout. Stripe redirects here with
+// ?session_id=... — this route confirms the session directly with
+// Stripe (doesn't trust the redirect alone) and settles every item tied
+// to it.
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { settleCartPayment } from "@/app/cart/actions";
 import { getStripe } from "@/lib/stripe";
 
-type SearchParams = Promise<{ session_id?: string; provider?: string }>;
+type SearchParams = Promise<{ session_id?: string }>;
 
 export default async function CartSuccessPage({ searchParams }: { searchParams: SearchParams }) {
-  const { session_id: sessionId, provider } = await searchParams;
-
-  if (provider === "paypal") {
-    return <Confirmation />;
-  }
+  const { session_id: sessionId } = await searchParams;
 
   if (!sessionId) notFound();
 

@@ -8,7 +8,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { removeFromCart, startCartStripeCheckout } from "@/app/cart/actions";
-import { PaypalCartCheckoutButton } from "@/components/paypal-cart-checkout-button";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -105,22 +104,18 @@ export default async function CartPage() {
             </div>
 
             <div className="flex flex-col gap-3 rounded-md border border-canvas-deep bg-paper p-6 shadow-[0_8px_24px_rgba(27,42,58,0.08)]">
+              {/* Stripe Checkout itself offers card, Apple Pay, Google Pay,
+                  and PayPal as payment methods (whichever Charlie has
+                  turned on in the Stripe Dashboard) — one button, not a
+                  separate one per provider. */}
               <form action={startCartStripeCheckout}>
                 <button
                   type="submit"
                   className="w-full rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
                 >
-                  Pay with card ({currencyFormatter.format(total)})
+                  Checkout ({currencyFormatter.format(total)})
                 </button>
               </form>
-
-              <div className="flex items-center gap-3 text-xs text-ink-soft/60">
-                <span className="h-px flex-1 bg-canvas-deep" />
-                or
-                <span className="h-px flex-1 bg-canvas-deep" />
-              </div>
-
-              <PaypalCartCheckoutButton />
             </div>
 
             <p className="mt-4 text-center text-xs text-ink-soft/60">
