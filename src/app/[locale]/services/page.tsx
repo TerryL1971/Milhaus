@@ -28,7 +28,7 @@ export default async function ServicesPage({ searchParams }: { searchParams: Sea
   return (
     <main className="flex-1">
       <SponsorBannerCarousel />
-      <div className="mx-auto max-w-[1400px] px-8 py-8 sm:py-11 lg:py-14">
+      <div className="mx-auto max-w-[1600px] px-8 py-8 sm:py-11 lg:py-14">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-5">
           <div>
             <h1 className="font-display text-[2rem] font-semibold text-ink">{t("heading")}</h1>

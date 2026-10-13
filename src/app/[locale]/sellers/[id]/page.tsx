@@ -44,7 +44,7 @@ export default async function SellerProfilePage({ params }: { params: Params }) 
 
   return (
     <main className="flex-1 py-14">
-      <div className="mx-auto max-w-[1400px] px-8">
+      <div className="mx-auto max-w-[1600px] px-8">
         {/* Cover photo + overlapping avatar, LinkedIn-style — same
             treatment as the business profile page
             (src/app/[locale]/businesses/[id]). */}

@@ -50,7 +50,7 @@ export default function CartLayout({ children }: { children: React.ReactNode }) 
             "/" is enough: unlike /auth's brief interstitials, /cart is a
             page people land on mid-browse and need a way out of. */}
         <div className="border-b border-canvas-deep bg-ink">
-          <div className="mx-auto max-w-[1400px] px-8 py-[18px]">
+          <div className="mx-auto max-w-[1600px] px-8 py-[18px]">
             <a href="/" className="inline-flex items-center">
               {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset, not worth next/image's config here */}
               <img src="/brand/milhaus-logo-cream-red-horizontal.png" alt="Milhaus" className="h-10 w-auto" />

@@ -68,7 +68,7 @@ export async function SiteFooter() {
 
   return (
     <footer className="bg-ink text-paper">
-      <div className="mx-auto max-w-[1400px] px-8 pb-7 pt-11">
+      <div className="mx-auto max-w-[1600px] px-8 pb-7 pt-11">
         <div className="mb-4.5 flex flex-wrap justify-between gap-6 border-b border-paper/15 pb-7">
           <div className="flex items-center">
             {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset, not worth next/image's config here */}

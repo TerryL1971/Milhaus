@@ -40,7 +40,7 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
 
   return (
     <header className="sticky top-0 z-50 bg-ink text-paper">
-      <div className="relative mx-auto flex max-w-[1400px] items-center justify-between gap-6 px-8 py-[18px]">
+      <div className="relative mx-auto flex max-w-[1600px] items-center justify-between gap-6 px-8 py-[18px]">
         <HomeLink className="flex flex-shrink-0 items-center">
           {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset, not worth next/image's config here */}
           <img src="/brand/milhaus-logo-cream-red-horizontal.png" alt="Milhaus" className="h-10 w-auto" />

@@ -100,7 +100,7 @@ export default async function Home() {
           <div className="absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/20 to-transparent" />
         </div>
 
-        <div className="relative mx-auto flex min-h-[420px] max-w-[1400px] flex-col justify-start px-8 pb-12 pt-8 sm:min-h-[480px] sm:pb-16 sm:pt-10 lg:min-h-[620px] xl:min-h-[680px]">
+        <div className="relative mx-auto flex min-h-[420px] max-w-[1600px] flex-col justify-start px-8 pb-12 pt-8 sm:min-h-[480px] sm:pb-16 sm:pt-10 lg:min-h-[620px] xl:min-h-[680px]">
           {/* Charlie's new hero photo has its visual interest (the house,
               flag) on the left — per his annotated mockup, the text and
               search bar move to the right half on larger screens so they
@@ -193,7 +193,7 @@ export default async function Home() {
           renders once there's at least one featured item of that type. */}
       {featuredRentals.length > 0 && (
         <section className="py-11">
-          <div className="mx-auto max-w-[1400px] px-8">
+          <div className="mx-auto max-w-[1600px] px-8">
             <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
               <h2 className="font-display text-[2rem] font-semibold text-ink">{t("featuredHomesHeading")}</h2>
               <Link href="/listings" className="text-sm font-semibold text-olive-deep hover:underline">
@@ -211,7 +211,7 @@ export default async function Home() {
 
       {featuredCars.length > 0 && (
         <section className="bg-canvas-deep py-11">
-          <div className="mx-auto max-w-[1400px] px-8">
+          <div className="mx-auto max-w-[1600px] px-8">
             <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
               <h2 className="font-display text-[2rem] font-semibold text-ink">{t("featuredCarsHeading")}</h2>
               <Link href="/cars" className="text-sm font-semibold text-olive-deep hover:underline">
@@ -233,7 +233,7 @@ export default async function Home() {
           empty/fake section" rule the rest of the homepage follows. */}
       {featuredBusinesses.length > 0 && (
         <section className="py-11">
-          <div className="mx-auto max-w-[1400px] px-8">
+          <div className="mx-auto max-w-[1600px] px-8">
             <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
               <h2 className="font-display text-[2rem] font-semibold text-ink">{t("businessesHeading")}</h2>
               <Link href="/services" className="text-sm font-semibold text-olive-deep hover:underline">
@@ -252,7 +252,7 @@ export default async function Home() {
       {/* ---------- FEATURED BUY & SELL ---------- */}
       {featuredProducts.length > 0 && (
         <section className="bg-canvas-deep py-11">
-          <div className="mx-auto max-w-[1400px] px-8">
+          <div className="mx-auto max-w-[1600px] px-8">
             <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
               <h2 className="font-display text-[2rem] font-semibold text-ink">{t("featuredProductsHeading")}</h2>
               <Link href="/products" className="text-sm font-semibold text-olive-deep hover:underline">
@@ -270,7 +270,7 @@ export default async function Home() {
 
       {/* ---------- HOW IT WORKS ---------- */}
       <section id="how" className="py-18">
-        <div className="mx-auto max-w-[1400px] px-8">
+        <div className="mx-auto max-w-[1600px] px-8">
           <h2 className="font-display text-[2rem] font-semibold text-ink">{t("howHeading")}</h2>
           <div className="mt-8.5 grid grid-cols-1 gap-7.5 md:grid-cols-3">
             {howSteps.map((step) => (
@@ -290,7 +290,7 @@ export default async function Home() {
 
       {/* ---------- CTA STRIP ---------- */}
       <section className="bg-rust py-11 text-center text-paper">
-        <div className="mx-auto max-w-[1400px] px-8">
+        <div className="mx-auto max-w-[1600px] px-8">
           <h2 className="mb-2.5 font-display text-[1.7rem] font-semibold text-paper">
             {t("ctaHeading")}
           </h2>

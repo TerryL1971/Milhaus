@@ -37,7 +37,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
 
   return (
     <main className="flex-1 py-14">
-      <div className="mx-auto max-w-[1400px] px-8">
+      <div className="mx-auto max-w-[1600px] px-8">
         <h1 className="mb-2 font-display text-3xl font-semibold text-ink">{t("heading")}</h1>
         <p className="mb-8 text-ink-soft">{t("subhead")}</p>
         <Suspense fallback={null}>

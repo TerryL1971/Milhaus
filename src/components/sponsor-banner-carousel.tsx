@@ -8,7 +8,7 @@
 // hardcoded) so the timing stays correct regardless of how many slides
 // exist.
 //
-// Full width of the page's own content container (max-w-[1400px], same
+// Full width of the page's own content container (max-w-[1600px], same
 // as the nav/hero/grid everywhere else on the site) with a fixed height
 // — per Charlie's frontpage mockup, where the ad spans edge to edge the
 // same as everything else on the page, not a small centered box (an
@@ -64,7 +64,7 @@ export async function SponsorBannerCarousel() {
           hero photo (tried that) meant no background of its own, but
           Terry wanted the small cream strip back. py-2 keeps that strip
           tight to the ad's own height rather than a tall band.
-          max-w-[1400px] matches the content container everywhere else on
+          max-w-[1600px] matches the content container everywhere else on
           the site, so the banner spans the full page width; h-20/h-24
           (not an aspect-ratio lock) keeps the height modest and fixed
           regardless of how wide the container gets. Padding lives on
@@ -72,7 +72,7 @@ export async function SponsorBannerCarousel() {
           positioned child measures `inset-0` from its ancestor's padding
           edge, not its content edge, so padding on the `relative`
           element itself wouldn't actually inset anything. */}
-      <div className="mx-auto max-w-[1400px] px-8">
+      <div className="mx-auto max-w-[1600px] px-8">
         <div className="group relative h-20 w-full sm:h-24">
           {animated && (
             <style>{`
