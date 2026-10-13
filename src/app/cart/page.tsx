@@ -69,9 +69,16 @@ export default async function CartPage() {
           </div>
         ) : (
           <>
-            <p className="mb-8 text-ink-soft">
+            <p className="mb-2 text-ink-soft">
               Each of these is saved and ready — they're submitted for review as soon as you pay.
             </p>
+            {/* Listing multiple properties/cars and paying once, in one
+                checkout, already just works — the cart is per-user, not
+                per-session — it just wasn't visible from this page that
+                you could keep adding before checking out. */}
+            <Link href="/post-ad" className="mb-8 inline-block text-sm font-semibold text-olive-deep hover:underline">
+              + Add another listing
+            </Link>
 
             <div className="mb-6 flex flex-col gap-3">
               {rows.map((row) => (

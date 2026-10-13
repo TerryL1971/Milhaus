@@ -8,7 +8,8 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { ListingForm } from "@/components/listing-form";
 import { PostingPriceNotice } from "@/components/posting-price-notice";
 import { getPathname, redirect } from "@/i18n/navigation";
-import { getPostingPrice } from "@/lib/listing-prices";
+import { getPostingPriceForProfile } from "@/lib/listing-prices";
+import { getProfile } from "@/lib/profiles";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -27,9 +28,11 @@ export default async function PostCarPage() {
     const locale = await getLocale();
     const nextPath = getPathname({ href: "/post-car", locale });
     redirect({ href: `/sign-in?next=${nextPath}`, locale });
+    return;
   }
 
-  const priceEur = await getPostingPrice("car");
+  const profile = await getProfile(user.id);
+  const priceEur = await getPostingPriceForProfile("car", profile?.isIndividualLister ?? false);
 
   return (
     <main className="flex-1 py-14">

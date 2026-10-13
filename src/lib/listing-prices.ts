@@ -49,3 +49,15 @@ export async function getPostingPrice(type: PriceableType): Promise<number | nul
   const price = await getListingPrice(type);
   return price > 0 ? price : null;
 }
+
+/** Same as getPostingPrice, but free for anyone who's checked "I'm an
+ * individual" on their own profile (Charlie's ask, self-declared/honor
+ * system — see profiles.is_individual_lister) regardless of the
+ * category's normal price. */
+export async function getPostingPriceForProfile(
+  type: PriceableType,
+  isIndividualLister: boolean,
+): Promise<number | null> {
+  if (isIndividualLister) return null;
+  return getPostingPrice(type);
+}

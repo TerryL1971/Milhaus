@@ -508,6 +508,8 @@
     "contactPhonePlaceholder": "Optional",
     "bio": "Über Sie",
     "bioPlaceholder": "Ein bis zwei Zeilen — wer Sie sind, was Sie anbieten, wie Sie helfen können",
+    "individualListerLabel": "Ich bin eine Privatperson (kein Unternehmen), z. B. Inhaber eines Militärausweises",
+    "individualListerHint": "Für Sie ist das Inserieren kostenlos. Unternehmen und Händler zahlen weiterhin die normale Gebühr.",
     "save": "Profil speichern",
     "saving": "Wird gespeichert…",
     "saved": "Gespeichert"

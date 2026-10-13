@@ -74,6 +74,7 @@ export function ProfileEditor({ profile }: { profile: Profile }) {
         display_name: formData.get("displayName") || null,
         contact_phone: formData.get("contactPhone") || null,
         bio: formData.get("bio") || null,
+        is_individual_lister: formData.get("isIndividualLister") === "on",
       })
       .eq("id", profile.id);
 
@@ -151,6 +152,19 @@ export function ProfileEditor({ profile }: { profile: Profile }) {
             className={inputClass}
           />
         </div>
+
+        <label className="flex items-start gap-2 rounded-md border border-canvas-deep bg-canvas/40 p-3 text-sm text-charcoal">
+          <input
+            type="checkbox"
+            name="isIndividualLister"
+            defaultChecked={profile.isIndividualLister}
+            className="mt-0.5 h-4 w-4 rounded border-canvas-deep text-olive focus:ring-olive"
+          />
+          <span>
+            <span className="block font-semibold">{t("individualListerLabel")}</span>
+            <span className="text-ink-soft">{t("individualListerHint")}</span>
+          </span>
+        </label>
 
         {status === "error" && <p className="text-sm text-rust">{errorMessage}</p>}
 

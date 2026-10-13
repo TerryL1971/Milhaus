@@ -14,6 +14,8 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getListingPrices } from "@/lib/listing-prices";
+import { getProfile } from "@/lib/profiles";
+import { createClient } from "@/lib/supabase/server";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("PostAdPage");
@@ -26,10 +28,25 @@ export default async function PostAdPage() {
   const t = await getTranslations("PostAdPage");
   const prices = await getListingPrices();
 
+  // Business directory submissions aren't covered by the individual-
+  // lister discount (submitting a business is, by definition, a
+  // business) — only the three "lists your own stuff" categories are.
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const profile = user ? await getProfile(user.id) : null;
+  const isIndividual = profile?.isIndividualLister ?? false;
+
   const options = [
-    { href: "/post", heading: t("rentalHeading"), body: t("rentalBody"), priceEur: prices.rental },
-    { href: "/post-car", heading: t("carHeading"), body: t("carBody"), priceEur: prices.car },
-    { href: "/post-product", heading: t("productHeading"), body: t("productBody"), priceEur: prices.product },
+    { href: "/post", heading: t("rentalHeading"), body: t("rentalBody"), priceEur: isIndividual ? 0 : prices.rental },
+    { href: "/post-car", heading: t("carHeading"), body: t("carBody"), priceEur: isIndividual ? 0 : prices.car },
+    {
+      href: "/post-product",
+      heading: t("productHeading"),
+      body: t("productBody"),
+      priceEur: isIndividual ? 0 : prices.product,
+    },
     { href: "/post-business", heading: t("serviceHeading"), body: t("serviceBody"), priceEur: prices.business },
   ];
 

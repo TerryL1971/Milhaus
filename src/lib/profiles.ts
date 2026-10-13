@@ -23,6 +23,10 @@ export interface Profile {
   contactPhone: string | null;
   photoUrl: string | null;
   bio: string | null;
+  /** Self-declared on their own profile — "I'm an individual/military ID
+   * holder", not a business/dealer. Posting is free when this is set
+   * (see getPostingPriceForProfile). Honor system, not admin-reviewed. */
+  isIndividualLister: boolean;
   createdAt: string;
 }
 
@@ -47,6 +51,7 @@ function mapProfileRow(row: Record<string, unknown>): Profile {
     contactPhone: (row.contact_phone as string | null) ?? null,
     photoUrl: (row.photo_url as string | null) ?? null,
     bio: (row.bio as string | null) ?? null,
+    isIndividualLister: Boolean(row.is_individual_lister),
     createdAt: row.created_at as string,
   };
 }
@@ -58,7 +63,7 @@ export async function getAllProfiles(): Promise<Profile[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, role, status, display_name, contact_email, contact_phone, photo_url, bio, created_at")
+    .select("id, role, status, display_name, contact_email, contact_phone, photo_url, bio, is_individual_lister, created_at")
     .order("created_at");
 
   if (error) {
@@ -75,7 +80,7 @@ export async function getProfile(id: string): Promise<Profile | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, role, status, display_name, contact_email, contact_phone, photo_url, bio, created_at")
+    .select("id, role, status, display_name, contact_email, contact_phone, photo_url, bio, is_individual_lister, created_at")
     .eq("id", id)
     .maybeSingle();
 

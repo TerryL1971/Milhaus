@@ -508,6 +508,8 @@
     "contactPhonePlaceholder": "Optional",
     "bio": "About you",
     "bioPlaceholder": "A line or two — who you are, what you're listing, how you can help",
+    "individualListerLabel": "I'm an individual (not a business), e.g. a military ID card holder",
+    "individualListerHint": "Posting is free for you. Businesses and dealers still pay the normal posting fee.",
     "save": "Save profile",
     "saving": "Saving…",
     "saved": "Saved"
