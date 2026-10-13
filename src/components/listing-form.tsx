@@ -779,6 +779,25 @@ export function ListingForm({
         />
       </div>
 
+      {!isAdminAdd && (
+        // Same reasoning as post-business's owner-confirmation checkbox
+        // (Terry: Charlie needs consent for everything — images, contact
+        // info, logos, not just the listing itself). `required` blocks a
+        // normal submit client-side; there's no equivalent server action
+        // to re-check it in the way post-business/actions.ts does — this
+        // form inserts directly via the browser's Supabase client, RLS-
+        // protected, not a server action someone could post straight to.
+        <label className="flex items-start gap-2 rounded-md border border-canvas-deep bg-canvas/40 p-3 text-sm text-charcoal">
+          <input
+            type="checkbox"
+            name="rightsConfirmation"
+            required
+            className="mt-0.5 h-4 w-4 rounded border-canvas-deep text-olive focus:ring-olive"
+          />
+          <span>{t("rightsConfirmation")}</span>
+        </label>
+      )}
+
       {status === "error" && <p className="text-sm text-rust">{errorMessage}</p>}
 
       <button

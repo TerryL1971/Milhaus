@@ -230,6 +230,7 @@
     "successSelfListServiceTitle": "Submitted for review",
     "successSelfListServiceBody": "We'll take a look, usually the same day, and it'll go live on the Services page.",
     "photos": "Photos",
+    "rightsConfirmation": "I confirm I have the right to post this listing, and the right to use the photos, images, and contact information I'm submitting here.",
     "submitSelfList": "Post home",
     "submitSelfListCar": "Post car ad",
     "submitAdminAdd": "Publish listing",
@@ -610,7 +611,7 @@
     "successBody": "Thanks — we'll take a look and get it listed, usually the same day.",
     "successCta": "View the directory",
     "postAnother": "List another business",
-    "ownerConfirmation": "I confirm I am the owner of this business, or an authorized representative with permission to list it on Milhaus.",
+    "ownerConfirmation": "I confirm I am the owner of this business, or an authorized representative with permission to list it on Milhaus — including the right to use any logo, image, and contact information (email, phone, social media) submitted here.",
     "ownerConfirmationRequired": "You must confirm you have the authority to list this business."
   }
 }

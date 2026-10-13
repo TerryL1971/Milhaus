@@ -230,6 +230,7 @@
     "successSelfListServiceTitle": "Zur Prüfung eingereicht",
     "successSelfListServiceBody": "Wir schauen es uns an, meist noch am selben Tag, dann geht es auf der Dienstleistungen-Seite live.",
     "photos": "Fotos",
+    "rightsConfirmation": "Ich bestätige, dass ich zur Veröffentlichung dieser Anzeige berechtigt bin und das Recht habe, die hier angegebenen Fotos, Bilder und Kontaktdaten zu verwenden.",
     "submitSelfList": "Zuhause inserieren",
     "submitSelfListCar": "Auto inserieren",
     "submitAdminAdd": "Angebot veröffentlichen",
@@ -610,7 +611,7 @@
     "successBody": "Danke — wir schauen es uns an und veröffentlichen es, meist noch am selben Tag.",
     "successCta": "Verzeichnis ansehen",
     "postAnother": "Weiteres Unternehmen eintragen",
-    "ownerConfirmation": "Ich bestätige, dass ich Inhaber dieses Unternehmens bin oder als bevollmächtigter Vertreter zur Eintragung auf Milhaus berechtigt bin.",
+    "ownerConfirmation": "Ich bestätige, dass ich Inhaber dieses Unternehmens bin oder als bevollmächtigter Vertreter zur Eintragung auf Milhaus berechtigt bin — einschließlich des Rechts, das hier angegebene Logo, Bilder und Kontaktdaten (E-Mail, Telefon, soziale Medien) zu verwenden.",
     "ownerConfirmationRequired": "Sie müssen bestätigen, dass Sie zur Eintragung dieses Unternehmens berechtigt sind."
   }
 }
