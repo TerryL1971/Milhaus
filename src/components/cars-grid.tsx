@@ -24,6 +24,7 @@ import { FilterCheckboxList } from "@/components/filter-checkbox-list";
 import { FilterCluster } from "@/components/filter-cluster";
 import { PriceRangeFields } from "@/components/price-range-fields";
 import { BASE_NAMES } from "@/lib/bases";
+import { listingBases } from "@/lib/listing-bases";
 import type { Listing } from "@/lib/types";
 
 const PHOTO_GRADIENTS = [
@@ -101,7 +102,7 @@ export function CarsGrid({
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return listings.filter((listing) => {
-      if (applied.base.length > 0 && (!listing.base || !applied.base.includes(listing.base))) return false;
+      if (applied.base.length > 0 && !listingBases(listing).some((b) => applied.base.includes(b))) return false;
       if (applied.make.length > 0 && (!listing.make || !applied.make.includes(listing.make))) return false;
       if (applied.year.length > 0 && (listing.year == null || !applied.year.includes(String(listing.year)))) return false;
       if (applied.transmission.length > 0 && (!listing.transmission || !applied.transmission.includes(listing.transmission)))

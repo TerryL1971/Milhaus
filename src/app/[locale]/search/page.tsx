@@ -12,6 +12,7 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { SearchResultsGrid } from "@/components/search-results-grid";
 import { getActiveListings } from "@/lib/listings";
+import { listingBases } from "@/lib/listing-bases";
 import type { Listing, ListingType } from "@/lib/types";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -31,7 +32,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
     category && (ALL_TYPES as string[]).includes(category) ? [category as ListingType] : ALL_TYPES;
   const results = await Promise.all(types.map((type) => getActiveListings(type)));
   let listings: Listing[] = results.flat();
-  if (base) listings = listings.filter((listing) => listing.base === base);
+  if (base) listings = listings.filter((listing) => listingBases(listing).includes(base));
   listings.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
 
   return (

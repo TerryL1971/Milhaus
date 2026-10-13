@@ -114,6 +114,11 @@ export default async function CarDetailPage({ params }: { params: Params }) {
               {listing.city}
               {listing.distanceToBase ? ` · ${listing.distanceToBase}` : ""}
             </p>
+            {listing.bases && listing.bases.length > 1 && (
+              <p className="mt-0.5 text-sm text-ink-soft/80">
+                {t("availableAt")} {listing.bases.join(", ")}
+              </p>
+            )}
           </div>
           <div className="text-right">
             <div className="font-mono text-2xl font-semibold text-ink">

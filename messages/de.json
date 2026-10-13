@@ -170,6 +170,8 @@
     "address": "Adresse",
     "city": "Stadt",
     "nearestBase": "Nächster Stützpunkt",
+    "carBasesLabel": "Wo wird dieses Fahrzeug beworben?",
+    "allLocations": "Alle Standorte",
     "chooseOne": "Bitte wählen",
     "distanceToBase": "Entfernung zum Stützpunkt",
     "distanceToBasePlaceholder": "z. B. 12 Min. zur Panzer Kaserne",
@@ -409,6 +411,7 @@
     "backToCars": "← Zurück zu den Autos",
     "sold": "Verkauft",
     "availableStatus": "Verfügbar",
+    "availableAt": "Auch inseriert bei:",
     "mileage": "{km} km"
   },
   "PostCarPage": {

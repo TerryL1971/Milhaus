@@ -170,6 +170,8 @@
     "address": "Address",
     "city": "City",
     "nearestBase": "Nearest base",
+    "carBasesLabel": "Where is this advertised?",
+    "allLocations": "Every location",
     "chooseOne": "Choose one",
     "distanceToBase": "Distance to base",
     "distanceToBasePlaceholder": "e.g. 12 min to Panzer Kaserne",
@@ -409,6 +411,7 @@
     "backToCars": "← Back to cars",
     "sold": "Sold",
     "availableStatus": "Available",
+    "availableAt": "Also advertised at:",
     "mileage": "{km} km"
   },
   "PostCarPage": {

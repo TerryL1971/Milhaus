@@ -34,6 +34,7 @@ export function mapRow(row: Record<string, unknown>): Listing {
     address: (details.address as string | null) ?? null,
     city: row.city as string,
     base: (row.base as string | null) ?? null,
+    bases: (row.bases as string[] | null) ?? null,
     distanceToBase: (row.distance_to_base as string | null) ?? null,
     priceEurMonth: Number(row.price_eur_month),
     bedrooms: details.bedrooms === null || details.bedrooms === undefined ? null : Number(details.bedrooms),

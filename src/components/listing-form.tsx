@@ -62,6 +62,10 @@ export function ListingForm({
   const [status, setStatus] = useState<Status>("idle");
   const [progress, setProgress] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  // Cars only — a dealer isn't tied to one base the way a rental is, so
+  // this can be several (or "every location") instead of the single
+  // <select> every other kind uses.
+  const [carBases, setCarBases] = useState<string[]>([]);
 
   const isAdminAdd = variant === "admin-add";
   const isRental = kind === "rental";
@@ -100,7 +104,8 @@ export function ListingForm({
       title: formData.get("title"),
       description: formData.get("description") || "",
       city: formData.get("city"),
-      base: formData.get("base") || null,
+      base: isCar ? (carBases[0] ?? null) : formData.get("base") || null,
+      bases: isCar && carBases.length > 1 ? carBases : null,
       distance_to_base: formData.get("distanceToBase") || null,
       price_eur_month: Number(formData.get("priceEurMonth")),
       source,
@@ -461,34 +466,78 @@ export function ListingForm({
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="base" className={labelClass}>
-            {t("nearestBase")}
-          </label>
-          <select id="base" name="base" className={inputClass} defaultValue="">
-            <option value="" disabled>
-              {t("chooseOne")}
-            </option>
-            {BASE_NAMES.map((base) => (
-              <option key={base} value={base}>
-                {base}
+      {isCar ? (
+        <>
+          <div>
+            <label htmlFor="distanceToBase" className={labelClass}>
+              {t("distanceToBase")}
+            </label>
+            <input
+              id="distanceToBase"
+              name="distanceToBase"
+              placeholder={t("distanceToBasePlaceholder")}
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <span className={labelClass}>{t("carBasesLabel")}</span>
+            <label className="mb-2 flex items-center gap-2 text-sm text-charcoal">
+              <input
+                type="checkbox"
+                checked={carBases.length === BASE_NAMES.length}
+                onChange={(e) => setCarBases(e.target.checked ? [...BASE_NAMES] : [])}
+                className="h-4 w-4 rounded border-canvas-deep text-olive focus:ring-olive"
+              />
+              <span className="font-semibold">{t("allLocations")}</span>
+            </label>
+            <div className="flex flex-wrap gap-4">
+              {BASE_NAMES.map((base) => (
+                <label key={base} className="flex items-center gap-2 text-sm text-charcoal">
+                  <input
+                    type="checkbox"
+                    checked={carBases.includes(base)}
+                    onChange={(e) =>
+                      setCarBases((prev) => (e.target.checked ? [...prev, base] : prev.filter((b) => b !== base)))
+                    }
+                    className="h-4 w-4 rounded border-canvas-deep text-olive focus:ring-olive"
+                  />
+                  <span>{base}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="base" className={labelClass}>
+              {t("nearestBase")}
+            </label>
+            <select id="base" name="base" className={inputClass} defaultValue="">
+              <option value="" disabled>
+                {t("chooseOne")}
               </option>
-            ))}
-          </select>
+              {BASE_NAMES.map((base) => (
+                <option key={base} value={base}>
+                  {base}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="distanceToBase" className={labelClass}>
+              {t("distanceToBase")}
+            </label>
+            <input
+              id="distanceToBase"
+              name="distanceToBase"
+              placeholder={t("distanceToBasePlaceholder")}
+              className={inputClass}
+            />
+          </div>
         </div>
-        <div>
-          <label htmlFor="distanceToBase" className={labelClass}>
-            {t("distanceToBase")}
-          </label>
-          <input
-            id="distanceToBase"
-            name="distanceToBase"
-            placeholder={t("distanceToBasePlaceholder")}
-            className={inputClass}
-          />
-        </div>
-      </div>
+      )}
 
       {!isRental ? (
         <div>

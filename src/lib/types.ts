@@ -38,6 +38,10 @@ export interface Listing {
   /** The base this listing is closest to — used for filtering. Nullable:
    * populated by the post-a-listing form, or unset on a car ad. */
   base: string | null;
+  /** Car only — set when a dealer advertises the same car at more than
+   * one base/region. Null (or a single-element array, never created by
+   * the form) means "just `base`". */
+  bases: string[] | null;
   distanceToBase: string | null;
   /** The listing's asking price — monthly rent for a rental, one-time
    * asking price for a car. Only display formatting is type-conditional
