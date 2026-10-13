@@ -40,7 +40,7 @@ export default async function CarsPage({ searchParams }: { searchParams: SearchP
           "Top Navigation → Sponsored Banner → Top Horizontal Filter Bar
           → Item Grid" per the Unified Category UX spec. */}
       <SponsorBannerCarousel />
-      <div className="mx-auto max-w-[1400px] px-8 py-14">
+      <div className="mx-auto max-w-[1400px] px-8 py-8 sm:py-11 lg:py-14">
         <div className="flex gap-8">
           <div className="min-w-0 flex-1">
             <div className="mb-8 flex flex-wrap items-end justify-between gap-5">
