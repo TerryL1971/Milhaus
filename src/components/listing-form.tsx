@@ -255,10 +255,34 @@ export function ListingForm({
                   ? t("successSelfListServiceBody")
                   : t("successSelfListBody")}
         </p>
-        {isAdminAdd && (
+        {isAdminAdd ? (
           <Link href="/admin" className="text-sm font-semibold text-olive-deep hover:underline">
             {t("backToAdmin")}
           </Link>
+        ) : (
+          // A dealer/property manager posting several at once (or anyone
+          // doing the same) had no way back to the form without manually
+          // navigating away — this was a dead end otherwise, especially
+          // now that a free category skips the cart entirely and lands
+          // here directly instead of offering "+ Add another listing"
+          // on the cart page.
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+            <Link
+              href={isCar ? "/post-car" : isProduct ? "/post-product" : isService ? "/post-service" : "/post"}
+              className="text-sm font-semibold text-olive-deep hover:underline"
+            >
+              {isCar
+                ? t("postAnotherCar")
+                : isProduct
+                  ? t("postAnotherProduct")
+                  : isService
+                    ? t("postAnotherService")
+                    : t("postAnotherHome")}
+            </Link>
+            <Link href="/my-listings" className="text-sm font-semibold text-ink-soft hover:text-ink">
+              {t("goToMyListings")}
+            </Link>
+          </div>
         )}
       </div>
     );

@@ -247,6 +247,11 @@
     "successAdminAddTitle": "Angebot veröffentlicht",
     "successAdminAddBody": "Es ist jetzt live auf der Seite.",
     "backToAdmin": "← Zurück zum Admin-Bereich",
+    "postAnotherHome": "Weiteres Zuhause inserieren",
+    "postAnotherCar": "Weiteres Auto inserieren",
+    "postAnotherProduct": "Weiteren Artikel inserieren",
+    "postAnotherService": "Weitere Dienstleistung inserieren",
+    "goToMyListings": "Zu Meine Anzeigen",
     "sessionExpired": "Ihre Sitzung ist abgelaufen — bitte melden Sie sich erneut an.",
     "saveFailed": "Das Angebot konnte nicht gespeichert werden.",
     "photoUploadFailed": "Foto-Upload fehlgeschlagen: {message}",
@@ -603,6 +608,7 @@
     "submitWithPrice": "Einreichen und bezahlen (€{price})",
     "successTitle": "Eingereicht",
     "successBody": "Danke — wir schauen es uns an und veröffentlichen es, meist noch am selben Tag.",
-    "successCta": "Verzeichnis ansehen"
+    "successCta": "Verzeichnis ansehen",
+    "postAnother": "Weiteres Unternehmen vorschlagen"
   }
 }

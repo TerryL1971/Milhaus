@@ -247,6 +247,11 @@
     "successAdminAddTitle": "Listing published",
     "successAdminAddBody": "It's live on the site now.",
     "backToAdmin": "← Back to admin",
+    "postAnotherHome": "Post another home",
+    "postAnotherCar": "Post another car",
+    "postAnotherProduct": "Post another item",
+    "postAnotherService": "Post another service",
+    "goToMyListings": "Go to My listings",
     "sessionExpired": "Your session expired — please sign in again.",
     "saveFailed": "Could not save the listing.",
     "photoUploadFailed": "Photo upload failed: {message}",
@@ -603,6 +608,7 @@
     "submitWithPrice": "Submit and pay (€{price})",
     "successTitle": "Submitted",
     "successBody": "Thanks — we'll take a look and get it listed, usually the same day.",
-    "successCta": "View the directory"
+    "successCta": "View the directory",
+    "postAnother": "Suggest another business"
   }
 }

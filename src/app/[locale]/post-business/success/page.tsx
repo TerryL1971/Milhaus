@@ -21,9 +21,14 @@ export default async function PostBusinessSuccessPage() {
       <div className="mx-auto max-w-[480px] px-8 text-center">
         <p className="mb-2 font-display text-xl font-semibold text-ink">{t("successTitle")}</p>
         <p className="mb-4 text-sm text-ink-soft">{t("successBody")}</p>
-        <Link href="/services" className="text-sm font-semibold text-olive-deep hover:underline">
-          {t("successCta")}
-        </Link>
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+          <Link href="/post-business" className="text-sm font-semibold text-olive-deep hover:underline">
+            {t("postAnother")}
+          </Link>
+          <Link href="/services" className="text-sm font-semibold text-ink-soft hover:text-ink">
+            {t("successCta")}
+          </Link>
+        </div>
       </div>
     </main>
   );
