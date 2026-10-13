@@ -1,11 +1,12 @@
 // src/components/sponsor-banner-carousel.tsx
-// One banner slot above the homepage hero, showing exactly one
-// advertiser at a time — cross-fades to the next on a timer. Pure CSS
-// (no JS): slides are stacked on top of each other and each gets the
-// same shared keyframe, offset by a negative animation-delay so they
-// take turns being the visible one. The keyframe's percentage
-// breakpoints are computed here (not hardcoded) so the timing stays
-// correct regardless of how many slides exist.
+// One banner slot above the homepage hero (and every other category
+// page's grid), showing exactly one advertiser at a time — cross-fades
+// to the next on a timer. Pure CSS (no JS): slides are stacked on top of
+// each other and each gets the same shared keyframe, offset by a
+// negative animation-delay so they take turns being the visible one.
+// The keyframe's percentage breakpoints are computed here (not
+// hardcoded) so the timing stays correct regardless of how many slides
+// exist.
 //
 // Full width of the page's own content container (max-w-[1400px], same
 // as the nav/hero/grid everywhere else on the site) with a fixed height
@@ -19,58 +20,43 @@
 // own — whatever the advertiser's image looks like (solid background
 // baked in, or transparent) is exactly what shows.
 //
-// SLIDES below is a mock-up for Charlie to see the carousel effect, not
-// real paid placements yet: UCG (Used Car Guys) is a real logo Terry
-// provided directly for this demo; the other two businesses are
-// invented placeholders with no logo to show, so they fall back to
-// plain text. Swap/extend this list once real advertisers sign up.
+// Slides come from the ad_slots table now (Charlie manages them at
+// /admin/ads) instead of a hardcoded array — falls back to a single
+// "Advertise here" placeholder slide when he hasn't added any yet,
+// rather than showing an empty strip.
+
+import { getActiveAdSlots } from "@/lib/ad-slots-queries";
 
 type Slide =
   | { kind: "image"; imageUrl: string; alt: string; href: string }
   | { kind: "text"; heading: string; body: string; href: string };
 
-const SLIDES: Slide[] = [
-  {
-    kind: "image",
-    // Cropped tight to the lockup (trims the wide white margin the
-    // source file had above/below it).
-    imageUrl: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/listing-photos/_site/banners/ucg-logo-cropped.png`,
-    alt: "UCG Used Car Guys — usedcarguys.net",
-    href: "https://www.usedcarguys.net",
-  },
-  {
-    kind: "text",
-    heading: "Kaiserslautern Auto Detailing",
-    body: "Full details & PCS prep — mention Milhaus for 10% off",
-    // Invented business, no real site to link to — example.com (reserved
-    // by IANA for exactly this, never a real/registrable business
-    // domain) so clicking still goes somewhere instead of a dead "#",
-    // without risking linking to someone else's actual website.
-    href: "https://example.com/kaiserslautern-auto-detailing",
-  },
-  {
-    kind: "text",
-    heading: "Ramstein Movers Express",
-    body: "Door to door, stateside to Germany",
-    href: "https://example.com/ramstein-movers-express",
-  },
-  {
-    kind: "text",
-    heading: "Advertise here",
-    body: "Click to find out how",
-    href: "mailto:hello@example.com?subject=Advertising%20on%20Milhaus",
-  },
-];
+const FALLBACK_SLIDE: Slide = {
+  kind: "text",
+  heading: "Advertise here",
+  body: "Click to find out how",
+  href: "mailto:hello@example.com?subject=Advertising%20on%20Milhaus",
+};
 
 const VISIBLE_SECONDS = 6;
 const FADE_SECONDS = 1;
 
-export function SponsorBannerCarousel() {
+export async function SponsorBannerCarousel() {
+  const ads = await getActiveAdSlots("site_banner");
+  const slides: Slide[] =
+    ads.length > 0
+      ? ads.map((ad) =>
+          ad.imageUrl
+            ? { kind: "image", imageUrl: ad.imageUrl, alt: ad.advertiserName, href: ad.linkUrl }
+            : { kind: "text", heading: ad.heading ?? ad.advertiserName, body: ad.bodyText ?? "", href: ad.linkUrl },
+        )
+      : [FALLBACK_SLIDE];
+
   const perSlideSeconds = VISIBLE_SECONDS + FADE_SECONDS;
-  const totalSeconds = SLIDES.length * perSlideSeconds;
+  const totalSeconds = slides.length * perSlideSeconds;
   const visiblePercent = (VISIBLE_SECONDS / totalSeconds) * 100;
   const fadeEndPercent = (perSlideSeconds / totalSeconds) * 100;
-  const animated = SLIDES.length > 1;
+  const animated = slides.length > 1;
 
   return (
     <div className="w-full bg-canvas py-2">
@@ -98,7 +84,7 @@ export function SponsorBannerCarousel() {
               }
             `}</style>
           )}
-          {SLIDES.map((slide, index) => (
+          {slides.map((slide, index) => (
             <a
               key={index}
               href={slide.href}
