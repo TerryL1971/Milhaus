@@ -146,7 +146,7 @@ export function BusinessesGrid({ businesses, initialQuery = "" }: { businesses: 
       {filtered.length === 0 ? (
         <p className="text-ink-soft">{businesses.length === 0 ? t("emptyNone") : t("emptyNoMatch")}</p>
       ) : (
-        <div className="flex flex-col gap-3">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((business) => (
             <BusinessCard key={business.id} business={business} />
           ))}
