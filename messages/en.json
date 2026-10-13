@@ -494,14 +494,16 @@
     "postedBy": "Posted by",
     "emailButton": "Email {name}",
     "theSeller": "the seller",
-    "moreFromSeller": "More from {name}"
+    "moreFromSeller": "More from {name}",
+    "visitWebsite": "Visit website"
   },
   "SellerProfilePage": {
     "emailButton": "Email {name}",
     "theSeller": "this seller",
     "listingsHeading": "{name}'s listings",
     "noListings": "Nothing listed right now.",
-    "backHome": "← Back to browsing"
+    "backHome": "← Back to browsing",
+    "visitWebsite": "Visit website"
   },
   "ProfileEditor": {
     "heading": "Your public profile",
@@ -515,6 +517,11 @@
     "contactPhonePlaceholder": "Optional",
     "bio": "About you",
     "bioPlaceholder": "A line or two — who you are, what you're listing, how you can help",
+    "businessLinkHeading": "Your business (optional)",
+    "businessLinkHint": "Run your own small business — photography, dog-walking, and the like? Show its logo and link here.",
+    "changeBusinessLogo": "Change logo",
+    "websiteUrl": "Website",
+    "websiteUrlPlaceholder": "https://…",
     "individualListerLabel": "I'm an individual (not a business), e.g. a military ID card holder",
     "individualListerHint": "Posting is free for you. Businesses and dealers still pay the normal posting fee.",
     "save": "Save profile",

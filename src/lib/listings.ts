@@ -157,6 +157,11 @@ export interface SellerProfile {
    * relationship as a business's coverImageUrl to its logoUrl. */
   coverImageUrl: string | null;
   bio: string | null;
+  /** A self-lister's own small business, if they have one — the optional
+   * "Company" line under the bio on /sellers/[id]. Distinct from
+   * Charlie's vetted advertiser businesses directory. */
+  websiteUrl: string | null;
+  businessLogoUrl: string | null;
 }
 
 /** The public seller card shown on every listing's detail page, and the
@@ -169,7 +174,7 @@ export async function getSellerProfile(ownerId: string): Promise<SellerProfile |
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("profiles")
-    .select("display_name, contact_email, contact_phone, photo_url, cover_image_url, bio")
+    .select("display_name, contact_email, contact_phone, photo_url, cover_image_url, bio, website_url, business_logo_url")
     .eq("id", ownerId)
     .maybeSingle();
 
@@ -181,6 +186,8 @@ export async function getSellerProfile(ownerId: string): Promise<SellerProfile |
     photoUrl: data.photo_url as string | null,
     coverImageUrl: data.cover_image_url as string | null,
     bio: data.bio as string | null,
+    websiteUrl: data.website_url as string | null,
+    businessLogoUrl: data.business_logo_url as string | null,
   };
 }
 

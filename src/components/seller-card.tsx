@@ -56,6 +56,28 @@ export function SellerCard({
             {name}
           </Link>
           {seller.bio && <p className="mt-1.5 text-sm text-ink-soft">{seller.bio}</p>}
+          {(seller.businessLogoUrl || seller.websiteUrl) && (
+            <div className="mt-1.5 flex items-center gap-2">
+              {seller.businessLogoUrl && (
+                // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL
+                <img
+                  src={seller.businessLogoUrl}
+                  alt=""
+                  className="h-5 w-5 flex-none rounded border border-canvas-deep object-contain"
+                />
+              )}
+              {seller.websiteUrl && (
+                <a
+                  href={seller.websiteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-semibold text-olive-deep hover:underline"
+                >
+                  {t("visitWebsite")}
+                </a>
+              )}
+            </div>
+          )}
 
           <div className="mt-3 flex flex-wrap items-center gap-3">
             {seller.contactEmail && (

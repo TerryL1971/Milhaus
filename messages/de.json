@@ -494,14 +494,16 @@
     "postedBy": "Inseriert von",
     "emailButton": "E-Mail an {name}",
     "theSeller": "den Verkäufer",
-    "moreFromSeller": "Mehr von {name}"
+    "moreFromSeller": "Mehr von {name}",
+    "visitWebsite": "Website besuchen"
   },
   "SellerProfilePage": {
     "emailButton": "E-Mail an {name}",
     "theSeller": "diesen Verkäufer",
     "listingsHeading": "Anzeigen von {name}",
     "noListings": "Gerade nichts gelistet.",
-    "backHome": "← Zurück zur Übersicht"
+    "backHome": "← Zurück zur Übersicht",
+    "visitWebsite": "Website besuchen"
   },
   "ProfileEditor": {
     "heading": "Ihr öffentliches Profil",
@@ -515,6 +517,11 @@
     "contactPhonePlaceholder": "Optional",
     "bio": "Über Sie",
     "bioPlaceholder": "Ein bis zwei Zeilen — wer Sie sind, was Sie anbieten, wie Sie helfen können",
+    "businessLinkHeading": "Ihr Unternehmen (optional)",
+    "businessLinkHint": "Betreiben Sie ein eigenes kleines Unternehmen — Fotografie, Gassi-Service o. Ä.? Zeigen Sie hier dessen Logo und Link.",
+    "changeBusinessLogo": "Logo ändern",
+    "websiteUrl": "Website",
+    "websiteUrlPlaceholder": "https://…",
     "individualListerLabel": "Ich bin eine Privatperson (kein Unternehmen), z. B. Inhaber eines Militärausweises",
     "individualListerHint": "Für Sie ist das Inserieren kostenlos. Unternehmen und Händler zahlen weiterhin die normale Gebühr.",
     "save": "Profil speichern",

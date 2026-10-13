@@ -65,6 +65,28 @@ export default async function SellerProfilePage({ params }: { params: Params }) 
             <div className="min-w-0 flex-1">
               <h1 className="font-display text-2xl font-semibold text-ink">{name}</h1>
               {seller.bio && <p className="mt-1.5 text-ink-soft">{seller.bio}</p>}
+              {(seller.businessLogoUrl || seller.websiteUrl) && (
+                <div className="mt-2 flex items-center gap-2">
+                  {seller.businessLogoUrl && (
+                    // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL
+                    <img
+                      src={seller.businessLogoUrl}
+                      alt=""
+                      className="h-6 w-6 flex-none rounded border border-canvas-deep object-contain"
+                    />
+                  )}
+                  {seller.websiteUrl && (
+                    <a
+                      href={seller.websiteUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-semibold text-olive-deep hover:underline"
+                    >
+                      {t("visitWebsite")}
+                    </a>
+                  )}
+                </div>
+              )}
               <div className="mt-3 flex flex-wrap items-center gap-3">
                 {seller.contactEmail && (
                   <a

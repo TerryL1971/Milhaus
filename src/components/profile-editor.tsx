@@ -29,6 +29,9 @@ export function ProfileEditor({ profile }: { profile: Profile }) {
   const [photoStatus, setPhotoStatus] = useState<Status>("idle");
   const [coverImageUrl, setCoverImageUrl] = useState(profile.coverImageUrl);
   const [coverStatus, setCoverStatus] = useState<Status>("idle");
+  const logoFileInputRef = useRef<HTMLInputElement>(null);
+  const [businessLogoUrl, setBusinessLogoUrl] = useState(profile.businessLogoUrl);
+  const [logoStatus, setLogoStatus] = useState<Status>("idle");
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -94,6 +97,36 @@ export function ProfileEditor({ profile }: { profile: Profile }) {
     router.refresh();
   }
 
+  async function handleLogoChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setLogoStatus("saving");
+
+    const supabase = createClient();
+    const ext = file.name.split(".").pop() || "jpg";
+    const path = `${profile.id}/logo.${ext}`;
+    const { error: uploadError } = await supabase.storage
+      .from("profile-photos")
+      .upload(path, file, { upsert: true });
+    if (uploadError) {
+      setLogoStatus("error");
+      return;
+    }
+    const { data } = supabase.storage.from("profile-photos").getPublicUrl(path);
+    const url = `${data.publicUrl}?v=${Date.now()}`;
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update({ business_logo_url: url })
+      .eq("id", profile.id);
+    if (updateError) {
+      setLogoStatus("error");
+      return;
+    }
+    setBusinessLogoUrl(url);
+    setLogoStatus("saved");
+    router.refresh();
+  }
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -107,6 +140,7 @@ export function ProfileEditor({ profile }: { profile: Profile }) {
         display_name: formData.get("displayName") || null,
         contact_phone: formData.get("contactPhone") || null,
         bio: formData.get("bio") || null,
+        website_url: formData.get("websiteUrl") || null,
         is_individual_lister: formData.get("isIndividualLister") === "on",
       })
       .eq("id", profile.id);
@@ -212,6 +246,47 @@ export function ProfileEditor({ profile }: { profile: Profile }) {
             rows={3}
             defaultValue={profile.bio ?? ""}
             placeholder={t("bioPlaceholder")}
+            className={inputClass}
+          />
+        </div>
+
+        <div className="rounded-md border border-canvas-deep bg-canvas/40 p-3">
+          <p className="mb-1 text-sm font-semibold text-charcoal">{t("businessLinkHeading")}</p>
+          <p className="mb-3 text-sm text-ink-soft">{t("businessLinkHint")}</p>
+
+          <div className="mb-3 flex items-center gap-3">
+            <div className="flex h-12 w-12 flex-none items-center justify-center overflow-hidden rounded-md border border-canvas-deep bg-paper">
+              {businessLogoUrl && (
+                // eslint-disable-next-line @next/next/no-img-element -- Supabase Storage URL, own account's business logo
+                <img src={businessLogoUrl} alt="" className="h-full w-full object-contain" />
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={() => logoFileInputRef.current?.click()}
+              disabled={logoStatus === "saving"}
+              className="rounded-md border border-canvas-deep bg-paper px-4 py-2 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-olive hover:text-olive-deep disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {logoStatus === "saving" ? t("uploadingPhoto") : t("changeBusinessLogo")}
+            </button>
+            <input
+              ref={logoFileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleLogoChange}
+            />
+          </div>
+
+          <label htmlFor="websiteUrl" className={labelClass}>
+            {t("websiteUrl")}
+          </label>
+          <input
+            id="websiteUrl"
+            name="websiteUrl"
+            type="url"
+            defaultValue={profile.websiteUrl ?? ""}
+            placeholder={t("websiteUrlPlaceholder")}
             className={inputClass}
           />
         </div>
