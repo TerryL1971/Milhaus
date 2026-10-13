@@ -12,6 +12,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { Dancing_Script, IBM_Plex_Mono, Work_Sans, Libre_Baskerville } from "next/font/google";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { WelcomeBanner } from "@/components/welcome-banner";
 import { routing } from "@/i18n/routing";
 import { SITE_URL } from "@/lib/site-url";
 import "../globals.css";
@@ -105,6 +106,7 @@ export default async function LocaleLayout({
       <body className="flex min-h-full flex-col font-body">
         <NextIntlClientProvider>
           <SiteHeader />
+          <WelcomeBanner />
           <div className="flex flex-1 flex-col">{children}</div>
           <SiteFooter />
         </NextIntlClientProvider>
