@@ -9,7 +9,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { deleteAdSlot, toggleAdSlotActive } from "@/app/admin/ads/actions";
-import { AD_PLACEMENT_LABELS } from "@/lib/ad-slots";
+import { AD_PLACEMENT_LABELS, AD_PLACEMENT_SIZES, AD_PLACEMENTS } from "@/lib/ad-slots";
 import { getAllAdSlots } from "@/lib/ad-slots-queries";
 import { isAdminRole } from "@/lib/roles";
 import { createClient } from "@/lib/supabase/server";
@@ -52,6 +52,17 @@ export default async function AdminAdsPage() {
           >
             Add an ad
           </Link>
+        </div>
+
+        <div className="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {AD_PLACEMENTS.map((placement) => (
+            <div key={placement} className="rounded-md border border-canvas-deep bg-paper p-4">
+              <p className="mb-1 font-mono text-[0.68rem] font-semibold uppercase tracking-wider text-ink-soft/75">
+                {AD_PLACEMENT_LABELS[placement]}
+              </p>
+              <p className="text-sm text-ink-soft">{AD_PLACEMENT_SIZES[placement]}</p>
+            </div>
+          ))}
         </div>
 
         {ads.length === 0 ? (

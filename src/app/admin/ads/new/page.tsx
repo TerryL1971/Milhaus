@@ -8,7 +8,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createAdSlot } from "@/app/admin/ads/actions";
-import { AD_PLACEMENTS, AD_PLACEMENT_LABELS } from "@/lib/ad-slots";
+import { AD_PLACEMENTS, AD_PLACEMENT_LABELS, AD_PLACEMENT_SIZES } from "@/lib/ad-slots";
 import { isAdminRole } from "@/lib/roles";
 import { createClient } from "@/lib/supabase/server";
 
@@ -66,6 +66,14 @@ export default async function AdminNewAdPage() {
                 </option>
               ))}
             </select>
+            <div className="mt-2 rounded-md bg-canvas/50 p-3 text-xs text-ink-soft">
+              {AD_PLACEMENTS.map((key) => (
+                <p key={key} className="mb-1 last:mb-0">
+                  <span className="font-semibold text-charcoal">{AD_PLACEMENT_LABELS[key]}:</span>{" "}
+                  {AD_PLACEMENT_SIZES[key]}
+                </p>
+              ))}
+            </div>
           </div>
 
           <div>

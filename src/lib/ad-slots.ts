@@ -11,6 +11,14 @@ export const AD_PLACEMENT_LABELS = {
 export type AdPlacement = keyof typeof AD_PLACEMENT_LABELS;
 export const AD_PLACEMENTS = Object.keys(AD_PLACEMENT_LABELS) as AdPlacement[];
 
+// What to tell an advertiser to design at, per placement — shown on
+// /admin/ads and /admin/ads/new so Charlie never has to guess or ask.
+export const AD_PLACEMENT_SIZES: Record<AdPlacement, string> = {
+  site_banner:
+    "Fluid width × fixed height — up to 1336px wide on desktop (96px tall; 80px tall on phones, narrower). Design at roughly 1336×96px, 2672×192px for retina. A smaller/differently-shaped image still works — it just won't fill the full width.",
+  cars_sidebar: '300×600px (IAB "Half Page Ad"). Design at 2x for retina: 600×1200px.',
+};
+
 export interface AdSlot {
   id: string;
   placement: AdPlacement;
