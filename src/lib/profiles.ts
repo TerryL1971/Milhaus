@@ -22,6 +22,8 @@ export interface Profile {
   contactEmail: string | null;
   contactPhone: string | null;
   photoUrl: string | null;
+  /** Wide banner shown behind the avatar on /sellers/[id]. */
+  coverImageUrl: string | null;
   bio: string | null;
   /** Self-declared on their own profile — "I'm an individual/military ID
    * holder", not a business/dealer. Posting is free when this is set
@@ -50,6 +52,7 @@ function mapProfileRow(row: Record<string, unknown>): Profile {
     contactEmail: (row.contact_email as string | null) ?? null,
     contactPhone: (row.contact_phone as string | null) ?? null,
     photoUrl: (row.photo_url as string | null) ?? null,
+    coverImageUrl: (row.cover_image_url as string | null) ?? null,
     bio: (row.bio as string | null) ?? null,
     isIndividualLister: Boolean(row.is_individual_lister),
     createdAt: row.created_at as string,
@@ -63,7 +66,7 @@ export async function getAllProfiles(): Promise<Profile[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, role, status, display_name, contact_email, contact_phone, photo_url, bio, is_individual_lister, created_at")
+    .select("id, role, status, display_name, contact_email, contact_phone, photo_url, cover_image_url, bio, is_individual_lister, created_at")
     .order("created_at");
 
   if (error) {
@@ -80,7 +83,7 @@ export async function getProfile(id: string): Promise<Profile | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, role, status, display_name, contact_email, contact_phone, photo_url, bio, is_individual_lister, created_at")
+    .select("id, role, status, display_name, contact_email, contact_phone, photo_url, cover_image_url, bio, is_individual_lister, created_at")
     .eq("id", id)
     .maybeSingle();
 

@@ -153,6 +153,9 @@ export interface SellerProfile {
   contactEmail: string | null;
   contactPhone: string | null;
   photoUrl: string | null;
+  /** Wide banner shown behind the avatar on /sellers/[id] — same
+   * relationship as a business's coverImageUrl to its logoUrl. */
+  coverImageUrl: string | null;
   bio: string | null;
 }
 
@@ -166,7 +169,7 @@ export async function getSellerProfile(ownerId: string): Promise<SellerProfile |
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("profiles")
-    .select("display_name, contact_email, contact_phone, photo_url, bio")
+    .select("display_name, contact_email, contact_phone, photo_url, cover_image_url, bio")
     .eq("id", ownerId)
     .maybeSingle();
 
@@ -176,6 +179,7 @@ export async function getSellerProfile(ownerId: string): Promise<SellerProfile |
     contactEmail: data.contact_email as string | null,
     contactPhone: data.contact_phone as string | null,
     photoUrl: data.photo_url as string | null,
+    coverImageUrl: data.cover_image_url as string | null,
     bio: data.bio as string | null,
   };
 }

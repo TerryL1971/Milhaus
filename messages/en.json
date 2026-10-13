@@ -501,6 +501,7 @@
     "heading": "Your public profile",
     "body": "Shown on every listing you post — buyers see this before they contact you.",
     "changePhoto": "Change photo",
+    "changeCoverPhoto": "Change cover photo",
     "uploadingPhoto": "Uploading…",
     "displayName": "Name",
     "displayNamePlaceholder": "How buyers will see you",

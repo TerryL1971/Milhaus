@@ -45,28 +45,44 @@ export default async function SellerProfilePage({ params }: { params: Params }) 
   return (
     <main className="flex-1 py-14">
       <div className="mx-auto max-w-[1400px] px-8">
-        <div className="mb-8 flex flex-wrap items-start gap-5 rounded-md border border-canvas-deep bg-paper p-6">
-          <Avatar name={name} photoUrl={seller.photoUrl} size="lg" />
-          <div className="min-w-0 flex-1">
-            <h1 className="font-display text-2xl font-semibold text-ink">{name}</h1>
-            {seller.bio && <p className="mt-1.5 text-ink-soft">{seller.bio}</p>}
-            <div className="mt-3 flex flex-wrap items-center gap-3">
-              {seller.contactEmail && (
-                <a
-                  href={`mailto:${seller.contactEmail}`}
-                  className="inline-block rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
-                >
-                  {t("emailButton", { name })}
-                </a>
-              )}
-              {seller.contactPhone && (
-                <a
-                  href={`tel:${seller.contactPhone.replace(/[^+\d]/g, "")}`}
-                  className="text-sm font-semibold text-ink-soft hover:text-ink"
-                >
-                  {seller.contactPhone}
-                </a>
-              )}
+        {/* Cover photo + overlapping avatar, LinkedIn-style — same
+            treatment as the business profile page
+            (src/app/[locale]/businesses/[id]). */}
+        <div className="mb-8 overflow-hidden rounded-md border border-canvas-deep bg-paper">
+          <div className="h-36 w-full bg-canvas-deep sm:h-48">
+            {seller.coverImageUrl && (
+              // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL
+              <img src={seller.coverImageUrl} alt="" className="h-full w-full object-cover" />
+            )}
+          </div>
+          <div className="flex flex-wrap items-start gap-5 p-6">
+            <Avatar
+              name={name}
+              photoUrl={seller.photoUrl}
+              size="lg"
+              className="-mt-16 border-4 border-paper shadow-md"
+            />
+            <div className="min-w-0 flex-1">
+              <h1 className="font-display text-2xl font-semibold text-ink">{name}</h1>
+              {seller.bio && <p className="mt-1.5 text-ink-soft">{seller.bio}</p>}
+              <div className="mt-3 flex flex-wrap items-center gap-3">
+                {seller.contactEmail && (
+                  <a
+                    href={`mailto:${seller.contactEmail}`}
+                    className="inline-block rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+                  >
+                    {t("emailButton", { name })}
+                  </a>
+                )}
+                {seller.contactPhone && (
+                  <a
+                    href={`tel:${seller.contactPhone.replace(/[^+\d]/g, "")}`}
+                    className="text-sm font-semibold text-ink-soft hover:text-ink"
+                  >
+                    {seller.contactPhone}
+                  </a>
+                )}
+              </div>
             </div>
           </div>
         </div>
