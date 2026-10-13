@@ -129,6 +129,47 @@ export default async function PostBusinessPage() {
             </div>
           </div>
 
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="instagramUrl" className={labelClass}>
+                {t("instagramUrl")}
+              </label>
+              <input
+                id="instagramUrl"
+                name="instagramUrl"
+                type="url"
+                placeholder="https://instagram.com/…"
+                className={inputClass}
+              />
+            </div>
+            <div>
+              <label htmlFor="facebookUrl" className={labelClass}>
+                {t("facebookUrl")}
+              </label>
+              <input
+                id="facebookUrl"
+                name="facebookUrl"
+                type="url"
+                placeholder="https://facebook.com/…"
+                className={inputClass}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="whatsappNumber" className={labelClass}>
+              {t("whatsappNumber")}
+            </label>
+            <input
+              id="whatsappNumber"
+              name="whatsappNumber"
+              type="tel"
+              placeholder="+49…"
+              className={inputClass}
+            />
+            <p className="mt-1 text-xs text-ink-soft/75">{t("whatsappNumberHint")}</p>
+          </div>
+
           <button
             type="submit"
             className="mt-2 rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"

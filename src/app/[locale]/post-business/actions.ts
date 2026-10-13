@@ -37,6 +37,9 @@ export async function submitBusiness(formData: FormData) {
       logo_url: formData.get("logoUrl") || null,
       website_url: formData.get("websiteUrl") || null,
       phone: formData.get("phone") || null,
+      instagram_url: formData.get("instagramUrl") || null,
+      facebook_url: formData.get("facebookUrl") || null,
+      whatsapp_number: formData.get("whatsappNumber") || null,
       owner_id: user.id,
       is_active: false, // never publicly visible until Charlie approves
       status: priceEur ? "draft" : "pending_review",

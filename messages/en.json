@@ -38,7 +38,9 @@
     "signOut": "Sign out",
     "languageToggle": "Switch to German",
     "products": "Items for sale",
-    "services": "Services"
+    "services": "Services",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   },
   "SiteFooter": {
     "forRentersHeading": "For renters",
@@ -582,6 +584,10 @@
     "logoUrl": "Logo URL (optional)",
     "websiteUrl": "Website (optional)",
     "phone": "Phone (optional)",
+    "instagramUrl": "Instagram (optional)",
+    "facebookUrl": "Facebook (optional)",
+    "whatsappNumber": "WhatsApp number (optional)",
+    "whatsappNumberHint": "Full international format (e.g. +49 170 1234567) — this builds the wa.me link.",
     "submit": "Submit for review",
     "submitWithPrice": "Submit and pay (€{price})",
     "successTitle": "Submitted",

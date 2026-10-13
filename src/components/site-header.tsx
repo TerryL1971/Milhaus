@@ -9,6 +9,7 @@ import NextLink from "next/link";
 import { Avatar } from "@/components/avatar";
 import { HomeLink } from "@/components/home-link";
 import { LanguageToggle } from "@/components/language-toggle";
+import { MobileNavToggle } from "@/components/mobile-nav-toggle";
 import { Link } from "@/i18n/navigation";
 import { isAdminRole } from "@/lib/roles";
 import { createClient } from "@/lib/supabase/server";
@@ -39,7 +40,7 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
 
   return (
     <header className="sticky top-0 z-50 bg-ink text-paper">
-      <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-6 px-8 py-[18px]">
+      <div className="relative mx-auto flex max-w-[1400px] items-center justify-between gap-6 px-8 py-[18px]">
         <HomeLink className="flex flex-shrink-0 items-center">
           {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset, not worth next/image's config here */}
           <img src="/brand/milhaus-logo-cream-red-horizontal.png" alt="Milhaus" className="h-10 w-auto" />
@@ -64,7 +65,7 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
           </Link>
         </nav>
 
-        <div className="flex flex-shrink-0 items-center gap-3">
+        <div className="hidden flex-shrink-0 items-center gap-3 md:flex">
           {/* Same slot/style as the Admin link — DE/EN always shows here;
               Admin joins it alongside for admins, rather than replacing it. */}
           <LanguageToggle className={toggleButtonClass} preservePath={translatedPage} />
@@ -126,6 +127,14 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
             </Link>
           )}
         </div>
+
+        <MobileNavToggle
+          translatedPage={translatedPage}
+          isAdmin={isAdmin}
+          isSignedIn={!!user}
+          accountName={accountName}
+          accountPhotoUrl={accountPhotoUrl}
+        />
       </div>
     </header>
   );

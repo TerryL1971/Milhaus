@@ -38,7 +38,9 @@
     "signOut": "Abmelden",
     "languageToggle": "Auf Englisch umschalten",
     "products": "Artikel",
-    "services": "Dienstleistungen"
+    "services": "Dienstleistungen",
+    "openMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen"
   },
   "SiteFooter": {
     "forRentersHeading": "Für Mieter",
@@ -582,6 +584,10 @@
     "logoUrl": "Logo-URL (optional)",
     "websiteUrl": "Website (optional)",
     "phone": "Telefon (optional)",
+    "instagramUrl": "Instagram (optional)",
+    "facebookUrl": "Facebook (optional)",
+    "whatsappNumber": "WhatsApp-Nummer (optional)",
+    "whatsappNumberHint": "Vollständiges internationales Format (z. B. +49 170 1234567) — daraus wird der wa.me-Link erstellt.",
     "submit": "Zur Prüfung einreichen",
     "submitWithPrice": "Einreichen und bezahlen (€{price})",
     "successTitle": "Eingereicht",

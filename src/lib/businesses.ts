@@ -44,6 +44,12 @@ export interface Business {
   logoUrl: string | null;
   websiteUrl: string | null;
   phone: string | null;
+  instagramUrl: string | null;
+  facebookUrl: string | null;
+  /** Digits-only (with country code), not reusing `phone` — a wa.me link
+   * needs that exact format, not necessarily how someone types their
+   * regular contact number. */
+  whatsappNumber: string | null;
   isActive: boolean;
   isFeatured: boolean;
   /** null = one of Charlie's original hand-entered rows, not a

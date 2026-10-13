@@ -142,6 +142,49 @@ export default async function AdminNewBusinessPage() {
             </div>
           </div>
 
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="instagramUrl" className={labelClass}>
+                Instagram (optional)
+              </label>
+              <input
+                id="instagramUrl"
+                name="instagramUrl"
+                type="url"
+                placeholder="https://instagram.com/…"
+                className={inputClass}
+              />
+            </div>
+            <div>
+              <label htmlFor="facebookUrl" className={labelClass}>
+                Facebook (optional)
+              </label>
+              <input
+                id="facebookUrl"
+                name="facebookUrl"
+                type="url"
+                placeholder="https://facebook.com/…"
+                className={inputClass}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="whatsappNumber" className={labelClass}>
+              WhatsApp number (optional)
+            </label>
+            <input
+              id="whatsappNumber"
+              name="whatsappNumber"
+              type="tel"
+              placeholder="+49…"
+              className={inputClass}
+            />
+            <p className="mt-1 text-xs text-ink-soft/75">
+              Full international format (e.g. +49 170 1234567) — this builds the wa.me link.
+            </p>
+          </div>
+
           <label className="flex items-center gap-2 text-sm text-charcoal">
             <input
               type="checkbox"

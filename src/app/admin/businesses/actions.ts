@@ -32,6 +32,9 @@ export async function createBusiness(formData: FormData) {
     logo_url: formData.get("logoUrl") || null,
     website_url: formData.get("websiteUrl") || null,
     phone: formData.get("phone") || null,
+    instagram_url: formData.get("instagramUrl") || null,
+    facebook_url: formData.get("facebookUrl") || null,
+    whatsapp_number: formData.get("whatsappNumber") || null,
     is_featured: formData.get("isFeatured") === "on",
   });
 
