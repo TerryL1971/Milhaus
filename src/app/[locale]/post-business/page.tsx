@@ -107,11 +107,39 @@ export default async function PostBusinessPage() {
             </div>
           </div>
 
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="logoUrl" className={labelClass}>
+                {t("logoUrl")}
+              </label>
+              <input id="logoUrl" name="logoUrl" type="url" placeholder="https://…" className={inputClass} />
+            </div>
+            <div>
+              <label htmlFor="coverImageUrl" className={labelClass}>
+                {t("coverImageUrl")}
+              </label>
+              <input id="coverImageUrl" name="coverImageUrl" type="url" placeholder="https://…" className={inputClass} />
+            </div>
+          </div>
+
           <div>
-            <label htmlFor="logoUrl" className={labelClass}>
-              {t("logoUrl")}
+            <label htmlFor="description" className={labelClass}>
+              {t("description")}
             </label>
-            <input id="logoUrl" name="logoUrl" type="url" placeholder="https://…" className={inputClass} />
+            <textarea
+              id="description"
+              name="description"
+              rows={4}
+              placeholder={t("descriptionPlaceholder")}
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="promotion" className={labelClass}>
+              {t("promotion")}
+            </label>
+            <input id="promotion" name="promotion" placeholder={t("promotionPlaceholder")} className={inputClass} />
           </div>
 
           <div className="grid grid-cols-2 gap-4">

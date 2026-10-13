@@ -41,7 +41,20 @@ export interface Business {
   rating: number | null;
   reviewCount: number | null;
   tags: BusinessTagKey[];
+  /** The small badge/avatar — "profile picture" on the business profile
+   * page, same image shown on the directory card. */
   logoUrl: string | null;
+  /** Wide banner image on the business profile page (and the tile's
+   * photo area on the directory grid) — a separate image from logoUrl,
+   * same relationship as a LinkedIn cover photo to a profile picture. */
+  coverImageUrl: string | null;
+  /** Long-form "about the business" copy — shown on the directory tile
+   * (truncated) and in full on the profile page. */
+  description: string | null;
+  /** A short promo/discount line, e.g. "10% off for military ID
+   * holders" — not a structured discount-code system, just a prominent
+   * callout. */
+  promotion: string | null;
   websiteUrl: string | null;
   phone: string | null;
   instagramUrl: string | null;

@@ -120,11 +120,46 @@ export default async function AdminNewBusinessPage() {
             </div>
           </div>
 
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="logoUrl" className={labelClass}>
+                Logo URL (optional)
+              </label>
+              <input id="logoUrl" name="logoUrl" type="url" placeholder="https://…" className={inputClass} />
+              <p className="mt-1 text-xs text-ink-soft/75">Shown as a small badge/profile picture.</p>
+            </div>
+            <div>
+              <label htmlFor="coverImageUrl" className={labelClass}>
+                Cover image URL (optional)
+              </label>
+              <input id="coverImageUrl" name="coverImageUrl" type="url" placeholder="https://…" className={inputClass} />
+              <p className="mt-1 text-xs text-ink-soft/75">Wide banner shown on the tile and profile page.</p>
+            </div>
+          </div>
+
           <div>
-            <label htmlFor="logoUrl" className={labelClass}>
-              Logo URL (optional)
+            <label htmlFor="description" className={labelClass}>
+              About the business (optional)
             </label>
-            <input id="logoUrl" name="logoUrl" type="url" placeholder="https://…" className={inputClass} />
+            <textarea
+              id="description"
+              name="description"
+              rows={4}
+              placeholder="What do you offer, and what should someone know before reaching out?"
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="promotion" className={labelClass}>
+              Current promotion/discount (optional)
+            </label>
+            <input
+              id="promotion"
+              name="promotion"
+              placeholder="e.g. 10% off for military ID holders"
+              className={inputClass}
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
