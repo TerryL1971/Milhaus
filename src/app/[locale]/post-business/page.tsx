@@ -226,6 +226,12 @@ export default async function PostBusinessPage() {
             <span>{t("ownerConfirmation")}</span>
           </label>
 
+          {/* Terry: this needs to be said plainly before the click, not
+              discovered after — the listing doesn't go live on
+              submission alone (see submitBusiness/sendConsentRequestEmail);
+              it waits on this email too. */}
+          <p className="text-sm text-ink-soft">{t("consentEmailNotice")}</p>
+
           <button
             type="submit"
             className="mt-2 rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"

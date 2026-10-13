@@ -614,6 +614,7 @@
     "successCta": "View the directory",
     "postAnother": "List another business",
     "ownerConfirmation": "I confirm I am the owner of this business, or an authorized representative with permission to list it on Milhaus — including the right to use any logo, image, and contact information (email, phone, social media) submitted here.",
+    "consentEmailNotice": "We'll send a confirmation email to the business email address above — this listing won't go live until that's confirmed, even after Charlie reviews it.",
     "ownerConfirmationRequired": "You must confirm you have the authority to list this business."
   }
 }

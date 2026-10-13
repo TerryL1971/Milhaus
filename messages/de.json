@@ -614,6 +614,7 @@
     "successCta": "Verzeichnis ansehen",
     "postAnother": "Weiteres Unternehmen eintragen",
     "ownerConfirmation": "Ich bestätige, dass ich Inhaber dieses Unternehmens bin oder als bevollmächtigter Vertreter zur Eintragung auf Milhaus berechtigt bin — einschließlich des Rechts, das hier angegebene Logo, Bilder und Kontaktdaten (E-Mail, Telefon, soziale Medien) zu verwenden.",
+    "consentEmailNotice": "Wir senden eine Bestätigungs-E-Mail an die oben angegebene geschäftliche E-Mail-Adresse — diese Anzeige geht erst online, wenn das bestätigt wurde, auch nachdem Charlie sie geprüft hat.",
     "ownerConfirmationRequired": "Sie müssen bestätigen, dass Sie zur Eintragung dieses Unternehmens berechtigt sind."
   }
 }
