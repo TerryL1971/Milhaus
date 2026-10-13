@@ -1,8 +1,13 @@
 // src/app/[locale]/post-business/page.tsx
-// Submit a business to the Military-Friendly Businesses directory — the
-// paid self-serve replacement for "Suggest a business" (a mailto link
-// before this). Same auth-gate/redirect-back pattern as /post, /post-car,
-// /post-product.
+// List your own business in the Military-Friendly Businesses directory
+// — the paid self-serve replacement for the old "Suggest a business"
+// mailto link. Renamed from "Suggest" (Terry: listing someone else's
+// business without their permission is illegal in Germany — ran into
+// this on European-Living.live) — framed throughout as the owner/an
+// authorized rep listing their own business, with a required
+// attestation checkbox below, enforced server-side too in
+// actions.ts/submitBusiness (not just a client-side nicety). Same
+// auth-gate/redirect-back pattern as /post, /post-car, /post-product.
 
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -15,7 +20,7 @@ import { getPostingPrice } from "@/lib/listing-prices";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Suggest a business",
+  title: "List your business",
   robots: { index: false, follow: false },
 };
 
@@ -197,6 +202,21 @@ export default async function PostBusinessPage() {
             />
             <p className="mt-1 text-xs text-ink-soft/75">{t("whatsappNumberHint")}</p>
           </div>
+
+          {/* Legal requirement, not a formality — listing a business
+              without the owner's permission is illegal in Germany.
+              `required` blocks a normal submit client-side; the server
+              action re-checks this field too, since a required
+              attribute alone can be bypassed. */}
+          <label className="flex items-start gap-2 rounded-md border border-canvas-deep bg-canvas/40 p-3 text-sm text-charcoal">
+            <input
+              type="checkbox"
+              name="ownerConfirmation"
+              required
+              className="mt-0.5 h-4 w-4 rounded border-canvas-deep text-olive focus:ring-olive"
+            />
+            <span>{t("ownerConfirmation")}</span>
+          </label>
 
           <button
             type="submit"

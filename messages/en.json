@@ -58,7 +58,7 @@
     "sellSomething": "Sell something",
     "servicesHeading": "Services",
     "browseServices": "Browse services",
-    "suggestBusiness": "Suggest a business",
+    "suggestBusiness": "List your business",
     "aboutHeading": "About",
     "contact": "Contact",
     "impressum": "Impressum",
@@ -462,7 +462,7 @@
     "eyebrow": "Services",
     "heading": "Services",
     "subhead": "Local businesses that work well with Americans — car sales, movers, repair shops, and more. Hand-picked by Milhaus, not self-listed.",
-    "offerSomething": "Suggest a business",
+    "offerSomething": "List your business",
     "searchPlaceholder": "Search by name, city, or category…",
     "allBases": "All bases",
     "allCategories": "All categories",
@@ -572,7 +572,7 @@
     "productHeading": "An item",
     "productBody": "Furniture, electronics, anything else.",
     "serviceHeading": "A business",
-    "serviceBody": "Suggest a local business for the directory.",
+    "serviceBody": "List your own business in the directory.",
     "freeLabel": "Free"
   },
   "ListingsPage": {
@@ -583,8 +583,8 @@
     "postAHome": "List your home"
   },
   "PostBusinessPage": {
-    "heading": "Suggest a business",
-    "body": "Submit a local business for the Military-Friendly Businesses directory. Charlie reviews every submission before it goes live.",
+    "heading": "List your business",
+    "body": "List your own business in the Military-Friendly Businesses directory. Charlie reviews every submission before it goes live. You must be the owner or an authorized representative of the business — German law doesn't allow listing someone else's business without their permission.",
     "name": "Business name",
     "category": "Category",
     "chooseOne": "Choose one",
@@ -609,6 +609,8 @@
     "successTitle": "Submitted",
     "successBody": "Thanks — we'll take a look and get it listed, usually the same day.",
     "successCta": "View the directory",
-    "postAnother": "Suggest another business"
+    "postAnother": "List another business",
+    "ownerConfirmation": "I confirm I am the owner of this business, or an authorized representative with permission to list it on Milhaus.",
+    "ownerConfirmationRequired": "You must confirm you have the authority to list this business."
   }
 }

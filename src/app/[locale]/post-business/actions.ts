@@ -23,6 +23,14 @@ export async function submitBusiness(formData: FormData) {
   } = await supabase.auth.getUser();
   if (!user) throw new Error("You need to be signed in.");
 
+  // Legal requirement (Terry: illegal in Germany to list a business
+  // without its owner's permission — see the file-top comment) — the
+  // form's `required` attribute alone can be bypassed by posting
+  // directly to this action, so it's re-checked here too.
+  if (formData.get("ownerConfirmation") !== "on") {
+    throw new Error("You must confirm you have the authority to list this business.");
+  }
+
   const priceEur = await getPostingPrice("business");
   const tags = BUSINESS_TAG_KEYS.filter((key) => formData.get(`tag_${key}`) === "on") as BusinessTagKey[];
 

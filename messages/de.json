@@ -58,7 +58,7 @@
     "sellSomething": "Etwas verkaufen",
     "servicesHeading": "Dienstleistungen",
     "browseServices": "Dienstleistungen durchsuchen",
-    "suggestBusiness": "Unternehmen vorschlagen",
+    "suggestBusiness": "Ihr Unternehmen eintragen",
     "aboutHeading": "Über uns",
     "contact": "Kontakt",
     "impressum": "Impressum",
@@ -462,7 +462,7 @@
     "eyebrow": "Dienstleistungen",
     "heading": "Dienstleistungen",
     "subhead": "Örtliche Unternehmen, die gut mit Amerikanern zusammenarbeiten — Autoverkauf, Umzüge, Werkstätten und mehr. Von Milhaus ausgewählt, nicht selbst eingestellt.",
-    "offerSomething": "Unternehmen vorschlagen",
+    "offerSomething": "Ihr Unternehmen eintragen",
     "searchPlaceholder": "Suche nach Name, Stadt oder Kategorie…",
     "allBases": "Alle Standorte",
     "allCategories": "Alle Kategorien",
@@ -572,7 +572,7 @@
     "productHeading": "Einen Artikel",
     "productBody": "Möbel, Elektronik, alles andere.",
     "serviceHeading": "Ein Unternehmen",
-    "serviceBody": "Schlage ein örtliches Unternehmen für das Verzeichnis vor.",
+    "serviceBody": "Tragen Sie Ihr eigenes Unternehmen in das Verzeichnis ein.",
     "freeLabel": "Kostenlos"
   },
   "ListingsPage": {
@@ -583,8 +583,8 @@
     "postAHome": "Wohnung inserieren"
   },
   "PostBusinessPage": {
-    "heading": "Unternehmen vorschlagen",
-    "body": "Schlage ein örtliches Unternehmen für das Verzeichnis militärfreundlicher Unternehmen vor. Charlie prüft jede Einreichung, bevor sie veröffentlicht wird.",
+    "heading": "Ihr Unternehmen eintragen",
+    "body": "Tragen Sie Ihr eigenes Unternehmen in das Verzeichnis militärfreundlicher Unternehmen ein. Charlie prüft jede Einreichung, bevor sie veröffentlicht wird. Sie müssen Inhaber oder bevollmächtigter Vertreter des Unternehmens sein — nach deutschem Recht dürfen fremde Unternehmen nicht ohne deren Erlaubnis eingetragen werden.",
     "name": "Firmenname",
     "category": "Kategorie",
     "chooseOne": "Bitte auswählen",
@@ -609,6 +609,8 @@
     "successTitle": "Eingereicht",
     "successBody": "Danke — wir schauen es uns an und veröffentlichen es, meist noch am selben Tag.",
     "successCta": "Verzeichnis ansehen",
-    "postAnother": "Weiteres Unternehmen vorschlagen"
+    "postAnother": "Weiteres Unternehmen eintragen",
+    "ownerConfirmation": "Ich bestätige, dass ich Inhaber dieses Unternehmens bin oder als bevollmächtigter Vertreter zur Eintragung auf Milhaus berechtigt bin.",
+    "ownerConfirmationRequired": "Sie müssen bestätigen, dass Sie zur Eintragung dieses Unternehmens berechtigt sind."
   }
 }
