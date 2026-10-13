@@ -10,9 +10,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Fragment } from "react";
 import {
   approveBusiness,
   deleteBusiness,
+  recordManualConsent,
+  resendConsentEmail,
   toggleBusinessActive,
   toggleBusinessFeatured,
 } from "@/app/admin/businesses/actions";
@@ -86,12 +89,14 @@ export default async function AdminBusinessesPage() {
                   <th className="px-4 py-3 font-medium">City / base</th>
                   <th className="px-4 py-3 font-medium">Rating</th>
                   <th className="px-4 py-3 font-medium">Status</th>
+                  <th className="px-4 py-3 font-medium">Consent</th>
                   <th className="px-4 py-3 font-medium"></th>
                 </tr>
               </thead>
               <tbody>
                 {businesses.map((b) => (
-                  <tr key={b.id} className="border-b border-canvas-deep last:border-0">
+                  <Fragment key={b.id}>
+                  <tr className="border-b border-canvas-deep last:border-0">
                     <td className="px-4 py-3 font-medium text-ink">{b.name}</td>
                     <td className="px-4 py-3 text-ink-soft">
                       {BUSINESS_CATEGORY_LABELS[b.category as BusinessCategoryKey]}
@@ -131,15 +136,45 @@ export default async function AdminBusinessesPage() {
                       </div>
                     </td>
                     <td className="px-4 py-3">
+                      <span
+                        className={`rounded-[3px] px-2 py-0.5 font-mono text-[0.66rem] font-semibold uppercase tracking-wider ${
+                          b.consentStatus === "confirmed"
+                            ? "bg-olive/15 text-olive-deep"
+                            : b.consentStatus === "revoked"
+                              ? "bg-rust/15 text-rust"
+                              : "bg-canvas-deep text-ink-soft"
+                        }`}
+                      >
+                        {b.consentStatus}
+                      </span>
+                      {b.consentStatus !== "confirmed" && (
+                        <p className="mt-1 text-[0.7rem] text-ink-soft/75">via {b.consentMethod}</p>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
                       <div className="flex justify-end gap-2">
-                        {b.status === "pending_review" && (
-                          <form action={approveBusiness}>
+                        {b.status === "pending_review" &&
+                          (b.consentStatus === "confirmed" ? (
+                            <form action={approveBusiness}>
+                              <input type="hidden" name="id" value={b.id} />
+                              <button
+                                type="submit"
+                                className="rounded-md bg-olive px-3 py-1.5 text-xs font-semibold text-paper hover:bg-olive-deep"
+                              >
+                                Approve
+                              </button>
+                            </form>
+                          ) : (
+                            <span className="self-center text-xs text-ink-soft/75">Needs consent first</span>
+                          ))}
+                        {b.consentStatus === "pending" && b.consentMethod === "email" && (
+                          <form action={resendConsentEmail}>
                             <input type="hidden" name="id" value={b.id} />
                             <button
                               type="submit"
-                              className="rounded-md bg-olive px-3 py-1.5 text-xs font-semibold text-paper hover:bg-olive-deep"
+                              className="rounded-md border border-canvas-deep px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-olive hover:text-olive-deep"
                             >
-                              Approve
+                              Resend email
                             </button>
                           </form>
                         )}
@@ -175,6 +210,46 @@ export default async function AdminBusinessesPage() {
                       </div>
                     </td>
                   </tr>
+                  {b.consentStatus !== "confirmed" && (
+                    <tr className="border-b border-canvas-deep bg-canvas/30 last:border-0">
+                      <td colSpan={7} className="px-4 py-3">
+                        <form action={recordManualConsent} encType="multipart/form-data" className="flex flex-wrap items-end gap-3">
+                          <input type="hidden" name="id" value={b.id} />
+                          <div>
+                            <label className="mb-1 block font-mono text-[0.64rem] uppercase tracking-wider text-ink-soft/75">
+                              Got consent another way?
+                            </label>
+                            <select
+                              name="consentMethod"
+                              defaultValue="paper_form"
+                              className="rounded-md border border-canvas-deep bg-paper px-2 py-1.5 text-xs text-charcoal"
+                            >
+                              <option value="paper_form">Signed paper form</option>
+                              <option value="verbal_in_person">Verbal, in person</option>
+                            </select>
+                          </div>
+                          <input
+                            name="consentNote"
+                            placeholder="Note (e.g. who, when, how)"
+                            className="min-w-[200px] flex-1 rounded-md border border-canvas-deep bg-paper px-2 py-1.5 text-xs text-charcoal placeholder:text-charcoal/40"
+                          />
+                          <input
+                            name="consentProof"
+                            type="file"
+                            accept="image/*,application/pdf"
+                            className="text-xs text-ink-soft file:mr-2 file:rounded-md file:border-0 file:bg-canvas-deep file:px-2 file:py-1 file:text-xs file:font-medium file:text-ink"
+                          />
+                          <button
+                            type="submit"
+                            className="rounded-md bg-ink px-3 py-1.5 text-xs font-semibold text-paper hover:bg-ink-soft"
+                          >
+                            Mark consent confirmed
+                          </button>
+                        </form>
+                      </td>
+                    </tr>
+                  )}
+                  </Fragment>
                 ))}
               </tbody>
             </table>

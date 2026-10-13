@@ -587,6 +587,8 @@
     "heading": "Ihr Unternehmen eintragen",
     "body": "Tragen Sie Ihr eigenes Unternehmen in das Verzeichnis militärfreundlicher Unternehmen ein. Charlie prüft jede Einreichung, bevor sie veröffentlicht wird. Sie müssen Inhaber oder bevollmächtigter Vertreter des Unternehmens sein — nach deutschem Recht dürfen fremde Unternehmen nicht ohne deren Erlaubnis eingetragen werden.",
     "name": "Firmenname",
+    "email": "Geschäftliche E-Mail",
+    "emailHint": "Die E-Mail-Adresse des Unternehmens, nicht unbedingt Ihre eigene — wir senden hierher einen Bestätigungslink, bevor die Anzeige veröffentlicht wird.",
     "category": "Kategorie",
     "chooseOne": "Bitte auswählen",
     "nearestBase": "Nächster Stützpunkt (optional)",

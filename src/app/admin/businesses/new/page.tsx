@@ -43,12 +43,22 @@ export default async function AdminNewBusinessPage() {
           not the newest — everything active shows, featured ones also get the homepage strip).
         </p>
 
-        <form action={createBusiness} className="flex flex-col gap-5">
+        <form action={createBusiness} encType="multipart/form-data" className="flex flex-col gap-5">
           <div>
             <label htmlFor="name" className={labelClass}>
               Business name
             </label>
             <input id="name" name="name" required className={inputClass} />
+          </div>
+
+          <div>
+            <label htmlFor="email" className={labelClass}>
+              Business email
+            </label>
+            <input id="email" name="email" type="email" required className={inputClass} />
+            <p className="mt-1 text-xs text-ink-soft/75">
+              Used for the consent confirmation link if you pick the email method below.
+            </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -218,6 +228,52 @@ export default async function AdminNewBusinessPage() {
             <p className="mt-1 text-xs text-ink-soft/75">
               Full international format (e.g. +49 170 1234567) — this builds the wa.me link.
             </p>
+          </div>
+
+          <div className="rounded-md border border-canvas-deep bg-canvas/40 p-4">
+            <p className="mb-3 font-mono text-[0.68rem] font-semibold uppercase tracking-wider text-ink-soft/75">
+              Consent — required before this can go live
+            </p>
+            <div>
+              <label htmlFor="consentMethod" className={labelClass}>
+                How was consent obtained?
+              </label>
+              <select id="consentMethod" name="consentMethod" defaultValue="email" className={inputClass}>
+                <option value="email">Email confirmation link (send one now)</option>
+                <option value="paper_form">Signed paper form</option>
+                <option value="verbal_in_person">Verbal, in person</option>
+              </select>
+              <p className="mt-1 text-xs text-ink-soft/75">
+                Picking email sends the confirmation link now and leaves this pending until clicked.
+                Picking either other option marks consent as already confirmed — fill in the note (and
+                proof, if you have a scan) below.
+              </p>
+            </div>
+            <div className="mt-3">
+              <label htmlFor="consentNote" className={labelClass}>
+                Note (required unless using email)
+              </label>
+              <textarea
+                id="consentNote"
+                name="consentNote"
+                rows={2}
+                placeholder="e.g. Signed in person at the vendor fair, 2026-10-13"
+                className={inputClass}
+              />
+            </div>
+            <div className="mt-3">
+              <label htmlFor="consentProof" className={labelClass}>
+                Proof document (optional — a scanned signed form, etc.)
+              </label>
+              <input
+                id="consentProof"
+                name="consentProof"
+                type="file"
+                accept="image/*,application/pdf"
+                className="w-full text-sm text-ink-soft file:mr-3 file:rounded-md file:border-0 file:bg-canvas-deep file:px-3 file:py-2 file:text-sm file:font-medium file:text-ink"
+              />
+              <p className="mt-1 text-xs text-ink-soft/75">Stored privately — never shown on the public site.</p>
+            </div>
           </div>
 
           <label className="flex items-center gap-2 text-sm text-charcoal">

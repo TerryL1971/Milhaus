@@ -32,6 +32,15 @@ export const BUSINESS_TAG_KEYS = Object.keys(BUSINESS_TAG_LABELS) as BusinessTag
 
 export type BusinessStatus = "draft" | "pending_review" | "active" | "archived";
 
+export type ConsentStatus = "pending" | "confirmed" | "revoked";
+export type ConsentMethod = "email" | "paper_form" | "verbal_in_person";
+
+export const CONSENT_METHOD_LABELS: Record<ConsentMethod, string> = {
+  email: "Email confirmation link",
+  paper_form: "Signed paper form",
+  verbal_in_person: "Verbal, in person",
+};
+
 export interface Business {
   id: string;
   name: string;
@@ -41,6 +50,23 @@ export interface Business {
   rating: number | null;
   reviewCount: number | null;
   tags: BusinessTagKey[];
+  /** The business's own official contact email — distinct from
+   * ownerId's account. Whoever is signed in and submitting this form
+   * isn't necessarily the business itself, so the confirmation link
+   * goes here, not to the submitter. */
+  email: string | null;
+  consentStatus: ConsentStatus;
+  consentToken: string | null;
+  consentMethod: ConsentMethod;
+  consentRequestedAt: string | null;
+  consentConfirmedAt: string | null;
+  confirmationIp: string | null;
+  confirmationEmailSentAt: string | null;
+  /** Set when Charlie records consent he obtained outside the email
+   * flow — a link to the uploaded proof in the private
+   * consent-documents storage bucket. */
+  consentProofUrl: string | null;
+  consentNote: string | null;
   /** The small badge/avatar — "profile picture" on the business profile
    * page, same image shown on the directory card. */
   logoUrl: string | null;

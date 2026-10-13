@@ -587,6 +587,8 @@
     "heading": "List your business",
     "body": "List your own business in the Military-Friendly Businesses directory. Charlie reviews every submission before it goes live. You must be the owner or an authorized representative of the business — German law doesn't allow listing someone else's business without their permission.",
     "name": "Business name",
+    "email": "Business email",
+    "emailHint": "The business's own email, not necessarily yours — we'll send a confirmation link here before this goes live.",
     "category": "Category",
     "chooseOne": "Choose one",
     "nearestBase": "Nearest base (optional)",

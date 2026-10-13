@@ -58,6 +58,14 @@ export default async function PostBusinessPage() {
             <input id="name" name="name" required className={inputClass} />
           </div>
 
+          <div>
+            <label htmlFor="email" className={labelClass}>
+              {t("email")}
+            </label>
+            <input id="email" name="email" type="email" required className={inputClass} />
+            <p className="mt-1 text-xs text-ink-soft/75">{t("emailHint")}</p>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label htmlFor="category" className={labelClass}>

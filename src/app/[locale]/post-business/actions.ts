@@ -8,12 +8,21 @@
 // other submission. No photo upload step like ListingForm has — just a
 // logo URL field — so this stays a plain server action, no client-side
 // multi-step state needed.
+//
+// Also kicks off the real consent flow (supabase/migrations/
+// 20261013180000_add_business_consent_system.sql, ported from Terry's
+// European-Living.live): the business's own email — not the submitter's
+// account, which may belong to a third party — gets a one-time
+// confirmation link. Nothing here skips that just because a submission
+// is also paid for; consent and payment are separate gates.
 
 "use server";
 
 import { redirect } from "next/navigation";
 import { BUSINESS_TAG_KEYS, type BusinessTagKey } from "@/lib/businesses";
+import { sendConsentRequestEmail } from "@/lib/consent-email";
 import { getPostingPrice } from "@/lib/listing-prices";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
 export async function submitBusiness(formData: FormData) {
@@ -31,8 +40,14 @@ export async function submitBusiness(formData: FormData) {
     throw new Error("You must confirm you have the authority to list this business.");
   }
 
+  const email = (formData.get("email") as string | null)?.trim();
+  if (!email) {
+    throw new Error("The business's own email is required — that's where the confirmation link goes.");
+  }
+
   const priceEur = await getPostingPrice("business");
   const tags = BUSINESS_TAG_KEYS.filter((key) => formData.get(`tag_${key}`) === "on") as BusinessTagKey[];
+  const now = new Date().toISOString();
 
   const { data: created, error } = await supabase
     .from("businesses")
@@ -51,15 +66,37 @@ export async function submitBusiness(formData: FormData) {
       instagram_url: formData.get("instagramUrl") || null,
       facebook_url: formData.get("facebookUrl") || null,
       whatsapp_number: formData.get("whatsappNumber") || null,
+      email,
+      consent_requested_at: now,
       owner_id: user.id,
-      is_active: false, // never publicly visible until Charlie approves
+      is_active: false, // never publicly visible until Charlie approves AND consent is confirmed
       status: priceEur ? "draft" : "pending_review",
     })
-    .select("id")
+    .select("id, name, consent_token")
     .single();
 
   if (error || !created) {
     throw new Error(error?.message ?? "Couldn't save that — try again.");
+  }
+
+  // The consent log (an audit trail, not something a regular user's own
+  // session should be able to write at will) and the email-sent
+  // timestamp both go through the admin client — same reasoning as the
+  // public /consent/[token] actions.
+  const admin = createAdminClient();
+  await admin.from("business_consent_log").insert({
+    business_id: created.id,
+    event_type: "requested",
+    email,
+    token: created.consent_token,
+    consent_method: "email",
+  });
+
+  if (created.consent_token) {
+    const sent = await sendConsentRequestEmail({ to: email, businessName: created.name, token: created.consent_token });
+    if (sent) {
+      await admin.from("businesses").update({ confirmation_email_sent_at: now }).eq("id", created.id);
+    }
   }
 
   if (priceEur) {
