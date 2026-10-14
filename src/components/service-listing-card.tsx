@@ -38,7 +38,7 @@ export function ServiceListingCard({
       )}
       <div className="px-4 pb-4 pt-3.5">
         <div className="mb-1 flex items-start justify-between">
-          <span className="font-mono text-[1.08rem] font-semibold text-ink">
+          <span className="text-[1.08rem] font-semibold text-ink">
             {listing.priceIsEstimate && <span className="mr-1 text-[0.7rem] font-normal text-ink-soft">{t("from")}</span>}
             {currencyFormatter.format(listing.priceEurMonth)}
           </span>
@@ -53,7 +53,7 @@ export function ServiceListingCard({
 
         <p className="mb-2 truncate text-[0.95rem] font-medium text-charcoal">{listing.title}</p>
 
-        <div className="flex flex-wrap gap-3 font-mono text-[0.76rem] text-charcoal/80">
+        <div className="flex flex-wrap gap-3 text-[0.76rem] text-charcoal/80">
           {listing.serviceCategory && (
             <span>{SERVICE_CATEGORY_LABELS[listing.serviceCategory as ServiceCategoryKey] ?? listing.serviceCategory}</span>
           )}
