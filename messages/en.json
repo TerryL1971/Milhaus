@@ -39,6 +39,7 @@
     "languageToggle": "Switch to German",
     "products": "Items for sale",
     "services": "Services",
+    "events": "Events",
     "openMenu": "Open menu",
     "closeMenu": "Close menu"
   },
@@ -489,6 +490,16 @@
   "PostServicePage": {
     "heading": "Offer a service",
     "body": "A few details and some photos — we'll review it, usually the same day, and it goes live on the Services page."
+  },
+  "EventsPage": {
+    "metaTitle": "Events",
+    "metaDescription": "Upcoming events for the American community in Germany — hand-picked by Milhaus, with links to each organizer.",
+    "heading": "Events",
+    "subhead": "What's happening nearby — hand-picked by Milhaus, with links to each organizer."
+  },
+  "EventDetailPage": {
+    "organizedBy": "Organized by",
+    "backToEvents": "← Back to events"
   },
   "SellerCard": {
     "postedBy": "Posted by",

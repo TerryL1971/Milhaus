@@ -53,6 +53,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
       alternates: { languages: withLanguageAlternates("/services") },
     },
+    {
+      // Static entry only, matching /services' own treatment — individual
+      // business pages aren't in here either, since getActiveBusinesses
+      // was never wired into this sitemap. Same gap, not fixed here.
+      url: `${SITE_URL}/events`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.9,
+      alternates: { languages: withLanguageAlternates("/events") },
+    },
     ...rentals.map((listing) => ({
       url: `${SITE_URL}/listings/${listing.id}`,
       lastModified: new Date(listing.updatedAt),

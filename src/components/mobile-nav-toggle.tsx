@@ -81,6 +81,9 @@ export function MobileNavToggle({
             <Link href="/services" className={navLinkClass} onClick={close}>
               {t("services")}
             </Link>
+            <Link href="/events" className={navLinkClass} onClick={close}>
+              {t("events")}
+            </Link>
           </nav>
 
           <div className="flex flex-col gap-2.5">

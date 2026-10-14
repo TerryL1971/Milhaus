@@ -39,6 +39,7 @@
     "languageToggle": "Auf Englisch umschalten",
     "products": "Artikel",
     "services": "Dienstleistungen",
+    "events": "Veranstaltungen",
     "openMenu": "Menü öffnen",
     "closeMenu": "Menü schließen"
   },
@@ -489,6 +490,16 @@
   "PostServicePage": {
     "heading": "Dienstleistung anbieten",
     "body": "Ein paar Details und einige Fotos — wir prüfen es, meist noch am selben Tag, dann geht es auf der Dienstleistungen-Seite live."
+  },
+  "EventsPage": {
+    "metaTitle": "Veranstaltungen",
+    "metaDescription": "Bevorstehende Veranstaltungen für die amerikanische Community in Deutschland — handverlesen von Milhaus, mit Links zu den Veranstaltern.",
+    "heading": "Veranstaltungen",
+    "subhead": "Was in der Nähe passiert — handverlesen von Milhaus, mit Links zu den jeweiligen Veranstaltern."
+  },
+  "EventDetailPage": {
+    "organizedBy": "Veranstalter:",
+    "backToEvents": "← Zurück zu Veranstaltungen"
   },
   "SellerCard": {
     "postedBy": "Inseriert von",

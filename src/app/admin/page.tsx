@@ -110,6 +110,12 @@ export default async function AdminPage() {
               Ad slots
             </Link>
             <Link
+              href="/admin/events"
+              className="rounded-md border border-canvas-deep px-5 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-ink hover:text-ink"
+            >
+              Events
+            </Link>
+            <Link
               href="/admin/listings/new"
               className="rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
             >

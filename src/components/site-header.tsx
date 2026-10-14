@@ -49,7 +49,8 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
         {/* Trimmed from 6 items to 4 — "List your home" and "For
             landlords" moved to the footer only. Fewer, clearer choices is
             itself a discoverability win, on top of the hero's unified
-            search being the primary way to find something now. */}
+            search being the primary way to find something now. Events
+            added back as a 5th per Charlie's ideas slide (2026-10-14). */}
         <nav className="hidden gap-6 whitespace-nowrap text-[0.92rem] font-medium md:flex">
           <Link href="/listings" className="opacity-85 transition-opacity hover:opacity-100">
             {t("homes")}
@@ -62,6 +63,9 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
           </Link>
           <Link href="/services" className="opacity-85 transition-opacity hover:opacity-100">
             {t("services")}
+          </Link>
+          <Link href="/events" className="opacity-85 transition-opacity hover:opacity-100">
+            {t("events")}
           </Link>
         </nav>
 
