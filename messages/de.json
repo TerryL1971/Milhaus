@@ -218,8 +218,8 @@
     "condition": "Zustand",
     "submitSelfListProduct": "Artikel inserieren",
     "submitAdminAddProduct": "Artikel veröffentlichen",
-    "successSelfListProductTitle": "Zur Prüfung eingereicht",
-    "successSelfListProductBody": "Wir schauen es uns an, meist noch am selben Tag, dann geht es auf der Artikel-Seite live.",
+    "successSelfListProductTitle": "Live geschaltet!",
+    "successSelfListProductBody": "Ihr Artikel ist bereits auf der Artikel-Seite live — keine Prüfung nötig.",
     "serviceTitlePlaceholder": "z. B. Lokale Umzugshilfe, PCS-Spezialist",
     "serviceDescriptionPlaceholder": "Was bieten Sie an, und was sollte man vor der Buchung wissen?",
     "servicePrice": "Preis (€)",
@@ -228,8 +228,8 @@
     "serviceCategory": "Kategorie",
     "submitSelfListService": "Dienstleistung inserieren",
     "submitAdminAddService": "Dienstleistung veröffentlichen",
-    "successSelfListServiceTitle": "Zur Prüfung eingereicht",
-    "successSelfListServiceBody": "Wir schauen es uns an, meist noch am selben Tag, dann geht es auf der Dienstleistungen-Seite live.",
+    "successSelfListServiceTitle": "Live geschaltet!",
+    "successSelfListServiceBody": "Ihre Dienstleistung ist bereits auf der Dienstleistungen-Seite live — keine Prüfung nötig.",
     "photos": "Fotos",
     "rightsConfirmation": "Ich bestätige, dass ich zur Veröffentlichung dieser Anzeige berechtigt bin und das Recht habe, die hier angegebenen Fotos, Bilder und Kontaktdaten zu verwenden.",
     "submitSelfList": "Zuhause inserieren",
@@ -240,12 +240,11 @@
     "progressSaving": "Details werden gespeichert…",
     "progressUploading": "Foto {current} von {total} wird hochgeladen…",
     "progressPublishing": "Wird veröffentlicht…",
-    "progressReview": "Wird zur Prüfung eingereicht…",
     "progressCartRedirect": "Wird gespeichert – wird zum Warenkorb hinzugefügt…",
-    "successSelfListTitle": "Zur Prüfung eingereicht",
-    "successSelfListBody": "Wir schauen es uns an, meist noch am selben Tag. Es erscheint auf der Seite, sobald es freigegeben ist.",
-    "successSelfListCarTitle": "Zur Prüfung eingereicht",
-    "successSelfListCarBody": "Wir schauen es uns an, meist noch am selben Tag. Ihre Anzeige erscheint auf der Autos-Seite, sobald sie freigegeben ist.",
+    "successSelfListTitle": "Live geschaltet!",
+    "successSelfListBody": "Ihre Anzeige ist bereits live auf der Seite — keine Prüfung nötig.",
+    "successSelfListCarTitle": "Live geschaltet!",
+    "successSelfListCarBody": "Ihre Anzeige ist bereits live auf der Autos-Seite — keine Prüfung nötig.",
     "successAdminAddTitle": "Angebot veröffentlicht",
     "successAdminAddBody": "Es ist jetzt live auf der Seite.",
     "backToAdmin": "← Zurück zum Admin-Bereich",
@@ -298,7 +297,7 @@
   },
   "PostPage": {
     "heading": "Zuhause inserieren",
-    "body": "Ein paar Details und einige Fotos — wir prüfen es, meist noch am selben Tag, dann geht es live."
+    "body": "Ein paar Details und einige Fotos — es geht sofort live (oder sobald die Zahlung eingegangen ist, falls für diese Kategorie derzeit eine Gebühr anfällt)."
   },
   "SignIn": {
     "heading": "Anmelden",
@@ -424,7 +423,7 @@
   },
   "PostCarPage": {
     "heading": "Auto verkaufen",
-    "body": "Ein paar Details und einige Fotos — wir prüfen es, meist noch am selben Tag, dann geht es auf der Autos-Seite live."
+    "body": "Ein paar Details und einige Fotos — es geht sofort auf der Autos-Seite live (oder sobald die Zahlung eingegangen ist, falls für diese Kategorie derzeit eine Gebühr anfällt)."
   },
   "ProductsPage": {
     "metaTitle": "Artikel zu verkaufen",
@@ -457,7 +456,7 @@
   },
   "PostProductPage": {
     "heading": "Artikel verkaufen",
-    "body": "Ein paar Details und einige Fotos — wir prüfen es, meist noch am selben Tag, dann geht es auf der Artikel-Seite live."
+    "body": "Ein paar Details und einige Fotos — es geht sofort auf der Artikel-Seite live (oder sobald die Zahlung eingegangen ist, falls für diese Kategorie derzeit eine Gebühr anfällt)."
   },
   "ServicesPage": {
     "metaTitle": "Dienstleistungen",
@@ -490,7 +489,7 @@
   },
   "PostServicePage": {
     "heading": "Dienstleistung anbieten",
-    "body": "Ein paar Details und einige Fotos — wir prüfen es, meist noch am selben Tag, dann geht es auf der Dienstleistungen-Seite live."
+    "body": "Ein paar Details und einige Fotos — es geht sofort auf der Dienstleistungen-Seite live (oder sobald die Zahlung eingegangen ist, falls für diese Kategorie derzeit eine Gebühr anfällt)."
   },
   "EventsPage": {
     "metaTitle": "Veranstaltungen",
@@ -629,11 +628,11 @@
     "submit": "Zur Prüfung einreichen",
     "submitWithPrice": "Einreichen und bezahlen (€{price})",
     "successTitle": "Eingereicht",
-    "successBody": "Danke — wir schauen es uns an und veröffentlichen es, meist noch am selben Tag.",
+    "successBody": "Danke — es geht live, sobald das Unternehmen die gerade gesendete Bestätigungs-E-Mail bestätigt hat.",
     "successCta": "Verzeichnis ansehen",
     "postAnother": "Weiteres Unternehmen eintragen",
     "ownerConfirmation": "Ich bestätige, dass ich Inhaber dieses Unternehmens bin oder als bevollmächtigter Vertreter zur Eintragung auf Milhaus berechtigt bin — einschließlich des Rechts, das hier angegebene Logo, Bilder und Kontaktdaten (E-Mail, Telefon, soziale Medien) zu verwenden.",
-    "consentEmailNotice": "Wir senden eine Bestätigungs-E-Mail an die oben angegebene geschäftliche E-Mail-Adresse — diese Anzeige geht erst online, wenn das bestätigt wurde, auch nachdem Charlie sie geprüft hat.",
+    "consentEmailNotice": "Wir senden eine Bestätigungs-E-Mail an die oben angegebene geschäftliche E-Mail-Adresse — diese Anzeige geht erst online, wenn das bestätigt wurde, auch wenn sie bereits bezahlt ist.",
     "ownerConfirmationRequired": "Sie müssen bestätigen, dass Sie zur Eintragung dieses Unternehmens berechtigt sind."
   }
 }

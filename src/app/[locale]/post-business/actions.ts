@@ -3,23 +3,27 @@
 // a real self-serve submission now (see
 // supabase/migrations/20261009120000_...), not just Charlie hand-entering
 // everything. Always starts invisible (is_active=false) and in the same
-// draft -> pending_review pipeline every other listing type uses;
-// Charlie approves it from /admin/businesses, same as reviewing any
-// other submission. No photo upload step like ListingForm has — just a
-// logo URL field — so this stays a plain server action, no client-side
-// multi-step state needed.
+// draft -> pending_review pipeline every other listing type uses. No
+// manual approval step anymore (Charlie's call, 2026-10-15 — see this
+// repo's cart/actions.ts header comment for the full reasoning): it goes
+// active automatically via tryActivateBusiness once it's both paid for
+// and consent-confirmed. No photo upload step like ListingForm has —
+// just a logo URL field — so this stays a plain server action, no
+// client-side multi-step state needed.
 //
 // Also kicks off the real consent flow (supabase/migrations/
 // 20261013180000_add_business_consent_system.sql, ported from Terry's
 // European-Living.live): the business's own email — not the submitter's
 // account, which may belong to a third party — gets a one-time
-// confirmation link. Nothing here skips that just because a submission
-// is also paid for; consent and payment are separate gates.
+// confirmation link. That part hasn't changed — consent still can't be
+// skipped just because a submission is paid for; see tryActivateBusiness
+// in src/lib/businesses-queries.ts for exactly why.
 
 "use server";
 
 import { redirect } from "next/navigation";
 import { BUSINESS_TAG_KEYS, type BusinessTagKey } from "@/lib/businesses";
+import { tryActivateBusiness } from "@/lib/businesses-queries";
 import { sendConsentRequestEmail } from "@/lib/consent-email";
 import { getPostingPrice } from "@/lib/listing-prices";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -106,6 +110,13 @@ export async function submitBusiness(formData: FormData) {
     if (cartError) throw new Error(cartError.message);
     redirect("/cart");
   }
+
+  // Free category, so there's no payment step to trigger this later —
+  // consent is still the only thing it's waiting on (tryActivateBusiness
+  // is a no-op here in practice, since consent was only just requested
+  // above, but every path that could move a business to active goes
+  // through it rather than checking consent_status inline).
+  await tryActivateBusiness(created.id);
 
   redirect("/post-business/success");
 }

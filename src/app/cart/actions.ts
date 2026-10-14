@@ -6,7 +6,13 @@
 // `draft` listing or business, owned by the signed-in caller (ListingForm
 // and the business-posting form both insert into cart_items right after
 // saving their draft) — this just prices and pays for all of them at
-// once, then flips every one to pending_review together.
+// once, then publishes every one. Listings go straight to active —
+// Charlie's call (2026-10-15): with volume potentially in the hundreds a
+// day, payment itself is the gate now, not his manual review; he
+// monitors the live site and takes down anything that's cheating instead
+// (see src/lib/listing-publish.ts for the matching free-listing path).
+// Businesses still can't skip consent, though — see tryActivateBusiness
+// in src/lib/businesses-queries.ts for why that one has to stay.
 //
 // Stripe only, not Stripe + PayPal: Stripe Checkout can itself offer
 // cards, Apple Pay, Google Pay, and PayPal as payment methods (toggle in
@@ -22,6 +28,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getStripe } from "@/lib/stripe";
 import { SITE_URL } from "@/lib/site-url";
+import { tryActivateBusiness } from "@/lib/businesses-queries";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -122,11 +129,13 @@ export async function startCartStripeCheckout() {
 }
 
 /** Called from the Stripe success page once it's confirmed the session
- * actually paid. Flips every listing/business tied to this payment
- * reference to pending_review, and empties the cart for whoever just
- * paid. Idempotent: the `.eq("status", "pending")` / `.eq("status",
- * "draft")` guards mean a repeat call (a refreshed success page) doesn't
- * re-process or error. */
+ * actually paid. Publishes every listing tied to this payment reference
+ * straight to active (payment is the whole gate now — see this file's
+ * header comment), tries to do the same for every business (still needs
+ * consent confirmed too, via tryActivateBusiness), and empties the cart
+ * for whoever just paid. Idempotent: the `.eq("status", "pending")` /
+ * `.eq("status", "draft")` guards mean a repeat call (a refreshed success
+ * page) doesn't re-process or error. */
 export async function settleCartPayment(providerReference: string) {
   const admin = createAdminClient();
 
@@ -150,7 +159,7 @@ export async function settleCartPayment(providerReference: string) {
   if (listingIds.length > 0) {
     await admin
       .from("listings")
-      .update({ status: "pending_review", status_changed_at: new Date().toISOString() })
+      .update({ status: "active", status_changed_at: new Date().toISOString() })
       .in("id", listingIds)
       .eq("status", "draft");
   }
@@ -160,6 +169,12 @@ export async function settleCartPayment(providerReference: string) {
       .update({ status: "pending_review" })
       .in("id", businessIds)
       .eq("status", "draft");
+    // Payment's done — if consent was somehow already confirmed first
+    // (an email reply can beat a slow card issuer, in theory), this is
+    // what actually takes it the rest of the way to active.
+    for (const businessId of businessIds) {
+      await tryActivateBusiness(businessId);
+    }
   }
 
   // Find whoever owns these and clear their cart — a payment reference

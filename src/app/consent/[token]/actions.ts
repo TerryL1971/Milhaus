@@ -9,6 +9,7 @@
 
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { tryActivateBusiness } from "@/lib/businesses-queries";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 async function getRequestIp(): Promise<string | null> {
@@ -45,8 +46,15 @@ export async function confirmConsent(formData: FormData) {
     token,
   });
 
+  // Consent is the one thing standing between a paid business listing and
+  // going live automatically (see tryActivateBusiness) — if payment
+  // already cleared, this is what actually publishes it.
+  await tryActivateBusiness(business.id);
+
   revalidatePath(`/consent/${token}`);
   revalidatePath("/admin/businesses");
+  revalidatePath("/services");
+  revalidatePath("/");
 }
 
 export async function declineConsent(formData: FormData) {

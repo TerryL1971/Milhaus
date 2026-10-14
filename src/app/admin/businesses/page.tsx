@@ -1,11 +1,14 @@
 // src/app/admin/businesses/page.tsx
 // Admin's Businesses page — the Military-Friendly Businesses directory
 // that the public /services page shows. Charlie still adds his own
-// entries directly here, but it's also a real review queue now:
-// self-serve submissions from /post-business land as
-// status='pending_review', is_active=false until he approves one.
-// Rating/review count stay plain numbers he types in — there's no real
-// review system behind them.
+// entries directly here. Self-serve submissions from /post-business land
+// as status='pending_review', is_active=false, same as always — but
+// nothing here needs his click anymore (2026-10-15): tryActivateBusiness
+// (src/lib/businesses-queries.ts) auto-publishes one the moment it's both
+// paid for and consent-confirmed, so "pending_review" now only ever
+// means "still waiting on consent." The Approve button below stays as a
+// manual fallback, not the normal path. Rating/review count stay plain
+// numbers he types in — there's no real review system behind them.
 
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -65,8 +68,9 @@ export default async function AdminBusinessesPage() {
             </h1>
             <p className="max-w-[60ch] text-ink-soft">
               What the public Services page shows — you can add one by hand, or a business submits
-              itself from /post-business and waits here for your approval. Featured ones also show
-              in the homepage's 4-card strip.
+              itself from /post-business and goes live automatically once it&apos;s paid for and the
+              business confirms consent by email — no click needed from you. Featured ones also show
+              in the homepage&apos;s 4-card strip.
             </p>
           </div>
           <Link

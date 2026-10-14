@@ -17,6 +17,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { BUSINESS_CATEGORY_KEYS, BUSINESS_TAG_KEYS, type BusinessCategoryKey, type BusinessTagKey } from "@/lib/businesses";
+import { tryActivateBusiness } from "@/lib/businesses-queries";
 import { sendConsentRequestEmail } from "@/lib/consent-email";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -177,6 +178,11 @@ export async function recordManualConsent(formData: FormData) {
     consent_method: consentMethod,
     note,
   });
+
+  // Same as the emailed-link path (src/app/consent/[token]/actions.ts) —
+  // if this business is only waiting on consent and already paid, this
+  // is what actually publishes it.
+  await tryActivateBusiness(id);
 
   revalidateBusinessPaths();
 }

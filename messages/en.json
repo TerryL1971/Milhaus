@@ -218,8 +218,8 @@
     "condition": "Condition",
     "submitSelfListProduct": "Post item",
     "submitAdminAddProduct": "Publish item",
-    "successSelfListProductTitle": "Submitted for review",
-    "successSelfListProductBody": "We'll take a look, usually the same day, and it'll go live on the Items for sale page.",
+    "successSelfListProductTitle": "You're live!",
+    "successSelfListProductBody": "Your item is already live on the Items for sale page — no review needed.",
     "serviceTitlePlaceholder": "e.g. Local moving help, PCS specialist",
     "serviceDescriptionPlaceholder": "What do you offer, and what should someone know before booking?",
     "servicePrice": "Price (€)",
@@ -228,8 +228,8 @@
     "serviceCategory": "Category",
     "submitSelfListService": "Post service",
     "submitAdminAddService": "Publish service",
-    "successSelfListServiceTitle": "Submitted for review",
-    "successSelfListServiceBody": "We'll take a look, usually the same day, and it'll go live on the Services page.",
+    "successSelfListServiceTitle": "You're live!",
+    "successSelfListServiceBody": "Your service is already live on the Services page — no review needed.",
     "photos": "Photos",
     "rightsConfirmation": "I confirm I have the right to post this listing, and the right to use the photos, images, and contact information I'm submitting here.",
     "submitSelfList": "Post home",
@@ -240,12 +240,11 @@
     "progressSaving": "Saving details…",
     "progressUploading": "Uploading photo {current} of {total}…",
     "progressPublishing": "Publishing…",
-    "progressReview": "Submitting for review…",
     "progressCartRedirect": "Saving — adding to your cart…",
-    "successSelfListTitle": "Submitted for review",
-    "successSelfListBody": "We'll take a look, usually the same day. It'll show up on the site as soon as it's approved.",
-    "successSelfListCarTitle": "Submitted for review",
-    "successSelfListCarBody": "We'll take a look, usually the same day. Your ad will show up on the Cars page as soon as it's approved.",
+    "successSelfListTitle": "You're live!",
+    "successSelfListBody": "Your listing is already live on the site — no review needed.",
+    "successSelfListCarTitle": "You're live!",
+    "successSelfListCarBody": "Your ad is already live on the Cars page — no review needed.",
     "successAdminAddTitle": "Listing published",
     "successAdminAddBody": "It's live on the site now.",
     "backToAdmin": "← Back to admin",
@@ -298,7 +297,7 @@
   },
   "PostPage": {
     "heading": "List your home",
-    "body": "A few details and some photos — we'll review it, usually the same day, and it goes live."
+    "body": "A few details and some photos — it goes live right away (or as soon as payment clears, if this category currently charges a posting fee)."
   },
   "SignIn": {
     "heading": "Sign in",
@@ -424,7 +423,7 @@
   },
   "PostCarPage": {
     "heading": "Sell your car",
-    "body": "A few details and some photos — we'll review it, usually the same day, and it goes live on the Cars page."
+    "body": "A few details and some photos — it goes live right away on the Cars page (or as soon as payment clears, if this category currently charges a posting fee)."
   },
   "ProductsPage": {
     "metaTitle": "Items for sale",
@@ -457,7 +456,7 @@
   },
   "PostProductPage": {
     "heading": "Sell an item",
-    "body": "A few details and some photos — we'll review it, usually the same day, and it goes live on the Items for sale page."
+    "body": "A few details and some photos — it goes live right away on the Items for sale page (or as soon as payment clears, if this category currently charges a posting fee)."
   },
   "ServicesPage": {
     "metaTitle": "Services",
@@ -490,7 +489,7 @@
   },
   "PostServicePage": {
     "heading": "Offer a service",
-    "body": "A few details and some photos — we'll review it, usually the same day, and it goes live on the Services page."
+    "body": "A few details and some photos — it goes live right away on the Services page (or as soon as payment clears, if this category currently charges a posting fee)."
   },
   "EventsPage": {
     "metaTitle": "Events",
@@ -629,11 +628,11 @@
     "submit": "Submit for review",
     "submitWithPrice": "Submit and pay (€{price})",
     "successTitle": "Submitted",
-    "successBody": "Thanks — we'll take a look and get it listed, usually the same day.",
+    "successBody": "Thanks — it'll go live as soon as the business confirms the consent email we just sent.",
     "successCta": "View the directory",
     "postAnother": "List another business",
     "ownerConfirmation": "I confirm I am the owner of this business, or an authorized representative with permission to list it on Milhaus — including the right to use any logo, image, and contact information (email, phone, social media) submitted here.",
-    "consentEmailNotice": "We'll send a confirmation email to the business email address above — this listing won't go live until that's confirmed, even after Charlie reviews it.",
+    "consentEmailNotice": "We'll send a confirmation email to the business email address above — this listing won't go live until that's confirmed, even once it's paid for.",
     "ownerConfirmationRequired": "You must confirm you have the authority to list this business."
   }
 }

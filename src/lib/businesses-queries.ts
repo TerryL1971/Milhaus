@@ -105,3 +105,36 @@ export async function getBusinessByConsentToken(token: string) {
   if (error || !data) return null;
   return mapRow(data);
 }
+
+/** Charlie's call (2026-10-15): he doesn't want to manually approve every
+ * paid business submission once postings reach real volume — but unlike
+ * a self-listed home/car/item, a business listing names a third party,
+ * so [[legal-third-party-listing-risk]]'s consent requirement can't be
+ * waived just because payment cleared. This is the one thing that still
+ * has to gate going live, and it's a yes/no fact (has the business
+ * confirmed it's really being listed with permission?), not a judgment
+ * call Charlie has to make — so it's checked here automatically instead
+ * of needing his click.
+ *
+ * Call this after whichever of {payment, consent} might have just
+ * become true — settleCartPayment (src/app/cart/actions.ts),
+ * confirmConsent (src/app/consent/[token]/actions.ts), and
+ * recordManualConsent (src/app/admin/businesses/actions.ts) all do.
+ * Whichever one finishes last is what actually flips it live; the other
+ * is a no-op since the row isn't in the right state yet. No DB trigger
+ * enforces this the way listings' enforce_listing_review_gate does, so
+ * every write that could move a business to 'active' needs to go
+ * through this one function rather than setting status inline. */
+export async function tryActivateBusiness(businessId: string) {
+  const admin = createAdminClient();
+  const { data: business } = await admin
+    .from("businesses")
+    .select("status, consent_status")
+    .eq("id", businessId)
+    .maybeSingle();
+  if (!business) return;
+  if (business.status !== "pending_review") return;
+  if (business.consent_status !== "confirmed") return;
+
+  await admin.from("businesses").update({ status: "active" }).eq("id", businessId);
+}

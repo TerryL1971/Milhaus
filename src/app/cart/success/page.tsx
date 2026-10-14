@@ -46,8 +46,8 @@ function Confirmation() {
       <div className="mx-auto max-w-[480px] px-8 text-center">
         <p className="mb-2 font-display text-xl font-semibold text-ink">Payment received</p>
         <p className="mb-4 text-sm text-ink-soft">
-          Everything in your cart has been submitted for review — we'll take a look, usually the same
-          day.
+          Listings are live now. Any business listing goes live as soon as its consent email is
+          confirmed.
         </p>
         <Link href="/my-listings" className="text-sm font-semibold text-olive-deep hover:underline">
           Go to My listings

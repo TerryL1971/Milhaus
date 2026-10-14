@@ -28,6 +28,7 @@ import { useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { AMENITY_KEYS } from "@/lib/amenities";
 import { BASE_NAMES } from "@/lib/bases";
+import { publishFreeListing } from "@/lib/listing-publish";
 import { NEARBY_AMENITY_KEYS } from "@/lib/nearby-amenities";
 import { CONDITION_KEYS, CONDITION_LABELS, PRODUCT_CATEGORY_KEYS, PRODUCT_CATEGORY_LABELS } from "@/lib/product-categories";
 import { SERVICE_CATEGORY_KEYS, SERVICE_CATEGORY_LABELS } from "@/lib/service-categories";
@@ -196,14 +197,17 @@ export function ListingForm({
     }
 
     const needsPayment = !isAdminAdd && !!priceEur && priceEur > 0;
-    setProgress(
-      isAdminAdd ? t("progressPublishing") : needsPayment ? t("progressCartRedirect") : t("progressReview"),
-    );
+    setProgress(needsPayment ? t("progressCartRedirect") : t("progressPublishing"));
     const { error: updateError } = await supabase
       .from("listings")
       // A listing with a fee owing stays in draft — ListingForm's job
       // ends at "saved and added to your cart," /cart is what moves it
-      // to pending_review once payment actually goes through.
+      // straight to active once payment actually goes through (see
+      // settleCartPayment). A free self-listing lands on pending_review
+      // here only for the instant it takes publishFreeListing (below) to
+      // flip it — the DB's review-gate trigger blocks this component's
+      // own session from setting status=active directly, so that runs
+      // server-side instead.
       .update({ photos: photoUrls, status: needsPayment ? "draft" : isAdminAdd ? "active" : "pending_review" })
       .eq("id", listingId);
 
@@ -224,6 +228,20 @@ export function ListingForm({
       }
       router.push("/cart");
       return;
+    }
+
+    if (!isAdminAdd) {
+      // Charlie's call (2026-10-15): with postings potentially reaching
+      // hundreds a day, he doesn't want to manually approve every free
+      // one — he'll monitor the live site and take down anything that's
+      // cheating instead. No price owed, so nothing further to wait on.
+      try {
+        await publishFreeListing(listingId);
+      } catch (error) {
+        setStatus("error");
+        setErrorMessage(error instanceof Error ? error.message : t("saveFailed"));
+        return;
+      }
     }
 
     setStatus("success");
