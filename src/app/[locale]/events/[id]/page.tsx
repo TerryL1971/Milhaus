@@ -41,8 +41,17 @@ export default async function EventDetailPage({ params }: { params: Params }) {
   return (
     <main className="flex-1 pb-14">
       {event.coverImageUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element -- external cover image URL
-        <img src={event.coverImageUrl} alt="" className="h-56 w-full object-cover sm:h-72" />
+        // object-contain, not object-cover — a lot of event covers are
+        // flyers (logo/text/QR code throughout, not a photo that tolerates
+        // a crop), and most are nowhere near this banner's full-bleed
+        // width, so object-cover was both cropping content off and
+        // upscaling the image until it looked stretched/blurry. The
+        // canvas-deep background fills in the letterboxing instead of
+        // leaving it blank.
+        <div className="flex h-56 w-full items-center justify-center bg-canvas-deep sm:h-72">
+          {/* eslint-disable-next-line @next/next/no-img-element -- external cover image URL */}
+          <img src={event.coverImageUrl} alt="" className="h-full w-full object-contain" />
+        </div>
       ) : (
         <div className="h-56 w-full sm:h-72" style={{ background: COVER_GRADIENT }} />
       )}

@@ -21,8 +21,13 @@ export function EventCard({ event }: { event: Event }) {
     >
       <div className="relative">
         {event.coverImageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL
-          <img src={event.coverImageUrl} alt="" className="aspect-[16/9] w-full object-cover" />
+          // object-contain, not object-cover — same reasoning as the
+          // detail page's cover (src/app/[locale]/events/[id]/page.tsx):
+          // event covers are often flyers, not photos that tolerate a crop.
+          <div className="flex aspect-[16/9] w-full items-center justify-center bg-canvas-deep">
+            {/* eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL */}
+            <img src={event.coverImageUrl} alt="" className="h-full w-full object-contain" />
+          </div>
         ) : (
           <div className="aspect-[16/9]" style={{ background: PHOTO_GRADIENT }} />
         )}
