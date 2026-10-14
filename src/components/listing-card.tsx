@@ -90,11 +90,15 @@ export function ListingCard({
         {/* Price and the bed/bath/sqm row below used to be font-mono, per
             CLAUDE.md's original design tokens ("Mono font: prices, specs,
             labels, eyebrows") — Charlie's later ask was to move away from
-            that for these two specifically; small uppercase pill badges
-            (status chip, amenity/feature tags) are untouched and still
-            mono, same as every other card type. */}
+            that for these two specifically, matching his own reference
+            mockup's card sample. Explicit font-body (IBM Plex Sans, the
+            project's body font — see globals.css) rather than just
+            dropping font-mono and relying on inheriting it from <body>,
+            so the choice is visible here, not implicit. Small uppercase
+            pill badges (status chip, amenity/feature tags) are untouched
+            and still mono, same as every other card type. */}
         <div className="mb-1 flex items-start justify-between">
-          <span className="text-[1.08rem] font-semibold text-ink">
+          <span className="font-body text-[1.08rem] font-semibold text-ink">
             {currencyFormatter.format(listing.priceEurMonth)} {t("perMonth")}
           </span>
           <span
@@ -113,7 +117,7 @@ export function ListingCard({
           {listing.distanceToBase ? ` · ${listing.distanceToBase}` : ""}
         </p>
 
-        <div className="flex gap-3 text-[0.76rem] text-charcoal/80">
+        <div className="flex gap-3 font-body text-[0.76rem] text-charcoal/80">
           <span>{listing.bedrooms} {t("bed")}</span>
           <span>{listing.bathrooms} {t("bath")}</span>
           {listing.sizeSqm != null && <span>{listing.sizeSqm} m²</span>}
