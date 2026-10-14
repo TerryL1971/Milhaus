@@ -1,8 +1,10 @@
 // src/components/cars-grid.tsx
 // The /cars browse grid — the Unified Category UX spec's top filter bar:
-// Base 📍, Category Specifics 🏷 (make/year), Price 💰, Features/Badges ⭐
-// (transmission, US/EU spec) dropdown clusters, a keyword box, and an
-// explicit Apply Filters button. Make and year options are derived from
+// Base 📍, Category Specifics 🏷 (make/year), Price 💰, Transmission /
+// Spec ⭐ (renamed from the generic "Features/Badges" label the spec's
+// other grids still use — Charlie's ask, this cluster is specifically
+// transmission + US/EU spec, not tags) dropdown clusters, a keyword box,
+// and an explicit Apply Filters button. Make and year options are derived from
 // whatever's actually listed rather than a fixed list — unlike bases,
 // "every car make/year that could ever be sold here" isn't a fixed,
 // known set.
@@ -194,8 +196,11 @@ export function CarsGrid({
           />
         </FilterCluster>
 
+        {/* Own label, not the shared tFilter("filterFeatures") every
+            other grid's ⭐ cluster uses (tags/badges) — this one is
+            specifically Transmission + Spec, per Charlie's ask. */}
         <FilterCluster
-          label={tFilter("filterFeatures")}
+          label={t("filterTransmissionSpec")}
           icon="⭐"
           badge={pending.transmission.length + pending.spec.length || undefined}
         >

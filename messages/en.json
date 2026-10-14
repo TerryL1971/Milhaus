@@ -396,6 +396,7 @@
     "filterYear": "Year",
     "filterTransmission": "Transmission",
     "filterUsSpec": "Spec",
+    "filterTransmissionSpec": "Transmission / Spec",
     "transOptAutomatic": "Automatic",
     "transOptManual": "Manual",
     "specOptUs": "US spec",

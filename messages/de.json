@@ -396,6 +396,7 @@
     "filterYear": "Baujahr",
     "filterTransmission": "Getriebe",
     "filterUsSpec": "Ausführung",
+    "filterTransmissionSpec": "Getriebe / Ausführung",
     "transOptAutomatic": "Automatik",
     "transOptManual": "Schaltgetriebe",
     "specOptUs": "US-Ausführung",
