@@ -104,15 +104,18 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
                   asked for. Outlined, not solid — the mockup's solid-red
                   treatment is reserved for "Log In", the one action that
                   should draw the eye most when logged out. */}
+              {/* text-base, not text-sm — Charlie's "Big Letters" ask
+                  (his ideas slide) for these two specifically; every
+                  other nav link/button stays at its existing size. */}
               <Link
                 href="/post-ad"
-                className="rounded-md border border-paper/35 px-5 py-2.5 text-sm font-semibold transition-[transform,box-shadow] hover:-translate-y-px hover:border-paper/70"
+                className="rounded-md border border-paper/35 px-5 py-2.5 text-base font-semibold transition-[transform,box-shadow] hover:-translate-y-px hover:border-paper/70"
               >
                 {t("postAd")}
               </Link>
               <Link
                 href="/sign-in"
-                className="rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+                className="rounded-md bg-brass px-5 py-2.5 text-base font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
               >
                 {t("signIn")}
               </Link>
@@ -121,7 +124,7 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
           {user && (
             <Link
               href="/post-ad"
-              className="rounded-md border border-paper/35 px-5 py-2.5 text-sm font-semibold transition-[transform,box-shadow] hover:-translate-y-px hover:border-paper/70"
+              className="rounded-md border border-paper/35 px-5 py-2.5 text-base font-semibold transition-[transform,box-shadow] hover:-translate-y-px hover:border-paper/70"
             >
               {t("postAd")}
             </Link>

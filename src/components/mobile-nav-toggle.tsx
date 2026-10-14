@@ -24,6 +24,14 @@ import { Link } from "@/i18n/navigation";
 const navLinkClass = "block py-2.5 text-[0.95rem] font-medium opacity-85 transition-opacity hover:opacity-100";
 const actionLinkClass =
   "block rounded-md border border-paper/35 px-4 py-2.5 text-center text-sm font-semibold transition-[transform,box-shadow] hover:-translate-y-px hover:border-paper/70";
+// "Post An Ad" and "Log In" specifically, per Charlie's "Big Letters" ask
+// (his ideas slide) — bigger than the rest of this menu's action rows
+// (Admin/My Listings/Sign out keep actionLinkClass as-is), same base
+// style otherwise. A separate constant rather than appending text-base
+// to actionLinkClass in the className string — Tailwind doesn't
+// guarantee the later class in a concatenated string wins over an
+// earlier conflicting one.
+const ctaLinkClass = actionLinkClass.replace("text-sm", "text-base");
 
 type MobileNavToggleProps = {
   translatedPage: boolean;
@@ -92,7 +100,7 @@ export function MobileNavToggle({
                   <Avatar name={accountName} photoUrl={accountPhotoUrl} size="sm" />
                   {accountName}
                 </Link>
-                <Link href="/post-ad" className={actionLinkClass} onClick={close}>
+                <Link href="/post-ad" className={ctaLinkClass} onClick={close}>
                   {t("postAd")}
                 </Link>
                 <form action="/auth/sign-out" method="post">
@@ -103,12 +111,12 @@ export function MobileNavToggle({
               </>
             ) : (
               <>
-                <Link href="/post-ad" className={actionLinkClass} onClick={close}>
+                <Link href="/post-ad" className={ctaLinkClass} onClick={close}>
                   {t("postAd")}
                 </Link>
                 <Link
                   href="/sign-in"
-                  className="block rounded-md bg-brass px-4 py-2.5 text-center text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+                  className="block rounded-md bg-brass px-4 py-2.5 text-center text-base font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
                   onClick={close}
                 >
                   {t("signIn")}
