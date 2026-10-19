@@ -60,7 +60,11 @@ export async function SiteFooter() {
     {
       heading: t("aboutHeading"),
       links: [
-        { label: t("contact"), href: "#" },
+        // Impressum stays a dead link — that needs a real registered
+        // business name/address from Charlie (German TMG §5 legal notice
+        // requirement), not just an email, still pending per
+        // launch-blockers-pending.
+        { label: t("contact"), href: "mailto:info@milhaus.de" },
         { label: t("impressum"), href: "#" },
       ],
     },

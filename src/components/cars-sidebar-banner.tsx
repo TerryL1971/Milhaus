@@ -33,7 +33,7 @@ const FALLBACK_AD: AdSlot = {
   imageUrl: null,
   heading: "Advertise here",
   bodyText: "Click to find out how",
-  linkUrl: "mailto:hello@example.com?subject=Advertising%20on%20Milhaus",
+  linkUrl: "mailto:info@milhaus.de?subject=Advertising%20on%20Milhaus",
   isActive: true,
   sortOrder: 0,
   createdAt: "",

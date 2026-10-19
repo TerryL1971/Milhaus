@@ -64,11 +64,8 @@ export default async function ForLandlordsPage() {
               {t("multiUnitHeading")}
             </h2>
             <p className="mb-6 flex-1 text-sm text-ink-soft">{t("multiUnitBody")}</p>
-            {/* TODO(charlie): swap for a real inbox before launch — this
-                placeholder deliberately uses the reserved example.com domain
-                (RFC 2606) so it can't accidentally email a real stranger. */}
             <a
-              href="mailto:hello@example.com"
+              href="mailto:info@milhaus.de"
               className="inline-block w-fit rounded-md border border-ink px-5 py-2.5 text-sm font-semibold text-ink transition-[transform,box-shadow] hover:-translate-y-px hover:border-brass hover:text-brass-deep"
             >
               {t("multiUnitCta")}
@@ -111,7 +108,7 @@ export default async function ForLandlordsPage() {
               {t("ctaListButton")}
             </Link>
             <a
-              href="mailto:hello@example.com"
+              href="mailto:info@milhaus.de"
               className="inline-block rounded-md border border-paper/50 px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:border-paper"
             >
               {t("ctaContactButton")}
