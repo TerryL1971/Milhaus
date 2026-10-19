@@ -61,17 +61,38 @@ const PHOTO_GRADIENTS = [
 // make an otherwise-good match miss — accepted as the better failure
 // mode than the noise AND replaces.
 //
-// Words under 2 characters are dropped first — found this the hard way
-// testing "2024 Mercedes 400 GLC e" against an unrelated Toyota
-// listing: the lone "e" token is a substring of almost any text at all
-// ("Camry SE", "Böblingen", ...), so a single stray letter from a model
-// name was enough to match everything. Numbers like "2024" or "400"
-// are long enough to stay meaningful and aren't affected.
+// Words under 2 characters are dropped first (numbers are exempt — see
+// below) — found this the hard way testing "2024 Mercedes 400 GLC e"
+// against an unrelated Toyota listing: the lone "e" token is a
+// substring of almost any text at all ("Camry SE", "Böblingen", ...),
+// so a single stray letter from a model name was enough to match
+// everything.
+//
+// Matching is whole-word, not "is this text found anywhere in the
+// field" — AND-across-words (above) stopped a propane grill from
+// matching "3 bedroom house" via its "Household" category, but plain
+// substring matching alone still let "2 door car"/"4 door car"/bare
+// "car" all match a photography *service* listing, because its own
+// description happens to read "...holiday cards" (contains "car") and
+// "Outdoor or in-home..." (contains "door"). Word-boundary matching
+// (\b) treats "car" and "cards", or "door" and "outdoor", as the
+// different words they actually are. The trade-off this introduces: a
+// compound like "townhouse" no longer matches a bare "house" query,
+// since "house" isn't its own separate word there — accepted, since
+// letting "car" match inside "cards" caused real, repeated false
+// positives on one of the four main listing types, a worse failure
+// than a townhouse not surfacing for the single word "house" alone
+// (multi-word queries like "3 bedroom house" still find it fine, since
+// "bedroom" alone already narrows correctly).
+function escapeForRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 function matchesAllWords(fields: (string | null | undefined)[], q: string): boolean {
-  const words = q.split(/\s+/).filter((word) => word.length >= 2);
+  const words = q.split(/\s+/).filter((word) => word.length >= 2 || /^\d+$/.test(word));
   if (words.length === 0) return true;
   const haystack = fields.filter(Boolean).join(" \u0000 ").toLowerCase();
-  return words.every((word) => haystack.includes(word));
+  return words.every((word) => new RegExp(`\\b${escapeForRegExp(word)}\\b`).test(haystack));
 }
 
 // "3 bed", "3 bedroom(s)" (and the bathroom equivalents) are pulled out
@@ -113,6 +134,19 @@ function matches(listing: Listing, q: string): boolean {
     listing.make,
     listing.model,
     listing.year != null ? String(listing.year) : null,
+    // A bare "car" search has nothing else to go on — unlike products/
+    // services below, nothing in a car's own title/make/model
+    // necessarily contains the literal word "car" (e.g. "2019 Toyota
+    // Camry SE" doesn't), so without this, the only way bare "car" ever
+    // matched anything was a coincidental substring hit elsewhere
+    // (fixed above) rather than a real one. Tried the equivalent "home"
+    // for rentals too, but dropped it — rentals' own titles/descriptions
+    // already say "home"/"house"/"apartment" often enough on their own
+    // (no equivalent total gap the way cars have), and all it added was
+    // new noise: "home" is also a perfectly real word several *service*
+    // listings' own descriptions use ("in-home sessions", etc.), so it
+    // started pulling those in too.
+    listing.type === "car" ? "car" : null,
   ];
   if (listing.productCategory) {
     fields.push(PRODUCT_CATEGORY_LABELS[listing.productCategory as ProductCategoryKey]);
