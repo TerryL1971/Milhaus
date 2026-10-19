@@ -118,13 +118,24 @@ export default async function Home() {
 
             <form
               action={searchAction}
-              className="flex flex-col gap-2.5 rounded-md bg-paper p-3.5 shadow-[0_14px_34px_rgba(0,0,0,0.3)] sm:flex-row sm:items-center"
+              className="flex flex-col flex-wrap gap-2.5 rounded-md bg-paper p-3.5 shadow-[0_14px_34px_rgba(0,0,0,0.3)] sm:flex-row sm:items-center"
             >
+              {/* min-w-[240px] (not min-w-0) — on the lg-and-up hero
+                  column (capped at 620px so the text/search card sits over
+                  open sky instead of the photo's left side, see the
+                  container above), this row's other three controls
+                  (category select, location select, submit button) could
+                  crush this input well below the width its own placeholder
+                  needs, truncating "What are you looking for?" to
+                  whatever fit — not wrapped, just cut off at the box edge.
+                  flex-wrap on the form lets the row break to a second line
+                  instead, if it ever comes to that, rather than squeezing
+                  this past a legible minimum. */}
               <input
                 type="search"
                 name="q"
                 placeholder={t("heroSearchPlaceholder")}
-                className="min-w-0 flex-[1.4] rounded-md border border-canvas-deep bg-canvas px-4 py-2.5 text-[0.95rem] text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none"
+                className="min-w-[240px] flex-[1.4] rounded-md border border-canvas-deep bg-canvas px-4 py-2.5 text-[0.95rem] text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none"
               />
               <select
                 name="category"
