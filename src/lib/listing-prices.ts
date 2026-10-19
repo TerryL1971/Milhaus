@@ -8,6 +8,7 @@
 // included as a 5th priced category alongside the original four.
 
 import { createClient } from "@/lib/supabase/server";
+import { getFreeUntilStatus } from "@/lib/site-settings";
 
 export type PriceableType = "rental" | "car" | "product" | "service" | "business";
 export type ListingPrices = Record<PriceableType, number>;
@@ -43,9 +44,13 @@ export async function getListingPrice(type: PriceableType): Promise<number> {
 /** The one check every /post-* page needs before rendering its form:
  * does this category currently cost something? Returns the price to
  * show a "pay to post" gate for, or null if Charlie's left this
- * category free (price is 0) and the form should just submit straight
- * to pending_review like it always did. */
+ * category free (price is 0), or the site-wide launch promo
+ * (site_settings.free_until) is still running, and the form should just
+ * submit straight to pending_review like it always did. */
 export async function getPostingPrice(type: PriceableType): Promise<number | null> {
+  const { isActive } = await getFreeUntilStatus();
+  if (isActive) return null;
+
   const price = await getListingPrice(type);
   return price > 0 ? price : null;
 }

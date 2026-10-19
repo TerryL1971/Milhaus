@@ -35,3 +35,26 @@ export async function setListingPrice(formData: FormData) {
   }
   revalidatePath("/admin/pricing");
 }
+
+/** The site-wide "everything's free until..." launch promo — one date,
+ * applies to every category regardless of its own configured price (see
+ * getPostingPrice in src/lib/listing-prices.ts). Empty input clears it. */
+export async function setFreeUntil(formData: FormData) {
+  const raw = formData.get("freeUntil") as string;
+  const freeUntil = raw ? new Date(raw).toISOString() : null;
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("site_settings")
+    .update({ free_until: freeUntil, updated_at: new Date().toISOString() })
+    .eq("id", true)
+    .select("id");
+
+  if (error) {
+    throw new Error(error.message);
+  }
+  if (!data || data.length === 0) {
+    throw new Error("That didn't go through — you may not have permission to do this.");
+  }
+  revalidatePath("/admin/pricing");
+}
