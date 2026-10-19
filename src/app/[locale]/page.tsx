@@ -165,7 +165,14 @@ export default async function Home() {
               <select
                 name="base"
                 defaultValue=""
-                className="flex-none rounded-md border border-canvas-deep bg-canvas py-2.5 pl-2.5 pr-1 text-sm text-charcoal focus:border-olive focus:outline-none"
+                // w-28, not left to size itself: a plain <select> auto-
+                // sizes to its *widest option* (BASE_NAMES has
+                // "Kaiserslautern", 14 characters), not the much shorter
+                // "Location" placeholder actually shown — that's what
+                // read as too much padding. A real selection longer than
+                // this box just displays truncated, same trade-off any
+                // fixed-width select makes.
+                className="w-28 flex-none rounded-md border border-canvas-deep bg-canvas py-2.5 pl-2.5 pr-1 text-sm text-charcoal focus:border-olive focus:outline-none"
               >
                 <option value="">{t("heroLocationPlaceholder")}</option>
                 {BASE_NAMES.map((base) => (
