@@ -156,8 +156,8 @@ export default async function Home() {
                 <option value="product">{t("heroCategoryItems")}</option>
                 <option value="service">{t("heroCategoryServices")}</option>
               </select>
-              {/* A fixed-list <select> rather than free-text — "Location /
-                  Base" in the mockup reads like it could be freeform/
+              {/* A fixed-list <select> rather than free-text — "Location"
+                  in the mockup reads like it could be freeform/
                   autocomplete, but this site only ever filters by the same
                   fixed set of bases everywhere else, so a select keeps
                   this consistent rather than accepting text that wouldn't
