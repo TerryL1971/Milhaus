@@ -119,70 +119,67 @@ export default async function Home() {
               {t("subhead")}
             </p>
 
-            {/* Two explicit rows, not one flex-wrap row that only breaks
-                once an item's own min-width forces it to — that let the
-                location select get squeezed down to a sliver ("Lo...")
-                once the search input's own min-width (below) claimed its
-                share first, since nothing stopped it shrinking toward
-                zero with flex-1's flex-basis:0. Four controls competing
-                for this card's ~580px of content width (the hero column
-                is capped at 620px so it sits over open sky, see the
-                container above) never left enough for all of them on one
-                line anyway — splitting into "search bar" / "filters +
-                button" rows gives each row's controls a fair, predictable
-                share instead of an implicit, fragile wrap. */}
+            {/* Back to one line (Terry's call) from sm: up — stacks below
+                that. Fitting all four controls legibly inside the lg+
+                hero column (capped at 620px so the card sits over open
+                sky, see the container above) left ~590px of content
+                width total, genuinely tight for four controls: the three
+                non-input ones (category/location/button) are flex-none,
+                sized to their own short text (the location select's 📍
+                icon was dropped — it cost ~25px of padding this layout
+                can't spare), so the search input — the one thing that
+                actually needs the most room — gets whatever's left via
+                flex-1, with min-w-[170px] as a floor rather than letting
+                it shrink toward zero the way flex-1 alone would. If this
+                is ever a few px over on the narrowest lg-width browsers,
+                the card just renders a hair wider than 620px (no
+                overflow-hidden on the column above) rather than clipping
+                anything — a safer failure mode than truncated text. */}
             <form
               action={searchAction}
-              className="flex flex-col gap-2.5 rounded-md bg-paper p-3.5 shadow-[0_14px_34px_rgba(0,0,0,0.3)]"
+              className="flex flex-col gap-2 rounded-md bg-paper p-3.5 shadow-[0_14px_34px_rgba(0,0,0,0.3)] sm:flex-row sm:items-center"
             >
               <input
                 type="search"
                 name="q"
                 placeholder={t("heroSearchPlaceholder")}
-                className="w-full rounded-md border border-canvas-deep bg-canvas px-4 py-2.5 text-[0.95rem] text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none"
+                className="min-w-[170px] flex-1 rounded-md border border-canvas-deep bg-canvas px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none"
               />
-              <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center">
-                <select
-                  name="category"
-                  defaultValue=""
-                  className="rounded-md border border-canvas-deep bg-canvas px-3 py-2.5 text-sm text-charcoal focus:border-olive focus:outline-none sm:flex-1"
-                >
-                  <option value="">{t("heroAllCategories")}</option>
-                  <option value="rental">{t("heroCategoryRentals")}</option>
-                  <option value="car">{t("heroCategoryCars")}</option>
-                  <option value="product">{t("heroCategoryItems")}</option>
-                  <option value="service">{t("heroCategoryServices")}</option>
-                </select>
-                {/* A fixed-list <select> rather than free-text — "Location /
-                    Garrison / Base" in the mockup reads like it could be
-                    freeform/autocomplete, but this site only ever filters by
-                    the same fixed set of bases everywhere else, so a select
-                    keeps this consistent rather than accepting text that
-                    wouldn't actually match anything. */}
-                <span className="relative sm:flex-1">
-                  <span aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft/60">
-                    📍
-                  </span>
-                  <select
-                    name="base"
-                    defaultValue=""
-                    className="w-full rounded-md border border-canvas-deep bg-canvas py-2.5 pl-8 pr-3 text-sm text-charcoal focus:border-olive focus:outline-none"
-                  >
-                    <option value="">{t("heroLocationPlaceholder")}</option>
-                    {BASE_NAMES.map((base) => (
-                      <option key={base} value={base}>
-                        {base}
-                      </option>
-                    ))}
-                  </select>
-                </span>
-                <button
-                  type="submit"
-                  className="flex-none whitespace-nowrap rounded-md bg-brass px-6 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
-                >
-                  {t("searchButton")}
-                </button>
-              </div>
+              <select
+                name="category"
+                defaultValue=""
+                className="flex-none rounded-md border border-canvas-deep bg-canvas px-2.5 py-2.5 text-sm text-charcoal focus:border-olive focus:outline-none"
+              >
+                <option value="">{t("heroAllCategories")}</option>
+                <option value="rental">{t("heroCategoryRentals")}</option>
+                <option value="car">{t("heroCategoryCars")}</option>
+                <option value="product">{t("heroCategoryItems")}</option>
+                <option value="service">{t("heroCategoryServices")}</option>
+              </select>
+              {/* A fixed-list <select> rather than free-text — "Location /
+                  Base" in the mockup reads like it could be freeform/
+                  autocomplete, but this site only ever filters by the same
+                  fixed set of bases everywhere else, so a select keeps
+                  this consistent rather than accepting text that wouldn't
+                  actually match anything. */}
+              <select
+                name="base"
+                defaultValue=""
+                className="flex-none rounded-md border border-canvas-deep bg-canvas px-2.5 py-2.5 text-sm text-charcoal focus:border-olive focus:outline-none"
+              >
+                <option value="">{t("heroLocationPlaceholder")}</option>
+                {BASE_NAMES.map((base) => (
+                  <option key={base} value={base}>
+                    {base}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="submit"
+                className="flex-none whitespace-nowrap rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+              >
+                {t("searchButton")}
+              </button>
             </form>
 
             <div className="mt-4 flex flex-wrap items-end justify-between gap-3">
