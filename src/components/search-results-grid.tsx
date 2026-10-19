@@ -23,7 +23,7 @@ import { EventCard } from "@/components/event-card";
 import { ListingCard } from "@/components/listing-card";
 import { ProductListingCard } from "@/components/product-listing-card";
 import { ServiceListingCard } from "@/components/service-listing-card";
-import type { Business } from "@/lib/businesses";
+import { BUSINESS_CATEGORY_LABELS, type Business } from "@/lib/businesses";
 import type { Event } from "@/lib/events";
 import { PRODUCT_CATEGORY_LABELS, type ProductCategoryKey } from "@/lib/product-categories";
 import { SERVICE_CATEGORY_LABELS, type ServiceCategoryKey } from "@/lib/service-categories";
@@ -36,13 +36,54 @@ const PHOTO_GRADIENTS = [
   "linear-gradient(135deg,#D3C6A6,#9AA37E)",
 ];
 
+// Word-by-word OR matching, not "does the whole typed phrase appear
+// verbatim somewhere" — Terry's report: "Baby items", "2024 Mercedes 400
+// GLC e", and "3 bedroom house" all found nothing for listings that
+// should've matched. Requiring the entire query as one literal substring
+// is brittle the moment someone's phrasing doesn't line up with the
+// stored text — "Baby items" was never going to appear verbatim
+// anywhere, only the category label "Baby & kids" does; "3 bedroom
+// house" doesn't match a hyphenated "3-bedroom house" title. Splitting
+// the query into words and matching if *any* one of them turns up
+// anywhere across the combined fields is strictly more forgiving than
+// the old whole-phrase check (every phrase that used to match still
+// does — each of its words is trivially a substring of it too) while
+// actually finding things a real visitor's loose, casual phrasing was
+// always going to produce. False positives are the acceptable failure
+// mode here, not false "nothing found"s, for a small community
+// marketplace rather than a large noisy catalog. Words under 2
+// characters are dropped first, though — found this the hard way
+// testing "2024 Mercedes 400 GLC e" against an unrelated Toyota
+// listing: the lone "e" token is a substring of almost any text at all
+// ("Camry SE", "Böblingen", ...), so a single stray letter from a model
+// name was enough to match everything. Numbers like "2024" or "400"
+// are long enough to stay meaningful and aren't affected.
+function matchesAnyWord(fields: (string | null | undefined)[], q: string): boolean {
+  const words = q.split(/\s+/).filter((word) => word.length >= 2);
+  if (words.length === 0) return true;
+  const haystack = fields.filter(Boolean).join(" \u0000 ").toLowerCase();
+  return words.some((word) => haystack.includes(word));
+}
+
+// Matches "3 bed", "3 bedroom", "3 bedrooms" (and the bathroom
+// equivalents) against the actual bedrooms/bathrooms *count* — word
+// matching alone would need the literal word "bed" to appear somewhere,
+// which nothing in a listing's own text necessarily contains even when
+// it genuinely has 3 bedrooms. A query carries at most one of each —
+// nobody searches "3 bed 4 bed" — so a single capture per pattern is
+// enough.
+const BEDROOM_QUERY = /(\d+)\s*bed(?:room)?s?\b/;
+const BATHROOM_QUERY = /(\d+)\s*bath(?:room)?s?\b/;
+
 function matches(listing: Listing, q: string): boolean {
   const fields: (string | null | undefined)[] = [
     listing.title,
+    listing.description,
     listing.city,
     listing.address,
     listing.make,
     listing.model,
+    listing.year != null ? String(listing.year) : null,
   ];
   if (listing.productCategory) {
     fields.push(PRODUCT_CATEGORY_LABELS[listing.productCategory as ProductCategoryKey]);
@@ -50,19 +91,25 @@ function matches(listing: Listing, q: string): boolean {
   if (listing.serviceCategory) {
     fields.push(SERVICE_CATEGORY_LABELS[listing.serviceCategory as ServiceCategoryKey]);
   }
-  return fields.filter(Boolean).some((field) => field!.toLowerCase().includes(q));
+  if (matchesAnyWord(fields, q)) return true;
+
+  const bedroomQuery = q.match(BEDROOM_QUERY);
+  if (bedroomQuery && listing.bedrooms === Number(bedroomQuery[1])) return true;
+
+  const bathroomQuery = q.match(BATHROOM_QUERY);
+  if (bathroomQuery && listing.bathrooms === Number(bathroomQuery[1])) return true;
+
+  return false;
 }
 
 function matchesBusiness(business: Business, q: string): boolean {
-  return [business.name, business.city, business.base, business.description]
-    .filter(Boolean)
-    .some((field) => field!.toLowerCase().includes(q));
+  const fields: (string | null | undefined)[] = [business.name, business.city, business.base, business.description];
+  fields.push(BUSINESS_CATEGORY_LABELS[business.category]);
+  return matchesAnyWord(fields, q);
 }
 
 function matchesEvent(event: Event, q: string): boolean {
-  return [event.title, event.organizerName, event.city, event.base, event.description]
-    .filter(Boolean)
-    .some((field) => field!.toLowerCase().includes(q));
+  return matchesAnyWord([event.title, event.organizerName, event.city, event.base, event.description], q);
 }
 
 export function SearchResultsGrid({
