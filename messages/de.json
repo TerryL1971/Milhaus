@@ -575,10 +575,12 @@
   "SearchPage": {
     "metaTitle": "Suche",
     "heading": "Suchergebnisse",
-    "subhead": "Über alle Kategorien hinweg — Wohnungen, Autos, Artikel und Dienstleistungen.",
+    "subhead": "Über alle Kategorien hinweg — Wohnungen, Autos, Artikel, Dienstleistungen, Unternehmen und Veranstaltungen.",
     "searchPlaceholder": "Suche verfeinern…",
     "emptyNone": "Noch nichts passend — versuchen Sie eine andere Suche.",
-    "emptyNoMatch": "Nichts passt zu dieser Suche."
+    "emptyNoMatch": "Nichts passt zu dieser Suche.",
+    "businessesHeading": "Unternehmen",
+    "eventsHeading": "Veranstaltungen"
   },
   "PostAdPage": {
     "metaTitle": "Anzeige aufgeben",

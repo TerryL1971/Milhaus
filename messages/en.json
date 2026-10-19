@@ -575,10 +575,12 @@
   "SearchPage": {
     "metaTitle": "Search",
     "heading": "Search results",
-    "subhead": "Across every category — homes, cars, items for sale, and services.",
+    "subhead": "Across every category — homes, cars, items for sale, services, businesses, and events.",
     "searchPlaceholder": "Refine your search…",
     "emptyNone": "Nothing matches yet — try a different search.",
-    "emptyNoMatch": "Nothing matches that search."
+    "emptyNoMatch": "Nothing matches that search.",
+    "businessesHeading": "Businesses",
+    "eventsHeading": "Events"
   },
   "PostAdPage": {
     "metaTitle": "Post an ad",

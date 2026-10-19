@@ -79,8 +79,11 @@ export default async function Home() {
       {/* One search box across all four categories, not four separate
           ones — the actual fix for "how would someone even know Items
           for sale is where a baby crib would be." Submits to /search,
-          which fans out across every type unless a specific category is
-          picked. */}
+          which fans out across every listing type plus businesses and
+          events (Terry: the bar was only ever finding Cars/Rentals/Items
+          for sale/Services) unless a specific listing category is picked
+          from this dropdown — businesses/events have no dropdown entry
+          of their own, so they're only ever part of "all categories". */}
       <section className="relative min-h-[420px] overflow-hidden sm:min-h-[480px] lg:min-h-[620px] xl:min-h-[680px]">
         <div className="absolute inset-0">
           {/* eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL, not worth next/image's config here */}
