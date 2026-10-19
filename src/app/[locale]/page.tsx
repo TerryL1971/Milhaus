@@ -148,7 +148,7 @@ export default async function Home() {
               <select
                 name="category"
                 defaultValue=""
-                className="flex-none rounded-md border border-canvas-deep bg-canvas px-2.5 py-2.5 text-sm text-charcoal focus:border-olive focus:outline-none"
+                className="flex-none rounded-md border border-canvas-deep bg-canvas py-2.5 pl-2.5 pr-1 text-sm text-charcoal focus:border-olive focus:outline-none"
               >
                 <option value="">{t("heroAllCategories")}</option>
                 <option value="rental">{t("heroCategoryRentals")}</option>
@@ -165,7 +165,7 @@ export default async function Home() {
               <select
                 name="base"
                 defaultValue=""
-                className="flex-none rounded-md border border-canvas-deep bg-canvas px-2.5 py-2.5 text-sm text-charcoal focus:border-olive focus:outline-none"
+                className="flex-none rounded-md border border-canvas-deep bg-canvas py-2.5 pl-2.5 pr-1 text-sm text-charcoal focus:border-olive focus:outline-none"
               >
                 <option value="">{t("heroLocationPlaceholder")}</option>
                 {BASE_NAMES.map((base) => (
