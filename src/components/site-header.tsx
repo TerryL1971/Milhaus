@@ -42,8 +42,23 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
     <header className="sticky top-0 z-50 bg-ink text-paper">
       <div className="relative mx-auto flex max-w-[1600px] items-center justify-between gap-6 px-8 py-[18px]">
         <HomeLink className="flex flex-shrink-0 items-center">
+          {/* h-7, not h-10, below md — this logo file is a ~8.5:1 wide
+              lockup; at h-10 it renders ~338px wide, which alone exceeds
+              the ~329px of content width a typical phone viewport has
+              left after this header's own px-8 padding. flex-shrink-0
+              (needed so desktop's nav/buttons don't squeeze the logo)
+              meant it held that full width regardless, pushing
+              MobileNavToggle's hamburger button off-screen entirely
+              rather than just tight against it — not a hidden/non-
+              rendering button, an overflowing one. h-7 (~237px wide)
+              leaves comfortable room for the button beside it even on
+              the narrowest common phone widths. */}
           {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset, not worth next/image's config here */}
-          <img src="/brand/milhaus-logo-cream-red-horizontal.png" alt="Milhaus" className="h-10 w-auto" />
+          <img
+            src="/brand/milhaus-logo-cream-red-horizontal.png"
+            alt="Milhaus"
+            className="h-7 w-auto md:h-10"
+          />
         </HomeLink>
 
         {/* Trimmed from 6 items to 4 — "List your home" and "For

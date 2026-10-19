@@ -75,8 +75,15 @@ export async function SiteFooter() {
       <div className="mx-auto max-w-[1600px] px-8 pb-7 pt-11">
         <div className="mb-4.5 flex flex-wrap justify-between gap-6 border-b border-paper/15 pb-7">
           <div className="flex items-center">
+            {/* h-7 below md — see site-header.tsx for why this logo
+                needs a smaller mobile size (it overflows a phone's width
+                at h-10). */}
             {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset, not worth next/image's config here */}
-            <img src="/brand/milhaus-logo-cream-red-horizontal.png" alt="Milhaus" className="h-10 w-auto" />
+            <img
+              src="/brand/milhaus-logo-cream-red-horizontal.png"
+              alt="Milhaus"
+              className="h-7 w-auto md:h-10"
+            />
           </div>
 
           <div className="flex flex-wrap gap-12">

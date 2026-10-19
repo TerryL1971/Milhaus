@@ -47,8 +47,15 @@ export default function ConsentLayout({ children }: { children: React.ReactNode 
         <div className="border-b border-canvas-deep bg-ink">
           <div className="mx-auto max-w-[1600px] px-8 py-[18px]">
             <a href="/" className="inline-flex items-center">
+              {/* h-7 below md — see site-header.tsx for why this logo
+                  needs a smaller mobile size (it overflows a phone's
+                  width at h-10). */}
               {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset, not worth next/image's config here */}
-              <img src="/brand/milhaus-logo-cream-red-horizontal.png" alt="Milhaus" className="h-10 w-auto" />
+              <img
+                src="/brand/milhaus-logo-cream-red-horizontal.png"
+                alt="Milhaus"
+                className="h-7 w-auto md:h-10"
+              />
             </a>
           </div>
         </div>
