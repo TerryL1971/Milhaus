@@ -36,46 +36,75 @@ const PHOTO_GRADIENTS = [
   "linear-gradient(135deg,#D3C6A6,#9AA37E)",
 ];
 
-// Word-by-word OR matching, not "does the whole typed phrase appear
-// verbatim somewhere" — Terry's report: "Baby items", "2024 Mercedes 400
-// GLC e", and "3 bedroom house" all found nothing for listings that
-// should've matched. Requiring the entire query as one literal substring
-// is brittle the moment someone's phrasing doesn't line up with the
-// stored text — "Baby items" was never going to appear verbatim
-// anywhere, only the category label "Baby & kids" does; "3 bedroom
-// house" doesn't match a hyphenated "3-bedroom house" title. Splitting
-// the query into words and matching if *any* one of them turns up
-// anywhere across the combined fields is strictly more forgiving than
-// the old whole-phrase check (every phrase that used to match still
-// does — each of its words is trivially a substring of it too) while
-// actually finding things a real visitor's loose, casual phrasing was
-// always going to produce. False positives are the acceptable failure
-// mode here, not false "nothing found"s, for a small community
-// marketplace rather than a large noisy catalog. Words under 2
-// characters are dropped first, though — found this the hard way
+// Word-by-word AND matching, not "does the whole typed phrase appear
+// verbatim somewhere" — Terry's report: "3 bedroom house" and "Baby
+// crib" found nothing for listings that should've matched, since
+// requiring the entire query as one literal substring is brittle the
+// moment someone's phrasing doesn't line up with the stored text
+// exactly ("3 bedroom house" doesn't match a hyphenated "3-bedroom
+// house" title).
+//
+// A first pass tried OR (match if *any* query word turns up anywhere)
+// instead — more forgiving, but turned out *too* forgiving: searching
+// "3 bedroom house" started surfacing a propane grill (category
+// "Household", which literally contains the substring "house") and a
+// house-cleaning service (title has the word "House"), neither of which
+// anyone searching for a 3-bedroom house to rent wants to see. AND — a
+// listing has to match *every* word in the query somewhere across its
+// fields, same as how most real search boxes treat a multi-word
+// query — fixes that: the grill and the cleaning service don't have
+// "bedroom" anywhere, so they're correctly excluded, while the actual
+// 3-bedroom listing still has both "bedroom" (within "3-bedroom") and
+// "house" in its own title. The one trade-off: an overly generic filler
+// word in the query (e.g. "items" in "Baby items", which isn't
+// literally stored anywhere even for a real baby-category listing) can
+// make an otherwise-good match miss — accepted as the better failure
+// mode than the noise AND replaces.
+//
+// Words under 2 characters are dropped first — found this the hard way
 // testing "2024 Mercedes 400 GLC e" against an unrelated Toyota
 // listing: the lone "e" token is a substring of almost any text at all
 // ("Camry SE", "Böblingen", ...), so a single stray letter from a model
 // name was enough to match everything. Numbers like "2024" or "400"
 // are long enough to stay meaningful and aren't affected.
-function matchesAnyWord(fields: (string | null | undefined)[], q: string): boolean {
+function matchesAllWords(fields: (string | null | undefined)[], q: string): boolean {
   const words = q.split(/\s+/).filter((word) => word.length >= 2);
   if (words.length === 0) return true;
   const haystack = fields.filter(Boolean).join(" \u0000 ").toLowerCase();
-  return words.some((word) => haystack.includes(word));
+  return words.every((word) => haystack.includes(word));
 }
 
-// Matches "3 bed", "3 bedroom", "3 bedrooms" (and the bathroom
-// equivalents) against the actual bedrooms/bathrooms *count* — word
-// matching alone would need the literal word "bed" to appear somewhere,
-// which nothing in a listing's own text necessarily contains even when
-// it genuinely has 3 bedrooms. A query carries at most one of each —
-// nobody searches "3 bed 4 bed" — so a single capture per pattern is
-// enough.
+// "3 bed", "3 bedroom(s)" (and the bathroom equivalents) are pulled out
+// of the query and treated as an exact bedrooms/bathrooms *count* filter
+// on their own, not left in the pool of free-text words — first tried as
+// just another OR'd/AND'd word, but that's genuinely ambiguous: a real
+// product search turned up "Graco convertible crib + mattress" for
+// "3 Bed" purely because its own description happens to say "Converts
+// to toddler bed" — a real word match, but not what anyone typing a
+// number-of-bedrooms query is looking for. Pulling "3 bed" out as its
+// own required condition (listing.bedrooms === 3, car/product/service
+// listings excluded outright since bedrooms is null for them) and
+// matching whatever's left of the query as free text gets both parts
+// right. A query carries at most one of each — nobody searches "3 bed
+// 4 bed" — so a single capture per pattern is enough.
 const BEDROOM_QUERY = /(\d+)\s*bed(?:room)?s?\b/;
 const BATHROOM_QUERY = /(\d+)\s*bath(?:room)?s?\b/;
 
 function matches(listing: Listing, q: string): boolean {
+  let freeTextQuery = q;
+
+  const bedroomQuery = q.match(BEDROOM_QUERY);
+  if (bedroomQuery) {
+    if (listing.bedrooms !== Number(bedroomQuery[1])) return false;
+    freeTextQuery = freeTextQuery.replace(bedroomQuery[0], " ");
+  }
+
+  const bathroomQuery = q.match(BATHROOM_QUERY);
+  if (bathroomQuery) {
+    if (listing.bathrooms !== Number(bathroomQuery[1])) return false;
+    freeTextQuery = freeTextQuery.replace(bathroomQuery[0], " ");
+  }
+
   const fields: (string | null | undefined)[] = [
     listing.title,
     listing.description,
@@ -91,25 +120,17 @@ function matches(listing: Listing, q: string): boolean {
   if (listing.serviceCategory) {
     fields.push(SERVICE_CATEGORY_LABELS[listing.serviceCategory as ServiceCategoryKey]);
   }
-  if (matchesAnyWord(fields, q)) return true;
-
-  const bedroomQuery = q.match(BEDROOM_QUERY);
-  if (bedroomQuery && listing.bedrooms === Number(bedroomQuery[1])) return true;
-
-  const bathroomQuery = q.match(BATHROOM_QUERY);
-  if (bathroomQuery && listing.bathrooms === Number(bathroomQuery[1])) return true;
-
-  return false;
+  return matchesAllWords(fields, freeTextQuery);
 }
 
 function matchesBusiness(business: Business, q: string): boolean {
   const fields: (string | null | undefined)[] = [business.name, business.city, business.base, business.description];
   fields.push(BUSINESS_CATEGORY_LABELS[business.category]);
-  return matchesAnyWord(fields, q);
+  return matchesAllWords(fields, q);
 }
 
 function matchesEvent(event: Event, q: string): boolean {
-  return matchesAnyWord([event.title, event.organizerName, event.city, event.base, event.description], q);
+  return matchesAllWords([event.title, event.organizerName, event.city, event.base, event.description], q);
 }
 
 export function SearchResultsGrid({
