@@ -53,7 +53,10 @@ const ALL_TYPES: ListingType[] = ["rental", "car", "product", "service"];
 // landing on a different, dedicated page (e.g. the Cars page) with no
 // indication that's what happened. Reusing the same labels the hero's
 // own dropdown already shows (HomePage namespace), not inventing new
-// category names that could drift out of sync with it.
+// category names that could drift out of sync with it. Extended the
+// same fix to the location dropdown right after ("Showing Stuttgart
+// only," alone or combined with a category) — one shared "clear
+// filters" link covers either or both being set.
 const CATEGORY_LABEL_KEYS: Record<ListingType, string> = {
   rental: "heroCategoryRentals",
   car: "heroCategoryCars",
@@ -82,21 +85,34 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
   if (base) listings = listings.filter((listing) => listingBases(listing).includes(base));
   listings.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
 
+  // Same ask, extended to the hero's location dropdown — "Showing
+  // Stuttgart only," on its own or combined with a category ("Showing
+  // Cars in Stuttgart only."). Base names (Stuttgart, Kaiserslautern,
+  // ...) are the same spelling in both languages, so the raw value
+  // drops straight into the template with no label lookup needed, same
+  // as everywhere else this app shows a base name.
+  const categoryLabel = isSpecificListingType
+    ? (await getTranslations("HomePage"))(CATEGORY_LABEL_KEYS[category as ListingType])
+    : null;
+  const isFiltered = Boolean(categoryLabel) || Boolean(base);
+
   let subhead = t("subhead");
-  if (isSpecificListingType) {
-    const tHome = await getTranslations("HomePage");
-    const categoryLabel = tHome(CATEGORY_LABEL_KEYS[category as ListingType]);
+  if (categoryLabel && base) {
+    subhead = t("subheadCategoryLocation", { category: categoryLabel, location: base });
+  } else if (categoryLabel) {
     subhead = t("subheadCategory", { category: categoryLabel });
+  } else if (base) {
+    subhead = t("subheadLocation", { location: base });
   }
 
   return (
     <main className="flex-1 py-14">
       <div className="mx-auto max-w-[1600px] px-8">
         <h1 className="mb-2 font-display text-3xl font-semibold text-ink">{t("heading")}</h1>
-        <p className={isSpecificListingType ? "mb-1 text-ink-soft" : "mb-8 text-ink-soft"}>{subhead}</p>
-        {isSpecificListingType && (
+        <p className={isFiltered ? "mb-1 text-ink-soft" : "mb-8 text-ink-soft"}>{subhead}</p>
+        {isFiltered && (
           <Link href="/search" className="mb-8 inline-block text-sm text-olive-deep hover:underline">
-            {t("searchEveryCategory")}
+            {t("clearFilters")}
           </Link>
         )}
         <Suspense fallback={null}>

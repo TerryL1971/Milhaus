@@ -574,7 +574,9 @@
     "businessesHeading": "Unternehmen",
     "eventsHeading": "Veranstaltungen",
     "subheadCategory": "Zeigt nur {category}.",
-    "searchEveryCategory": "Stattdessen alle Kategorien durchsuchen"
+    "subheadLocation": "Zeigt nur {location}.",
+    "subheadCategoryLocation": "Zeigt nur {category} in {location}.",
+    "clearFilters": "Stattdessen alles anzeigen"
   },
   "PostAdPage": {
     "metaTitle": "Anzeige aufgeben",
