@@ -13,10 +13,23 @@
 // `ListingType`s themselves (no dropdown option narrows to just one of
 // them the way "Cars" does), so picking a specific listing category is
 // treated as "only that," same as before.
-
+//
+// "Services" is a special case, not just another ListingType filter,
+// though: Charlie caught this — picking it in the hero dropdown and
+// hitting Search left him on *this* page showing self-listed service
+// *listings* (dog walking, photography, moving help — the "service"
+// ListingType), not the actual Services page he expected, which is the
+// Military-Friendly Businesses directory (a completely different
+// table, see src/app/[locale]/services/page.tsx's own header comment).
+// Those two things sharing the word "Services" is the real, pre-
+// existing confusion; Rentals/Cars/Items for sale don't have an
+// equivalent split (their dedicated pages show the exact same
+// listings this page would filter to, just with richer filter UI
+// around them), so only this one category redirects.
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
+import { redirect } from "@/i18n/navigation";
 import { SearchResultsGrid } from "@/components/search-results-grid";
 import { getActiveBusinesses } from "@/lib/businesses-queries";
 import { getActiveEvents } from "@/lib/events-queries";
@@ -36,6 +49,11 @@ const ALL_TYPES: ListingType[] = ["rental", "car", "product", "service"];
 export default async function SearchPage({ searchParams }: { searchParams: SearchParams }) {
   const { q, category, base } = await searchParams;
   const t = await getTranslations("SearchPage");
+
+  if (category === "service") {
+    const locale = await getLocale();
+    redirect({ href: q ? `/services?q=${encodeURIComponent(q)}` : "/services", locale });
+  }
 
   const isSpecificListingType = Boolean(category) && (ALL_TYPES as string[]).includes(category!);
   const types: ListingType[] = isSpecificListingType ? [category as ListingType] : ALL_TYPES;
