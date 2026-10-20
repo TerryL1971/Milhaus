@@ -78,14 +78,6 @@
     "heroCategoryItems": "Artikel",
     "heroCategoryServices": "Dienstleistungen",
     "heroTagline": "Eine stärkere Community. Ein leichteres Leben im Ausland.",
-    "__searchpage__": {
-      "metaTitle": "Suche",
-      "heading": "Suchergebnisse",
-      "subhead": "Über alle Kategorien hinweg — Wohnungen, Autos, Artikel und Dienstleistungen.",
-      "searchPlaceholder": "Suche verfeinern…",
-      "emptyNone": "Noch nichts passend — versuchen Sie eine andere Suche.",
-      "emptyNoMatch": "Nichts passt zu dieser Suche."
-    },
     "rentalCardEyebrow": "Wohnen",
     "rentalCardHeading": "Mietobjekte",
     "rentalCardSubhead": "Angebote vom Housing Office und von Familien selbst inseriert, geprüft bevor sie online gehen.",
@@ -580,7 +572,9 @@
     "emptyNone": "Noch nichts passend — versuchen Sie eine andere Suche.",
     "emptyNoMatch": "Nichts passt zu dieser Suche.",
     "businessesHeading": "Unternehmen",
-    "eventsHeading": "Veranstaltungen"
+    "eventsHeading": "Veranstaltungen",
+    "subheadCategory": "Zeigt nur {category}.",
+    "searchEveryCategory": "Stattdessen alle Kategorien durchsuchen"
   },
   "PostAdPage": {
     "metaTitle": "Anzeige aufgeben",

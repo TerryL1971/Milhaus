@@ -78,14 +78,6 @@
     "heroCategoryItems": "Items for sale",
     "heroCategoryServices": "Services",
     "heroTagline": "A stronger community. A smoother life abroad.",
-    "__searchpage__": {
-      "metaTitle": "Search",
-      "heading": "Search results",
-      "subhead": "Across every category — homes, cars, items for sale, and services.",
-      "searchPlaceholder": "Refine your search…",
-      "emptyNone": "Nothing matches yet — try a different search.",
-      "emptyNoMatch": "Nothing matches that search."
-    },
     "rentalCardEyebrow": "Housing",
     "rentalCardHeading": "Rentals",
     "rentalCardSubhead": "Housing-office listings and self-listed homes, reviewed before they go live.",
@@ -580,19 +572,21 @@
     "emptyNone": "Nothing matches yet — try a different search.",
     "emptyNoMatch": "Nothing matches that search.",
     "businessesHeading": "Businesses",
-    "eventsHeading": "Events"
+    "eventsHeading": "Events",
+    "subheadCategory": "Showing {category} only.",
+    "searchEveryCategory": "Search every category instead"
   },
   "PostAdPage": {
     "metaTitle": "Post an ad",
     "heading": "What are you posting?",
     "subhead": "Pick a category to get started.",
-    "rentalHeading": "A home",
+    "rentalHeading": "A Home",
     "rentalBody": "List a place you're moving out of.",
-    "carHeading": "A car",
+    "carHeading": "A Car",
     "carBody": "PCSing out, or just upgrading.",
-    "productHeading": "An item",
+    "productHeading": "An Item",
     "productBody": "Furniture, electronics, anything else.",
-    "serviceHeading": "A business",
+    "serviceHeading": "A Service",
     "serviceBody": "List your own business in the directory.",
     "freeLabel": "Free"
   },

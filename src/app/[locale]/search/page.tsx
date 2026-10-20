@@ -29,7 +29,7 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
-import { redirect } from "@/i18n/navigation";
+import { Link, redirect } from "@/i18n/navigation";
 import { SearchResultsGrid } from "@/components/search-results-grid";
 import { getActiveBusinesses } from "@/lib/businesses-queries";
 import { getActiveEvents } from "@/lib/events-queries";
@@ -45,6 +45,21 @@ export async function generateMetadata(): Promise<Metadata> {
 type SearchParams = Promise<{ q?: string; category?: string; base?: string }>;
 
 const ALL_TYPES: ListingType[] = ["rental", "car", "product", "service"];
+
+// Picking "Cars" (or Rentals/Items for sale) from the hero's dropdown
+// narrowed the results correctly, but the heading/subhead never changed
+// from the generic "Search results — across every category" line, even
+// though only one category was actually showing — Terry: this read like
+// landing on a different, dedicated page (e.g. the Cars page) with no
+// indication that's what happened. Reusing the same labels the hero's
+// own dropdown already shows (HomePage namespace), not inventing new
+// category names that could drift out of sync with it.
+const CATEGORY_LABEL_KEYS: Record<ListingType, string> = {
+  rental: "heroCategoryRentals",
+  car: "heroCategoryCars",
+  product: "heroCategoryItems",
+  service: "heroCategoryServices",
+};
 
 export default async function SearchPage({ searchParams }: { searchParams: SearchParams }) {
   const { q, category, base } = await searchParams;
@@ -67,11 +82,23 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
   if (base) listings = listings.filter((listing) => listingBases(listing).includes(base));
   listings.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
 
+  let subhead = t("subhead");
+  if (isSpecificListingType) {
+    const tHome = await getTranslations("HomePage");
+    const categoryLabel = tHome(CATEGORY_LABEL_KEYS[category as ListingType]);
+    subhead = t("subheadCategory", { category: categoryLabel });
+  }
+
   return (
     <main className="flex-1 py-14">
       <div className="mx-auto max-w-[1600px] px-8">
         <h1 className="mb-2 font-display text-3xl font-semibold text-ink">{t("heading")}</h1>
-        <p className="mb-8 text-ink-soft">{t("subhead")}</p>
+        <p className={isSpecificListingType ? "mb-1 text-ink-soft" : "mb-8 text-ink-soft"}>{subhead}</p>
+        {isSpecificListingType && (
+          <Link href="/search" className="mb-8 inline-block text-sm text-olive-deep hover:underline">
+            {t("searchEveryCategory")}
+          </Link>
+        )}
         <Suspense fallback={null}>
           <SearchResultsGrid listings={listings} businesses={businesses} events={events} initialQuery={q} />
         </Suspense>
