@@ -57,6 +57,7 @@ export function SearchResultsGrid({
   initialQuery?: string;
 }) {
   const t = useTranslations("SearchPage");
+  const tFilter = useTranslations("FilterModal");
   const [query, setQuery] = useState(initialQuery);
 
   const filtered = useMemo(() => {
@@ -81,7 +82,7 @@ export function SearchResultsGrid({
 
   return (
     <>
-      <div className="mb-7">
+      <div className="mb-7 flex flex-wrap items-center gap-2">
         <input
           type="search"
           value={query}
@@ -89,6 +90,19 @@ export function SearchResultsGrid({
           placeholder={t("searchPlaceholder")}
           className="w-full max-w-md rounded-md border border-canvas-deep bg-paper px-4 py-2.5 text-[0.95rem] text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none"
         />
+        {/* Terry: every page's search bar needs this, not just
+            /listings //cars/products/services (see FilterBar's own
+            onClear/clearLabel props) — this page had no way to reset
+            the keyword box at all beyond manually deleting the text. */}
+        {query && (
+          <button
+            type="button"
+            onClick={() => setQuery("")}
+            className="whitespace-nowrap rounded-md border border-canvas-deep px-4 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-rust hover:text-rust"
+          >
+            {tFilter("clearAll")}
+          </button>
+        )}
       </div>
 
       {!hasAnyResults ? (

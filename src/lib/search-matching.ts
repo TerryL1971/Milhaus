@@ -71,11 +71,58 @@ function escapeForRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+// Terry: "coat could be a jacket or similar," "bike maybe searched as
+// bicycle," "drills, wrenches, etc. may be searched as tools and vice
+// versa" — the same root problem cars' body type/make-alias fixes
+// solved (a real word nobody typed is stored, or the word typed isn't
+// the one stored), but these don't share a fixed, closed taxonomy the
+// way body type does ("item for sale" spans far too much to enumerate
+// every category up front), so they live here as plain interchangeable-
+// word groups instead of a stored field. Per-word, not per-listing-type —
+// nothing about "coat"/"jacket" is products-only in principle, so there's
+// no reason to gate it there.
+//
+// Each query word that belongs to a group gets checked as "does *any*
+// word in this group appear," not just the literal word typed — AND
+// across *different* query words is unchanged (a multi-word query still
+// has to find every one of its distinct words somewhere, same reasoning
+// as the file-top comment above). Groups are deliberately small and
+// literal, not a general synonym dictionary or stemmer — each one exists
+// because Terry named that exact pair/cluster, not a guess at what else
+// might be related.
+const SYNONYM_GROUPS: string[][] = [
+  ["bike", "bikes", "bicycle", "bicycles"],
+  ["coat", "coats", "jacket", "jackets"],
+  ["crib", "cribs", "baby", "babies"],
+  ["tool", "tools", "toolbox", "toolkit", "drill", "wrench", "hammer", "screwdriver"],
+];
+const SYNONYM_LOOKUP = new Map<string, string[]>();
+for (const group of SYNONYM_GROUPS) {
+  for (const word of group) SYNONYM_LOOKUP.set(word, group);
+}
+
+// Generic words that never discriminate one listing from another —
+// "Baby items" found nothing for an actual baby-category crib because
+// nothing on that listing literally contains the word "items", and
+// AND-across-words (needed to keep "3 bedroom house" from matching a
+// "Household"-category grill, see below) means one unmatchable filler
+// word sinks an otherwise-correct query. Dropped the same way a <2-char
+// word already is — these only ever cause false negatives, never a
+// true one, since nobody's listing is actually found *by* the word
+// "items" or "stuff" alone.
+const FILLER_WORDS = new Set(["item", "items", "stuff", "thing", "things"]);
+
 export function matchesAllWords(fields: (string | null | undefined)[], q: string): boolean {
-  const words = q.split(/\s+/).filter((word) => word.length >= 2 || /^\d+$/.test(word));
+  const words = q
+    .split(/\s+/)
+    .filter((word) => (word.length >= 2 || /^\d+$/.test(word)) && !FILLER_WORDS.has(word));
   if (words.length === 0) return true;
   const haystack = fields.filter(Boolean).join(" \u0000 ").toLowerCase();
-  return words.every((word) => new RegExp(`\\b${escapeForRegExp(word)}\\b`).test(haystack));
+  return words.every((word) => {
+    const group = SYNONYM_LOOKUP.get(word) ?? [word];
+    const alternation = group.map(escapeForRegExp).join("|");
+    return new RegExp(`\\b(?:${alternation})\\b`).test(haystack);
+  });
 }
 
 // "3 bed", "3 bedroom(s)" (and the bathroom equivalents) are pulled out
