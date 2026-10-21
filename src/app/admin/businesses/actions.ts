@@ -11,6 +11,15 @@
 // client regardless, same reasoning as the public /consent/[token]
 // actions: it's an audit trail, not something any authenticated role
 // should freely insert into.
+//
+// Logo/cover are real file uploads now, not URL text fields (Charlie
+// himself couldn't make sense of "paste a URL" on this same form — see
+// supabase/migrations/20261021120000_add_business_logo_cover_upload_policy.sql
+// and the matching change to the public /post-business form). Unlike
+// that public form, this one can upload first and insert once: the
+// storage policy's admin clause allows any admin/owner role to write to
+// a not-yet-existing business id, so there's no insert-then-update
+// round trip needed here.
 
 "use server";
 
@@ -42,6 +51,7 @@ export async function createBusiness(formData: FormData) {
   const ratingRaw = formData.get("rating") as string;
   const reviewCountRaw = formData.get("reviewCount") as string;
   const now = new Date().toISOString();
+  const businessId = crypto.randomUUID();
 
   const supabase = await createClient();
 
@@ -59,9 +69,30 @@ export async function createBusiness(formData: FormData) {
     consentProofUrl = urlData.publicUrl;
   }
 
+  // Real file uploads now, not URL text fields (same ask/reasoning as
+  // the public /post-business form — see that action's own header
+  // comment and supabase/migrations/
+  // 20261021120000_add_business_logo_cover_upload_policy.sql). An admin
+  // can upload to this id's path before the row exists (that policy's
+  // admin clause checks the uploader's own role, not an existing
+  // businesses row), so this stays a single insert below rather than
+  // the public form's insert-then-upload-then-update dance.
+  async function uploadLogoOrCover(file: File | null, name: "logo" | "cover"): Promise<string | null> {
+    if (!file || file.size === 0) return null;
+    const ext = file.name.split(".").pop() || "jpg";
+    const path = `${businessId}/${name}.${ext}`;
+    const { error: uploadError } = await supabase.storage.from("listing-photos").upload(path, file);
+    if (uploadError) throw new Error(uploadError.message);
+    const { data: urlData } = supabase.storage.from("listing-photos").getPublicUrl(path);
+    return urlData.publicUrl;
+  }
+  const logoUrl = await uploadLogoOrCover(formData.get("logo") as File | null, "logo");
+  const coverUrl = await uploadLogoOrCover(formData.get("coverImage") as File | null, "cover");
+
   const { data: created, error } = await supabase
     .from("businesses")
     .insert({
+      id: businessId,
       name: formData.get("name"),
       category,
       city: formData.get("city"),
@@ -69,8 +100,8 @@ export async function createBusiness(formData: FormData) {
       rating: ratingRaw ? Number(ratingRaw) : null,
       review_count: reviewCountRaw ? Number(reviewCountRaw) : null,
       tags,
-      logo_url: formData.get("logoUrl") || null,
-      cover_image_url: formData.get("coverImageUrl") || null,
+      logo_url: logoUrl,
+      cover_image_url: coverUrl,
       description: formData.get("description") || null,
       promotion: formData.get("promotion") || null,
       website_url: formData.get("websiteUrl") || null,

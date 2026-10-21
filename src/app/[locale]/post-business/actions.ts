@@ -7,9 +7,18 @@
 // manual approval step anymore (Charlie's call, 2026-10-15 — see this
 // repo's cart/actions.ts header comment for the full reasoning): it goes
 // active automatically via tryActivateBusiness once it's both paid for
-// and consent-confirmed. No photo upload step like ListingForm has —
-// just a logo URL field — so this stays a plain server action, no
-// client-side multi-step state needed.
+// and consent-confirmed.
+//
+// Logo/cover are real file uploads now, not URL text fields (Charlie
+// couldn't make sense of "paste a URL" — see
+// supabase/migrations/20261021120000_add_business_logo_cover_upload_policy.sql).
+// The business row has to be inserted *before* uploading (that policy
+// checks ownership via an existing businesses row, same pattern
+// listing-photos itself uses), so this inserts with both image columns
+// null, uploads whichever files were provided using the new row's own
+// id as the storage path, then updates just those two columns — not a
+// client-side multi-step form the way ListingForm is, just one extra
+// round trip inside the same server action.
 //
 // Also kicks off the real consent flow (supabase/migrations/
 // 20261013180000_add_business_consent_system.sql, ported from Terry's
@@ -28,6 +37,21 @@ import { sendConsentRequestEmail } from "@/lib/consent-email";
 import { getPostingPrice } from "@/lib/listing-prices";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+
+async function uploadBusinessImage(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  businessId: string,
+  file: File,
+  name: "logo" | "cover",
+): Promise<string | null> {
+  if (!file || file.size === 0) return null;
+  const ext = file.name.split(".").pop() || "jpg";
+  const path = `${businessId}/${name}.${ext}`;
+  const { error } = await supabase.storage.from("listing-photos").upload(path, file);
+  if (error) throw new Error(error.message);
+  const { data } = supabase.storage.from("listing-photos").getPublicUrl(path);
+  return data.publicUrl;
+}
 
 export async function submitBusiness(formData: FormData) {
   const supabase = await createClient();
@@ -52,17 +76,21 @@ export async function submitBusiness(formData: FormData) {
   const priceEur = await getPostingPrice("business");
   const tags = BUSINESS_TAG_KEYS.filter((key) => formData.get(`tag_${key}`) === "on") as BusinessTagKey[];
   const now = new Date().toISOString();
+  const businessId = crypto.randomUUID();
 
   const { data: created, error } = await supabase
     .from("businesses")
     .insert({
+      id: businessId,
       name: formData.get("name"),
       category: formData.get("category"),
       city: formData.get("city"),
       base: formData.get("base") || null,
       tags,
-      logo_url: formData.get("logoUrl") || null,
-      cover_image_url: formData.get("coverImageUrl") || null,
+      // Uploaded just below, once this row exists — see
+      // uploadBusinessImage's own comment for why it can't happen first.
+      logo_url: null,
+      cover_image_url: null,
       description: formData.get("description") || null,
       promotion: formData.get("promotion") || null,
       website_url: formData.get("websiteUrl") || null,
@@ -81,6 +109,21 @@ export async function submitBusiness(formData: FormData) {
 
   if (error || !created) {
     throw new Error(error?.message ?? "Couldn't save that — try again.");
+  }
+
+  const logoFile = formData.get("logo") as File | null;
+  const coverFile = formData.get("coverImage") as File | null;
+  const logoUrl = logoFile ? await uploadBusinessImage(supabase, businessId, logoFile, "logo") : null;
+  const coverUrl = coverFile ? await uploadBusinessImage(supabase, businessId, coverFile, "cover") : null;
+  if (logoUrl || coverUrl) {
+    const { error: imageError } = await supabase
+      .from("businesses")
+      .update({
+        ...(logoUrl ? { logo_url: logoUrl } : {}),
+        ...(coverUrl ? { cover_image_url: coverUrl } : {}),
+      })
+      .eq("id", businessId);
+    if (imageError) throw new Error(imageError.message);
   }
 
   // The consent log (an audit trail, not something a regular user's own

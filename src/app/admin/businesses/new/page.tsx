@@ -132,17 +132,29 @@ export default async function AdminNewBusinessPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="logoUrl" className={labelClass}>
-                Logo URL (optional)
+              <label htmlFor="logo" className={labelClass}>
+                Upload your logo (optional)
               </label>
-              <input id="logoUrl" name="logoUrl" type="url" placeholder="https://…" className={inputClass} />
+              <input
+                id="logo"
+                name="logo"
+                type="file"
+                accept="image/*"
+                className="w-full text-sm text-ink-soft file:mr-3 file:rounded-md file:border-0 file:bg-canvas-deep file:px-3 file:py-2 file:text-sm file:font-medium file:text-ink"
+              />
               <p className="mt-1 text-xs text-ink-soft/75">Shown as a small badge/profile picture.</p>
             </div>
             <div>
-              <label htmlFor="coverImageUrl" className={labelClass}>
-                Cover image URL (optional)
+              <label htmlFor="coverImage" className={labelClass}>
+                Upload your cover image (optional)
               </label>
-              <input id="coverImageUrl" name="coverImageUrl" type="url" placeholder="https://…" className={inputClass} />
+              <input
+                id="coverImage"
+                name="coverImage"
+                type="file"
+                accept="image/*"
+                className="w-full text-sm text-ink-soft file:mr-3 file:rounded-md file:border-0 file:bg-canvas-deep file:px-3 file:py-2 file:text-sm file:font-medium file:text-ink"
+              />
               <p className="mt-1 text-xs text-ink-soft/75">Wide banner shown on the tile and profile page.</p>
             </div>
           </div>

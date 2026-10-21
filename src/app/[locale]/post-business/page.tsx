@@ -50,7 +50,7 @@ export default async function PostBusinessPage() {
         <p className="mb-8 text-ink-soft">{t("body")}</p>
         {priceEur !== null && <PostingPriceNotice priceEur={priceEur} />}
 
-        <form action={submitBusiness} className="flex flex-col gap-5">
+        <form action={submitBusiness} encType="multipart/form-data" className="flex flex-col gap-5">
           <div>
             <label htmlFor="name" className={labelClass}>
               {t("name")}
@@ -122,16 +122,28 @@ export default async function PostBusinessPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="logoUrl" className={labelClass}>
+              <label htmlFor="logo" className={labelClass}>
                 {t("logoUrl")}
               </label>
-              <input id="logoUrl" name="logoUrl" type="url" placeholder="https://…" className={inputClass} />
+              <input
+                id="logo"
+                name="logo"
+                type="file"
+                accept="image/*"
+                className="w-full text-sm text-ink-soft file:mr-3 file:rounded-md file:border-0 file:bg-canvas-deep file:px-3 file:py-2 file:text-sm file:font-medium file:text-ink"
+              />
             </div>
             <div>
-              <label htmlFor="coverImageUrl" className={labelClass}>
+              <label htmlFor="coverImage" className={labelClass}>
                 {t("coverImageUrl")}
               </label>
-              <input id="coverImageUrl" name="coverImageUrl" type="url" placeholder="https://…" className={inputClass} />
+              <input
+                id="coverImage"
+                name="coverImage"
+                type="file"
+                accept="image/*"
+                className="w-full text-sm text-ink-soft file:mr-3 file:rounded-md file:border-0 file:bg-canvas-deep file:px-3 file:py-2 file:text-sm file:font-medium file:text-ink"
+              />
             </div>
           </div>
 
