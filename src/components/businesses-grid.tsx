@@ -98,6 +98,8 @@ export function BusinessesGrid({
         activeLabel={(count) => tFilter("activeFiltersLabel", { count })}
         onApply={handleApply}
         applyLabel={tFilter("applyFilters")}
+        onClear={handleClearAll}
+        clearLabel={tFilter("clearAll")}
       >
         <FilterCluster label={t("filterBase")} icon="📍" badge={pending.base.length || undefined}>
           <FilterCheckboxList
@@ -149,12 +151,6 @@ export function BusinessesGrid({
             onToggle={(value) => setPending((p) => ({ ...p, tags: toggleIn(p.tags, value) }))}
           />
         </FilterCluster>
-
-        {activeCount > 0 && (
-          <button type="button" onClick={handleClearAll} className="text-sm font-semibold text-ink-soft hover:text-rust">
-            {tFilter("clearAll")}
-          </button>
-        )}
       </FilterBar>
 
       {filtered.length === 0 ? (

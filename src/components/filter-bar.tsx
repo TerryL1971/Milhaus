@@ -2,9 +2,19 @@
 // The row shell for the Unified Category UX spec's top filter bar:
 // filter-cluster dropdown buttons (passed as children) + a keyword box +
 // an "N active filters applied" indicator + an explicit Apply Filters
-// button. Every browse page uses this same shell; only which clusters
-// go inside differ (see ListingsGrid/CarsGrid/ProductsGrid/
-// BusinessesGrid).
+// button + a Clear Filters button right next to it. Every browse page
+// uses this same shell; only which clusters go inside differ (see
+// ListingsGrid/CarsGrid/ProductsGrid/BusinessesGrid).
+//
+// Clear used to be one of each grid's own `children` — a plain text
+// link sitting among the filter-cluster dropdown buttons, gated on
+// activeCount (structured filters) alone. Terry: it needed to sit next
+// to Apply instead, not buried over on the left; moving it here, next
+// to Apply, put it where he expected it. That move also fixed a real
+// gap, not just a cosmetic one — activeCount never counted the keyword
+// box, so a page landed on via the homepage's search bar (just a
+// keyword, no structured filters — see search/page.tsx's redirect) had
+// no way to clear it at all. Gating on `keyword` too fixes that.
 
 export function FilterBar({
   children,
@@ -15,6 +25,8 @@ export function FilterBar({
   activeLabel,
   onApply,
   applyLabel,
+  onClear,
+  clearLabel,
 }: {
   children: React.ReactNode;
   keyword: string;
@@ -24,6 +36,8 @@ export function FilterBar({
   activeLabel: (count: number) => string;
   onApply: () => void;
   applyLabel: string;
+  onClear: () => void;
+  clearLabel: string;
 }) {
   return (
     <div className="mb-7 flex flex-wrap items-center gap-2">
@@ -47,6 +61,15 @@ export function FilterBar({
       >
         {applyLabel}
       </button>
+      {(activeCount > 0 || keyword) && (
+        <button
+          type="button"
+          onClick={onClear}
+          className="whitespace-nowrap rounded-md border border-canvas-deep px-4 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-rust hover:text-rust"
+        >
+          {clearLabel}
+        </button>
+      )}
     </div>
   );
 }

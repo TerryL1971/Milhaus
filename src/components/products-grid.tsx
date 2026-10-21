@@ -125,6 +125,8 @@ export function ProductsGrid({
         activeLabel={(count) => tFilter("activeFiltersLabel", { count })}
         onApply={handleApply}
         applyLabel={tFilter("applyFilters")}
+        onClear={handleClearAll}
+        clearLabel={tFilter("clearAll")}
       >
         <FilterCluster label={t("filterBase")} icon="📍" badge={pending.base.length || undefined}>
           <FilterCheckboxList
@@ -164,12 +166,6 @@ export function ProductsGrid({
             onToggle={(value) => setPending((p) => ({ ...p, condition: toggleIn(p.condition, value) }))}
           />
         </FilterCluster>
-
-        {activeCount > 0 && (
-          <button type="button" onClick={handleClearAll} className="text-sm font-semibold text-ink-soft hover:text-rust">
-            {tFilter("clearAll")}
-          </button>
-        )}
       </FilterBar>
 
       {sorted.length === 0 ? (
