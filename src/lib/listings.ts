@@ -60,6 +60,7 @@ export function mapRow(row: Record<string, unknown>): Listing {
     mileageKm: details.mileage_km === null || details.mileage_km === undefined ? null : Number(details.mileage_km),
     transmission: (details.transmission as Listing["transmission"]) ?? null,
     usSpec: details.us_spec === null || details.us_spec === undefined ? null : Boolean(details.us_spec),
+    bodyType: (details.body_type as string | null) ?? null,
     lowMileage: Boolean(details.low_mileage),
     productCategory: (details.product_category as string | null) ?? null,
     condition: (details.condition as string | null) ?? null,

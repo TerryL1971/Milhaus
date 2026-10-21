@@ -30,6 +30,7 @@ import { FilterCheckboxList } from "@/components/filter-checkbox-list";
 import { FilterCluster } from "@/components/filter-cluster";
 import { PriceRangeFields } from "@/components/price-range-fields";
 import { BASE_NAMES } from "@/lib/bases";
+import { CAR_BODY_TYPE_KEYS, CAR_BODY_TYPE_LABELS } from "@/lib/car-body-types";
 import { listingBases } from "@/lib/listing-bases";
 import { matchesListing } from "@/lib/search-matching";
 import type { Listing } from "@/lib/types";
@@ -45,13 +46,23 @@ type Applied = {
   base: string[];
   make: string[];
   year: string[];
+  bodyType: string[];
   transmission: string[];
   spec: string[];
   priceMin: number | null;
   priceMax: number | null;
 };
 
-const EMPTY_APPLIED: Applied = { base: [], make: [], year: [], transmission: [], spec: [], priceMin: null, priceMax: null };
+const EMPTY_APPLIED: Applied = {
+  base: [],
+  make: [],
+  year: [],
+  bodyType: [],
+  transmission: [],
+  spec: [],
+  priceMin: null,
+  priceMax: null,
+};
 
 function toggleIn<T>(list: T[], value: T): T[] {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
@@ -101,6 +112,7 @@ export function CarsGrid({
     applied.base.length +
     applied.make.length +
     applied.year.length +
+    applied.bodyType.length +
     applied.transmission.length +
     applied.spec.length +
     (applied.priceMin != null ? 1 : 0) +
@@ -122,6 +134,7 @@ export function CarsGrid({
       if (applied.base.length > 0 && !listingBases(listing).some((b) => applied.base.includes(b))) return false;
       if (applied.make.length > 0 && (!listing.make || !applied.make.includes(listing.make))) return false;
       if (applied.year.length > 0 && (listing.year == null || !applied.year.includes(String(listing.year)))) return false;
+      if (applied.bodyType.length > 0 && (!listing.bodyType || !applied.bodyType.includes(listing.bodyType))) return false;
       if (applied.transmission.length > 0 && (!listing.transmission || !applied.transmission.includes(listing.transmission)))
         return false;
       if (applied.spec.length > 0) {
@@ -166,9 +179,26 @@ export function CarsGrid({
         <FilterCluster
           label={tFilter("filterCategorySpecifics")}
           icon="🏷"
-          badge={pending.make.length + pending.year.length || undefined}
+          badge={pending.make.length + pending.year.length + pending.bodyType.length || undefined}
         >
           <div className="flex flex-col gap-4">
+            {/* Fixed vocab (unlike make/year below, which are derived
+                from whatever's actually listed) — body type isn't
+                something free text ever reliably contains ("2019 Toyota
+                Camry SE" never says "sedan"), so it needs an explicit
+                filter the same way it needs an explicit field on the
+                listing itself; see car-body-types.ts and the migration
+                that added it. */}
+            <div>
+              <span className="mb-1.5 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
+                {t("filterBodyType")}
+              </span>
+              <FilterCheckboxList
+                options={CAR_BODY_TYPE_KEYS.map((key) => ({ value: key, label: CAR_BODY_TYPE_LABELS[key] }))}
+                selected={pending.bodyType}
+                onToggle={(value) => setPending((p) => ({ ...p, bodyType: toggleIn(p.bodyType, value) }))}
+              />
+            </div>
             {makes.length > 0 && (
               <div>
                 <span className="mb-1.5 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">

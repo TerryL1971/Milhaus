@@ -28,6 +28,7 @@ import { useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { AMENITY_KEYS } from "@/lib/amenities";
 import { BASE_NAMES } from "@/lib/bases";
+import { CAR_BODY_TYPE_KEYS, CAR_BODY_TYPE_LABELS } from "@/lib/car-body-types";
 import { publishFreeListing } from "@/lib/listing-publish";
 import { NEARBY_AMENITY_KEYS } from "@/lib/nearby-amenities";
 import { CONDITION_KEYS, CONDITION_LABELS, PRODUCT_CATEGORY_KEYS, PRODUCT_CATEGORY_LABELS } from "@/lib/product-categories";
@@ -140,6 +141,7 @@ export function ListingForm({
         mileage_km: formData.get("mileageKm") ? Number(formData.get("mileageKm")) : null,
         transmission: formData.get("transmission") || null,
         us_spec: formData.get("usSpec") ? formData.get("usSpec") === "yes" : null,
+        body_type: formData.get("bodyType") || null,
         low_mileage: formData.get("lowMileage") === "on",
       }));
     } else if (isProduct) {
@@ -392,6 +394,19 @@ export function ListingForm({
               {t("model")}
             </label>
             <input id="model" name="model" required placeholder={t("modelPlaceholder")} className={inputClass} />
+          </div>
+          <div>
+            <label htmlFor="bodyType" className={labelClass}>
+              {t("bodyType")}
+            </label>
+            <select id="bodyType" name="bodyType" className={inputClass} defaultValue="">
+              <option value="">{t("notSpecified")}</option>
+              {CAR_BODY_TYPE_KEYS.map((key) => (
+                <option key={key} value={key}>
+                  {CAR_BODY_TYPE_LABELS[key]}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <label htmlFor="mileageKm" className={labelClass}>

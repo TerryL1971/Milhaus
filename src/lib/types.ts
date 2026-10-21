@@ -91,6 +91,10 @@ export interface Listing {
    * one, which matters a lot to this audience (re-registration hassle).
    * Nullable/optional, same reasoning as transmission. */
   usSpec: boolean | null;
+  /** Car only — key from CAR_BODY_TYPE_LABELS in
+   * src/lib/car-body-types.ts. Nullable/optional, same reasoning as
+   * transmission. */
+  bodyType: string | null;
   /** Car only — a "Low Mileage" badge, set by the lister themselves
    * (not computed from mileageKm). Defaults false. */
   lowMileage: boolean;

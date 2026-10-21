@@ -14,6 +14,7 @@
 // Centralizing it here instead of copy-pasting it again into every grid.
 
 import { BUSINESS_CATEGORY_LABELS, type Business } from "@/lib/businesses";
+import { CAR_BODY_TYPE_LABELS, type CarBodyTypeKey } from "@/lib/car-body-types";
 import { PRODUCT_CATEGORY_LABELS, type ProductCategoryKey } from "@/lib/product-categories";
 import { SERVICE_CATEGORY_LABELS, type ServiceCategoryKey } from "@/lib/service-categories";
 import type { Listing } from "@/lib/types";
@@ -93,6 +94,30 @@ export function matchesAllWords(fields: (string | null | undefined)[], q: string
 const BEDROOM_QUERY = /(\d+)\s*bed(?:room)?s?\b/;
 const BATHROOM_QUERY = /(\d+)\s*bath(?:room)?s?\b/;
 
+// Terry: "VW" for Volkswagen, "MB" for Mercedes-Benz — common shorthand
+// nobody stores anywhere in a car's own make/model, so it could never
+// match without a lookup like this one, same gap body type had. Keyed
+// by a lowercase substring of the make actually stored (not an exact
+// make string), since "Mercedes" and "Mercedes-Benz" both occur in real
+// listings depending on how the seller typed it. Only abbreviations a
+// real shopper would actually type are included — not every possible
+// nickname, which would risk an alias colliding with an unrelated real
+// word (the same failure mode the word-boundary fix above exists to
+// avoid in the first place).
+const MAKE_ALIASES: Record<string, string[]> = {
+  volkswagen: ["vw"],
+  mercedes: ["mb", "merc"],
+  chevrolet: ["chevy"],
+};
+
+function makeAliasFields(make: string | null): string[] {
+  if (!make) return [];
+  const lower = make.toLowerCase();
+  return Object.entries(MAKE_ALIASES)
+    .filter(([key]) => lower.includes(key))
+    .flatMap(([, aliases]) => aliases);
+}
+
 export function matchesListing(listing: Listing, q: string): boolean {
   let freeTextQuery = q;
 
@@ -136,6 +161,15 @@ export function matchesListing(listing: Listing, q: string): boolean {
   if (listing.serviceCategory) {
     fields.push(SERVICE_CATEGORY_LABELS[listing.serviceCategory as ServiceCategoryKey]);
   }
+  if (listing.bodyType) {
+    fields.push(CAR_BODY_TYPE_LABELS[listing.bodyType as CarBodyTypeKey]);
+    // Terry typed "sportscar" as one word — the stored label is two
+    // ("Sports car"), and word-boundary matching (by design) won't find
+    // a one-word query inside a two-word field, so the one-word form
+    // needs its own entry alongside the label.
+    if (listing.bodyType === "sports_car") fields.push("sportscar");
+  }
+  fields.push(...makeAliasFields(listing.make));
   return matchesAllWords(fields, freeTextQuery);
 }
 
