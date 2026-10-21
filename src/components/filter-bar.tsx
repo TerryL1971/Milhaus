@@ -14,7 +14,16 @@
 // gap, not just a cosmetic one — activeCount never counted the keyword
 // box, so a page landed on via the homepage's search bar (just a
 // keyword, no structured filters — see search/page.tsx's redirect) had
-// no way to clear it at all. Gating on `keyword` too fixes that.
+// no way to clear it at all.
+//
+// Unconditional now, same as Apply — first tried gating it on
+// activeCount>0 || keyword (hide it on a page with nothing to clear),
+// but Terry: clicking a plain nav link (Homes/Cars/...) with no filters
+// set landed on a page with no Clear button at all, which read as
+// broken/missing rather than correctly "there's nothing to clear yet."
+// Always showing it, same as Apply Filters always shows, is simpler to
+// reason about than two buttons that each decide independently whether
+// to exist — a Clear click when nothing's set is just a harmless no-op.
 
 export function FilterBar({
   children,
@@ -61,15 +70,13 @@ export function FilterBar({
       >
         {applyLabel}
       </button>
-      {(activeCount > 0 || keyword) && (
-        <button
-          type="button"
-          onClick={onClear}
-          className="whitespace-nowrap rounded-md border border-canvas-deep px-4 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-rust hover:text-rust"
-        >
-          {clearLabel}
-        </button>
-      )}
+      <button
+        type="button"
+        onClick={onClear}
+        className="whitespace-nowrap rounded-md border border-canvas-deep px-4 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-rust hover:text-rust"
+      >
+        {clearLabel}
+      </button>
     </div>
   );
 }

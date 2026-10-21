@@ -91,18 +91,19 @@ export function SearchResultsGrid({
           className="w-full max-w-md rounded-md border border-canvas-deep bg-paper px-4 py-2.5 text-[0.95rem] text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none"
         />
         {/* Terry: every page's search bar needs this, not just
-            /listings //cars/products/services (see FilterBar's own
+            /listings/cars/products/services (see FilterBar's own
             onClear/clearLabel props) — this page had no way to reset
-            the keyword box at all beyond manually deleting the text. */}
-        {query && (
-          <button
-            type="button"
-            onClick={() => setQuery("")}
-            className="whitespace-nowrap rounded-md border border-canvas-deep px-4 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-rust hover:text-rust"
-          >
-            {tFilter("clearAll")}
-          </button>
-        )}
+            the keyword box at all beyond manually deleting the text.
+            Unconditional, same as FilterBar's own Clear button — see
+            that component's header comment for why it's no longer
+            gated on there being anything to actually clear. */}
+        <button
+          type="button"
+          onClick={() => setQuery("")}
+          className="whitespace-nowrap rounded-md border border-canvas-deep px-4 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-rust hover:text-rust"
+        >
+          {tFilter("clearAll")}
+        </button>
       </div>
 
       {!hasAnyResults ? (
