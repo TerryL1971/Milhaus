@@ -15,6 +15,7 @@
 
 import { BUSINESS_CATEGORY_LABELS, type Business } from "@/lib/businesses";
 import { CAR_BODY_TYPE_LABELS, type CarBodyTypeKey } from "@/lib/car-body-types";
+import type { Event } from "@/lib/events";
 import { PRODUCT_CATEGORY_LABELS, type ProductCategoryKey } from "@/lib/product-categories";
 import { SERVICE_CATEGORY_LABELS, type ServiceCategoryKey } from "@/lib/service-categories";
 import type { Listing } from "@/lib/types";
@@ -224,4 +225,8 @@ export function matchesBusiness(business: Business, q: string): boolean {
   const fields: (string | null | undefined)[] = [business.name, business.city, business.base, business.description];
   fields.push(BUSINESS_CATEGORY_LABELS[business.category]);
   return matchesAllWords(fields, q);
+}
+
+export function matchesEvent(event: Event, q: string): boolean {
+  return matchesAllWords([event.title, event.organizerName, event.city, event.base, event.description], q);
 }

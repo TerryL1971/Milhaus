@@ -16,8 +16,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("metaTitle"), description: t("metaDescription") };
 }
 
-export default async function EventsPage() {
+type SearchParams = Promise<{ q?: string }>;
+
+export default async function EventsPage({ searchParams }: { searchParams: SearchParams }) {
   const t = await getTranslations("EventsPage");
+  const { q } = await searchParams;
   const events = await getActiveEvents();
 
   return (
@@ -29,7 +32,7 @@ export default async function EventsPage() {
           <p className="mt-1 max-w-[52ch] text-ink-soft">{t("subhead")}</p>
         </div>
 
-        <EventsBrowser events={events} />
+        <EventsBrowser events={events} initialQuery={q} />
       </div>
     </main>
   );

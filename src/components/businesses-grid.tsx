@@ -18,6 +18,7 @@ import { BusinessCard } from "@/components/business-card";
 import { FilterBar } from "@/components/filter-bar";
 import { FilterCheckboxList } from "@/components/filter-checkbox-list";
 import { FilterCluster } from "@/components/filter-cluster";
+import { SearchNoResultsAlert } from "@/components/search-no-results-alert";
 import { BASE_NAMES } from "@/lib/bases";
 import {
   BUSINESS_CATEGORY_KEYS,
@@ -55,6 +56,12 @@ export function BusinessesGrid({
   const t = useTranslations("ServicesPage");
   const tFilter = useTranslations("FilterModal");
   const [query, setQuery] = useState(initialQuery);
+  const [alertDismissed, setAlertDismissed] = useState(false);
+
+  function handleQueryChange(value: string) {
+    setQuery(value);
+    setAlertDismissed(false);
+  }
 
   const initialApplied = useMemo(
     () => (initialBase ? { ...EMPTY_APPLIED, base: [initialBase] } : EMPTY_APPLIED),
@@ -68,12 +75,14 @@ export function BusinessesGrid({
 
   function handleApply() {
     setApplied(pending);
+    setAlertDismissed(false);
   }
 
   function handleClearAll() {
     setPending(EMPTY_APPLIED);
     setApplied(EMPTY_APPLIED);
     setQuery("");
+    setAlertDismissed(false);
   }
 
   const filtered = useMemo(() => {
@@ -88,11 +97,18 @@ export function BusinessesGrid({
     });
   }, [businesses, query, applied]);
 
+  const noInventory = businesses.length === 0;
+  const noResults = !noInventory && filtered.length === 0;
+
   return (
     <>
+      {noResults && !alertDismissed && (
+        <SearchNoResultsAlert message={t("emptyNoMatch")} onDismiss={() => setAlertDismissed(true)} />
+      )}
+
       <FilterBar
         keyword={query}
-        onKeywordChange={setQuery}
+        onKeywordChange={handleQueryChange}
         keywordPlaceholder={t("searchPlaceholder")}
         activeCount={activeCount}
         activeLabel={(count) => tFilter("activeFiltersLabel", { count })}
@@ -153,14 +169,16 @@ export function BusinessesGrid({
         </FilterCluster>
       </FilterBar>
 
-      {filtered.length === 0 ? (
-        <p className="text-ink-soft">{businesses.length === 0 ? t("emptyNone") : t("emptyNoMatch")}</p>
+      {noInventory ? (
+        <p className="text-ink-soft">{t("emptyNone")}</p>
       ) : (
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((business) => (
-            <BusinessCard key={business.id} business={business} />
-          ))}
-        </div>
+        !noResults && (
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {filtered.map((business) => (
+              <BusinessCard key={business.id} business={business} />
+            ))}
+          </div>
+        )
       )}
     </>
   );

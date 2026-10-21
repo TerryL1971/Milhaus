@@ -72,6 +72,7 @@
     "headlineEnd": "Sie landen.",
     "subhead": "Wohnen • Autos • Kaufen & Verkaufen • Services — Lokal für die US-Militärgemeinschaft.",
     "heroSearchPlaceholder": "Wonach suchen Sie?",
+    "heroSearchNoResults": "Keine Ergebnisse für „{query}“ — versuchen Sie andere Begriffe.",
     "heroAllCategories": "Kategorien",
     "heroCategoryRentals": "Mietobjekte",
     "heroCategoryCars": "Autos",
@@ -565,18 +566,6 @@
     "submitting": "Wird gesendet…",
     "cancel": "Abbrechen",
     "submitted": "Danke — wir schauen es uns an."
-  },
-  "SearchPage": {
-    "metaTitle": "Suche",
-    "heading": "Suchergebnisse",
-    "subhead": "Über alle Kategorien hinweg — Wohnungen, Autos, Artikel, Dienstleistungen, Unternehmen und Veranstaltungen.",
-    "searchPlaceholder": "Suche verfeinern…",
-    "emptyNone": "Noch nichts passend — versuchen Sie eine andere Suche.",
-    "emptyNoMatch": "Nichts passt zu dieser Suche.",
-    "businessesHeading": "Unternehmen",
-    "eventsHeading": "Veranstaltungen",
-    "subheadLocation": "Zeigt nur {location}.",
-    "clearFilters": "Stattdessen alles anzeigen"
   },
   "PostAdPage": {
     "metaTitle": "Anzeige aufgeben",

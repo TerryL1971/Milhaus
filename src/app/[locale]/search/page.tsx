@@ -1,55 +1,38 @@
 // src/app/[locale]/search/page.tsx
-// Cross-category search — where the homepage hero's unified search bar
-// lands when "All categories" is picked (or left alone): one search,
-// every listing type plus businesses and events, instead of requiring
-// the visitor to already know which category page to check first (the
-// actual fix for "how would someone even know Items for sale is where a
-// baby crib would be").
+// No longer a results page — Terry: a whole separate "Search results"
+// page mixing every type together added a page nobody needed once each
+// category could show its own matches on its own page with its own
+// full filter bar (see /listings, /cars, /products, /services, /events,
+// each of which already accepts ?q=/?base= as its own starting filter —
+// the earlier redirect-to-the-right-category work this builds on).
+// This route never renders anything now, purely a server-side redirect:
 //
-// Picking a *specific* category, though, redirects straight to that
-// category's own dedicated page (CATEGORY_REDIRECT_PATHS below) instead
-// of staying on this generic page narrowed to one type. Terry/Charlie:
-// landing on a page titled "Search results" after choosing "Rentals"
-// read like a dead end with none of /listings' own richer filter bar
-// (bedrooms, amenities, price, move-in date) available — whereas
-// /listings, /cars, /products and /services already have everything
-// this page's results would show plus that filter bar, and each already
-// accepts ?q=/?base= as the search's starting point (see each grid's
-// own initialQuery/initialBase prop), so there's no real loss
-// redirecting there instead. "Services" was the first of these fixed
-// (Charlie caught it first — "Services" in the dropdown is the self-
-// listed "service" ListingType, but what he expects there is the
-// Military-Friendly Businesses directory, a different table entirely);
-// the other three are the same fix, generalized once that pattern was
-// proven out.
-import type { Metadata } from "next";
-import { getLocale, getTranslations } from "next-intl/server";
-import { Suspense } from "react";
-import { Link, redirect } from "@/i18n/navigation";
-import { SearchResultsGrid } from "@/components/search-results-grid";
+// - A specific category (?category=rental/car/product/service) goes
+//   straight to that category's own page, same as before.
+// - "All categories" (or an unrecognized category) picks whichever
+//   single page actually has the most matches for this query/location
+//   and sends the visitor straight there instead of a generic results
+//   page mixing types together. "Service" counts both the self-listed
+//   "service" ListingType and the Military-Friendly Businesses
+//   directory together, since both land on /services (same reasoning
+//   as the specific-category redirect for "service" below).
+// - Nothing matches anywhere — the one case with no page to send
+//   someone to — redirects home instead, where a dismissible red alert
+//   says so above the hero search bar (see page.tsx's own
+//   `searchFailed` handling), rather than a results page just showing
+//   "nothing found."
+
+import { getLocale } from "next-intl/server";
+import { redirect } from "@/i18n/navigation";
 import { getActiveBusinesses } from "@/lib/businesses-queries";
 import { getActiveEvents } from "@/lib/events-queries";
-import { getActiveListings } from "@/lib/listings";
 import { listingBases } from "@/lib/listing-bases";
+import { getActiveListings } from "@/lib/listings";
+import { matchesBusiness, matchesEvent, matchesListing } from "@/lib/search-matching";
 import type { Listing, ListingType } from "@/lib/types";
-
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("SearchPage");
-  return { title: t("metaTitle"), robots: { index: false, follow: false } };
-}
 
 type SearchParams = Promise<{ q?: string; category?: string; base?: string }>;
 
-const ALL_TYPES: ListingType[] = ["rental", "car", "product", "service"];
-
-// Where each specific category redirects to — "service" goes to the
-// Businesses directory, not a dedicated page for the "service"
-// ListingType itself (dog walking, photography, moving help), which has
-// no browse page of its own; see the file-top comment for why that's
-// the right redirect anyway. Since these cover every ListingType, every
-// request that reaches past this redirect has no specific category
-// (or an unrecognized one) — "all categories" the only case left to
-// render below, optionally narrowed by ?base=.
 const CATEGORY_REDIRECT_PATHS: Record<ListingType, string> = {
   rental: "/listings",
   car: "/cars",
@@ -57,50 +40,69 @@ const CATEGORY_REDIRECT_PATHS: Record<ListingType, string> = {
   service: "/services",
 };
 
+function buildQueryString(q?: string, base?: string): string {
+  const params = new URLSearchParams();
+  if (q) params.set("q", q);
+  if (base) params.set("base", base);
+  return params.toString();
+}
+
 export default async function SearchPage({ searchParams }: { searchParams: SearchParams }) {
   const { q, category, base } = await searchParams;
-  const t = await getTranslations("SearchPage");
+  const locale = await getLocale();
+  const query = buildQueryString(q, base);
 
   if (category && category in CATEGORY_REDIRECT_PATHS) {
-    const locale = await getLocale();
-    const params = new URLSearchParams();
-    if (q) params.set("q", q);
-    if (base) params.set("base", base);
-    const query = params.toString();
     const path = CATEGORY_REDIRECT_PATHS[category as ListingType];
     redirect({ href: query ? `${path}?${query}` : path, locale });
   }
 
-  const [results, businesses, events] = await Promise.all([
-    Promise.all(ALL_TYPES.map((type) => getActiveListings(type))),
+  const lowerQ = (q ?? "").trim().toLowerCase();
+
+  const [rentals, cars, products, services, businesses, events] = await Promise.all([
+    getActiveListings("rental"),
+    getActiveListings("car"),
+    getActiveListings("product"),
+    getActiveListings("service"),
     getActiveBusinesses(),
     getActiveEvents(),
   ]);
-  let listings: Listing[] = results.flat();
-  if (base) listings = listings.filter((listing) => listingBases(listing).includes(base));
-  listings.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
 
-  // "Showing Stuttgart only" — base names (Stuttgart, Kaiserslautern,
-  // ...) are the same spelling in both languages, so the raw value
-  // drops straight into the template with no label lookup needed, same
-  // as everywhere else this app shows a base name.
-  const isFiltered = Boolean(base);
-  const subhead = base ? t("subheadLocation", { location: base }) : t("subhead");
+  function countListings(listings: Listing[]): number {
+    return listings.filter((listing) => {
+      if (base && !listingBases(listing).includes(base)) return false;
+      if (lowerQ && !matchesListing(listing, lowerQ)) return false;
+      return true;
+    }).length;
+  }
 
-  return (
-    <main className="flex-1 py-14">
-      <div className="mx-auto max-w-[1600px] px-8">
-        <h1 className="mb-2 font-display text-3xl font-semibold text-ink">{t("heading")}</h1>
-        <p className={isFiltered ? "mb-1 text-ink-soft" : "mb-8 text-ink-soft"}>{subhead}</p>
-        {isFiltered && (
-          <Link href="/search" className="mb-8 inline-block text-sm text-olive-deep hover:underline">
-            {t("clearFilters")}
-          </Link>
-        )}
-        <Suspense fallback={null}>
-          <SearchResultsGrid listings={listings} businesses={businesses} events={events} initialQuery={q} />
-        </Suspense>
-      </div>
-    </main>
-  );
+  const businessCount = businesses.filter((business) => {
+    if (base && business.base !== base) return false;
+    if (lowerQ && !matchesBusiness(business, lowerQ)) return false;
+    return true;
+  }).length;
+
+  const eventCount = events.filter((event) => {
+    if (base && event.base !== base) return false;
+    if (lowerQ && !matchesEvent(event, lowerQ)) return false;
+    return true;
+  }).length;
+
+  const counts = [
+    { path: "/listings", count: countListings(rentals) },
+    { path: "/cars", count: countListings(cars) },
+    { path: "/products", count: countListings(products) },
+    { path: "/services", count: countListings(services) + businessCount },
+    { path: "/events", count: eventCount },
+  ];
+
+  const best = counts.reduce((max, entry) => (entry.count > max.count ? entry : max), counts[0]);
+
+  if (best.count === 0) {
+    const params = new URLSearchParams();
+    if (q) params.set("searchFailed", q);
+    redirect({ href: params.toString() ? `/?${params.toString()}` : "/", locale });
+  }
+
+  redirect({ href: query ? `${best.path}?${query}` : best.path, locale });
 }

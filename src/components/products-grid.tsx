@@ -17,6 +17,7 @@ import { FilterCheckboxList } from "@/components/filter-checkbox-list";
 import { FilterCluster } from "@/components/filter-cluster";
 import { PriceRangeFields } from "@/components/price-range-fields";
 import { ProductListingCard } from "@/components/product-listing-card";
+import { SearchNoResultsAlert } from "@/components/search-no-results-alert";
 import { BASE_NAMES } from "@/lib/bases";
 import {
   CONDITION_KEYS,
@@ -67,7 +68,13 @@ export function ProductsGrid({
   const t = useTranslations("ProductsPage");
   const tFilter = useTranslations("FilterModal");
   const [query, setQuery] = useState(initialQuery);
+  const [alertDismissed, setAlertDismissed] = useState(false);
   const favoriteIdSet = useMemo(() => new Set(favoriteIds ?? []), [favoriteIds]);
+
+  function handleQueryChange(value: string) {
+    setQuery(value);
+    setAlertDismissed(false);
+  }
 
   const initialApplied = useMemo(
     () => (initialBase ? { ...EMPTY_APPLIED, base: [initialBase] } : EMPTY_APPLIED),
@@ -85,12 +92,14 @@ export function ProductsGrid({
 
   function handleApply() {
     setApplied(pending);
+    setAlertDismissed(false);
   }
 
   function handleClearAll() {
     setPending(EMPTY_APPLIED);
     setApplied(EMPTY_APPLIED);
     setQuery("");
+    setAlertDismissed(false);
   }
 
   const filtered = useMemo(() => {
@@ -115,11 +124,18 @@ export function ProductsGrid({
     [filtered, favoriteIdSet],
   );
 
+  const noInventory = listings.length === 0;
+  const noResults = !noInventory && sorted.length === 0;
+
   return (
     <>
+      {noResults && !alertDismissed && (
+        <SearchNoResultsAlert message={t("emptyNoMatch")} onDismiss={() => setAlertDismissed(true)} />
+      )}
+
       <FilterBar
         keyword={query}
-        onKeywordChange={setQuery}
+        onKeywordChange={handleQueryChange}
         keywordPlaceholder={t("searchPlaceholder")}
         activeCount={activeCount}
         activeLabel={(count) => tFilter("activeFiltersLabel", { count })}
@@ -168,21 +184,23 @@ export function ProductsGrid({
         </FilterCluster>
       </FilterBar>
 
-      {sorted.length === 0 ? (
-        <p className="text-ink-soft">{listings.length === 0 ? t("emptyNone") : t("emptyNoMatch")}</p>
+      {noInventory ? (
+        <p className="text-ink-soft">{t("emptyNone")}</p>
       ) : (
-        // 4 columns, not 3 — on its own page, Buy & Sell should read as
-        // smaller cards than Homes (which stays at 3), per Terry.
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {sorted.map((listing, index) => (
-            <ProductListingCard
-              key={listing.id}
-              listing={listing}
-              photoGradient={PHOTO_GRADIENTS[index % PHOTO_GRADIENTS.length]}
-              isFavorited={favoriteIds ? favoriteIdSet.has(listing.id) : undefined}
-            />
-          ))}
-        </div>
+        !noResults && (
+          // 4 columns, not 3 — on its own page, Buy & Sell should read as
+          // smaller cards than Homes (which stays at 3), per Terry.
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {sorted.map((listing, index) => (
+              <ProductListingCard
+                key={listing.id}
+                listing={listing}
+                photoGradient={PHOTO_GRADIENTS[index % PHOTO_GRADIENTS.length]}
+                isFavorited={favoriteIds ? favoriteIdSet.has(listing.id) : undefined}
+              />
+            ))}
+          </div>
+        )
       )}
     </>
   );

@@ -7,6 +7,7 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { BusinessCard } from "@/components/business-card";
 import { CarListingCard } from "@/components/car-listing-card";
+import { HeroSearchAlert } from "@/components/hero-search-alert";
 import { ListingCard } from "@/components/listing-card";
 import { ProductListingCard } from "@/components/product-listing-card";
 import { SponsorBannerCarousel } from "@/components/sponsor-banner-carousel";
@@ -43,8 +44,11 @@ const PRODUCT_PHOTO_GRADIENTS = [
 // already used this) rather than the 4:3 originally guessed here.
 const FEATURED_CARD_ASPECT = "aspect-[16/9]";
 
-export default async function Home() {
+type SearchParams = Promise<{ searchFailed?: string }>;
+
+export default async function Home({ searchParams }: { searchParams: SearchParams }) {
   const t = await getTranslations("HomePage");
+  const { searchFailed } = await searchParams;
   const locale = await getLocale();
   const supabase = await createClient();
   const {
@@ -119,6 +123,12 @@ export default async function Home() {
               {t("subhead")}
             </p>
 
+            {/* search/page.tsx redirects here with ?searchFailed=<query>
+                when nothing matched in any category — the one case that
+                dispatcher can't send anywhere else (see its own header
+                comment). */}
+            {searchFailed && <HeroSearchAlert message={t("heroSearchNoResults", { query: searchFailed })} />}
+
             {/* Back to one line (Terry's call) from sm: up — stacks below
                 that. Fitting all four controls legibly inside the lg+
                 hero column (capped at 620px so the card sits over open
@@ -142,6 +152,7 @@ export default async function Home() {
               <input
                 type="search"
                 name="q"
+                defaultValue={searchFailed ?? ""}
                 placeholder={t("heroSearchPlaceholder")}
                 className="min-w-[170px] flex-1 rounded-md border border-canvas-deep bg-canvas px-3 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none"
               />

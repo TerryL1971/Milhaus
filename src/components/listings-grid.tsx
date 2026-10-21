@@ -22,6 +22,7 @@ import { FilterCheckboxList } from "@/components/filter-checkbox-list";
 import { FilterCluster } from "@/components/filter-cluster";
 import { ListingCard } from "@/components/listing-card";
 import { PriceRangeFields } from "@/components/price-range-fields";
+import { SearchNoResultsAlert } from "@/components/search-no-results-alert";
 import { Link } from "@/i18n/navigation";
 import { AMENITY_KEYS, type AmenityKey } from "@/lib/amenities";
 import { BASE_NAMES } from "@/lib/bases";
@@ -103,6 +104,15 @@ export function ListingsGrid({
   } = useListingFilters();
 
   const [keyword, setKeyword] = useState(initialQuery);
+  // A *new* search that also finds nothing needs to re-show the alert
+  // even after a previous one was dismissed — reset on every change
+  // that could affect the result set, not tracked by the alert itself.
+  const [alertDismissed, setAlertDismissed] = useState(false);
+
+  function handleKeywordChange(value: string) {
+    setKeyword(value);
+    setAlertDismissed(false);
+  }
 
   // Pending — what's checked/typed in the (still-open or just-closed)
   // dropdowns, not yet applied to the grid. Re-synced from the applied
@@ -125,6 +135,7 @@ export function ListingsGrid({
       priceMax: pendingPriceMax,
       housingOfficeOnly: pendingHousingOnly,
     });
+    setAlertDismissed(false);
   }
 
   function handleClearAll() {
@@ -136,6 +147,7 @@ export function ListingsGrid({
     setPendingPriceMax(null);
     setPendingHousingOnly(false);
     setKeyword("");
+    setAlertDismissed(false);
     clearAll();
   }
 
@@ -176,6 +188,19 @@ export function ListingsGrid({
   const hasActiveFilters = activeCount > 0;
   // Only pad the *unfiltered* view — see PlaceholderCard's comment for why.
   const placeholderCount = hasActiveFilters || keyword ? 0 : Math.max(0, 3 - filtered.length);
+  const noResults = sorted.length === 0 && (hasActiveFilters || Boolean(keyword));
+  const noResultsMessage = [
+    t("emptyPrefix"),
+    activeBases.length > 0 ? t("emptyNear", { base: activeBases.join(", ") }) : "",
+    minBedrooms > 0 ? t("emptyBedrooms", { count: minBedrooms }) : "",
+    moveIn
+      ? t("emptyMoveIn", { date: new Date(`${moveIn}T00:00:00`).toLocaleDateString(locale, { month: "long", day: "numeric" }) })
+      : "",
+    activeAmenities.length > 0 ? t("emptyAmenities", { list: activeAmenities.map((key) => tAmenities(key)).join(", ") }) : "",
+    t("emptySuffix"),
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <>
@@ -183,9 +208,13 @@ export function ListingsGrid({
         <h2 className="font-display text-[2rem] font-semibold text-ink">{t("heading")}</h2>
       </div>
 
+      {noResults && !alertDismissed && (
+        <SearchNoResultsAlert message={noResultsMessage} onDismiss={() => setAlertDismissed(true)} />
+      )}
+
       <FilterBar
         keyword={keyword}
-        onKeywordChange={setKeyword}
+        onKeywordChange={handleKeywordChange}
         keywordPlaceholder={t("searchPlaceholder")}
         activeCount={activeCount}
         activeLabel={(count) => tFilter("activeFiltersLabel", { count })}
@@ -283,20 +312,7 @@ export function ListingsGrid({
         </FilterCluster>
       </FilterBar>
 
-      {sorted.length === 0 && (hasActiveFilters || keyword) ? (
-        <p className="text-ink-soft">
-          {t("emptyPrefix")}
-          {activeBases.length > 0 ? ` ${t("emptyNear", { base: activeBases.join(", ") })}` : ""}
-          {minBedrooms > 0 ? ` ${t("emptyBedrooms", { count: minBedrooms })}` : ""}
-          {moveIn
-            ? ` ${t("emptyMoveIn", { date: new Date(`${moveIn}T00:00:00`).toLocaleDateString(locale, { month: "long", day: "numeric" }) })}`
-            : ""}
-          {activeAmenities.length > 0
-            ? ` ${t("emptyAmenities", { list: activeAmenities.map((key) => tAmenities(key)).join(", ") })}`
-            : ""}{" "}
-          {t("emptySuffix")}
-        </p>
-      ) : (
+      {!noResults && (
         <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
           {sorted.map((listing, index) => (
             <ListingCard

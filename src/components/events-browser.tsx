@@ -6,13 +6,18 @@
 // control (and a heavier bundle) than one month-grid needs here. Clicking
 // a date with events filters the list below to that day; clicking it
 // again (or "Show all") clears the filter. A keyword box searches title/
-// organizer/city same as every other category's grid.
+// organizer/city same as every other category's grid — via the shared
+// matchesEvent (word-boundary matching, see lib/search-matching.ts), not
+// its own naive substring check, and initialQuery/a Clear button for the
+// same reasons every other grid has them (see cars-grid.tsx/filter-bar.tsx).
 
 "use client";
 
 import { useMemo, useState } from "react";
 import { EventCard } from "@/components/event-card";
+import { SearchNoResultsAlert } from "@/components/search-no-results-alert";
 import type { Event } from "@/lib/events";
+import { matchesEvent } from "@/lib/search-matching";
 
 const WEEKDAY_LABELS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 const MONTH_FORMATTER = new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" });
@@ -21,13 +26,33 @@ function toDateKey(date: Date): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
 
-export function EventsBrowser({ events }: { events: Event[] }) {
-  const [query, setQuery] = useState("");
+export function EventsBrowser({
+  events,
+  initialQuery = "",
+}: {
+  events: Event[];
+  /** Carried over from the homepage's unified search bar (?q=) — see
+   * cars-grid.tsx's own prop comment and search/page.tsx's redirect. */
+  initialQuery?: string;
+}) {
+  const [query, setQuery] = useState(initialQuery);
+  const [alertDismissed, setAlertDismissed] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [monthCursor, setMonthCursor] = useState(() => {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), 1);
   });
+
+  function handleQueryChange(value: string) {
+    setQuery(value);
+    setAlertDismissed(false);
+  }
+
+  function handleClear() {
+    setQuery("");
+    setSelectedDate(null);
+    setAlertDismissed(false);
+  }
 
   const eventDatesByKey = useMemo(() => {
     const map = new Map<string, number>();
@@ -43,9 +68,12 @@ export function EventsBrowser({ events }: { events: Event[] }) {
     return events.filter((event) => {
       if (selectedDate && toDateKey(new Date(event.startsAt)) !== selectedDate) return false;
       if (!q) return true;
-      return [event.title, event.organizerName, event.city].some((field) => field.toLowerCase().includes(q));
+      return matchesEvent(event, q);
     });
   }, [events, query, selectedDate]);
+
+  const noInventory = events.length === 0;
+  const noResults = !noInventory && filtered.length === 0;
 
   // Calendar grid: every day from the Sunday on/before the 1st through
   // the Saturday on/after the last day of the month — always a whole
@@ -71,6 +99,7 @@ export function EventsBrowser({ events }: { events: Event[] }) {
 
   function toggleDate(key: string) {
     setSelectedDate((current) => (current === key ? null : key));
+    setAlertDismissed(false);
   }
 
   return (
@@ -142,24 +171,37 @@ export function EventsBrowser({ events }: { events: Event[] }) {
         </div>
 
         <div className="flex-1">
-          <input
-            type="text"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search events…"
-            className="w-full rounded-md border border-canvas-deep bg-paper px-3 py-2.5 text-[0.95rem] text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none"
-          />
+          {noResults && !alertDismissed && (
+            <SearchNoResultsAlert message="Nothing matches that." onDismiss={() => setAlertDismissed(true)} />
+          )}
 
-          {filtered.length === 0 ? (
-            <p className="mt-5 text-ink-soft">
-              {events.length === 0 ? "No events scheduled right now." : "Nothing matches that."}
-            </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <input
+              type="text"
+              value={query}
+              onChange={(event) => handleQueryChange(event.target.value)}
+              placeholder="Search events…"
+              className="min-w-[180px] flex-1 rounded-md border border-canvas-deep bg-paper px-3 py-2.5 text-[0.95rem] text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none"
+            />
+            <button
+              type="button"
+              onClick={handleClear}
+              className="whitespace-nowrap rounded-md border border-canvas-deep px-4 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-rust hover:text-rust"
+            >
+              Clear
+            </button>
+          </div>
+
+          {noInventory ? (
+            <p className="mt-5 text-ink-soft">No events scheduled right now.</p>
           ) : (
-            <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
-              {filtered.map((event) => (
-                <EventCard key={event.id} event={event} />
-              ))}
-            </div>
+            !noResults && (
+              <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
+                {filtered.map((event) => (
+                  <EventCard key={event.id} event={event} />
+                ))}
+              </div>
+            )
           )}
         </div>
       </div>

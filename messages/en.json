@@ -72,6 +72,7 @@
     "headlineEnd": "you land.",
     "subhead": "Homes • Cars • Buy & Sell • Services — Local for the U.S. military community.",
     "heroSearchPlaceholder": "What are you looking for?",
+    "heroSearchNoResults": "No results for “{query}” — try different words.",
     "heroAllCategories": "Categories",
     "heroCategoryRentals": "Rentals",
     "heroCategoryCars": "Cars",
@@ -565,18 +566,6 @@
     "submitting": "Submitting…",
     "cancel": "Cancel",
     "submitted": "Thanks — we'll take a look."
-  },
-  "SearchPage": {
-    "metaTitle": "Search",
-    "heading": "Search results",
-    "subhead": "Across every category — homes, cars, items for sale, services, businesses, and events.",
-    "searchPlaceholder": "Refine your search…",
-    "emptyNone": "Nothing matches yet — try a different search.",
-    "emptyNoMatch": "Nothing matches that search.",
-    "businessesHeading": "Businesses",
-    "eventsHeading": "Events",
-    "subheadLocation": "Showing {location} only.",
-    "clearFilters": "Show everything instead"
   },
   "PostAdPage": {
     "metaTitle": "Post an ad",
