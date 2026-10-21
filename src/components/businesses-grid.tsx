@@ -40,13 +40,27 @@ function toggleIn<T>(list: T[], value: T): T[] {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
 }
 
-export function BusinessesGrid({ businesses, initialQuery = "" }: { businesses: Business[]; initialQuery?: string }) {
+export function BusinessesGrid({
+  businesses,
+  initialQuery = "",
+  initialBase = "",
+}: {
+  businesses: Business[];
+  initialQuery?: string;
+  /** Carried over from the homepage's unified search bar (?base=) — see
+   * cars-grid.tsx's own prop comment. */
+  initialBase?: string;
+}) {
   const t = useTranslations("ServicesPage");
   const tFilter = useTranslations("FilterModal");
   const [query, setQuery] = useState(initialQuery);
 
-  const [applied, setApplied] = useState<Applied>(EMPTY_APPLIED);
-  const [pending, setPending] = useState<Applied>(EMPTY_APPLIED);
+  const initialApplied = useMemo(
+    () => (initialBase ? { ...EMPTY_APPLIED, base: [initialBase] } : EMPTY_APPLIED),
+    [initialBase],
+  );
+  const [applied, setApplied] = useState<Applied>(initialApplied);
+  const [pending, setPending] = useState<Applied>(initialApplied);
 
   const activeCount =
     applied.base.length + applied.category.length + (applied.minRating > 0 ? 1 : 0) + applied.tags.length;
@@ -58,6 +72,7 @@ export function BusinessesGrid({ businesses, initialQuery = "" }: { businesses: 
   function handleClearAll() {
     setPending(EMPTY_APPLIED);
     setApplied(EMPTY_APPLIED);
+    setQuery("");
   }
 
   const filtered = useMemo(() => {

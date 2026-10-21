@@ -25,8 +25,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("metaTitle"), description: t("metaDescription") };
 }
 
-export default async function ListingsPage() {
+type SearchParams = Promise<{ q?: string }>;
+
+export default async function ListingsPage({ searchParams }: { searchParams: SearchParams }) {
   const t = await getTranslations("ListingsPage");
+  const { q } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -54,7 +57,7 @@ export default async function ListingsPage() {
         </div>
 
         <Suspense fallback={null}>
-          <ListingsGrid listings={listings} favoriteIds={user ? Array.from(favoriteIds) : null} />
+          <ListingsGrid listings={listings} favoriteIds={user ? Array.from(favoriteIds) : null} initialQuery={q} />
         </Suspense>
       </div>
     </main>

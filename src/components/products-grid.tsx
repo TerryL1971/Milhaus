@@ -4,7 +4,9 @@
 // Badges ⭐ (condition) dropdown clusters, a keyword box, and an explicit
 // Apply Filters button. Plain local state, not URL params — see
 // cars-grid.tsx's header comment for why (an explicit Apply button
-// doesn't fit the old per-click-writes-the-URL model).
+// doesn't fit the old per-click-writes-the-URL model) and for why
+// initialQuery/initialBase are the one exception, seeded from the
+// homepage's unified search bar via search/page.tsx's redirect.
 
 "use client";
 
@@ -50,10 +52,14 @@ function toggleIn<T>(list: T[], value: T): T[] {
 export function ProductsGrid({
   listings,
   initialQuery = "",
+  initialBase = "",
   favoriteIds,
 }: {
   listings: Listing[];
   initialQuery?: string;
+  /** Carried over from the homepage's unified search bar (?base=) — see
+   * cars-grid.tsx's own prop comment. */
+  initialBase?: string;
   /** null = signed-out visitor (no hearts at all); array (possibly
    * empty) = signed in, these listing IDs are favorited. */
   favoriteIds: string[] | null;
@@ -63,8 +69,12 @@ export function ProductsGrid({
   const [query, setQuery] = useState(initialQuery);
   const favoriteIdSet = useMemo(() => new Set(favoriteIds ?? []), [favoriteIds]);
 
-  const [applied, setApplied] = useState<Applied>(EMPTY_APPLIED);
-  const [pending, setPending] = useState<Applied>(EMPTY_APPLIED);
+  const initialApplied = useMemo(
+    () => (initialBase ? { ...EMPTY_APPLIED, base: [initialBase] } : EMPTY_APPLIED),
+    [initialBase],
+  );
+  const [applied, setApplied] = useState<Applied>(initialApplied);
+  const [pending, setPending] = useState<Applied>(initialApplied);
 
   const activeCount =
     applied.base.length +
@@ -80,6 +90,7 @@ export function ProductsGrid({
   function handleClearAll() {
     setPending(EMPTY_APPLIED);
     setApplied(EMPTY_APPLIED);
+    setQuery("");
   }
 
   const filtered = useMemo(() => {

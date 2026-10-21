@@ -573,9 +573,7 @@
     "emptyNoMatch": "Nothing matches that search.",
     "businessesHeading": "Businesses",
     "eventsHeading": "Events",
-    "subheadCategory": "Showing {category} only.",
     "subheadLocation": "Showing {location} only.",
-    "subheadCategoryLocation": "Showing {category} in {location} only.",
     "clearFilters": "Show everything instead"
   },
   "PostAdPage": {

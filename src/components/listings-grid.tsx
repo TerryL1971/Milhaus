@@ -70,11 +70,17 @@ function PlaceholderCard({ variant }: { variant: 0 | 1 | 2 }) {
 export function ListingsGrid({
   listings,
   favoriteIds,
+  initialQuery = "",
 }: {
   listings: Listing[];
   /** null = signed-out visitor (no hearts at all); array (possibly
    * empty) = signed in, these listing IDs are favorited. */
   favoriteIds: string[] | null;
+  /** Carried over from the homepage's unified search bar (?q=) when a
+   * visitor picks "Rentals" and hits Search there — lands them here
+   * with the same keyword already typed in, instead of on the generic
+   * cross-category /search page. See search/page.tsx's redirect. */
+  initialQuery?: string;
 }) {
   const favoriteIdSet = useMemo(() => new Set(favoriteIds ?? []), [favoriteIds]);
   const t = useTranslations("ListingsGrid");
@@ -95,7 +101,7 @@ export function ListingsGrid({
     clearAll,
   } = useListingFilters();
 
-  const [keyword, setKeyword] = useState("");
+  const [keyword, setKeyword] = useState(initialQuery);
 
   // Pending — what's checked/typed in the (still-open or just-closed)
   // dropdowns, not yet applied to the grid. Re-synced from the applied
@@ -128,6 +134,7 @@ export function ListingsGrid({
     setPendingPriceMin(null);
     setPendingPriceMax(null);
     setPendingHousingOnly(false);
+    setKeyword("");
     clearAll();
   }
 

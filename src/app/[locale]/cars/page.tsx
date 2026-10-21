@@ -23,11 +23,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("metaTitle"), description: t("metaDescription") };
 }
 
-type SearchParams = Promise<{ q?: string }>;
+type SearchParams = Promise<{ q?: string; base?: string }>;
 
 export default async function CarsPage({ searchParams }: { searchParams: SearchParams }) {
   const t = await getTranslations("CarsPage");
-  const { q } = await searchParams;
+  const { q, base } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -57,7 +57,12 @@ export default async function CarsPage({ searchParams }: { searchParams: SearchP
             </div>
 
             <Suspense fallback={null}>
-              <CarsGrid listings={listings} initialQuery={q} favoriteIds={user ? Array.from(favoriteIds) : null} />
+              <CarsGrid
+                listings={listings}
+                initialQuery={q}
+                initialBase={base}
+                favoriteIds={user ? Array.from(favoriteIds) : null}
+              />
             </Suspense>
           </div>
 

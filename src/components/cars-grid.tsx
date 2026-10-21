@@ -14,7 +14,11 @@
 // (each toggle would've raced the next one against a stale
 // searchParams snapshot). Resets on reload; that's an acceptable trade
 // for a bar whose whole point is "nothing happens until you click
-// Apply" anyway.
+// Apply" anyway. initialQuery/initialBase are the one exception — seeded
+// once from ?q=/?base= when the homepage's unified search bar sends a
+// "Cars" pick straight here (see search/page.tsx's redirect) instead of
+// to the generic /search page, so the visitor lands already filtered to
+// what they searched for rather than on an empty grid.
 
 "use client";
 
@@ -55,10 +59,15 @@ function toggleIn<T>(list: T[], value: T): T[] {
 export function CarsGrid({
   listings,
   initialQuery = "",
+  initialBase = "",
   favoriteIds,
 }: {
   listings: Listing[];
   initialQuery?: string;
+  /** Carried over from the homepage's unified search bar (?base=) when a
+   * visitor picks "Cars" and a location and hits Search there — see
+   * search/page.tsx's redirect. */
+  initialBase?: string;
   /** null = signed-out visitor (no hearts at all); array (possibly
    * empty) = signed in, these listing IDs are favorited. */
   favoriteIds: string[] | null;
@@ -68,8 +77,12 @@ export function CarsGrid({
   const [query, setQuery] = useState(initialQuery);
   const favoriteIdSet = useMemo(() => new Set(favoriteIds ?? []), [favoriteIds]);
 
-  const [applied, setApplied] = useState<Applied>(EMPTY_APPLIED);
-  const [pending, setPending] = useState<Applied>(EMPTY_APPLIED);
+  const initialApplied = useMemo(
+    () => (initialBase ? { ...EMPTY_APPLIED, base: [initialBase] } : EMPTY_APPLIED),
+    [initialBase],
+  );
+  const [applied, setApplied] = useState<Applied>(initialApplied);
+  const [pending, setPending] = useState<Applied>(initialApplied);
 
   const makes = useMemo(
     () => Array.from(new Set(listings.map((l) => l.make).filter((m): m is string => !!m))).sort(),
@@ -99,6 +112,7 @@ export function CarsGrid({
   function handleClearAll() {
     setPending(EMPTY_APPLIED);
     setApplied(EMPTY_APPLIED);
+    setQuery("");
   }
 
   const filtered = useMemo(() => {

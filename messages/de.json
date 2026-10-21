@@ -573,9 +573,7 @@
     "emptyNoMatch": "Nichts passt zu dieser Suche.",
     "businessesHeading": "Unternehmen",
     "eventsHeading": "Veranstaltungen",
-    "subheadCategory": "Zeigt nur {category}.",
     "subheadLocation": "Zeigt nur {location}.",
-    "subheadCategoryLocation": "Zeigt nur {category} in {location}.",
     "clearFilters": "Stattdessen alles anzeigen"
   },
   "PostAdPage": {

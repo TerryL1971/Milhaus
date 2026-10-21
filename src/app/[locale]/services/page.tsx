@@ -18,11 +18,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("metaTitle"), description: t("metaDescription") };
 }
 
-type SearchParams = Promise<{ q?: string }>;
+type SearchParams = Promise<{ q?: string; base?: string }>;
 
 export default async function ServicesPage({ searchParams }: { searchParams: SearchParams }) {
   const t = await getTranslations("ServicesPage");
-  const { q } = await searchParams;
+  const { q, base } = await searchParams;
   const businesses = await getActiveBusinesses();
 
   return (
@@ -43,7 +43,7 @@ export default async function ServicesPage({ searchParams }: { searchParams: Sea
         </div>
 
         <Suspense fallback={null}>
-          <BusinessesGrid businesses={businesses} initialQuery={q} />
+          <BusinessesGrid businesses={businesses} initialQuery={q} initialBase={base} />
         </Suspense>
       </div>
     </main>

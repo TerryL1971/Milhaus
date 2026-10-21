@@ -1,31 +1,27 @@
 // src/app/[locale]/search/page.tsx
 // Cross-category search — where the homepage hero's unified search bar
-// lands. The actual fix for "how would someone even know Items for sale
-// is where a baby crib would be": one search, every type, instead of
-// requiring the visitor to already know which of the four category pages
-// to check. A specific category can still narrow results (the hero's
-// category dropdown sets ?category=), but "all categories" is the
-// default and the whole point.
+// lands when "All categories" is picked (or left alone): one search,
+// every listing type plus businesses and events, instead of requiring
+// the visitor to already know which category page to check first (the
+// actual fix for "how would someone even know Items for sale is where a
+// baby crib would be").
 //
-// Businesses and events are fetched alongside listings for that same
-// "all categories" default (Terry: the bar was only ever finding Cars/
-// Rentals/Items for sale/Services) — but only then. They aren't
-// `ListingType`s themselves (no dropdown option narrows to just one of
-// them the way "Cars" does), so picking a specific listing category is
-// treated as "only that," same as before.
-//
-// "Services" is a special case, not just another ListingType filter,
-// though: Charlie caught this — picking it in the hero dropdown and
-// hitting Search left him on *this* page showing self-listed service
-// *listings* (dog walking, photography, moving help — the "service"
-// ListingType), not the actual Services page he expected, which is the
-// Military-Friendly Businesses directory (a completely different
-// table, see src/app/[locale]/services/page.tsx's own header comment).
-// Those two things sharing the word "Services" is the real, pre-
-// existing confusion; Rentals/Cars/Items for sale don't have an
-// equivalent split (their dedicated pages show the exact same
-// listings this page would filter to, just with richer filter UI
-// around them), so only this one category redirects.
+// Picking a *specific* category, though, redirects straight to that
+// category's own dedicated page (CATEGORY_REDIRECT_PATHS below) instead
+// of staying on this generic page narrowed to one type. Terry/Charlie:
+// landing on a page titled "Search results" after choosing "Rentals"
+// read like a dead end with none of /listings' own richer filter bar
+// (bedrooms, amenities, price, move-in date) available — whereas
+// /listings, /cars, /products and /services already have everything
+// this page's results would show plus that filter bar, and each already
+// accepts ?q=/?base= as the search's starting point (see each grid's
+// own initialQuery/initialBase prop), so there's no real loss
+// redirecting there instead. "Services" was the first of these fixed
+// (Charlie caught it first — "Services" in the dropdown is the self-
+// listed "service" ListingType, but what he expects there is the
+// Military-Friendly Businesses directory, a different table entirely);
+// the other three are the same fix, generalized once that pattern was
+// proven out.
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
@@ -46,64 +42,50 @@ type SearchParams = Promise<{ q?: string; category?: string; base?: string }>;
 
 const ALL_TYPES: ListingType[] = ["rental", "car", "product", "service"];
 
-// Picking "Cars" (or Rentals/Items for sale) from the hero's dropdown
-// narrowed the results correctly, but the heading/subhead never changed
-// from the generic "Search results — across every category" line, even
-// though only one category was actually showing — Terry: this read like
-// landing on a different, dedicated page (e.g. the Cars page) with no
-// indication that's what happened. Reusing the same labels the hero's
-// own dropdown already shows (HomePage namespace), not inventing new
-// category names that could drift out of sync with it. Extended the
-// same fix to the location dropdown right after ("Showing Stuttgart
-// only," alone or combined with a category) — one shared "clear
-// filters" link covers either or both being set.
-const CATEGORY_LABEL_KEYS: Record<ListingType, string> = {
-  rental: "heroCategoryRentals",
-  car: "heroCategoryCars",
-  product: "heroCategoryItems",
-  service: "heroCategoryServices",
+// Where each specific category redirects to — "service" goes to the
+// Businesses directory, not a dedicated page for the "service"
+// ListingType itself (dog walking, photography, moving help), which has
+// no browse page of its own; see the file-top comment for why that's
+// the right redirect anyway. Since these cover every ListingType, every
+// request that reaches past this redirect has no specific category
+// (or an unrecognized one) — "all categories" the only case left to
+// render below, optionally narrowed by ?base=.
+const CATEGORY_REDIRECT_PATHS: Record<ListingType, string> = {
+  rental: "/listings",
+  car: "/cars",
+  product: "/products",
+  service: "/services",
 };
 
 export default async function SearchPage({ searchParams }: { searchParams: SearchParams }) {
   const { q, category, base } = await searchParams;
   const t = await getTranslations("SearchPage");
 
-  if (category === "service") {
+  if (category && category in CATEGORY_REDIRECT_PATHS) {
     const locale = await getLocale();
-    redirect({ href: q ? `/services?q=${encodeURIComponent(q)}` : "/services", locale });
+    const params = new URLSearchParams();
+    if (q) params.set("q", q);
+    if (base) params.set("base", base);
+    const query = params.toString();
+    const path = CATEGORY_REDIRECT_PATHS[category as ListingType];
+    redirect({ href: query ? `${path}?${query}` : path, locale });
   }
 
-  const isSpecificListingType = Boolean(category) && (ALL_TYPES as string[]).includes(category!);
-  const types: ListingType[] = isSpecificListingType ? [category as ListingType] : ALL_TYPES;
-
   const [results, businesses, events] = await Promise.all([
-    Promise.all(types.map((type) => getActiveListings(type))),
-    isSpecificListingType ? Promise.resolve([]) : getActiveBusinesses(),
-    isSpecificListingType ? Promise.resolve([]) : getActiveEvents(),
+    Promise.all(ALL_TYPES.map((type) => getActiveListings(type))),
+    getActiveBusinesses(),
+    getActiveEvents(),
   ]);
   let listings: Listing[] = results.flat();
   if (base) listings = listings.filter((listing) => listingBases(listing).includes(base));
   listings.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
 
-  // Same ask, extended to the hero's location dropdown — "Showing
-  // Stuttgart only," on its own or combined with a category ("Showing
-  // Cars in Stuttgart only."). Base names (Stuttgart, Kaiserslautern,
+  // "Showing Stuttgart only" — base names (Stuttgart, Kaiserslautern,
   // ...) are the same spelling in both languages, so the raw value
   // drops straight into the template with no label lookup needed, same
   // as everywhere else this app shows a base name.
-  const categoryLabel = isSpecificListingType
-    ? (await getTranslations("HomePage"))(CATEGORY_LABEL_KEYS[category as ListingType])
-    : null;
-  const isFiltered = Boolean(categoryLabel) || Boolean(base);
-
-  let subhead = t("subhead");
-  if (categoryLabel && base) {
-    subhead = t("subheadCategoryLocation", { category: categoryLabel, location: base });
-  } else if (categoryLabel) {
-    subhead = t("subheadCategory", { category: categoryLabel });
-  } else if (base) {
-    subhead = t("subheadLocation", { location: base });
-  }
+  const isFiltered = Boolean(base);
+  const subhead = base ? t("subheadLocation", { location: base }) : t("subhead");
 
   return (
     <main className="flex-1 py-14">
