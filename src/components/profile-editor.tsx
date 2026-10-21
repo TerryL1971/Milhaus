@@ -189,8 +189,13 @@ export function ProfileEditor({ profile }: { profile: Profile }) {
           the cover's overflow-hidden container), but that default
           stacking is easy to second-guess at a glance in a negative-
           margin overlap like this one; making the priority explicit
-          costs nothing and settles it for good. */}
-      <div className="relative z-10 -mt-12 mb-5 flex items-end gap-4 pl-1">
+          costs nothing and settles it for good. w-fit matters here,
+          not just cosmetically: a flex row with no width constraint is
+          still a full-width block box even where it has no visible
+          content, so without it this row's empty right-hand side sat
+          on top of (and ate clicks meant for) the cover photo's own
+          "change cover photo" button occupying that same corner. */}
+      <div className="relative z-10 -mt-12 mb-5 flex w-fit items-end gap-4 pl-1">
         <Avatar
           name={profile.displayName ?? profile.contactEmail ?? "?"}
           photoUrl={photoUrl}
