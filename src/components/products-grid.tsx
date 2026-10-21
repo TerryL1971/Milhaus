@@ -24,8 +24,8 @@ import {
   PRODUCT_CATEGORY_KEYS,
   PRODUCT_CATEGORY_LABELS,
   type ConditionKey,
-  type ProductCategoryKey,
 } from "@/lib/product-categories";
+import { matchesListing } from "@/lib/search-matching";
 import type { Listing } from "@/lib/types";
 
 const PHOTO_GRADIENTS = [
@@ -104,12 +104,7 @@ export function ProductsGrid({
       if (applied.priceMin != null && listing.priceEurMonth < applied.priceMin) return false;
       if (applied.priceMax != null && listing.priceEurMonth > applied.priceMax) return false;
       if (!q) return true;
-      const categoryLabel = listing.productCategory
-        ? PRODUCT_CATEGORY_LABELS[listing.productCategory as ProductCategoryKey]
-        : null;
-      return [listing.title, listing.city, categoryLabel].filter(Boolean).some((field) =>
-        field!.toLowerCase().includes(q),
-      );
+      return matchesListing(listing, q);
     });
   }, [listings, query, applied]);
 

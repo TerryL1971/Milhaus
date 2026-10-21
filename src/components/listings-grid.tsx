@@ -25,6 +25,7 @@ import { PriceRangeFields } from "@/components/price-range-fields";
 import { Link } from "@/i18n/navigation";
 import { AMENITY_KEYS, type AmenityKey } from "@/lib/amenities";
 import { BASE_NAMES } from "@/lib/bases";
+import { matchesListing } from "@/lib/search-matching";
 import type { Listing } from "@/lib/types";
 import { useListingFilters } from "@/lib/use-listing-filters";
 
@@ -160,9 +161,7 @@ export function ListingsGrid({
       if (priceMax != null && listing.priceEurMonth > priceMax) return false;
       if (housingOfficeOnly && listing.source !== "housing_office") return false;
       if (!q) return true;
-      return [listing.title, listing.city, listing.address].filter(Boolean).some((field) =>
-        field!.toLowerCase().includes(q),
-      );
+      return matchesListing(listing, q);
     });
   }, [listings, keyword, activeBases, minBedrooms, moveIn, activeAmenities, priceMin, priceMax, housingOfficeOnly]);
 

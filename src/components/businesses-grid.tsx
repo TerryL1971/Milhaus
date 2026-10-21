@@ -26,6 +26,7 @@ import {
   BUSINESS_TAG_LABELS,
   type Business,
 } from "@/lib/businesses";
+import { matchesBusiness } from "@/lib/search-matching";
 
 type Applied = {
   base: string[];
@@ -83,9 +84,7 @@ export function BusinessesGrid({
       if (applied.minRating > 0 && (business.rating == null || business.rating < applied.minRating)) return false;
       if (applied.tags.some((tag) => !business.tags.includes(tag as (typeof business.tags)[number]))) return false;
       if (!q) return true;
-      return [business.name, business.city, BUSINESS_CATEGORY_LABELS[business.category]]
-        .filter(Boolean)
-        .some((field) => field!.toLowerCase().includes(q));
+      return matchesBusiness(business, q);
     });
   }, [businesses, query, applied]);
 

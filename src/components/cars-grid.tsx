@@ -31,6 +31,7 @@ import { FilterCluster } from "@/components/filter-cluster";
 import { PriceRangeFields } from "@/components/price-range-fields";
 import { BASE_NAMES } from "@/lib/bases";
 import { listingBases } from "@/lib/listing-bases";
+import { matchesListing } from "@/lib/search-matching";
 import type { Listing } from "@/lib/types";
 
 const PHOTO_GRADIENTS = [
@@ -130,9 +131,7 @@ export function CarsGrid({
       if (applied.priceMin != null && listing.priceEurMonth < applied.priceMin) return false;
       if (applied.priceMax != null && listing.priceEurMonth > applied.priceMax) return false;
       if (!q) return true;
-      return [listing.title, listing.make, listing.model, listing.city]
-        .filter(Boolean)
-        .some((field) => field!.toLowerCase().includes(q));
+      return matchesListing(listing, q);
     });
   }, [listings, query, applied]);
 
