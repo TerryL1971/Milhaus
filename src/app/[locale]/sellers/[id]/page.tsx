@@ -60,7 +60,7 @@ export default async function SellerProfilePage({ params }: { params: Params }) 
               name={name}
               photoUrl={seller.photoUrl}
               size="lg"
-              className="-mt-16 border-4 border-paper shadow-md"
+              className="relative z-10 -mt-16 border-4 border-paper shadow-md"
             />
             <div className="min-w-0 flex-1">
               <h1 className="font-display text-2xl font-semibold text-ink">{name}</h1>

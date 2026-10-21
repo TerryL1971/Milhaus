@@ -32,10 +32,10 @@ export function BusinessCard({ business }: { business: Business }) {
             <img
               src={business.logoUrl}
               alt=""
-              className="-mt-8 h-12 w-12 flex-shrink-0 rounded-md border-2 border-paper bg-paper object-contain shadow-sm"
+              className="relative z-10 -mt-8 h-12 w-12 flex-shrink-0 rounded-md border-2 border-paper bg-paper object-contain shadow-sm"
             />
           ) : (
-            <div className="-mt-8 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-md border-2 border-paper bg-ink font-display text-lg font-semibold text-paper shadow-sm">
+            <div className="relative z-10 -mt-8 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-md border-2 border-paper bg-ink font-display text-lg font-semibold text-paper shadow-sm">
               {business.name.charAt(0).toUpperCase()}
             </div>
           )}

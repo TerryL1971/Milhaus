@@ -184,7 +184,13 @@ export function ProfileEditor({ profile }: { profile: Profile }) {
         />
       </div>
 
-      <div className="-mt-12 mb-5 flex items-end gap-4 pl-1">
+      {/* relative z-10 — this already paints in front of the cover box
+          by plain DOM order (it's a later sibling, not nested inside
+          the cover's overflow-hidden container), but that default
+          stacking is easy to second-guess at a glance in a negative-
+          margin overlap like this one; making the priority explicit
+          costs nothing and settles it for good. */}
+      <div className="relative z-10 -mt-12 mb-5 flex items-end gap-4 pl-1">
         <Avatar
           name={profile.displayName ?? profile.contactEmail ?? "?"}
           photoUrl={photoUrl}

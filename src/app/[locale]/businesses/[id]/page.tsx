@@ -45,10 +45,10 @@ export default async function BusinessProfilePage({ params }: { params: Params }
             <img
               src={business.logoUrl}
               alt=""
-              className="-mt-12 h-24 w-24 flex-shrink-0 rounded-md border-4 border-paper bg-paper object-contain shadow-md sm:h-28 sm:w-28"
+              className="relative z-10 -mt-12 h-24 w-24 flex-shrink-0 rounded-md border-4 border-paper bg-paper object-contain shadow-md sm:h-28 sm:w-28"
             />
           ) : (
-            <div className="-mt-12 flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-md border-4 border-paper bg-ink font-display text-3xl font-semibold text-paper shadow-md sm:h-28 sm:w-28">
+            <div className="relative z-10 -mt-12 flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-md border-4 border-paper bg-ink font-display text-3xl font-semibold text-paper shadow-md sm:h-28 sm:w-28">
               {business.name.charAt(0).toUpperCase()}
             </div>
           )}
