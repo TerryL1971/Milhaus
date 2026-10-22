@@ -14,8 +14,13 @@ import { Link } from "@/i18n/navigation";
 import { isAdminRole } from "@/lib/roles";
 import { createClient } from "@/lib/supabase/server";
 
+// Cream (text-paper), matching the logo wordmark and every other nav
+// link/button — these two (DE/Admin) used to be the one red (text-brass)
+// pair in an otherwise all-cream header, which read as inconsistent
+// rather than intentional (unlike Post An Ad/Sign In's solid brass
+// background, the site's one deliberate primary-CTA accent).
 const toggleButtonClass =
-  "rounded-md border border-brass/50 px-4 py-2 text-sm font-semibold text-brass transition-[transform,box-shadow] hover:-translate-y-px hover:border-brass";
+  "rounded-md border border-paper/35 px-4 py-2 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:border-paper/70";
 
 export async function SiteHeader({ translatedPage = true }: { translatedPage?: boolean } = {}) {
   const t = await getTranslations("SiteHeader");

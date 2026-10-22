@@ -87,8 +87,11 @@ export function MobileNavToggle({
           </nav>
 
           <div className="flex flex-col gap-2.5">
+            {/* Cream, matching the desktop header's toggleButtonClass fix —
+                this used to be the one red (text-brass) element in an
+                otherwise all-cream menu. */}
             <LanguageToggle
-              className="rounded-md border border-brass/50 px-4 py-2.5 text-center text-sm font-semibold text-brass transition-[transform,box-shadow] hover:-translate-y-px hover:border-brass"
+              className="rounded-md border border-paper/35 px-4 py-2.5 text-center text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:border-paper/70"
               preservePath={translatedPage}
             />
 
