@@ -60,14 +60,13 @@ export async function SiteFooter() {
     {
       heading: t("aboutHeading"),
       links: [
-        // Impressum stays a dead link — that needs a real registered
-        // business name/address from Charlie (German TMG §5 legal notice
-        // requirement), not just an email, still pending per
-        // launch-blockers-pending. Terms now has a real page (Charlie
-        // sent the actual ToS text 2026-10-22, see src/app/[locale]/terms).
+        // Both Terms and Impressum now have real pages — Charlie sent
+        // the ToS text 2026-10-22 (src/app/[locale]/terms) and the
+        // remaining Impressum facts (phone/VAT ID/address/Handelsregister
+        // status/VSBG stance) the same day (src/app/[locale]/impressum).
         { label: t("contact"), href: "mailto:info@milhaus.de" },
         { label: t("terms"), href: "/terms" },
-        { label: t("impressum"), href: "#" },
+        { label: t("impressum"), href: "/impressum" },
       ],
     },
   ];
