@@ -253,6 +253,7 @@ export default async function AdminPage() {
                   <tr className="border-b border-canvas-deep text-left font-mono text-xs uppercase tracking-wider text-ink-soft/75">
                     <th className="px-4 py-3 font-medium">Listing</th>
                     <th className="px-4 py-3 font-medium">Price</th>
+                    <th className="px-4 py-3 font-medium">Views</th>
                     <th className="px-4 py-3 font-medium">Status</th>
                     <th className="px-4 py-3 font-medium"></th>
                   </tr>
@@ -279,6 +280,7 @@ export default async function AdminPage() {
                         {formatListingPrice(listing)}
                         {listing.type === "rental" ? "/mo" : ""}
                       </td>
+                      <td className="px-4 py-3 font-mono text-ink-soft">{listing.viewCount}</td>
                       <td className="px-4 py-3">
                         <span
                           className={`rounded-[3px] px-2 py-0.5 font-mono text-[0.66rem] font-semibold uppercase tracking-wider ${
@@ -354,6 +356,7 @@ export default async function AdminPage() {
                   <tr className="border-b border-canvas-deep text-left font-mono text-xs uppercase tracking-wider text-ink-soft/75">
                     <th className="px-4 py-3 font-medium">Listing</th>
                     <th className="px-4 py-3 font-medium">Price</th>
+                    <th className="px-4 py-3 font-medium">Views</th>
                     <th className="px-4 py-3 font-medium">Archived</th>
                     <th className="px-4 py-3 font-medium"></th>
                   </tr>
@@ -371,6 +374,7 @@ export default async function AdminPage() {
                       <td className="px-4 py-3 font-mono">
                         {formatListingPrice(listing)}
                       </td>
+                      <td className="px-4 py-3 font-mono text-ink-soft">{listing.viewCount}</td>
                       <td className="px-4 py-3 text-xs text-ink-soft">
                         {dateFormatter.format(new Date(listing.statusChangedAt))}
                       </td>
