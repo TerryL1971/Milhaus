@@ -18,6 +18,7 @@ import {
 } from "@/app/admin/actions";
 import { getOpenReports } from "@/lib/listing-reports";
 import { getArchivedListings, getLiveListings, getPendingListings } from "@/lib/listings";
+import { getAllProfiles } from "@/lib/profiles";
 import { isAdminRole } from "@/lib/roles";
 import { createClient } from "@/lib/supabase/server";
 import type { Listing } from "@/lib/types";
@@ -58,12 +59,17 @@ export default async function AdminPage() {
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
   if (!isAdminRole(profile?.role)) redirect("/");
 
-  const [pending, live, archived, reports] = await Promise.all([
+  const [pending, live, archived, reports, profiles] = await Promise.all([
     getPendingListings(),
     getLiveListings(),
     getArchivedListings(),
     getOpenReports(),
+    getAllProfiles(),
   ]);
+  // Charlie: "who posted this" under the city/base line, both tables —
+  // listings themselves only carry an ownerId, not a name, so this
+  // builds the lookup once rather than a per-row query.
+  const posterNameById = new Map(profiles.map((p) => [p.id, p.displayName ?? p.contactEmail ?? "Unknown"]));
 
   return (
     <main className="flex-1 py-12">
@@ -275,6 +281,7 @@ export default async function AdminPage() {
                           {listing.city}
                           {listing.base ? ` · ${listing.base}` : ""}
                         </p>
+                        <p className="text-xs text-ink-soft/70">{posterNameById.get(listing.ownerId) ?? "Unknown"}</p>
                       </td>
                       <td className="px-4 py-3 font-mono">
                         {formatListingPrice(listing)}
@@ -370,6 +377,7 @@ export default async function AdminPage() {
                           {listing.city}
                           {listing.base ? ` · ${listing.base}` : ""}
                         </p>
+                        <p className="text-xs text-ink-soft/70">{posterNameById.get(listing.ownerId) ?? "Unknown"}</p>
                       </td>
                       <td className="px-4 py-3 font-mono">
                         {formatListingPrice(listing)}
