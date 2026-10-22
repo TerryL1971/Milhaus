@@ -12,9 +12,11 @@ import { ReportListingButton } from "@/components/report-listing-button";
 import { SellerCard } from "@/components/seller-card";
 import { Link } from "@/i18n/navigation";
 import { AMENITY_LABELS, type AmenityKey } from "@/lib/amenities";
-import { NEARBY_AMENITY_LABELS, type NearbyAmenityKey } from "@/lib/nearby-amenities";
+import { recordListingView } from "@/lib/listing-views";
 import { getListingById, getSellerListings, getSellerProfile } from "@/lib/listings";
+import { NEARBY_AMENITY_LABELS, type NearbyAmenityKey } from "@/lib/nearby-amenities";
 import { SITE_URL } from "@/lib/site-url";
+import { createClient } from "@/lib/supabase/server";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -67,6 +69,13 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
 
   const isRented = listing.status === "rented";
   const isHousingOffice = listing.source === "housing_office";
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const isOwner = user?.id === listing.ownerId;
+  await recordListingView(listing.id, user?.id ?? null, listing.ownerId);
 
   // Public — no sign-in wall, per Charlie's call (see SellerCard). Comes
   // back null only if the owner has no active listing (the RLS policy's
@@ -142,6 +151,9 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
             >
               {isRented ? t("rented") : t("availableStatus")}
             </span>
+            {isOwner && (
+              <p className="mt-1 font-mono text-xs text-ink-soft">{t("viewCount", { count: listing.viewCount })}</p>
+            )}
           </div>
         </div>
 

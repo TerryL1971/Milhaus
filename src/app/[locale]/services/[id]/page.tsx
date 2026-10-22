@@ -11,9 +11,11 @@ import { ListingPhotoGallery } from "@/components/listing-photo-gallery";
 import { ReportListingButton } from "@/components/report-listing-button";
 import { SellerCard } from "@/components/seller-card";
 import { Link } from "@/i18n/navigation";
+import { recordListingView } from "@/lib/listing-views";
 import { getListingById, getSellerListings, getSellerProfile } from "@/lib/listings";
 import { SERVICE_CATEGORY_LABELS, type ServiceCategoryKey } from "@/lib/service-categories";
 import { SITE_URL } from "@/lib/site-url";
+import { createClient } from "@/lib/supabase/server";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -55,6 +57,13 @@ export default async function ServiceDetailPage({ params }: { params: Params }) 
 
   const t = await getTranslations("ServiceDetail");
   const isUnavailable = listing.status === "rented";
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const isOwner = user?.id === listing.ownerId;
+  await recordListingView(listing.id, user?.id ?? null, listing.ownerId);
 
   const [seller, otherListings] = await Promise.all([
     getSellerProfile(listing.ownerId),
@@ -106,6 +115,9 @@ export default async function ServiceDetailPage({ params }: { params: Params }) 
             >
               {isUnavailable ? t("unavailable") : t("availableStatus")}
             </span>
+            {isOwner && (
+              <p className="mt-1 font-mono text-xs text-ink-soft">{t("viewCount", { count: listing.viewCount })}</p>
+            )}
           </div>
         </div>
 

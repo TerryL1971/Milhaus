@@ -150,7 +150,8 @@ export default async function MyListingsPage() {
                         </Link>
                         <p className="font-mono text-xs text-ink-soft">
                           {formatListingPrice(listing)}
-                          {listing.type === "rental" ? t("perMonth") : ""} · {listing.city}
+                          {listing.type === "rental" ? t("perMonth") : ""} · {listing.city} ·{" "}
+                          {t("viewCount", { count: listing.viewCount })}
                         </p>
                       </div>
                       <div className="flex gap-2">

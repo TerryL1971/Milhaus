@@ -262,6 +262,7 @@
     "status": "Status",
     "rented": "Vermietet",
     "availableStatus": "Verfügbar",
+    "viewCount": "{count, plural, =0 {Noch keine Aufrufe} =1 {1 Aufruf} other {# Aufrufe}}",
     "housingOfficeListing": "Vom Housing Office",
     "listedByFamily": "Von ausziehender Familie inseriert",
     "interestedHeading": "Interesse an dieser Wohnung?",
@@ -414,6 +415,7 @@
     "backToCars": "← Zurück zu den Autos",
     "sold": "Verkauft",
     "availableStatus": "Verfügbar",
+    "viewCount": "{count, plural, =0 {Noch keine Aufrufe} =1 {1 Aufruf} other {# Aufrufe}}",
     "availableAt": "Auch inseriert bei:",
     "mileage": "{km} km"
   },
@@ -448,7 +450,8 @@
   "ProductDetail": {
     "backToProducts": "← Zurück zu den Artikeln",
     "sold": "Verkauft",
-    "availableStatus": "Verfügbar"
+    "availableStatus": "Verfügbar",
+    "viewCount": "{count, plural, =0 {Noch keine Aufrufe} =1 {1 Aufruf} other {# Aufrufe}}"
   },
   "PostProductPage": {
     "heading": "Artikel verkaufen",
@@ -481,6 +484,7 @@
     "backToServices": "← Zurück zu den Dienstleistungen",
     "unavailable": "Nicht verfügbar",
     "availableStatus": "Verfügbar",
+    "viewCount": "{count, plural, =0 {Noch keine Aufrufe} =1 {1 Aufruf} other {# Aufrufe}}",
     "from": "ab"
   },
   "PostServicePage": {
@@ -552,6 +556,7 @@
     "archivedEmpty": "Nichts archiviert.",
     "draftHeading": "Unvollständige Einreichungen",
     "perMonth": "/Monat",
+    "viewCount": "{count, plural, =0 {noch keine Aufrufe} =1 {1 Aufruf} other {# Aufrufe}}",
     "markRented": "Als vermietet markieren",
     "markSold": "Als verkauft markieren",
     "markUnavailable": "Als nicht verfügbar markieren",

@@ -262,6 +262,7 @@
     "status": "Status",
     "rented": "Rented",
     "availableStatus": "Available",
+    "viewCount": "{count, plural, =0 {No views yet} =1 {1 view} other {# views}}",
     "housingOfficeListing": "Housing office listing",
     "listedByFamily": "Listed by outgoing family",
     "interestedHeading": "Interested in this home?",
@@ -414,6 +415,7 @@
     "backToCars": "← Back to cars",
     "sold": "Sold",
     "availableStatus": "Available",
+    "viewCount": "{count, plural, =0 {No views yet} =1 {1 view} other {# views}}",
     "availableAt": "Also advertised at:",
     "mileage": "{km} km"
   },
@@ -448,7 +450,8 @@
   "ProductDetail": {
     "backToProducts": "← Back to items for sale",
     "sold": "Sold",
-    "availableStatus": "Available"
+    "availableStatus": "Available",
+    "viewCount": "{count, plural, =0 {No views yet} =1 {1 view} other {# views}}"
   },
   "PostProductPage": {
     "heading": "Sell an item",
@@ -481,6 +484,7 @@
     "backToServices": "← Back to services",
     "unavailable": "Unavailable",
     "availableStatus": "Available",
+    "viewCount": "{count, plural, =0 {No views yet} =1 {1 view} other {# views}}",
     "from": "from"
   },
   "PostServicePage": {
@@ -552,6 +556,7 @@
     "archivedEmpty": "Nothing archived.",
     "draftHeading": "Incomplete submissions",
     "perMonth": "/mo",
+    "viewCount": "{count, plural, =0 {no views yet} =1 {1 view} other {# views}}",
     "markRented": "Mark rented",
     "markSold": "Mark sold",
     "markUnavailable": "Mark unavailable",

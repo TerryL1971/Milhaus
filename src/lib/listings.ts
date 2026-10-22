@@ -70,6 +70,7 @@ export function mapRow(row: Record<string, unknown>): Listing {
     source: row.source as Listing["source"],
     status: row.status as Listing["status"],
     isFeatured: Boolean(row.is_featured),
+    viewCount: Number(row.view_count) || 0,
     ownerId: row.owner_id as string,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,

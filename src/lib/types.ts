@@ -119,6 +119,11 @@ export interface Listing {
   /** Admin-controlled: whether this shows in the homepage hero's 3-card
    * fan. Toggled from the admin dashboard's live-listings table. */
   isFeatured: boolean;
+  /** How many times this listing's detail page has been viewed —
+   * incremented server-side (src/lib/listing-views.ts), never counting
+   * the owner's own views. Owner-facing only (/my-listings, the detail
+   * page when the viewer is the owner), never shown publicly. */
+  viewCount: number;
   ownerId: string;
   createdAt: string;
   updatedAt: string;
