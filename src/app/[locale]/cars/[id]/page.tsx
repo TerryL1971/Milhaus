@@ -13,6 +13,7 @@ import { SellerCard } from "@/components/seller-card";
 import { Link } from "@/i18n/navigation";
 import { recordListingView } from "@/lib/listing-views";
 import { getListingById, getSellerListings, getSellerProfile } from "@/lib/listings";
+import { isAdminRole } from "@/lib/roles";
 import { SITE_URL } from "@/lib/site-url";
 import { createClient } from "@/lib/supabase/server";
 
@@ -71,6 +72,16 @@ export default async function CarDetailPage({ params }: { params: Params }) {
     data: { user },
   } = await supabase.auth.getUser();
   const isOwner = user?.id === listing.ownerId;
+  // Charlie's own account is "owner" role (admin-equivalent, see
+  // src/lib/roles.ts), not the lister on any real listing — he can't
+  // see the view count at all without this, since isOwner alone would
+  // never be true for him on someone else's listing.
+  let isAdminViewer = false;
+  if (user && !isOwner) {
+    const { data: viewerProfile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+    isAdminViewer = isAdminRole(viewerProfile?.role);
+  }
+  const canSeeViewCount = isOwner || isAdminViewer;
   await recordListingView(listing.id, user?.id ?? null, listing.ownerId);
 
   const [seller, otherListings] = await Promise.all([
@@ -140,7 +151,7 @@ export default async function CarDetailPage({ params }: { params: Params }) {
             >
               {isSold ? t("sold") : t("availableStatus")}
             </span>
-            {isOwner && (
+            {canSeeViewCount && (
               <p className="mt-1 font-mono text-xs text-ink-soft">{t("viewCount", { count: listing.viewCount })}</p>
             )}
           </div>

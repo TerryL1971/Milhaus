@@ -15,6 +15,7 @@ import { AMENITY_LABELS, type AmenityKey } from "@/lib/amenities";
 import { recordListingView } from "@/lib/listing-views";
 import { getListingById, getSellerListings, getSellerProfile } from "@/lib/listings";
 import { NEARBY_AMENITY_LABELS, type NearbyAmenityKey } from "@/lib/nearby-amenities";
+import { isAdminRole } from "@/lib/roles";
 import { SITE_URL } from "@/lib/site-url";
 import { createClient } from "@/lib/supabase/server";
 
@@ -75,6 +76,16 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
     data: { user },
   } = await supabase.auth.getUser();
   const isOwner = user?.id === listing.ownerId;
+  // Charlie's own account is "owner" role (admin-equivalent, see
+  // src/lib/roles.ts), not the lister on any real listing — he can't
+  // see the view count at all without this, since isOwner alone would
+  // never be true for him on someone else's listing.
+  let isAdminViewer = false;
+  if (user && !isOwner) {
+    const { data: viewerProfile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+    isAdminViewer = isAdminRole(viewerProfile?.role);
+  }
+  const canSeeViewCount = isOwner || isAdminViewer;
   await recordListingView(listing.id, user?.id ?? null, listing.ownerId);
 
   // Public — no sign-in wall, per Charlie's call (see SellerCard). Comes
@@ -151,7 +162,7 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
             >
               {isRented ? t("rented") : t("availableStatus")}
             </span>
-            {isOwner && (
+            {canSeeViewCount && (
               <p className="mt-1 font-mono text-xs text-ink-soft">{t("viewCount", { count: listing.viewCount })}</p>
             )}
           </div>
