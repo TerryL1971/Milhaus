@@ -537,7 +537,12 @@
     "individualListerHint": "Für Sie ist das Inserieren kostenlos. Unternehmen und Händler zahlen weiterhin die normale Gebühr.",
     "save": "Profil speichern",
     "saving": "Wird gespeichert…",
-    "saved": "Gespeichert"
+    "saved": "Gespeichert",
+    "dangerZoneHeading": "Konto löschen",
+    "dangerZoneBody": "Dies löscht Ihr Konto, Ihr Profil und alles, was Sie inseriert haben, dauerhaft — Wohnungen, Autos, Artikel, Dienstleistungen. Es gibt kein Zurück. Geben Sie unten LÖSCHEN ein, um zu bestätigen.",
+    "deleteConfirmPlaceholder": "LÖSCHEN eingeben, um zu bestätigen",
+    "deleteConfirmWord": "LÖSCHEN",
+    "deleteAccountButton": "Mein Konto löschen"
   },
   "MyListings": {
     "heading": "Meine Anzeigen",

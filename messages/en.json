@@ -537,7 +537,12 @@
     "individualListerHint": "Posting is free for you. Businesses and dealers still pay the normal posting fee.",
     "save": "Save profile",
     "saving": "Saving…",
-    "saved": "Saved"
+    "saved": "Saved",
+    "dangerZoneHeading": "Delete your account",
+    "dangerZoneBody": "This permanently deletes your account, your profile, and everything you've posted — homes, cars, items, services. There's no undo. Type DELETE below to confirm.",
+    "deleteConfirmPlaceholder": "Type DELETE to confirm",
+    "deleteConfirmWord": "DELETE",
+    "deleteAccountButton": "Delete my account"
   },
   "MyListings": {
     "heading": "My listings",

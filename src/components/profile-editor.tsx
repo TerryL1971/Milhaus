@@ -10,6 +10,7 @@
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
+import { deleteMyAccount } from "@/app/[locale]/my-listings/actions";
 import { Avatar } from "@/components/avatar";
 import { createClient } from "@/lib/supabase/client";
 import type { Profile } from "@/lib/profiles";
@@ -34,6 +35,7 @@ export function ProfileEditor({ profile }: { profile: Profile }) {
   const [logoStatus, setLogoStatus] = useState<Status>("idle");
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
 
   async function handlePhotoChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -325,6 +327,34 @@ export function ProfileEditor({ profile }: { profile: Profile }) {
           {status === "saving" ? t("saving") : status === "saved" ? t("saved") : t("save")}
         </button>
       </form>
+
+      {/* Consumer-protection requirement (GDPR's right to erasure), not
+          a nice-to-have — a visitor needs a real way to delete their own
+          account, not just an email address to ask with. Outside the
+          profile-save form above on purpose: a different action
+          entirely, not a field on "save my profile". Typing the
+          confirmation word gates the button instead of a browser
+          confirm() dialog, which is easy to dismiss without reading. */}
+      <div className="mt-8 rounded-md border border-rust/30 bg-rust/5 p-4">
+        <p className="mb-1 text-sm font-semibold text-rust">{t("dangerZoneHeading")}</p>
+        <p className="mb-3 text-sm text-ink-soft">{t("dangerZoneBody")}</p>
+        <form action={deleteMyAccount} className="flex flex-wrap items-center gap-2">
+          <input
+            type="text"
+            value={deleteConfirmText}
+            onChange={(event) => setDeleteConfirmText(event.target.value)}
+            placeholder={t("deleteConfirmPlaceholder")}
+            className="w-full max-w-[220px] rounded-md border border-canvas-deep bg-paper px-3 py-2 text-sm text-charcoal placeholder:text-charcoal/40 focus:border-rust focus:outline-none"
+          />
+          <button
+            type="submit"
+            disabled={deleteConfirmText !== t("deleteConfirmWord")}
+            className="rounded-md bg-rust px-4 py-2 text-sm font-semibold text-paper transition-[transform] hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {t("deleteAccountButton")}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
