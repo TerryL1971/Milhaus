@@ -270,11 +270,15 @@ export default async function AdminPage() {
                       <td className="px-4 py-3">
                         <p className="font-medium text-ink">
                           {listing.isFeatured && <span className="mr-1 text-brass">★</span>}
-                          {listing.type !== "rental" && (
-                            <span className="mr-1.5 rounded-full bg-canvas-deep px-1.5 py-0.5 align-middle font-mono text-[0.58rem] uppercase tracking-wider text-ink-soft">
-                              {listing.type === "car" ? "Car" : listing.type === "service" ? "Service" : "Item"}
-                            </span>
-                          )}
+                          <span className="mr-1.5 rounded-full bg-canvas-deep px-1.5 py-0.5 align-middle font-mono text-[0.58rem] uppercase tracking-wider text-ink-soft">
+                            {listing.type === "car"
+                              ? "Car"
+                              : listing.type === "service"
+                                ? "Service"
+                                : listing.type === "product"
+                                  ? "Item"
+                                  : "Home"}
+                          </span>
                           {listing.title}
                         </p>
                         <p className="text-xs text-ink-soft">
