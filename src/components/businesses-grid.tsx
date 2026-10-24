@@ -99,6 +99,9 @@ export function BusinessesGrid({
 
   const noInventory = businesses.length === 0;
   const noResults = !noInventory && filtered.length === 0;
+  // Whichever card actually renders a photo first is a real LCP
+  // candidate on this page — see ListingCard's same-named prop.
+  const firstBusinessPhotoIndex = filtered.findIndex((business) => business.coverImageUrl);
 
   return (
     <>
@@ -174,8 +177,8 @@ export function BusinessesGrid({
       ) : (
         !noResults && (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((business) => (
-              <BusinessCard key={business.id} business={business} />
+            {filtered.map((business, index) => (
+              <BusinessCard key={business.id} business={business} priority={index === firstBusinessPhotoIndex} />
             ))}
           </div>
         )

@@ -18,7 +18,15 @@ import { NoPhotoPlaceholder } from "@/components/no-photo-placeholder";
 
 const PHOTO_GRADIENT = "linear-gradient(135deg,#C3B79D,#8C9873)";
 
-export function BusinessCard({ business }: { business: Business }) {
+export function BusinessCard({
+  business,
+  priority,
+}: {
+  business: Business;
+  /** Set on whichever card in a row is the actual LCP candidate — see
+   * ListingCard's same prop for why this isn't just "index 0". */
+  priority?: boolean;
+}) {
   const t = useTranslations("BusinessCard");
 
   return (
@@ -26,7 +34,14 @@ export function BusinessCard({ business }: { business: Business }) {
       <Link href={`/businesses/${business.id}`} className="block">
         {business.coverImageUrl ? (
           <div className="relative aspect-[16/9] w-full">
-            <Image src={business.coverImageUrl} alt="" fill sizes="(min-width: 640px) 33vw, 100vw" className="object-cover" />
+            <Image
+              src={business.coverImageUrl}
+              alt=""
+              fill
+              sizes="(min-width: 640px) 33vw, 100vw"
+              className="object-cover"
+              priority={priority}
+            />
           </div>
         ) : (
           <div className="relative aspect-[16/9] w-full">

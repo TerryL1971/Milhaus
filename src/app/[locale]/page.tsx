@@ -89,6 +89,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
   // an <Image> at all. -1 (no match) just means nothing gets `priority`.
   const firstRentalPhotoIndex = featuredRentals.findIndex((listing) => listing.photos.length > 0);
   const firstCarPhotoIndex = featuredCars.findIndex((listing) => listing.photos.length > 0);
+  const firstBusinessPhotoIndex = featuredBusinesses.findIndex((business) => business.coverImageUrl);
 
   const howSteps = [
     { num: "01", heading: t("how1Heading"), body: t("how1Body") },
@@ -336,8 +337,8 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
           </div>
           {featuredBusinesses.length > 0 ? (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {featuredBusinesses.map((business) => (
-                <BusinessCard key={business.id} business={business} />
+              {featuredBusinesses.map((business, index) => (
+                <BusinessCard key={business.id} business={business} priority={index === firstBusinessPhotoIndex} />
               ))}
             </div>
           ) : (
