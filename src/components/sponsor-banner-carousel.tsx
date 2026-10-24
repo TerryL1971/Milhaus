@@ -25,6 +25,7 @@
 // "Advertise here" placeholder slide when he hasn't added any yet,
 // rather than showing an empty strip.
 
+import Image from "next/image";
 import { getActiveAdSlots } from "@/lib/ad-slots-queries";
 
 type Slide =
@@ -105,8 +106,7 @@ export async function SponsorBannerCarousel() {
               {slide.kind === "image" ? (
                 // No background/border — whatever the advertiser's image looks
                 // like (solid background baked in, or transparent) is the ad.
-                // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL
-                <img src={slide.imageUrl} alt={slide.alt} className="h-full w-full object-contain py-0.5" />
+                <Image src={slide.imageUrl} alt={slide.alt} fill sizes="100vw" className="object-contain py-0.5" />
               ) : (
                 <span className="font-mono text-xs font-semibold uppercase tracking-[0.12em] text-ink-soft">
                   {slide.heading}

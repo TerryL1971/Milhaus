@@ -5,6 +5,7 @@
 // state, so it's never stale the way a client-fetched version could be.
 
 import { getTranslations } from "next-intl/server";
+import Image from "next/image";
 import NextLink from "next/link";
 import { Avatar } from "@/components/avatar";
 import { HomeLink } from "@/components/home-link";
@@ -58,10 +59,12 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
               rendering button, an overflowing one. h-7 (~237px wide)
               leaves comfortable room for the button beside it even on
               the narrowest common phone widths. */}
-          {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset, not worth next/image's config here */}
-          <img
+          <Image
             src="/brand/milhaus-logo-cream-red-horizontal.png"
             alt="Milhaus"
+            width={1994}
+            height={236}
+            priority
             className="h-7 w-auto md:h-10"
           />
         </HomeLink>

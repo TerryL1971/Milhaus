@@ -23,6 +23,7 @@
 // at /admin/ads — falling back to the same "Advertise here" placeholder
 // SponsorBannerCarousel uses when he hasn't added one yet.
 
+import Image from "next/image";
 import { getActiveAdSlots } from "@/lib/ad-slots-queries";
 import type { AdSlot } from "@/lib/ad-slots";
 
@@ -84,8 +85,7 @@ export async function CarsSidebarBanner() {
             }`}
           >
             {ad.imageUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element -- external advertiser image
-              <img src={ad.imageUrl} alt={ad.advertiserName} className="h-full w-full object-cover" />
+              <Image src={ad.imageUrl} alt={ad.advertiserName} fill sizes="300px" className="object-cover" />
             ) : (
               <div className="flex h-full w-full flex-col items-center justify-center gap-1 p-6 text-center">
                 <span className="font-mono text-xs font-semibold uppercase tracking-[0.12em] text-ink-soft">

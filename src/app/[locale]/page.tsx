@@ -4,7 +4,9 @@
 // hero with the live listings grid, matching the mockup's single-page
 // structure. Listing data is read live from Supabase.
 
+import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
+import Image from "next/image";
 import { BusinessCard } from "@/components/business-card";
 import { CarListingCard } from "@/components/car-listing-card";
 import { HeroSearchAlert } from "@/components/hero-search-alert";
@@ -16,7 +18,25 @@ import { BASE_NAMES } from "@/lib/bases";
 import { getFeaturedBusinesses } from "@/lib/businesses-queries";
 import { getFavoriteListingIds } from "@/lib/favorites-queries";
 import { getFeaturedListings } from "@/lib/listings";
+import { SITE_URL } from "@/lib/site-url";
 import { createClient } from "@/lib/supabase/server";
+
+// The layout's own generateMetadata already supplies the homepage's
+// title/description/openGraph/twitter (its default IS the homepage's
+// content — see messages/*.json's "Metadata" namespace), so this only
+// adds what the layout doesn't: a canonical URL. Next.js metadata
+// objects aren't deep-merged, so `languages` has to be repeated here too
+// or overriding `alternates` would silently drop the hreflang setup the
+// layout already sets up for /de.
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  return {
+    alternates: {
+      canonical: locale === "de" ? `${SITE_URL}/de` : SITE_URL,
+      languages: { en: SITE_URL, de: `${SITE_URL}/de` },
+    },
+  };
+}
 
 // Same fallback-when-no-photo treatment as ListingsGrid/CarsGrid, just a
 // local copy sized to 3 (these "Featured X" sections never show more).
@@ -71,8 +91,37 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
   const heroImageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/listing-photos/_site/hero-home.jpg`;
   const searchAction = getPathname({ href: "/search", locale });
 
+  // Organization + WebSite structured data — the entity schema Google/AI
+  // answer engines use to understand "who is Milhaus" as a brand, plus a
+  // SearchAction so Google can (at its own discretion) show a sitelinks
+  // search box pointed at this site's own real search endpoint.
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        name: "Milhaus",
+        url: SITE_URL,
+        logo: `${SITE_URL}/brand/milhaus-logo-full-color-horizontal.png`,
+        description: t("subhead"),
+      },
+      {
+        "@type": "WebSite",
+        name: "Milhaus",
+        url: SITE_URL,
+        potentialAction: {
+          "@type": "SearchAction",
+          target: `${SITE_URL}/search?q={search_term_string}`,
+          "query-input": "required name=search_term_string",
+        },
+      },
+    ],
+  };
+
   return (
     <main className="flex-1">
+      {/* Static JSON we built above, not user input. */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {/* One site-wide scrolling banner instead of the four separate
           per-card "Sponsored spot" boxes this replaced — its own small
           cream strip above the hero, not floating on the photo (tried
@@ -90,15 +139,16 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
           of their own, so they're only ever part of "all categories". */}
       <section className="relative min-h-[420px] overflow-hidden sm:min-h-[480px] lg:min-h-[620px] xl:min-h-[680px]">
         <div className="absolute inset-0">
-          {/* eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL, not worth next/image's config here */}
           {/* object-top, not the object-cover default (center): shrinking
               the section's height (the previous pass) made it wider-than-
               tall relative to this ~2.5:1 photo, so object-cover was
               cropping top and bottom to fill — centered, that ate into
               the flag/roofline at the top. Anchoring to the top instead
               crops only from the bottom, which is Terry's "image needs to
-              be moved down" (down = reveal more of the top). */}
-          <img src={heroImageUrl} alt="" className="h-full w-full object-cover object-top" />
+              be moved down" (down = reveal more of the top). priority —
+              this is the largest above-the-fold element on the homepage,
+              i.e. almost certainly the page's own LCP candidate. */}
+          <Image src={heroImageUrl} alt="" fill sizes="100vw" className="object-cover object-top" priority />
           {/* Much lighter than the first pass — Terry: it was drowning
               Charlie's photo in navy. Just enough at the bottom for the
               tagline strip to read; the headline/search area now leans on

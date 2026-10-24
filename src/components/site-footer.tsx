@@ -3,6 +3,7 @@
 // /design-reference/milhaus-landing-mockup.html.
 
 import { getTranslations } from "next-intl/server";
+import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { getListingPrices } from "@/lib/listing-prices";
 
@@ -79,10 +80,11 @@ export async function SiteFooter() {
             {/* h-7 below md — see site-header.tsx for why this logo
                 needs a smaller mobile size (it overflows a phone's width
                 at h-10). */}
-            {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset, not worth next/image's config here */}
-            <img
+            <Image
               src="/brand/milhaus-logo-cream-red-horizontal.png"
               alt="Milhaus"
+              width={1994}
+              height={236}
               className="h-7 w-auto md:h-10"
             />
           </div>

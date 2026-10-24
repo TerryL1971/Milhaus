@@ -8,6 +8,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { deleteMyAccount } from "@/app/[locale]/my-listings/actions";
@@ -165,10 +166,7 @@ export function ProfileEditor({ profile }: { profile: Profile }) {
           is what shows behind the avatar on /sellers/[id], same
           relationship as a business's cover image to its logo. */}
       <div className="relative mb-5 h-28 overflow-hidden rounded-md bg-canvas-deep sm:h-36">
-        {coverImageUrl && (
-          // eslint-disable-next-line @next/next/no-img-element -- Supabase Storage URL, own account's cover photo
-          <img src={coverImageUrl} alt="" className="h-full w-full object-cover" />
-        )}
+        {coverImageUrl && <Image src={coverImageUrl} alt="" fill sizes="(min-width: 640px) 760px, 100vw" className="object-cover" />}
         <button
           type="button"
           onClick={() => coverFileInputRef.current?.click()}
@@ -270,8 +268,7 @@ export function ProfileEditor({ profile }: { profile: Profile }) {
           <div className="mb-3 flex items-center gap-3">
             <div className="flex h-12 w-12 flex-none items-center justify-center overflow-hidden rounded-md border border-canvas-deep bg-paper">
               {businessLogoUrl && (
-                // eslint-disable-next-line @next/next/no-img-element -- Supabase Storage URL, own account's business logo
-                <img src={businessLogoUrl} alt="" className="h-full w-full object-contain" />
+                <Image src={businessLogoUrl} alt="" width={48} height={48} className="h-full w-full object-contain" />
               )}
             </div>
             <button

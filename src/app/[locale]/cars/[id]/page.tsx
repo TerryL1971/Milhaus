@@ -114,16 +114,36 @@ export default async function CarDetailPage({ params }: { params: Params }) {
     },
   };
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Milhaus", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Cars", item: `${SITE_URL}/cars` },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: listing.title || `${listing.year} ${listing.make} ${listing.model}`,
+        item: `${SITE_URL}/cars/${listing.id}`,
+      },
+    ],
+  };
+
   return (
     <main className="flex-1 py-10">
       {/* Static JSON we built above, not user input. */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <div className="mx-auto max-w-[860px] px-8">
         <Link href="/cars" className="mb-6 inline-block text-sm text-ink-soft hover:text-ink">
           {t("backToCars")}
         </Link>
 
-        <ListingPhotoGallery photos={listing.photos} showStamp={false} />
+        <ListingPhotoGallery
+          photos={listing.photos}
+          showStamp={false}
+          alt={`${listing.year} ${listing.make} ${listing.model}`}
+        />
 
         <div className="mt-6 flex flex-wrap items-start justify-between gap-3">
           <div>

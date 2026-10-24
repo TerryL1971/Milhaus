@@ -15,6 +15,17 @@ const nextConfig: NextConfig = {
   // rest of that browser session (assets 403, no React event handlers ever
   // attach) with no visible error beyond a console warning easy to miss.
   allowedDevOrigins: ["127.0.0.1"],
+  // next/image refuses to optimize a remote image unless its host is
+  // explicitly allow-listed here — every listing/business/event photo in
+  // this app is a Supabase Storage URL. Wildcarded to *.supabase.co (not
+  // the specific project ref) so this doesn't need touching if the
+  // project ever moves to a different ref; scoped to the public storage
+  // object path rather than the whole domain.
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "*.supabase.co", pathname: "/storage/v1/object/public/**" },
+    ],
+  },
 };
 
 // SENTRY_ORG/SENTRY_PROJECT/SENTRY_AUTH_TOKEN are all optional here — unset

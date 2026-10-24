@@ -6,6 +6,7 @@
 
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Avatar } from "@/components/avatar";
 import { CarListingCard } from "@/components/car-listing-card";
@@ -14,6 +15,7 @@ import { ProductListingCard } from "@/components/product-listing-card";
 import { ServiceListingCard } from "@/components/service-listing-card";
 import { Link } from "@/i18n/navigation";
 import { getSellerListings, getSellerProfile } from "@/lib/listings";
+import { SITE_URL } from "@/lib/site-url";
 
 const PHOTO_GRADIENTS = [
   "linear-gradient(135deg,#D8C9A8,#A9AE83)",
@@ -29,9 +31,28 @@ type Params = Promise<{ id: string }>;
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { id } = await params;
   const seller = await getSellerProfile(id);
-  return seller
-    ? { title: seller.displayName ?? "Seller profile", robots: { index: false, follow: false } }
-    : { title: "Seller not found", robots: { index: false, follow: false } };
+  if (!seller) return { title: "Seller not found", robots: { index: false, follow: false } };
+
+  // Bug fix: this used to noindex every seller page unconditionally,
+  // found or not — only the not-found case above should. A real,
+  // findable seller profile (name, bio, their active listings) is
+  // exactly the kind of page that should be indexable.
+  const title = seller.displayName ?? "Seller profile";
+  const description = seller.bio || "See everything this seller has listed on Milhaus.";
+  const url = `${SITE_URL}/sellers/${id}`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: "profile",
+      images: seller.coverImageUrl ? [{ url: seller.coverImageUrl }] : undefined,
+    },
+  };
 }
 
 export default async function SellerProfilePage({ params }: { params: Params }) {
@@ -49,10 +70,9 @@ export default async function SellerProfilePage({ params }: { params: Params }) 
             treatment as the business profile page
             (src/app/[locale]/businesses/[id]). */}
         <div className="mb-8 overflow-hidden rounded-md border border-canvas-deep bg-paper">
-          <div className="h-36 w-full bg-canvas-deep sm:h-48">
+          <div className="relative h-36 w-full bg-canvas-deep sm:h-48">
             {seller.coverImageUrl && (
-              // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL
-              <img src={seller.coverImageUrl} alt="" className="h-full w-full object-cover" />
+              <Image src={seller.coverImageUrl} alt="" fill sizes="100vw" className="object-cover" />
             )}
           </div>
           <div className="flex flex-wrap items-start gap-5 p-6">
@@ -68,10 +88,11 @@ export default async function SellerProfilePage({ params }: { params: Params }) 
               {(seller.businessLogoUrl || seller.websiteUrl) && (
                 <div className="mt-2 flex items-center gap-2">
                   {seller.businessLogoUrl && (
-                    // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL
-                    <img
+                    <Image
                       src={seller.businessLogoUrl}
-                      alt=""
+                      alt={`${name} business logo`}
+                      width={24}
+                      height={24}
                       className="h-6 w-6 flex-none rounded border border-canvas-deep object-contain"
                     />
                   )}

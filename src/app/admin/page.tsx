@@ -6,8 +6,9 @@
 // use this daily" per CLAUDE.md.
 
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import {
   approveListing,
   archiveListing,
@@ -225,11 +226,12 @@ export default async function AdminPage() {
                   {listing.photos.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {listing.photos.map((url, i) => (
-                        // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL
-                        <img
+                        <Image
                           key={url}
                           src={url}
                           alt={`Photo ${i + 1}`}
+                          width={96}
+                          height={96}
                           className="h-24 w-24 rounded-md border border-canvas-deep object-cover"
                         />
                       ))}

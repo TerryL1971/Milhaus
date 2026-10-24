@@ -3,6 +3,7 @@
 // /design-reference/milhaus-landing-mockup.html.
 
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 import { FavoriteButton } from "@/components/favorite-button";
 import { Link } from "@/i18n/navigation";
 import type { AmenityKey } from "@/lib/amenities";
@@ -50,16 +51,17 @@ export function ListingCard({
         href={`/listings/${listing.id}`}
         className="block overflow-hidden rounded-md border border-canvas-deep bg-paper transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(27,42,58,0.12)]"
       >
-      <div className="relative">
+      <div className={`relative ${aspectClassName}`}>
         {listing.photos[0] ? (
-          // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL, not worth next/image's config for a placeholder SVG
-          <img
+          <Image
             src={listing.photos[0]}
-            alt=""
-            className={`${aspectClassName} w-full object-cover`}
+            alt={`${listing.bedrooms}-bedroom home in ${listing.city}`}
+            fill
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            className="object-cover"
           />
         ) : (
-          <div className={aspectClassName} style={{ background: photoGradient }} />
+          <div className="h-full w-full" style={{ background: photoGradient }} />
         )}
         {(isHousingOffice || listing.isNew || listing.amenities.includes("furnished") || listing.amenities.includes("pet_friendly")) && (
           <div className="absolute left-2.5 top-2.5 flex flex-wrap gap-1.5">

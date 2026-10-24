@@ -6,6 +6,7 @@
 // readable, and this way the working rental card is untouched.
 
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 import { FavoriteButton } from "@/components/favorite-button";
 import { Link } from "@/i18n/navigation";
 import type { Listing } from "@/lib/types";
@@ -44,12 +45,19 @@ export function CarListingCard({
         href={`/cars/${listing.id}`}
         className="block overflow-hidden rounded-md border border-canvas-deep bg-paper transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(27,42,58,0.12)]"
       >
-      {listing.photos[0] ? (
-        // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL
-        <img src={listing.photos[0]} alt="" className={`${aspectClassName} w-full object-cover`} />
-      ) : (
-        <div className={aspectClassName} style={{ background: photoGradient }} />
-      )}
+      <div className={`relative ${aspectClassName}`}>
+        {listing.photos[0] ? (
+          <Image
+            src={listing.photos[0]}
+            alt={`${listing.year} ${listing.make} ${listing.model}`}
+            fill
+            sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+            className="object-cover"
+          />
+        ) : (
+          <div className="h-full w-full" style={{ background: photoGradient }} />
+        )}
+      </div>
       <div className="px-4 pb-4 pt-3.5">
         <div className="mb-1 flex items-start justify-between">
           <span className="font-body text-[1.08rem] font-semibold text-ink">

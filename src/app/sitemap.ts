@@ -1,11 +1,21 @@
 // src/app/sitemap.ts
 // Generates /sitemap.xml from the homepage plus every currently active
-// listing — dynamic on purpose, so a new approved listing is discoverable
-// without a code change or redeploy. Each URL lists both language versions
-// via `alternates.languages` so Google indexes /de/... as the German
-// translation of a page rather than a duplicate of it.
+// listing, business, and event — dynamic on purpose, so a new approved
+// listing is discoverable without a code change or redeploy. Each URL
+// lists both language versions via `alternates.languages` so Google
+// indexes /de/... as the German translation of a page rather than a
+// duplicate of it.
+//
+// Deliberately NOT including self-listed "service"-type listings
+// (/services/{id}) — that's the old pre-Businesses-directory feature,
+// still postable via /post-service but with no page anywhere left that
+// browses or links to it (see that route's own noindex, same reasoning).
+// A sitemap is a crawl-priority signal; there's no reason to prioritize
+// crawling pages no real visitor can ever reach by browsing the site.
 
 import type { MetadataRoute } from "next";
+import { getActiveBusinesses } from "@/lib/businesses-queries";
+import { getActiveEvents } from "@/lib/events-queries";
 import { getActiveListings } from "@/lib/listings";
 import { SITE_URL } from "@/lib/site-url";
 
@@ -17,11 +27,12 @@ function withLanguageAlternates(path: string) {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [rentals, cars, products, services] = await Promise.all([
+  const [rentals, cars, products, businesses, events] = await Promise.all([
     getActiveListings("rental"),
     getActiveListings("car"),
     getActiveListings("product"),
-    getActiveListings("service"),
+    getActiveBusinesses(),
+    getActiveEvents(),
   ]);
 
   return [
@@ -54,9 +65,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       alternates: { languages: withLanguageAlternates("/services") },
     },
     {
-      // Static entry only, matching /services' own treatment — individual
-      // business pages aren't in here either, since getActiveBusinesses
-      // was never wired into this sitemap. Same gap, not fixed here.
       url: `${SITE_URL}/events`,
       lastModified: new Date(),
       changeFrequency: "daily",
@@ -84,12 +92,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
       alternates: { languages: withLanguageAlternates(`/products/${listing.id}`) },
     })),
-    ...services.map((listing) => ({
-      url: `${SITE_URL}/services/${listing.id}`,
-      lastModified: new Date(listing.updatedAt),
-      changeFrequency: "daily" as const,
+    ...businesses.map((business) => ({
+      url: `${SITE_URL}/businesses/${business.id}`,
+      lastModified: new Date(business.updatedAt),
+      changeFrequency: "weekly" as const,
       priority: 0.8,
-      alternates: { languages: withLanguageAlternates(`/services/${listing.id}`) },
+      alternates: { languages: withLanguageAlternates(`/businesses/${business.id}`) },
+    })),
+    ...events.map((event) => ({
+      url: `${SITE_URL}/events/${event.id}`,
+      lastModified: new Date(event.updatedAt),
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+      alternates: { languages: withLanguageAlternates(`/events/${event.id}`) },
     })),
   ];
 }

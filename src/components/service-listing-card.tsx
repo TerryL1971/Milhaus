@@ -5,6 +5,7 @@
 // than a fixed number).
 
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { SERVICE_CATEGORY_LABELS, type ServiceCategoryKey } from "@/lib/service-categories";
 import type { Listing } from "@/lib/types";
@@ -30,12 +31,19 @@ export function ServiceListingCard({
       href={`/services/${listing.id}`}
       className="group block overflow-hidden rounded-md border border-canvas-deep bg-paper transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(27,42,58,0.12)]"
     >
-      {listing.photos[0] ? (
-        // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL
-        <img src={listing.photos[0]} alt="" className="h-40 w-full object-cover" />
-      ) : (
-        <div className="h-40" style={{ background: photoGradient }} />
-      )}
+      <div className="relative h-40">
+        {listing.photos[0] ? (
+          <Image
+            src={listing.photos[0]}
+            alt={listing.title}
+            fill
+            sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+            className="object-cover"
+          />
+        ) : (
+          <div className="h-full w-full" style={{ background: photoGradient }} />
+        )}
+      </div>
       <div className="px-4 pb-4 pt-3.5">
         <div className="mb-1 flex items-start justify-between">
           <span className="font-body text-[1.08rem] font-semibold text-ink">

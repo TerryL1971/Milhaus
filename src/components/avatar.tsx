@@ -7,10 +7,12 @@
 // so the same circle can later become the "click the poster to write to
 // them" affordance wherever a listing shows who posted it.
 
+import Image from "next/image";
+
 const SIZES = {
-  sm: { box: "h-8 w-8", text: "text-xs" },
-  md: { box: "h-16 w-16", text: "text-xl" },
-  lg: { box: "h-20 w-20", text: "text-2xl" },
+  sm: { box: "h-8 w-8", text: "text-xs", px: 32 },
+  md: { box: "h-16 w-16", text: "text-xl", px: 64 },
+  lg: { box: "h-20 w-20", text: "text-2xl", px: 80 },
 };
 
 function getInitials(name: string): string {
@@ -33,14 +35,15 @@ export function Avatar({
   size?: keyof typeof SIZES;
   className?: string;
 }) {
-  const { box, text } = SIZES[size];
+  const { box, text, px } = SIZES[size];
 
   if (photoUrl) {
     return (
-      // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL
-      <img
+      <Image
         src={photoUrl}
-        alt=""
+        alt={name}
+        width={px}
+        height={px}
         className={`${box} flex-none rounded-full border border-canvas-deep object-cover ${className}`}
       />
     );

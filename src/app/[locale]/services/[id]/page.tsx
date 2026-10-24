@@ -3,6 +3,15 @@
 // (same photo gallery, same public SellerCard, same report button),
 // swapped to service fields (category + pricing note instead of
 // condition, and a "from" price prefix when it's an estimate).
+//
+// Orphaned since Services became the Military-Friendly Businesses
+// directory: /post-service still works and this page still renders, but
+// nothing on the site browses or links to a self-listed "service"-type
+// listing anymore (the public /services page only shows businesses now
+// — see that route's own header comment). Deliberately always noindex
+// below, not just while pending/archived — a page no real visitor can
+// ever reach by browsing shouldn't be crawled/indexed either. Also
+// excluded from sitemap.ts for the same reason.
 
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -47,7 +56,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       type: "website",
       images: listing.photos[0] ? [{ url: listing.photos[0] }] : undefined,
     },
-    robots: listing.status === "active" ? { index: true, follow: true } : { index: false, follow: false },
+    robots: { index: false, follow: false },
   };
 }
 
@@ -105,7 +114,7 @@ export default async function ServiceDetailPage({ params }: { params: Params }) 
           {t("backToServices")}
         </Link>
 
-        <ListingPhotoGallery photos={listing.photos} showStamp={false} />
+        <ListingPhotoGallery photos={listing.photos} showStamp={false} alt={listing.title} />
 
         <div className="mt-6 flex flex-wrap items-start justify-between gap-3">
           <div>

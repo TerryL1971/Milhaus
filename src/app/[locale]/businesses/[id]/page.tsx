@@ -6,11 +6,13 @@
 // no sign-in wall, same as /sellers/[id] and every listing detail page.
 
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { BusinessSocialLinks } from "@/components/business-social-links";
 import { Link } from "@/i18n/navigation";
 import { BUSINESS_CATEGORY_LABELS, BUSINESS_TAG_LABELS, type BusinessTagKey } from "@/lib/businesses";
 import { getBusiness } from "@/lib/businesses-queries";
+import { SITE_URL } from "@/lib/site-url";
 
 const COVER_GRADIENT = "linear-gradient(135deg,#C3B79D,#8C9873)";
 
@@ -19,9 +21,30 @@ type Params = Promise<{ id: string }>;
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { id } = await params;
   const business = await getBusiness(id);
-  return business
-    ? { title: business.name, description: business.description ?? undefined }
-    : { title: "Business not found", robots: { index: false, follow: false } };
+  if (!business) return { title: "Business not found", robots: { index: false, follow: false } };
+
+  const description =
+    business.description ?? `${BUSINESS_CATEGORY_LABELS[business.category]} in ${business.city}.`;
+  const url = `${SITE_URL}/businesses/${business.id}`;
+
+  return {
+    title: business.name,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title: business.name,
+      description,
+      url,
+      type: "website",
+      images: business.coverImageUrl ? [{ url: business.coverImageUrl }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: business.name,
+      description,
+      images: business.coverImageUrl ? [business.coverImageUrl] : undefined,
+    },
+  };
 }
 
 export default async function BusinessProfilePage({ params }: { params: Params }) {
@@ -29,11 +52,48 @@ export default async function BusinessProfilePage({ params }: { params: Params }
   const business = await getBusiness(id);
   if (!business) notFound();
 
+  // Structured data for search/AI answer engines — directly matches
+  // Charlie's own stated AEO target ("military friendly business
+  // Stuttgart"): LocalBusiness is the schema.org type built for exactly
+  // this query shape.
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: business.name,
+    description: business.description || undefined,
+    url: `${SITE_URL}/businesses/${business.id}`,
+    image: business.coverImageUrl || business.logoUrl || undefined,
+    telephone: business.phone || undefined,
+    address: { "@type": "PostalAddress", addressLocality: business.city, addressCountry: "DE" },
+    aggregateRating:
+      business.rating != null
+        ? {
+            "@type": "AggregateRating",
+            ratingValue: business.rating,
+            reviewCount: business.reviewCount ?? 1,
+          }
+        : undefined,
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Milhaus", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Services", item: `${SITE_URL}/services` },
+      { "@type": "ListItem", position: 3, name: business.name, item: `${SITE_URL}/businesses/${business.id}` },
+    ],
+  };
+
   return (
     <main className="flex-1 pb-14">
+      {/* Static JSON we built above, not user input. */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       {business.coverImageUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element -- external cover image URL
-        <img src={business.coverImageUrl} alt="" className="h-56 w-full object-cover sm:h-72" />
+        <div className="relative h-56 w-full sm:h-72">
+          <Image src={business.coverImageUrl} alt="" fill sizes="100vw" className="object-cover" priority />
+        </div>
       ) : (
         <div className="h-56 w-full sm:h-72" style={{ background: COVER_GRADIENT }} />
       )}
@@ -41,10 +101,11 @@ export default async function BusinessProfilePage({ params }: { params: Params }
       <div className="mx-auto max-w-[900px] px-8">
         <div className="flex items-end gap-4">
           {business.logoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element -- external logo URL
-            <img
+            <Image
               src={business.logoUrl}
-              alt=""
+              alt={`${business.name} logo`}
+              width={112}
+              height={112}
               className="relative z-10 -mt-12 h-24 w-24 flex-shrink-0 rounded-md border-4 border-paper bg-paper object-contain shadow-md sm:h-28 sm:w-28"
             />
           ) : (

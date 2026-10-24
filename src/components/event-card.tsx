@@ -3,6 +3,7 @@
 // (falling back to a gradient, same pattern every other card type uses
 // for a missing photo), a date badge, title, organizer, and city/base.
 
+import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import type { Event } from "@/lib/events";
 
@@ -24,9 +25,14 @@ export function EventCard({ event }: { event: Event }) {
           // object-contain, not object-cover — same reasoning as the
           // detail page's cover (src/app/[locale]/events/[id]/page.tsx):
           // event covers are often flyers, not photos that tolerate a crop.
-          <div className="flex aspect-[16/9] w-full items-center justify-center bg-canvas-deep">
-            {/* eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL */}
-            <img src={event.coverImageUrl} alt="" className="h-full w-full object-contain" />
+          <div className="relative flex aspect-[16/9] w-full items-center justify-center bg-canvas-deep">
+            <Image
+              src={event.coverImageUrl}
+              alt={event.title}
+              fill
+              sizes="(min-width: 640px) 50vw, 100vw"
+              className="object-contain"
+            />
           </div>
         ) : (
           <div className="aspect-[16/9]" style={{ background: PHOTO_GRADIENT }} />

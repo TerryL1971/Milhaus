@@ -6,15 +6,20 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 import { useState } from "react";
 import { StampBadge } from "@/components/stamp-badge";
 
 export function ListingPhotoGallery({
   photos,
   showStamp,
+  alt,
 }: {
   photos: string[];
   showStamp: boolean;
+  /** What this listing actually is, for descriptive alt text — e.g.
+   * "2-bedroom home in Ramstein" or "2019 Toyota Camry SE". */
+  alt: string;
 }) {
   const t = useTranslations("PhotoGallery");
   const [selected, setSelected] = useState(0);
@@ -24,8 +29,7 @@ export function ListingPhotoGallery({
     <>
       <div className="relative h-72 overflow-hidden rounded-md sm:h-96">
         {hero ? (
-          // eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL, not worth next/image's config here
-          <img src={hero} alt="" className="h-full w-full object-cover" />
+          <Image src={hero} alt={alt} fill sizes="(min-width: 640px) 860px, 100vw" className="object-cover" priority />
         ) : (
           <div
             className="h-full w-full"
@@ -44,14 +48,13 @@ export function ListingPhotoGallery({
               onClick={() => setSelected(index)}
               aria-label={t("showPhoto", { number: index + 1 })}
               aria-current={index === selected}
-              className={`h-20 overflow-hidden rounded-md sm:h-24 ${
+              className={`relative h-20 overflow-hidden rounded-md sm:h-24 ${
                 index === selected
                   ? "ring-2 ring-olive ring-offset-2 ring-offset-canvas"
                   : "opacity-75 transition-opacity hover:opacity-100"
               }`}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element -- external Supabase Storage URL, not worth next/image's config here */}
-              <img src={photo} alt="" className="h-full w-full object-cover" />
+              <Image src={photo} alt="" fill sizes="120px" className="object-cover" />
             </button>
           ))}
         </div>

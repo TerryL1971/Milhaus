@@ -9,6 +9,7 @@
 // business's own profile page (src/app/[locale]/businesses/[id]) instead
 // of going straight to the external website.
 
+import Image from "next/image";
 import { BUSINESS_CATEGORY_LABELS, type Business } from "@/lib/businesses";
 import { BusinessSocialLinks } from "@/components/business-social-links";
 import { Link } from "@/i18n/navigation";
@@ -20,18 +21,20 @@ export function BusinessCard({ business }: { business: Business }) {
     <div className="group relative overflow-hidden rounded-md border border-canvas-deep bg-paper transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(27,42,58,0.12)]">
       <Link href={`/businesses/${business.id}`} className="block">
         {business.coverImageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element -- external cover image URL
-          <img src={business.coverImageUrl} alt="" className="aspect-[16/9] w-full object-cover" />
+          <div className="relative aspect-[16/9] w-full">
+            <Image src={business.coverImageUrl} alt="" fill sizes="(min-width: 640px) 33vw, 100vw" className="object-cover" />
+          </div>
         ) : (
           <div className="aspect-[16/9]" style={{ background: PHOTO_GRADIENT }} />
         )}
 
         <div className="flex items-start gap-3 px-4 pt-3.5">
           {business.logoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element -- external logo URL
-            <img
+            <Image
               src={business.logoUrl}
-              alt=""
+              alt={`${business.name} logo`}
+              width={48}
+              height={48}
               className="relative z-10 -mt-8 h-12 w-12 flex-shrink-0 rounded-md border-2 border-paper bg-paper object-contain shadow-sm"
             />
           ) : (

@@ -1,0 +1,25 @@
+# Milhaus
+
+> Milhaus is a rental-listing and classifieds marketplace for Americans relocating to Germany — military service members and expats. It combines on-base housing office listings with self-listed homes from outgoing families, plus cars, items for sale, a Military-Friendly Businesses directory, and a community events calendar.
+
+Every listing type goes through the same review pipeline before it's publicly visible, and every rental is marked as either a verified housing-office listing or a self-listed home from a PCSing family — that distinction is shown on every listing as a trust signal.
+
+## Homes
+- [Browse homes for rent](https://www.milhaus.de/listings): Housing-office and self-listed rentals near US military bases in Germany, filterable by base, bedrooms, price, and amenities.
+
+## Cars
+- [Browse cars for sale](https://www.milhaus.de/cars): Vehicles sold by Americans in Germany — often US-spec cars being sold before a PCS move. Filterable by make, year, body type, and US/EU spec.
+
+## Items for sale
+- [Browse items for sale](https://www.milhaus.de/products): General household items, furniture, and gear sold by the community, often as part of a move.
+
+## Services
+- [Military-Friendly Businesses directory](https://www.milhaus.de/services): Local businesses — movers, auto repair, tutoring, cleaning, childcare, pet care, home repair, photography, and more — vetted as military/English-friendly, organized by base and city.
+
+## Events
+- [Community events calendar](https://www.milhaus.de/events): Local meetups and events relevant to the American military/expat community in Germany, organized by base and city.
+
+## About
+- [Terms and Conditions](https://www.milhaus.de/terms)
+- [Impressum (legal notice)](https://www.milhaus.de/impressum)
+- [How listing verification works](https://www.milhaus.de/how-verification-works)
