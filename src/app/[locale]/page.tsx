@@ -83,11 +83,12 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
     getFavoriteListingIds(user?.id),
   ]);
 
-  // Whichever card actually renders a photo first is the page's real LCP
-  // element (first section below the hero) — not necessarily index 0,
+  // Whichever card actually renders a photo first in each of these two
+  // hero-adjacent rows is a real LCP candidate — not necessarily index 0,
   // since a listing with no photo renders NoPhotoPlaceholder instead of
   // an <Image> at all. -1 (no match) just means nothing gets `priority`.
   const firstRentalPhotoIndex = featuredRentals.findIndex((listing) => listing.photos.length > 0);
+  const firstCarPhotoIndex = featuredCars.findIndex((listing) => listing.photos.length > 0);
 
   const howSteps = [
     { num: "01", heading: t("how1Heading"), body: t("how1Body") },
@@ -314,7 +315,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
           {featuredCars.length > 0 ? (
             <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
               {featuredCars.map((listing, index) => (
-                <CarListingCard key={listing.id} listing={listing} photoGradient={CAR_PHOTO_GRADIENTS[index % CAR_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} />
+                <CarListingCard key={listing.id} listing={listing} photoGradient={CAR_PHOTO_GRADIENTS[index % CAR_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} priority={index === firstCarPhotoIndex} />
               ))}
             </div>
           ) : (
