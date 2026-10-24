@@ -486,6 +486,9 @@
     "filterMinRating": "Minimum rating",
     "filterAnyRating": "Any rating"
   },
+  "BusinessCard": {
+    "noPhotoYet": "No photo yet"
+  },
   "ServiceCard": {
     "available": "Available",
     "unavailable": "Unavailable",

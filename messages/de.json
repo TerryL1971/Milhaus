@@ -486,6 +486,9 @@
     "filterMinRating": "Mindestbewertung",
     "filterAnyRating": "Beliebige Bewertung"
   },
+  "BusinessCard": {
+    "noPhotoYet": "Noch kein Foto"
+  },
   "ServiceCard": {
     "available": "Verfügbar",
     "unavailable": "Nicht verfügbar",
