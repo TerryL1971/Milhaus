@@ -26,6 +26,7 @@ import { SearchNoResultsAlert } from "@/components/search-no-results-alert";
 import { Link } from "@/i18n/navigation";
 import { AMENITY_KEYS, type AmenityKey } from "@/lib/amenities";
 import { BASE_NAMES } from "@/lib/bases";
+import { firstPhotoIndices } from "@/lib/priority-indices";
 import { matchesListing } from "@/lib/search-matching";
 import type { Listing } from "@/lib/types";
 import { useListingFilters } from "@/lib/use-listing-filters";
@@ -191,7 +192,7 @@ export function ListingsGrid({
   const noResults = sorted.length === 0 && (hasActiveFilters || Boolean(keyword));
   // Whichever card actually renders a photo first is a real LCP
   // candidate on this page — see ListingCard's same-named prop.
-  const firstPhotoIndex = sorted.findIndex((listing) => listing.photos.length > 0);
+  const priorityIndices = firstPhotoIndices(sorted, (listing) => listing.photos.length > 0, 3);
   const noResultsMessage = [
     t("emptyPrefix"),
     activeBases.length > 0 ? t("emptyNear", { base: activeBases.join(", ") }) : "",
@@ -323,7 +324,7 @@ export function ListingsGrid({
               listing={listing}
               photoGradient={PHOTO_GRADIENTS[index % PHOTO_GRADIENTS.length]}
               isFavorited={favoriteIds ? favoriteIdSet.has(listing.id) : undefined}
-              priority={index === firstPhotoIndex}
+              priority={priorityIndices.has(index)}
             />
           ))}
           {Array.from({ length: placeholderCount }).map((_, index) => (

@@ -33,6 +33,7 @@ import { SearchNoResultsAlert } from "@/components/search-no-results-alert";
 import { BASE_NAMES } from "@/lib/bases";
 import { CAR_BODY_TYPE_KEYS, CAR_BODY_TYPE_LABELS } from "@/lib/car-body-types";
 import { listingBases } from "@/lib/listing-bases";
+import { firstPhotoIndices } from "@/lib/priority-indices";
 import { matchesListing } from "@/lib/search-matching";
 import type { Listing } from "@/lib/types";
 
@@ -171,7 +172,7 @@ export function CarsGrid({
   const noResults = !noInventory && sorted.length === 0;
   // Whichever card actually renders a photo first is a real LCP
   // candidate on this page — see ListingCard's same-named prop.
-  const firstPhotoIndex = sorted.findIndex((listing) => listing.photos.length > 0);
+  const priorityIndices = firstPhotoIndices(sorted, (listing) => listing.photos.length > 0, 4);
 
   return (
     <>
@@ -315,7 +316,7 @@ export function CarsGrid({
                 listing={listing}
                 photoGradient={PHOTO_GRADIENTS[index % PHOTO_GRADIENTS.length]}
                 isFavorited={favoriteIds ? favoriteIdSet.has(listing.id) : undefined}
-                priority={index === firstPhotoIndex}
+                priority={priorityIndices.has(index)}
               />
             ))}
           </div>

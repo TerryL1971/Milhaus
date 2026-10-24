@@ -19,6 +19,7 @@ import { BASE_NAMES } from "@/lib/bases";
 import { getFeaturedBusinesses } from "@/lib/businesses-queries";
 import { getFavoriteListingIds } from "@/lib/favorites-queries";
 import { getFeaturedListings } from "@/lib/listings";
+import { firstPhotoIndices } from "@/lib/priority-indices";
 import { SITE_URL } from "@/lib/site-url";
 import { createClient } from "@/lib/supabase/server";
 
@@ -83,14 +84,14 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
     getFavoriteListingIds(user?.id),
   ]);
 
-  // Whichever card actually renders a photo first in each of these two
-  // hero-adjacent rows is a real LCP candidate — not necessarily index 0,
-  // since a listing with no photo renders NoPhotoPlaceholder instead of
-  // an <Image> at all. -1 (no match) just means nothing gets `priority`.
-  const firstRentalPhotoIndex = featuredRentals.findIndex((listing) => listing.photos.length > 0);
-  const firstCarPhotoIndex = featuredCars.findIndex((listing) => listing.photos.length > 0);
-  const firstBusinessPhotoIndex = featuredBusinesses.findIndex((business) => business.coverImageUrl);
-  const firstProductPhotoIndex = featuredProducts.findIndex((listing) => listing.photos.length > 0);
+  // Every card in a Featured row's first (only) line is a real LCP
+  // candidate, not just whichever renders a photo first — see
+  // firstPhotoIndices' own comment for why a single findIndex wasn't
+  // enough. All 4 rows render 3-wide here.
+  const rentalPriorityIndices = firstPhotoIndices(featuredRentals, (listing) => listing.photos.length > 0, 3);
+  const carPriorityIndices = firstPhotoIndices(featuredCars, (listing) => listing.photos.length > 0, 3);
+  const businessPriorityIndices = firstPhotoIndices(featuredBusinesses, (business) => Boolean(business.coverImageUrl), 3);
+  const productPriorityIndices = firstPhotoIndices(featuredProducts, (listing) => listing.photos.length > 0, 3);
 
   const howSteps = [
     { num: "01", heading: t("how1Heading"), body: t("how1Body") },
@@ -297,7 +298,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
           {featuredRentals.length > 0 ? (
             <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
               {featuredRentals.map((listing, index) => (
-                <ListingCard key={listing.id} listing={listing} photoGradient={RENTAL_PHOTO_GRADIENTS[index % RENTAL_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} priority={index === firstRentalPhotoIndex} />
+                <ListingCard key={listing.id} listing={listing} photoGradient={RENTAL_PHOTO_GRADIENTS[index % RENTAL_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} priority={rentalPriorityIndices.has(index)} />
               ))}
             </div>
           ) : (
@@ -317,7 +318,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
           {featuredCars.length > 0 ? (
             <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
               {featuredCars.map((listing, index) => (
-                <CarListingCard key={listing.id} listing={listing} photoGradient={CAR_PHOTO_GRADIENTS[index % CAR_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} priority={index === firstCarPhotoIndex} />
+                <CarListingCard key={listing.id} listing={listing} photoGradient={CAR_PHOTO_GRADIENTS[index % CAR_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} priority={carPriorityIndices.has(index)} />
               ))}
             </div>
           ) : (
@@ -339,7 +340,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
           {featuredBusinesses.length > 0 ? (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {featuredBusinesses.map((business, index) => (
-                <BusinessCard key={business.id} business={business} priority={index === firstBusinessPhotoIndex} />
+                <BusinessCard key={business.id} business={business} priority={businessPriorityIndices.has(index)} />
               ))}
             </div>
           ) : (
@@ -360,7 +361,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
           {featuredProducts.length > 0 ? (
             <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
               {featuredProducts.map((listing, index) => (
-                <ProductListingCard key={listing.id} listing={listing} photoGradient={PRODUCT_PHOTO_GRADIENTS[index % PRODUCT_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} priority={index === firstProductPhotoIndex} />
+                <ProductListingCard key={listing.id} listing={listing} photoGradient={PRODUCT_PHOTO_GRADIENTS[index % PRODUCT_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} priority={productPriorityIndices.has(index)} />
               ))}
             </div>
           ) : (

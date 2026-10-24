@@ -27,6 +27,7 @@ import {
   BUSINESS_TAG_LABELS,
   type Business,
 } from "@/lib/businesses";
+import { firstPhotoIndices } from "@/lib/priority-indices";
 import { matchesBusiness } from "@/lib/search-matching";
 
 type Applied = {
@@ -101,7 +102,7 @@ export function BusinessesGrid({
   const noResults = !noInventory && filtered.length === 0;
   // Whichever card actually renders a photo first is a real LCP
   // candidate on this page — see ListingCard's same-named prop.
-  const firstBusinessPhotoIndex = filtered.findIndex((business) => business.coverImageUrl);
+  const businessPriorityIndices = firstPhotoIndices(filtered, (business) => Boolean(business.coverImageUrl), 3);
 
   return (
     <>
@@ -178,7 +179,7 @@ export function BusinessesGrid({
         !noResults && (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((business, index) => (
-              <BusinessCard key={business.id} business={business} priority={index === firstBusinessPhotoIndex} />
+              <BusinessCard key={business.id} business={business} priority={businessPriorityIndices.has(index)} />
             ))}
           </div>
         )
