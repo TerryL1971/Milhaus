@@ -189,6 +189,9 @@ export function ListingsGrid({
   // Only pad the *unfiltered* view — see PlaceholderCard's comment for why.
   const placeholderCount = hasActiveFilters || keyword ? 0 : Math.max(0, 3 - filtered.length);
   const noResults = sorted.length === 0 && (hasActiveFilters || Boolean(keyword));
+  // Whichever card actually renders a photo first is a real LCP
+  // candidate on this page — see ListingCard's same-named prop.
+  const firstPhotoIndex = sorted.findIndex((listing) => listing.photos.length > 0);
   const noResultsMessage = [
     t("emptyPrefix"),
     activeBases.length > 0 ? t("emptyNear", { base: activeBases.join(", ") }) : "",
@@ -320,6 +323,7 @@ export function ListingsGrid({
               listing={listing}
               photoGradient={PHOTO_GRADIENTS[index % PHOTO_GRADIENTS.length]}
               isFavorited={favoriteIds ? favoriteIdSet.has(listing.id) : undefined}
+              priority={index === firstPhotoIndex}
             />
           ))}
           {Array.from({ length: placeholderCount }).map((_, index) => (

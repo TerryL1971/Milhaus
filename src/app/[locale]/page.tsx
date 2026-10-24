@@ -90,6 +90,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
   const firstRentalPhotoIndex = featuredRentals.findIndex((listing) => listing.photos.length > 0);
   const firstCarPhotoIndex = featuredCars.findIndex((listing) => listing.photos.length > 0);
   const firstBusinessPhotoIndex = featuredBusinesses.findIndex((business) => business.coverImageUrl);
+  const firstProductPhotoIndex = featuredProducts.findIndex((listing) => listing.photos.length > 0);
 
   const howSteps = [
     { num: "01", heading: t("how1Heading"), body: t("how1Body") },
@@ -359,7 +360,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
           {featuredProducts.length > 0 ? (
             <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
               {featuredProducts.map((listing, index) => (
-                <ProductListingCard key={listing.id} listing={listing} photoGradient={PRODUCT_PHOTO_GRADIENTS[index % PRODUCT_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} />
+                <ProductListingCard key={listing.id} listing={listing} photoGradient={PRODUCT_PHOTO_GRADIENTS[index % PRODUCT_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} priority={index === firstProductPhotoIndex} />
               ))}
             </div>
           ) : (

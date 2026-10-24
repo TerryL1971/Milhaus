@@ -126,6 +126,9 @@ export function ProductsGrid({
 
   const noInventory = listings.length === 0;
   const noResults = !noInventory && sorted.length === 0;
+  // Whichever card actually renders a photo first is a real LCP
+  // candidate on this page — see ListingCard's same-named prop.
+  const firstPhotoIndex = sorted.findIndex((listing) => listing.photos.length > 0);
 
   return (
     <>
@@ -197,6 +200,7 @@ export function ProductsGrid({
                 listing={listing}
                 photoGradient={PHOTO_GRADIENTS[index % PHOTO_GRADIENTS.length]}
                 isFavorited={favoriteIds ? favoriteIdSet.has(listing.id) : undefined}
+                priority={index === firstPhotoIndex}
               />
             ))}
           </div>

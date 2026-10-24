@@ -23,6 +23,7 @@ export function ProductListingCard({
   photoGradient,
   aspectClassName = "aspect-square",
   isFavorited,
+  priority,
 }: {
   listing: Listing;
   photoGradient: string;
@@ -33,6 +34,9 @@ export function ProductListingCard({
   aspectClassName?: string;
   /** undefined = don't render the heart at all. */
   isFavorited?: boolean;
+  /** Set on whichever card in a row is the actual LCP candidate — see
+   * ListingCard's same prop for why this isn't just "index 0". */
+  priority?: boolean;
 }) {
   const t = useTranslations("ProductCard");
   const isSold = listing.status === "rented"; // same status column as every listing type; "rented" means "off the market"
@@ -52,6 +56,7 @@ export function ProductListingCard({
             fill
             sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
             className="object-cover"
+            priority={priority}
           />
         ) : (
           <NoPhotoPlaceholder gradient={photoGradient} label={t("noPhotoYet")} />
