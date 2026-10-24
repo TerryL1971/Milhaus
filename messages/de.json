@@ -117,7 +117,16 @@
     "heroLocationPlaceholder": "Standort",
     "scriptTagline": "Germany Feels Like Home",
     "featuredProductsHeading": "Empfohlenes Kaufen & Verkaufen",
-    "featuredProductsViewAll": "Alle Artikel ansehen"
+    "featuredProductsViewAll": "Alle Artikel ansehen",
+    "featuredHomesPlaceholderHeading": "Bald neue Angebote",
+    "featuredHomesPlaceholderBody": "Wohnungen vom Housing Office und ausziehenden Familien erscheinen hier.",
+    "featuredHomesPlaceholderCta": "Wohnung inserieren",
+    "featuredCarsPlaceholderHeading": "Bald neue Angebote",
+    "featuredCarsPlaceholderBody": "Autos aus der Community erscheinen hier.",
+    "featuredCarsPlaceholderCta": "Auto inserieren",
+    "featuredProductsPlaceholderHeading": "Bald neue Angebote",
+    "featuredProductsPlaceholderBody": "Artikel aus der Community erscheinen hier.",
+    "featuredProductsPlaceholderCta": "Artikel inserieren"
   },
   "ListingsGrid": {
     "heading": "Gerade verfügbar",
