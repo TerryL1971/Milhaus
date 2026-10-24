@@ -106,7 +106,17 @@ export async function SponsorBannerCarousel() {
               {slide.kind === "image" ? (
                 // No background/border — whatever the advertiser's image looks
                 // like (solid background baked in, or transparent) is the ad.
-                <Image src={slide.imageUrl} alt={slide.alt} fill sizes="100vw" className="object-contain py-0.5" />
+                // This banner sits above the fold on every page, and slide 0
+                // is the one actually visible at initial paint (0 animation
+                // delay) — a real LCP candidate, so it gets `priority`.
+                <Image
+                  src={slide.imageUrl}
+                  alt={slide.alt}
+                  fill
+                  sizes="100vw"
+                  className="object-contain py-0.5"
+                  priority={index === 0}
+                />
               ) : (
                 <span className="font-mono text-xs font-semibold uppercase tracking-[0.12em] text-ink-soft">
                   {slide.heading}
