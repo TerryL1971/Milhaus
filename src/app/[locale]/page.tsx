@@ -9,7 +9,6 @@ import { getLocale, getTranslations } from "next-intl/server";
 import Image from "next/image";
 import { BusinessCard } from "@/components/business-card";
 import { CarListingCard } from "@/components/car-listing-card";
-import { FeaturedPlaceholderCard } from "@/components/featured-placeholder-card";
 import { HeroSearchAlert } from "@/components/hero-search-alert";
 import { ListingCard } from "@/components/listing-card";
 import { ProductListingCard } from "@/components/product-listing-card";
@@ -271,62 +270,44 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
       {/* ---------- FEATURED HOMES / FEATURED CARS ---------- */}
       {/* Per Charlie's frontpage mockup — dedicated rows with the full
           card treatment (photo, badges, price/specs), distinct from the
-          hero's small mini-card fan above. Unlike Military-Friendly
-          Businesses below (Charlie hand-enters those, so an empty section
-          really would be empty), these three rows are inventory-driven —
-          always rendered, padded out to 3 with FeaturedPlaceholderCard
-          when real listings are thin, so Charlie sees the section's real
-          layout on day one instead of it being invisible until he's
-          featured enough listings. */}
-      <section className="py-11">
-        <div className="mx-auto max-w-[1600px] px-8">
-          <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-            <h2 className="font-display text-[2rem] font-semibold text-ink">{t("featuredHomesHeading")}</h2>
-            <Link href="/listings" className="text-sm font-semibold text-olive-deep hover:underline">
-              {t("featuredHomesViewAll")} →
-            </Link>
+          hero's small mini-card fan above. Same "don't show an empty
+          section" rule as Military-Friendly Businesses below: only
+          renders once there's at least one featured item of that type. */}
+      {featuredRentals.length > 0 && (
+        <section className="py-11">
+          <div className="mx-auto max-w-[1600px] px-8">
+            <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+              <h2 className="font-display text-[2rem] font-semibold text-ink">{t("featuredHomesHeading")}</h2>
+              <Link href="/listings" className="text-sm font-semibold text-olive-deep hover:underline">
+                {t("featuredHomesViewAll")} →
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
+              {featuredRentals.map((listing, index) => (
+                <ListingCard key={listing.id} listing={listing} photoGradient={RENTAL_PHOTO_GRADIENTS[index % RENTAL_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} />
+              ))}
+            </div>
           </div>
-          <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
-            {featuredRentals.map((listing, index) => (
-              <ListingCard key={listing.id} listing={listing} photoGradient={RENTAL_PHOTO_GRADIENTS[index % RENTAL_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} />
-            ))}
-            {Array.from({ length: Math.max(0, 3 - featuredRentals.length) }).map((_, index) => (
-              <FeaturedPlaceholderCard
-                key={`placeholder-home-${index}`}
-                heading={t("featuredHomesPlaceholderHeading")}
-                body={t("featuredHomesPlaceholderBody")}
-                ctaLabel={t("featuredHomesPlaceholderCta")}
-                ctaHref="/post"
-              />
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      <section className="bg-canvas-deep py-11">
-        <div className="mx-auto max-w-[1600px] px-8">
-          <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-            <h2 className="font-display text-[2rem] font-semibold text-ink">{t("featuredCarsHeading")}</h2>
-            <Link href="/cars" className="text-sm font-semibold text-olive-deep hover:underline">
-              {t("featuredCarsViewAll")} →
-            </Link>
+      {featuredCars.length > 0 && (
+        <section className="bg-canvas-deep py-11">
+          <div className="mx-auto max-w-[1600px] px-8">
+            <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+              <h2 className="font-display text-[2rem] font-semibold text-ink">{t("featuredCarsHeading")}</h2>
+              <Link href="/cars" className="text-sm font-semibold text-olive-deep hover:underline">
+                {t("featuredCarsViewAll")} →
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
+              {featuredCars.map((listing, index) => (
+                <CarListingCard key={listing.id} listing={listing} photoGradient={CAR_PHOTO_GRADIENTS[index % CAR_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} />
+              ))}
+            </div>
           </div>
-          <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
-            {featuredCars.map((listing, index) => (
-              <CarListingCard key={listing.id} listing={listing} photoGradient={CAR_PHOTO_GRADIENTS[index % CAR_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} />
-            ))}
-            {Array.from({ length: Math.max(0, 3 - featuredCars.length) }).map((_, index) => (
-              <FeaturedPlaceholderCard
-                key={`placeholder-car-${index}`}
-                heading={t("featuredCarsPlaceholderHeading")}
-                body={t("featuredCarsPlaceholderBody")}
-                ctaLabel={t("featuredCarsPlaceholderCta")}
-                ctaHref="/post-car"
-              />
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ---------- MILITARY-FRIENDLY BUSINESSES ---------- */}
       {/* Charlie hand-enters these from /admin/businesses — only shows
@@ -351,30 +332,23 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
       )}
 
       {/* ---------- FEATURED BUY & SELL ---------- */}
-      <section className="bg-canvas-deep py-11">
-        <div className="mx-auto max-w-[1600px] px-8">
-          <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-            <h2 className="font-display text-[2rem] font-semibold text-ink">{t("featuredProductsHeading")}</h2>
-            <Link href="/products" className="text-sm font-semibold text-olive-deep hover:underline">
-              {t("featuredProductsViewAll")} →
-            </Link>
+      {featuredProducts.length > 0 && (
+        <section className="bg-canvas-deep py-11">
+          <div className="mx-auto max-w-[1600px] px-8">
+            <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+              <h2 className="font-display text-[2rem] font-semibold text-ink">{t("featuredProductsHeading")}</h2>
+              <Link href="/products" className="text-sm font-semibold text-olive-deep hover:underline">
+                {t("featuredProductsViewAll")} →
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
+              {featuredProducts.map((listing, index) => (
+                <ProductListingCard key={listing.id} listing={listing} photoGradient={PRODUCT_PHOTO_GRADIENTS[index % PRODUCT_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} />
+              ))}
+            </div>
           </div>
-          <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
-            {featuredProducts.map((listing, index) => (
-              <ProductListingCard key={listing.id} listing={listing} photoGradient={PRODUCT_PHOTO_GRADIENTS[index % PRODUCT_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} />
-            ))}
-            {Array.from({ length: Math.max(0, 3 - featuredProducts.length) }).map((_, index) => (
-              <FeaturedPlaceholderCard
-                key={`placeholder-product-${index}`}
-                heading={t("featuredProductsPlaceholderHeading")}
-                body={t("featuredProductsPlaceholderBody")}
-                ctaLabel={t("featuredProductsPlaceholderCta")}
-                ctaHref="/post-product"
-              />
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ---------- HOW IT WORKS ---------- */}
       <section id="how" className="py-18">
