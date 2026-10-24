@@ -27,6 +27,7 @@ export function ListingCard({
   photoGradient,
   aspectClassName = "aspect-[4/3]",
   isFavorited,
+  priority,
 }: {
   listing: Listing;
   photoGradient: string;
@@ -39,6 +40,11 @@ export function ListingCard({
    * seller's own profile — favoriting your own listing isn't a thing);
    * a real boolean = render it, filled or not. */
   isFavorited?: boolean;
+  /** Set on the first card of the homepage's Featured Homes row — it's
+   * the page's actual LCP element (first section below the hero), and
+   * without this Next.js lazy-loads it and flags it as hurting LCP.
+   * Every other caller leaves this unset. */
+  priority?: boolean;
 }) {
   const t = useTranslations("ListingCard");
   const tAmenities = useTranslations("Amenities");
@@ -60,6 +66,7 @@ export function ListingCard({
             fill
             sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
             className="object-cover"
+            priority={priority}
           />
         ) : (
           <NoPhotoPlaceholder gradient={photoGradient} label={t("noPhotoYet")} />
