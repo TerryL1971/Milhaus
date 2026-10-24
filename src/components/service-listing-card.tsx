@@ -6,6 +6,7 @@
 
 import { useTranslations } from "next-intl";
 import Image from "next/image";
+import { NoPhotoPlaceholder } from "@/components/no-photo-placeholder";
 import { Link } from "@/i18n/navigation";
 import { SERVICE_CATEGORY_LABELS, type ServiceCategoryKey } from "@/lib/service-categories";
 import type { Listing } from "@/lib/types";
@@ -41,7 +42,7 @@ export function ServiceListingCard({
             className="object-cover"
           />
         ) : (
-          <div className="h-full w-full" style={{ background: photoGradient }} />
+          <NoPhotoPlaceholder gradient={photoGradient} label={t("noPhotoYet")} />
         )}
       </div>
       <div className="px-4 pb-4 pt-3.5">

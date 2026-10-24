@@ -150,7 +150,8 @@
     "housingOfficeListing": "Housing office listing",
     "listedByFamily": "Listed by outgoing family",
     "housingApprovedBadge": "Housing Approved",
-    "newBadge": "New"
+    "newBadge": "New",
+    "noPhotoYet": "No photo yet"
   },
   "ListingForm": {
     "source": "Source",
@@ -409,7 +410,8 @@
     "euSpec": "EU Spec",
     "automatic": "Automatic",
     "manual": "Manual",
-    "lowMileage": "Low Mileage"
+    "lowMileage": "Low Mileage",
+    "noPhotoYet": "No photo yet"
   },
   "CarDetail": {
     "backToCars": "← Back to cars",
@@ -445,7 +447,8 @@
     "available": "Available",
     "sold": "Sold",
     "likeNew": "Like New",
-    "pickUp": "Pick Up"
+    "pickUp": "Pick Up",
+    "noPhotoYet": "No photo yet"
   },
   "ProductDetail": {
     "backToProducts": "← Back to items for sale",
@@ -478,7 +481,8 @@
   "ServiceCard": {
     "available": "Available",
     "unavailable": "Unavailable",
-    "from": "from"
+    "from": "from",
+    "noPhotoYet": "No photo yet"
   },
   "ServiceDetail": {
     "backToServices": "← Back to services",

@@ -8,6 +8,7 @@
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { FavoriteButton } from "@/components/favorite-button";
+import { NoPhotoPlaceholder } from "@/components/no-photo-placeholder";
 import { Link } from "@/i18n/navigation";
 import type { Listing } from "@/lib/types";
 
@@ -55,7 +56,7 @@ export function CarListingCard({
             className="object-cover"
           />
         ) : (
-          <div className="h-full w-full" style={{ background: photoGradient }} />
+          <NoPhotoPlaceholder gradient={photoGradient} label={t("noPhotoYet")} />
         )}
       </div>
       <div className="px-4 pb-4 pt-3.5">

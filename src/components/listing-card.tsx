@@ -5,6 +5,7 @@
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { FavoriteButton } from "@/components/favorite-button";
+import { NoPhotoPlaceholder } from "@/components/no-photo-placeholder";
 import { Link } from "@/i18n/navigation";
 import type { AmenityKey } from "@/lib/amenities";
 import type { Listing } from "@/lib/types";
@@ -61,7 +62,7 @@ export function ListingCard({
             className="object-cover"
           />
         ) : (
-          <div className="h-full w-full" style={{ background: photoGradient }} />
+          <NoPhotoPlaceholder gradient={photoGradient} label={t("noPhotoYet")} />
         )}
         {(isHousingOffice || listing.isNew || listing.amenities.includes("furnished") || listing.amenities.includes("pet_friendly")) && (
           <div className="absolute left-2.5 top-2.5 flex flex-wrap gap-1.5">

@@ -150,7 +150,8 @@
     "housingOfficeListing": "Vom Housing Office",
     "listedByFamily": "Von ausziehender Familie",
     "housingApprovedBadge": "Housing-Office genehmigt",
-    "newBadge": "Neu"
+    "newBadge": "Neu",
+    "noPhotoYet": "Noch kein Foto"
   },
   "ListingForm": {
     "source": "Quelle",
@@ -409,7 +410,8 @@
     "euSpec": "EU-Ausführung",
     "automatic": "Automatik",
     "manual": "Schaltgetriebe",
-    "lowMileage": "Niedrige Laufleistung"
+    "lowMileage": "Niedrige Laufleistung",
+    "noPhotoYet": "Noch kein Foto"
   },
   "CarDetail": {
     "backToCars": "← Zurück zu den Autos",
@@ -445,7 +447,8 @@
     "available": "Verfügbar",
     "sold": "Verkauft",
     "likeNew": "Wie neu",
-    "pickUp": "Abholung"
+    "pickUp": "Abholung",
+    "noPhotoYet": "Noch kein Foto"
   },
   "ProductDetail": {
     "backToProducts": "← Zurück zu den Artikeln",
@@ -478,7 +481,8 @@
   "ServiceCard": {
     "available": "Verfügbar",
     "unavailable": "Nicht verfügbar",
-    "from": "ab"
+    "from": "ab",
+    "noPhotoYet": "Noch kein Foto"
   },
   "ServiceDetail": {
     "backToServices": "← Zurück zu den Dienstleistungen",
