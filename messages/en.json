@@ -512,6 +512,9 @@
     "heading": "Events",
     "subhead": "What's happening nearby — hand-picked by Milhaus, with links to each organizer."
   },
+  "EventCard": {
+    "noPhotoYet": "No photo yet"
+  },
   "EventDetailPage": {
     "organizedBy": "Organized by",
     "backToEvents": "← Back to events"

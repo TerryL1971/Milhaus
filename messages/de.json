@@ -512,6 +512,9 @@
     "heading": "Veranstaltungen",
     "subhead": "Was in der Nähe passiert — handverlesen von Milhaus, mit Links zu den jeweiligen Veranstaltern."
   },
+  "EventCard": {
+    "noPhotoYet": "Noch kein Foto"
+  },
   "EventDetailPage": {
     "organizedBy": "Veranstalter:",
     "backToEvents": "← Zurück zu Veranstaltungen"

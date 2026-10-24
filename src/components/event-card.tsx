@@ -4,7 +4,9 @@
 // for a missing photo), a date badge, title, organizer, and city/base.
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { NoPhotoPlaceholder } from "@/components/no-photo-placeholder";
 import type { Event } from "@/lib/events";
 
 const PHOTO_GRADIENT = "linear-gradient(135deg,#B9C4A3,#6B7353)";
@@ -13,6 +15,7 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", { month: "short", day: "n
 const timeFormatter = new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" });
 
 export function EventCard({ event }: { event: Event }) {
+  const t = useTranslations("EventCard");
   const startsAt = new Date(event.startsAt);
 
   return (
@@ -35,7 +38,9 @@ export function EventCard({ event }: { event: Event }) {
             />
           </div>
         ) : (
-          <div className="aspect-[16/9]" style={{ background: PHOTO_GRADIENT }} />
+          <div className="relative aspect-[16/9] w-full">
+            <NoPhotoPlaceholder gradient={PHOTO_GRADIENT} label={t("noPhotoYet")} />
+          </div>
         )}
         <span className="absolute left-2.5 top-2.5 rounded-[3px] bg-ink px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
           {dateFormatter.format(startsAt)}
