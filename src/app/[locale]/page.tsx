@@ -9,6 +9,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import Image from "next/image";
 import { BusinessCard } from "@/components/business-card";
 import { CarListingCard } from "@/components/car-listing-card";
+import { ComingSoonPanel } from "@/components/coming-soon-panel";
 import { HeroSearchAlert } from "@/components/hero-search-alert";
 import { ListingCard } from "@/components/listing-card";
 import { ProductListingCard } from "@/components/product-listing-card";
@@ -270,85 +271,94 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
       {/* ---------- FEATURED HOMES / FEATURED CARS ---------- */}
       {/* Per Charlie's frontpage mockup — dedicated rows with the full
           card treatment (photo, badges, price/specs), distinct from the
-          hero's small mini-card fan above. Same "don't show an empty
-          section" rule as Military-Friendly Businesses below: only
-          renders once there's at least one featured item of that type. */}
-      {featuredRentals.length > 0 && (
-        <section className="py-11">
-          <div className="mx-auto max-w-[1600px] px-8">
-            <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-              <h2 className="font-display text-[2rem] font-semibold text-ink">{t("featuredHomesHeading")}</h2>
-              <Link href="/listings" className="text-sm font-semibold text-olive-deep hover:underline">
-                {t("featuredHomesViewAll")} →
-              </Link>
-            </div>
+          hero's small mini-card fan above. All four rows below (these
+          two, Businesses, and Buy & Sell) always render — when a
+          category has zero active listings (e.g. right after Charlie
+          deletes the dev-only mock data, before real inventory exists),
+          ComingSoonPanel takes the grid's place instead of the whole
+          section just vanishing. */}
+      <section className="py-11">
+        <div className="mx-auto max-w-[1600px] px-8">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+            <h2 className="font-display text-[2rem] font-semibold text-ink">{t("featuredHomesHeading")}</h2>
+            <Link href="/listings" className="text-sm font-semibold text-olive-deep hover:underline">
+              {t("featuredHomesViewAll")} →
+            </Link>
+          </div>
+          {featuredRentals.length > 0 ? (
             <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
               {featuredRentals.map((listing, index) => (
                 <ListingCard key={listing.id} listing={listing} photoGradient={RENTAL_PHOTO_GRADIENTS[index % RENTAL_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} />
               ))}
             </div>
-          </div>
-        </section>
-      )}
+          ) : (
+            <ComingSoonPanel heading={t("homesComingSoonHeading")} body={t("homesComingSoonBody")} />
+          )}
+        </div>
+      </section>
 
-      {featuredCars.length > 0 && (
-        <section className="bg-canvas-deep py-11">
-          <div className="mx-auto max-w-[1600px] px-8">
-            <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-              <h2 className="font-display text-[2rem] font-semibold text-ink">{t("featuredCarsHeading")}</h2>
-              <Link href="/cars" className="text-sm font-semibold text-olive-deep hover:underline">
-                {t("featuredCarsViewAll")} →
-              </Link>
-            </div>
+      <section className="bg-canvas-deep py-11">
+        <div className="mx-auto max-w-[1600px] px-8">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+            <h2 className="font-display text-[2rem] font-semibold text-ink">{t("featuredCarsHeading")}</h2>
+            <Link href="/cars" className="text-sm font-semibold text-olive-deep hover:underline">
+              {t("featuredCarsViewAll")} →
+            </Link>
+          </div>
+          {featuredCars.length > 0 ? (
             <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
               {featuredCars.map((listing, index) => (
                 <CarListingCard key={listing.id} listing={listing} photoGradient={CAR_PHOTO_GRADIENTS[index % CAR_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} />
               ))}
             </div>
-          </div>
-        </section>
-      )}
+          ) : (
+            <ComingSoonPanel heading={t("carsComingSoonHeading")} body={t("carsComingSoonBody")} />
+          )}
+        </div>
+      </section>
 
       {/* ---------- MILITARY-FRIENDLY BUSINESSES ---------- */}
-      {/* Charlie hand-enters these from /admin/businesses — only shows
-          up at all once he's featured at least one, same "don't show an
-          empty/fake section" rule the rest of the homepage follows. */}
-      {featuredBusinesses.length > 0 && (
-        <section className="py-11">
-          <div className="mx-auto max-w-[1600px] px-8">
-            <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-              <h2 className="font-display text-[2rem] font-semibold text-ink">{t("businessesHeading")}</h2>
-              <Link href="/services" className="text-sm font-semibold text-olive-deep hover:underline">
-                {t("businessesViewAll")} →
-              </Link>
-            </div>
+      {/* Charlie hand-enters these from /admin/businesses. */}
+      <section className="py-11">
+        <div className="mx-auto max-w-[1600px] px-8">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+            <h2 className="font-display text-[2rem] font-semibold text-ink">{t("businessesHeading")}</h2>
+            <Link href="/services" className="text-sm font-semibold text-olive-deep hover:underline">
+              {t("businessesViewAll")} →
+            </Link>
+          </div>
+          {featuredBusinesses.length > 0 ? (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {featuredBusinesses.map((business) => (
                 <BusinessCard key={business.id} business={business} />
               ))}
             </div>
-          </div>
-        </section>
-      )}
+          ) : (
+            <ComingSoonPanel heading={t("businessesComingSoonHeading")} body={t("businessesComingSoonBody")} />
+          )}
+        </div>
+      </section>
 
       {/* ---------- FEATURED BUY & SELL ---------- */}
-      {featuredProducts.length > 0 && (
-        <section className="bg-canvas-deep py-11">
-          <div className="mx-auto max-w-[1600px] px-8">
-            <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-              <h2 className="font-display text-[2rem] font-semibold text-ink">{t("featuredProductsHeading")}</h2>
-              <Link href="/products" className="text-sm font-semibold text-olive-deep hover:underline">
-                {t("featuredProductsViewAll")} →
-              </Link>
-            </div>
+      <section className="bg-canvas-deep py-11">
+        <div className="mx-auto max-w-[1600px] px-8">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+            <h2 className="font-display text-[2rem] font-semibold text-ink">{t("featuredProductsHeading")}</h2>
+            <Link href="/products" className="text-sm font-semibold text-olive-deep hover:underline">
+              {t("featuredProductsViewAll")} →
+            </Link>
+          </div>
+          {featuredProducts.length > 0 ? (
             <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
               {featuredProducts.map((listing, index) => (
                 <ProductListingCard key={listing.id} listing={listing} photoGradient={PRODUCT_PHOTO_GRADIENTS[index % PRODUCT_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} />
               ))}
             </div>
-          </div>
-        </section>
-      )}
+          ) : (
+            <ComingSoonPanel heading={t("productsComingSoonHeading")} body={t("productsComingSoonBody")} />
+          )}
+        </div>
+      </section>
 
       {/* ---------- HOW IT WORKS ---------- */}
       <section id="how" className="py-18">

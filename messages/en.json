@@ -117,7 +117,15 @@
     "heroLocationPlaceholder": "Location",
     "scriptTagline": "Germany Feels Like Home",
     "featuredProductsHeading": "Featured Buy & Sell",
-    "featuredProductsViewAll": "View all items"
+    "featuredProductsViewAll": "View all items",
+    "homesComingSoonHeading": "Featured Homes coming soon",
+    "homesComingSoonBody": "Homes from the housing office and outgoing families will appear here.",
+    "carsComingSoonHeading": "Featured Cars coming soon",
+    "carsComingSoonBody": "Cars for sale from the community will appear here.",
+    "businessesComingSoonHeading": "Businesses coming soon",
+    "businessesComingSoonBody": "Military-friendly businesses will appear here.",
+    "productsComingSoonHeading": "Items for Sale coming soon",
+    "productsComingSoonBody": "Items for sale from the community will appear here."
   },
   "ListingsGrid": {
     "heading": "Open right now",
