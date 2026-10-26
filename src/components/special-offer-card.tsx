@@ -16,7 +16,10 @@ export function SpecialOfferCard({ offer, priority }: { offer: AdSlot; priority?
       href={offer.linkUrl}
       target={offer.linkUrl.startsWith("http") ? "_blank" : undefined}
       rel={offer.linkUrl.startsWith("http") ? "noopener noreferrer" : undefined}
-      className="block aspect-[1/2] w-full overflow-hidden rounded-md border border-canvas-deep bg-paper transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(27,42,58,0.12)]"
+      // Literal 300x600, not a responsive aspect-ratio box — Charlie's
+      // ask was the actual fixed size of the /cars sidebar ad, not just
+      // its proportions stretched to fill a grid column.
+      className="block h-[600px] w-[300px] flex-shrink-0 overflow-hidden rounded-md border border-canvas-deep bg-paper transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(27,42,58,0.12)]"
     >
       {offer.imageUrl ? (
         <div className="relative h-full w-full">
@@ -24,7 +27,7 @@ export function SpecialOfferCard({ offer, priority }: { offer: AdSlot; priority?
             src={offer.imageUrl}
             alt={offer.advertiserName}
             fill
-            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            sizes="300px"
             className="object-cover"
             priority={priority}
           />

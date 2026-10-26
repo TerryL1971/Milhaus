@@ -392,7 +392,10 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
             <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
               <h2 className="font-display text-[2rem] font-semibold text-ink">{t("specialOffersHeading")}</h2>
             </div>
-            <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
+            {/* flex-wrap, not a stretched grid — these cards are a fixed
+                300x600 size (see SpecialOfferCard), not a responsive
+                aspect-ratio box filling a grid column. */}
+            <div className="flex flex-wrap gap-5.5">
               {specialOffers.slice(0, 3).map((offer, index) => (
                 <SpecialOfferCard key={offer.id} offer={offer} priority={index === 0} />
               ))}

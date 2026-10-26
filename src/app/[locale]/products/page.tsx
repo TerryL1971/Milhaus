@@ -41,7 +41,10 @@ export default async function ProductsPage() {
         {offers.length === 0 ? (
           <p className="text-ink-soft">{t("emptyNone")}</p>
         ) : (
-          <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
+          // flex-wrap, not a stretched grid — these cards are a fixed
+          // 300x600 size (see SpecialOfferCard), not a responsive
+          // aspect-ratio box filling a grid column.
+          <div className="flex flex-wrap gap-5.5">
             {offers.map((offer, index) => (
               <SpecialOfferCard key={offer.id} offer={offer} priority={priorityIndices.has(index)} />
             ))}
