@@ -161,8 +161,10 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
               search bar move to the right half on larger screens so they
               sit over open sky instead of competing with the photo.
               Unconstrained (full-width, left-aligned) below lg, same as
-              before. */}
-          <div className="lg:ml-auto lg:max-w-[620px]">
+              before. 760px, not the original 620px — Charlie's later ask
+              for a wider search bar; still comfortably inside the hero's
+              own open-sky area on the right at lg+. */}
+          <div className="lg:ml-auto lg:max-w-[760px]">
             <h1 className="mb-3 font-display text-4xl font-bold leading-[1.1] tracking-tight text-paper drop-shadow-[0_2px_16px_rgba(0,0,0,0.55)] lg:text-5xl">
               {t("headlineLine1")} {t("headlineLine2")}
             </h1>
@@ -184,21 +186,17 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
             {searchFailed && <HeroSearchAlert message={t("heroSearchNoResults", { query: searchFailed })} />}
 
             {/* Back to one line (Terry's call) from sm: up — stacks below
-                that. Fitting all four controls legibly inside the lg+
-                hero column (capped at 620px so the card sits over open
-                sky, see the container above) left ~590px of content
-                width total, genuinely tight for four controls: the three
-                non-input ones (category/location/button) are flex-none,
-                sized to their own short text (the location select's 📍
-                icon was dropped — it cost ~25px of padding this layout
-                can't spare), so the search input — the one thing that
-                actually needs the most room — gets whatever's left via
-                flex-1, with min-w-[170px] as a floor rather than letting
-                it shrink toward zero the way flex-1 alone would. If this
-                is ever a few px over on the narrowest lg-width browsers,
-                the card just renders a hair wider than 620px (no
-                overflow-hidden on the column above) rather than clipping
-                anything — a safer failure mode than truncated text. */}
+                that. The three non-input controls (category/location/
+                button) are flex-none, sized to their own short text, so
+                the search input — the one thing that actually needs the
+                most room — gets whatever's left via flex-1, with
+                min-w-[170px] as a floor rather than letting it shrink
+                toward zero the way flex-1 alone would. If this is ever a
+                few px over on the narrowest lg-width browsers, the card
+                just renders a hair wider than the column's own 760px cap
+                (no overflow-hidden on the container above) rather than
+                clipping anything — a safer failure mode than truncated
+                text. */}
             <form
               action={searchAction}
               className="flex flex-col gap-2 rounded-md bg-paper p-3.5 shadow-[0_14px_34px_rgba(0,0,0,0.3)] sm:flex-row sm:items-center"
