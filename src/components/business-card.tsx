@@ -21,11 +21,17 @@ const PHOTO_GRADIENT = "linear-gradient(135deg,#C3B79D,#8C9873)";
 export function BusinessCard({
   business,
   priority,
+  aspectClassName = "aspect-[4/3]",
 }: {
   business: Business;
   /** Set on whichever card in a row is the actual LCP candidate — see
    * ListingCard's same prop for why this isn't just "index 0". */
   priority?: boolean;
+  /** 4:3 (matching Homes/Cars) is the default for /services' own grid.
+   * The homepage's Featured rows override this to one shared 16:9 ratio
+   * across Homes/Cars/Businesses/Buy & Sell — same pattern ListingCard/
+   * CarListingCard/ProductListingCard already use for the same reason. */
+  aspectClassName?: string;
 }) {
   const t = useTranslations("BusinessCard");
 
@@ -33,7 +39,7 @@ export function BusinessCard({
     <div className="group relative overflow-hidden rounded-md border border-canvas-deep bg-paper transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(27,42,58,0.12)]">
       <Link href={`/businesses/${business.id}`} className="block">
         {business.coverImageUrl ? (
-          <div className="relative aspect-[16/9] w-full">
+          <div className={`relative ${aspectClassName} w-full`}>
             <Image
               src={business.coverImageUrl}
               alt=""
@@ -44,7 +50,7 @@ export function BusinessCard({
             />
           </div>
         ) : (
-          <div className="relative aspect-[16/9] w-full">
+          <div className={`relative ${aspectClassName} w-full`}>
             <NoPhotoPlaceholder gradient={PHOTO_GRADIENT} label={t("noPhotoYet")} />
           </div>
         )}

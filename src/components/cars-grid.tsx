@@ -172,7 +172,7 @@ export function CarsGrid({
   const noResults = !noInventory && sorted.length === 0;
   // Whichever card actually renders a photo first is a real LCP
   // candidate on this page — see ListingCard's same-named prop.
-  const priorityIndices = firstPhotoIndices(sorted, (listing) => listing.photos.length > 0, 4);
+  const priorityIndices = firstPhotoIndices(sorted, (listing) => listing.photos.length > 0, 3);
 
   return (
     <>
@@ -307,14 +307,15 @@ export function CarsGrid({
         <p className="text-ink-soft">{t("emptyNone")}</p>
       ) : (
         !noResults && (
-          // 4 columns, not 3 — on its own page, Cars should read as
-          // smaller cards than Homes (which stays at 3), per Terry.
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          // 3 columns + 4:3, matching Homes exactly — Charlie's call,
+          // reversing the earlier "Cars reads smaller, 4 columns" choice.
+          <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
             {sorted.map((listing, index) => (
               <CarListingCard
                 key={listing.id}
                 listing={listing}
                 photoGradient={PHOTO_GRADIENTS[index % PHOTO_GRADIENTS.length]}
+                aspectClassName="aspect-[4/3]"
                 isFavorited={favoriteIds ? favoriteIdSet.has(listing.id) : undefined}
                 priority={priorityIndices.has(index)}
               />

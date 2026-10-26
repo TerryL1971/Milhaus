@@ -347,7 +347,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
           {featuredBusinesses.length > 0 ? (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {featuredBusinesses.map((business, index) => (
-                <BusinessCard key={business.id} business={business} priority={businessPriorityIndices.has(index)} />
+                <BusinessCard key={business.id} business={business} aspectClassName={FEATURED_CARD_ASPECT} priority={businessPriorityIndices.has(index)} />
               ))}
             </div>
           ) : (
