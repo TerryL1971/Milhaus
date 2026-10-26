@@ -41,16 +41,13 @@ export default async function ProductsPage() {
         {offers.length === 0 ? (
           <p className="text-ink-soft">{t("emptyNone")}</p>
         ) : (
-          // flex-wrap, not a stretched grid — these cards are a fixed
-          // 300x600 size (see SpecialOfferCard), not a responsive
-          // aspect-ratio box filling a grid column. max-w-[944px] is 3
-          // cards + 2 gaps exactly (3*300 + 2*22) — without this cap,
-          // flex-wrap would fit 4-5 fixed-width cards per row on a wide
-          // desktop screen instead of the 3-across convention every
-          // other grid on the site uses; this way it wraps to a new row
-          // every 3rd card regardless of viewport width (e.g. 12 active
-          // offers reads as 4 rows of 3), the same as Terry asked about.
-          <div className="flex max-w-[944px] flex-wrap gap-5.5">
+          // Same 3-across grid as every other card type on the site
+          // (Homes/Cars/Services) — cards stretch to fill their column
+          // width, with SpecialOfferCard's own fixed 600px height.
+          // Wraps to a new row every 3rd card regardless of how many
+          // total offers exist (e.g. 12 active offers reads as 4 rows
+          // of 3).
+          <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
             {offers.map((offer, index) => (
               <SpecialOfferCard key={offer.id} offer={offer} priority={priorityIndices.has(index)} />
             ))}

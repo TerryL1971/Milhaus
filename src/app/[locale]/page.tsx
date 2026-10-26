@@ -380,22 +380,22 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
           and the site's banner ads. Charlie manages them at /admin/ads
           (placement: special_offers) — same simple system as the
           site banner / cars sidebar ad, just a third placement, rather
-          than a whole new content type + admin page. Cards sized like
-          the /cars sidebar ad (300x600, "Half Page Ad"); up to 3 shown
-          at once, no rotation. Hidden entirely until Charlie's added at
-          least one — same "don't show an empty/fake section" rule as
-          Military-Friendly Businesses. No real Buy & Sell inventory or
-          /products page/nav were touched by this change. */}
+          than a whole new content type + admin page. Cards are as wide
+          as the Homes/Cars/Services cards (stretch to fill their grid
+          column) with a fixed 600px height — first built at a literal
+          300x600 to match /cars' sidebar ad exactly, but that read as
+          too narrow next to the other cards' width, per Terry. Up to 3
+          shown at once, no rotation. Hidden entirely until Charlie's
+          added at least one — same "don't show an empty/fake section"
+          rule as Military-Friendly Businesses. No real Buy & Sell
+          inventory or /products page/nav were touched by this change. */}
       {specialOffers.length > 0 && (
         <section className="bg-canvas-deep py-11">
           <div className="mx-auto max-w-[1600px] px-8">
             <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
               <h2 className="font-display text-[2rem] font-semibold text-ink">{t("specialOffersHeading")}</h2>
             </div>
-            {/* flex-wrap, not a stretched grid — these cards are a fixed
-                300x600 size (see SpecialOfferCard), not a responsive
-                aspect-ratio box filling a grid column. */}
-            <div className="flex flex-wrap gap-5.5">
+            <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
               {specialOffers.slice(0, 3).map((offer, index) => (
                 <SpecialOfferCard key={offer.id} offer={offer} priority={index === 0} />
               ))}
