@@ -135,18 +135,21 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
           for sale/Services) unless a specific listing category is picked
           from this dropdown — businesses/events have no dropdown entry
           of their own, so they're only ever part of "all categories". */}
-      <section className="relative min-h-[420px] overflow-hidden sm:min-h-[480px] lg:min-h-[620px] xl:min-h-[680px]">
+      <section className="relative min-h-[420px] overflow-hidden bg-ink sm:min-h-[480px] lg:min-h-[620px] xl:min-h-[680px]">
         <div className="absolute inset-0">
-          {/* object-top, not the object-cover default (center): shrinking
-              the section's height (the previous pass) made it wider-than-
-              tall relative to this ~2.5:1 photo, so object-cover was
-              cropping top and bottom to fill — centered, that ate into
-              the flag/roofline at the top. Anchoring to the top instead
-              crops only from the bottom, which is Terry's "image needs to
-              be moved down" (down = reveal more of the top). priority —
+          {/* object-contain, not object-cover: this photo has important
+              content at BOTH the top (flag/house) and the bottom-right
+              ("Germany Feels Like Home," baked into the photo itself) —
+              object-cover can only keep one edge fully in frame at a
+              time (object-top kept the flag but cropped the corner text
+              out entirely, not just darkened it), so cropping of any
+              kind can't show both. object-contain shows the whole photo,
+              un-cropped, on every viewport — the section's own bg-ink
+              fills whatever letterbox space is left around it, since the
+              image won't fill the box edge-to-edge any more. priority —
               this is the largest above-the-fold element on the homepage,
               i.e. almost certainly the page's own LCP candidate. */}
-          <Image src={heroImageUrl} alt="" fill sizes="100vw" className="object-cover object-top" priority />
+          <Image src={heroImageUrl} alt="" fill sizes="100vw" className="object-contain" priority />
           {/* Lighter again, second pass — the new hero photo has "Germany
               Feels Like Home" baked into its own bottom-right corner now
               (see the removed scriptTagline overlay above), and the
