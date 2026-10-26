@@ -77,3 +77,50 @@ export async function deleteMyAccount() {
   await supabase.auth.signOut();
   redirect("/");
 }
+
+// GDPR Article 15 (access) + Article 20 (portability) — every table that
+// mattered for deleteMyAccount above, read back instead of erased. The
+// admin client is used throughout, not just where there's no
+// RLS-respecting alternative like deleteMyAccount — listing_reports and
+// business_consent_log only grant SELECT to admins (see their own
+// migrations), not to the row's own reporter/business owner, so there's
+// no single client that could read everything here. Every query is
+// still hardcoded to the caller's own user.id (or the business ids that
+// belong to it) — never a value a client could influence — so this
+// doesn't actually widen what a caller can reach, unlike a general-
+// purpose admin-client endpoint would.
+export async function exportMyData() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/sign-in?next=/my-listings");
+
+  const admin = createAdminClient();
+
+  const [profileRes, listingsRes, favoritesRes, reportsRes, businessesRes, cartRes] = await Promise.all([
+    admin.from("profiles").select("*").eq("id", user.id).maybeSingle(),
+    admin.from("listings").select("*").eq("owner_id", user.id),
+    admin.from("favorites").select("*").eq("user_id", user.id),
+    admin.from("listing_reports").select("*").eq("reporter_id", user.id),
+    admin.from("businesses").select("*").eq("owner_id", user.id),
+    admin.from("cart_items").select("*").eq("user_id", user.id),
+  ]);
+
+  const businessIds = (businessesRes.data ?? []).map((business) => business.id as string);
+  const consentLogRes =
+    businessIds.length > 0
+      ? await admin.from("business_consent_log").select("*").in("business_id", businessIds)
+      : { data: [] as Record<string, unknown>[] };
+
+  return {
+    exportedAt: new Date().toISOString(),
+    account: profileRes.data,
+    listings: listingsRes.data ?? [],
+    favorites: favoritesRes.data ?? [],
+    reportsFiled: reportsRes.data ?? [],
+    businesses: businessesRes.data ?? [],
+    businessConsentLog: consentLogRes.data ?? [],
+    cartItems: cartRes.data ?? [],
+  };
+}

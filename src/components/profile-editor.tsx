@@ -11,7 +11,7 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
-import { deleteMyAccount } from "@/app/[locale]/my-listings/actions";
+import { deleteMyAccount, exportMyData } from "@/app/[locale]/my-listings/actions";
 import { Avatar } from "@/components/avatar";
 import { createClient } from "@/lib/supabase/client";
 import type { Profile } from "@/lib/profiles";
@@ -37,6 +37,7 @@ export function ProfileEditor({ profile }: { profile: Profile }) {
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [exportStatus, setExportStatus] = useState<Status>("idle");
 
   async function handlePhotoChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -155,6 +156,27 @@ export function ProfileEditor({ profile }: { profile: Profile }) {
     }
     setStatus("saved");
     router.refresh();
+  }
+
+  // Server Actions can be called directly (not just via a <form action>)
+  // and their return value awaited client-side — this is what lets a
+  // plain button trigger a real file download: build the JSON in memory,
+  // hand it to the browser as a Blob, click a throwaway <a download>.
+  async function handleExport() {
+    setExportStatus("saving");
+    try {
+      const data = await exportMyData();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `milhaus-data-export-${new Date().toISOString().slice(0, 10)}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+      setExportStatus("saved");
+    } catch {
+      setExportStatus("error");
+    }
   }
 
   return (
@@ -324,6 +346,25 @@ export function ProfileEditor({ profile }: { profile: Profile }) {
           {status === "saving" ? t("saving") : status === "saved" ? t("saved") : t("save")}
         </button>
       </form>
+
+      {/* GDPR Article 15/20 (access + portability) — previously a manual
+          "email info@milhaus.de" request per the Privacy Policy; this is
+          the self-service version that replaces it. Neutral styling, not
+          the Danger Zone's rust/red — downloading a copy isn't
+          destructive, so it doesn't belong in that box. */}
+      <div className="mt-8 rounded-md border border-canvas-deep bg-canvas/40 p-4">
+        <p className="mb-1 text-sm font-semibold text-ink">{t("exportHeading")}</p>
+        <p className="mb-3 text-sm text-ink-soft">{t("exportBody")}</p>
+        <button
+          type="button"
+          onClick={handleExport}
+          disabled={exportStatus === "saving"}
+          className="rounded-md border border-canvas-deep bg-paper px-4 py-2 text-sm font-semibold text-ink transition-[transform] hover:-translate-y-px hover:border-olive hover:text-olive-deep disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {exportStatus === "saving" ? t("exportDownloading") : t("exportButton")}
+        </button>
+        {exportStatus === "error" && <p className="mt-2 text-sm text-rust">{t("exportError")}</p>}
+      </div>
 
       {/* Consumer-protection requirement (GDPR's right to erasure), not
           a nice-to-have — a visitor needs a real way to delete their own
