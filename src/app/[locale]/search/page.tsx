@@ -2,10 +2,19 @@
 // No longer a results page — Terry: a whole separate "Search results"
 // page mixing every type together added a page nobody needed once each
 // category could show its own matches on its own page with its own
-// full filter bar (see /listings, /cars, /products, /services, /events,
-// each of which already accepts ?q=/?base= as its own starting filter —
-// the earlier redirect-to-the-right-category work this builds on).
+// full filter bar (see /listings, /cars, /services, /events, each of
+// which already accepts ?q=/?base= as its own starting filter — the
+// earlier redirect-to-the-right-category work this builds on).
 // This route never renders anything now, purely a server-side redirect:
+//
+// NOTE: "product" still redirects to /offers for nav consistency (it's
+// the only page left at that position), but /offers doesn't actually
+// read ?q=/?base= at all — it's a static grid of Charlie's ad cards now,
+// not a searchable listing grid, since real self-listed items have no
+// browse page any more (see /offers' own header comment). A real
+// "product" search silently lands on /offers with its query ignored —
+// a known, not-yet-addressed gap from the Buy & Sell retirement, not
+// something this rename fixes.
 //
 // - A specific category (?category=rental/car/product/service) goes
 //   straight to that category's own page, same as before.
@@ -36,7 +45,7 @@ type SearchParams = Promise<{ q?: string; category?: string; base?: string }>;
 const CATEGORY_REDIRECT_PATHS: Record<ListingType, string> = {
   rental: "/listings",
   car: "/cars",
-  product: "/products",
+  product: "/offers",
   service: "/services",
 };
 

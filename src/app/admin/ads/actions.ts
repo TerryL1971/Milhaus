@@ -17,7 +17,7 @@ function revalidateAdPaths() {
   revalidatePath("/");
   revalidatePath("/cars");
   revalidatePath("/listings");
-  revalidatePath("/products");
+  revalidatePath("/offers");
   revalidatePath("/services");
 }
 

@@ -54,8 +54,8 @@
     "carsHeading": "Autos",
     "browseCars": "Autos durchsuchen",
     "sellYourCar": "Auto verkaufen",
-    "productsHeading": "Sonderangebote",
-    "browseProducts": "Angebote ansehen",
+    "offersHeading": "Sonderangebote",
+    "browseOffers": "Angebote ansehen",
     "servicesHeading": "Dienstleistungen",
     "browseServices": "Dienstleistungen durchsuchen",
     "suggestBusiness": "Ihr Unternehmen eintragen",
@@ -429,7 +429,7 @@
     "heading": "Auto verkaufen",
     "body": "Ein paar Details und einige Fotos — es geht sofort auf der Autos-Seite live (oder sobald die Zahlung eingegangen ist, falls für diese Kategorie derzeit eine Gebühr anfällt)."
   },
-  "ProductsPage": {
+  "OffersPage": {
     "metaTitle": "Sonderangebote",
     "metaDescription": "Sonderaktionen und Angebote für die amerikanische und Expat-Community in Deutschland, ausgewählt von Milhaus.",
     "heading": "Sonderangebote",

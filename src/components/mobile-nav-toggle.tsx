@@ -75,7 +75,7 @@ export function MobileNavToggle({
             <Link href="/cars" className={navLinkClass} onClick={close}>
               {t("cars")}
             </Link>
-            <Link href="/products" className={navLinkClass} onClick={close}>
+            <Link href="/offers" className={navLinkClass} onClick={close}>
               {t("specialOffers")}
             </Link>
             <Link href="/services" className={navLinkClass} onClick={close}>

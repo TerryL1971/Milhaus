@@ -54,8 +54,8 @@
     "carsHeading": "Cars",
     "browseCars": "Browse cars",
     "sellYourCar": "Sell your car",
-    "productsHeading": "Special Offers",
-    "browseProducts": "View offers",
+    "offersHeading": "Special Offers",
+    "browseOffers": "View offers",
     "servicesHeading": "Services",
     "browseServices": "Browse services",
     "suggestBusiness": "List your business",
@@ -429,7 +429,7 @@
     "heading": "Sell your car",
     "body": "A few details and some photos — it goes live right away on the Cars page (or as soon as payment clears, if this category currently charges a posting fee)."
   },
-  "ProductsPage": {
+  "OffersPage": {
     "metaTitle": "Special Offers",
     "metaDescription": "Special promotions and offers for the American and expat community in Germany, curated by Milhaus.",
     "heading": "Special Offers",

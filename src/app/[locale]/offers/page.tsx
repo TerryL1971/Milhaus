@@ -1,16 +1,19 @@
-// src/app/[locale]/products/page.tsx
-// "Special Offers" — Charlie's ask: this used to be the real Buy & Sell
-// browse grid (self-listed items for sale); he wants it replaced
-// entirely with promotional cards instead, the same "special offers"
-// concept as the homepage's own Special Offers row, just showing every
-// active one here (not capped at 3). Same ad_slots placement
-// (special_offers) Charlie manages at /admin/ads — see
-// src/components/special-offer-card.tsx and src/lib/ad-slots.ts for the
-// full reasoning.
+// src/app/[locale]/offers/page.tsx
+// "Special Offers" — moved here from /products (Terry's call, 2026-10-26:
+// that route name was a leftover from when this was the real Buy & Sell
+// browse grid; the URL should match what's actually here now). Charlie
+// manages these at /admin/ads (placement: special_offers) — same simple
+// system as the site banner / cars sidebar ad, just a third placement,
+// rather than a whole new content type + admin page. Cards are as wide
+// as the Homes/Cars/Services cards (stretch to fill their grid column)
+// with a fixed 600px height. Shows every active offer, not capped at 3
+// like the homepage's own row — see src/components/special-offer-card.tsx
+// and src/lib/ad-slots.ts for the full reasoning.
 //
 // /post-product (the old posting flow) and /products/[id] (existing real
-// listings' detail pages) still work — just nothing on the public site
-// links to either any more, same as /post-service's own orphaned state.
+// listings' detail pages, unrelated to this route now) still work —
+// just nothing on the public site links to either any more, same as
+// /post-service's own orphaned state.
 
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -20,12 +23,12 @@ import { getActiveAdSlots } from "@/lib/ad-slots-queries";
 import { firstPhotoIndices } from "@/lib/priority-indices";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("ProductsPage");
+  const t = await getTranslations("OffersPage");
   return { title: t("metaTitle"), description: t("metaDescription") };
 }
 
-export default async function ProductsPage() {
-  const t = await getTranslations("ProductsPage");
+export default async function OffersPage() {
+  const t = await getTranslations("OffersPage");
   const offers = await getActiveAdSlots("special_offers");
   const priorityIndices = firstPhotoIndices(offers, (offer) => Boolean(offer.imageUrl), 3);
 

@@ -48,8 +48,8 @@ export async function SiteFooter() {
       // Charlie's promo cards now, not real self-listed items — no
       // "sell something" link here any more (/post-product still works,
       // just isn't promoted from anywhere public, same as /post-service).
-      heading: t("productsHeading"),
-      links: [{ label: t("browseProducts"), href: "/products" }],
+      heading: t("offersHeading"),
+      links: [{ label: t("browseOffers"), href: "/offers" }],
     },
     {
       heading: t("servicesHeading"),
