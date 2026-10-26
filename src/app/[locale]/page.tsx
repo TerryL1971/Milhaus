@@ -12,9 +12,10 @@ import { CarListingCard } from "@/components/car-listing-card";
 import { ComingSoonPanel } from "@/components/coming-soon-panel";
 import { HeroSearchAlert } from "@/components/hero-search-alert";
 import { ListingCard } from "@/components/listing-card";
-import { ProductListingCard } from "@/components/product-listing-card";
+import { SpecialOfferCard } from "@/components/special-offer-card";
 import { SponsorBannerCarousel } from "@/components/sponsor-banner-carousel";
 import { getPathname, Link } from "@/i18n/navigation";
+import { getActiveAdSlots } from "@/lib/ad-slots-queries";
 import { BASE_NAMES } from "@/lib/bases";
 import { getFeaturedBusinesses } from "@/lib/businesses-queries";
 import { getFavoriteListingIds } from "@/lib/favorites-queries";
@@ -52,18 +53,10 @@ const CAR_PHOTO_GRADIENTS = [
   "linear-gradient(135deg,#C7B8A0,#3E4A57)",
   "linear-gradient(135deg,#A9B4A0,#2C4053)",
 ];
-const PRODUCT_PHOTO_GRADIENTS = [
-  "linear-gradient(135deg,#D8C9A8,#A9AE83)",
-  "linear-gradient(135deg,#C3B79D,#8C9873)",
-  "linear-gradient(135deg,#CBBBA0,#8E7C67)",
-];
-
-// Homes/Cars/Buy & Sell each have their own category-spec aspect ratio
-// (4:3 / 16:9 / 1:1) on their own dedicated browse pages — but on the
-// homepage, all three "Featured X" rows should read as the same card
-// size, so every card here overrides to this one shared ratio instead.
-// 16:9, matching Charlie's frontpage mockup (and Cars' own page, which
-// already used this) rather than the 4:3 originally guessed here.
+// Homes/Cars/Businesses each have their own category-spec aspect ratio
+// on their own dedicated browse pages — but on the homepage, these
+// "Featured X" rows should read as the same card size, so every card
+// here overrides to this one shared ratio instead.
 const FEATURED_CARD_ASPECT = "aspect-[16/9]";
 
 type SearchParams = Promise<{ searchFailed?: string }>;
@@ -76,22 +69,21 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const [featuredRentals, featuredCars, featuredProducts, featuredBusinesses, favoriteIds] = await Promise.all([
+  const [featuredRentals, featuredCars, featuredBusinesses, specialOffers, favoriteIds] = await Promise.all([
     getFeaturedListings("rental", 3),
     getFeaturedListings("car", 3),
-    getFeaturedListings("product", 3),
     getFeaturedBusinesses(3),
+    getActiveAdSlots("special_offers"),
     getFavoriteListingIds(user?.id),
   ]);
 
   // Every card in a Featured row's first (only) line is a real LCP
   // candidate, not just whichever renders a photo first — see
   // firstPhotoIndices' own comment for why a single findIndex wasn't
-  // enough. All 4 rows render 3-wide here.
+  // enough. All 3 rows render 3-wide here.
   const rentalPriorityIndices = firstPhotoIndices(featuredRentals, (listing) => listing.photos.length > 0, 3);
   const carPriorityIndices = firstPhotoIndices(featuredCars, (listing) => listing.photos.length > 0, 3);
   const businessPriorityIndices = firstPhotoIndices(featuredBusinesses, (business) => Boolean(business.coverImageUrl), 3);
-  const productPriorityIndices = firstPhotoIndices(featuredProducts, (listing) => listing.photos.length > 0, 3);
 
   const howSteps = [
     { num: "01", heading: t("how1Heading"), body: t("how1Body") },
@@ -356,26 +348,33 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
         </div>
       </section>
 
-      {/* ---------- FEATURED BUY & SELL ---------- */}
-      <section className="bg-canvas-deep py-11">
-        <div className="mx-auto max-w-[1600px] px-8">
-          <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-            <h2 className="font-display text-[2rem] font-semibold text-ink">{t("featuredProductsHeading")}</h2>
-            <Link href="/products" className="text-sm font-semibold text-olive-deep hover:underline">
-              {t("featuredProductsViewAll")} →
-            </Link>
-          </div>
-          {featuredProducts.length > 0 ? (
+      {/* ---------- SPECIAL OFFERS ---------- */}
+      {/* Replaces the old "Featured Buy & Sell" preview of real product
+          listings, per Charlie's ask — these are "special promotions,"
+          his own distinct concept from both real Buy & Sell inventory
+          and the site's banner ads. Charlie manages them at /admin/ads
+          (placement: special_offers) — same simple system as the
+          site banner / cars sidebar ad, just a third placement, rather
+          than a whole new content type + admin page. Cards sized like
+          the /cars sidebar ad (300x600, "Half Page Ad"); up to 3 shown
+          at once, no rotation. Hidden entirely until Charlie's added at
+          least one — same "don't show an empty/fake section" rule as
+          Military-Friendly Businesses. No real Buy & Sell inventory or
+          /products page/nav were touched by this change. */}
+      {specialOffers.length > 0 && (
+        <section className="bg-canvas-deep py-11">
+          <div className="mx-auto max-w-[1600px] px-8">
+            <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+              <h2 className="font-display text-[2rem] font-semibold text-ink">{t("specialOffersHeading")}</h2>
+            </div>
             <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
-              {featuredProducts.map((listing, index) => (
-                <ProductListingCard key={listing.id} listing={listing} photoGradient={PRODUCT_PHOTO_GRADIENTS[index % PRODUCT_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} priority={productPriorityIndices.has(index)} />
+              {specialOffers.slice(0, 3).map((offer, index) => (
+                <SpecialOfferCard key={offer.id} offer={offer} priority={index === 0} />
               ))}
             </div>
-          ) : (
-            <ComingSoonPanel heading={t("productsComingSoonHeading")} body={t("productsComingSoonBody")} />
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
       {/* ---------- HOW IT WORKS ---------- */}
       <section id="how" className="py-18">

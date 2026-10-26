@@ -6,6 +6,7 @@
 export const AD_PLACEMENT_LABELS = {
   site_banner: "Site banner (homepage + every category page)",
   cars_sidebar: "Cars sidebar (/cars only)",
+  special_offers: "Special Offers (homepage, up to 3 shown at once)",
 } as const;
 
 export type AdPlacement = keyof typeof AD_PLACEMENT_LABELS;
@@ -17,6 +18,10 @@ export const AD_PLACEMENT_SIZES: Record<AdPlacement, string> = {
   site_banner:
     "Fluid width × fixed height — up to 1536px wide on desktop (96px tall; 80px tall on phones, narrower). Design at roughly 1536×96px, 3072×192px for retina. A smaller/differently-shaped image still works — it just won't fill the full width.",
   cars_sidebar: '300×600px (IAB "Half Page Ad"). Design at 2x for retina: 600×1200px.',
+  // Same 300×600 shape as cars_sidebar (Charlie's own comparison), just
+  // shown as a static row of up to 3 at once instead of one rotating
+  // slot — not a carousel, no cross-fade.
+  special_offers: '300×600px, same as the Cars sidebar ad. Design at 2x for retina: 600×1200px.',
 };
 
 export interface AdSlot {

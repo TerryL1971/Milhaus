@@ -116,16 +116,13 @@
     "headlineLine1": "Alles, was du brauchst,",
     "headlineLine2": "für das Leben in Deutschland.",
     "heroLocationPlaceholder": "Standort",
-    "featuredProductsHeading": "Empfohlenes Kaufen & Verkaufen",
-    "featuredProductsViewAll": "Alle Artikel ansehen",
+    "specialOffersHeading": "Sonderangebote",
     "homesComingSoonHeading": "Empfohlene Wohnungen folgen bald",
     "homesComingSoonBody": "Wohnungen vom Housing Office und ausziehenden Familien erscheinen hier.",
     "carsComingSoonHeading": "Empfohlene Autos folgen bald",
     "carsComingSoonBody": "Autos aus der Community erscheinen hier.",
     "businessesComingSoonHeading": "Unternehmen folgen bald",
-    "businessesComingSoonBody": "Militärfreundliche Unternehmen erscheinen hier.",
-    "productsComingSoonHeading": "Artikel zu verkaufen folgen bald",
-    "productsComingSoonBody": "Artikel aus der Community erscheinen hier."
+    "businessesComingSoonBody": "Militärfreundliche Unternehmen erscheinen hier."
   },
   "ListingsGrid": {
     "heading": "Gerade verfügbar",

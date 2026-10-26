@@ -116,16 +116,13 @@
     "headlineLine1": "Everything you need",
     "headlineLine2": "for life in Germany.",
     "heroLocationPlaceholder": "Location",
-    "featuredProductsHeading": "Featured Buy & Sell",
-    "featuredProductsViewAll": "View all items",
+    "specialOffersHeading": "Special Offers",
     "homesComingSoonHeading": "Featured Homes coming soon",
     "homesComingSoonBody": "Homes from the housing office and outgoing families will appear here.",
     "carsComingSoonHeading": "Featured Cars coming soon",
     "carsComingSoonBody": "Cars for sale from the community will appear here.",
     "businessesComingSoonHeading": "Businesses coming soon",
-    "businessesComingSoonBody": "Military-friendly businesses will appear here.",
-    "productsComingSoonHeading": "Items for Sale coming soon",
-    "productsComingSoonBody": "Items for sale from the community will appear here."
+    "businessesComingSoonBody": "Military-friendly businesses will appear here."
   },
   "ListingsGrid": {
     "heading": "Open right now",
