@@ -147,12 +147,15 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
               this is the largest above-the-fold element on the homepage,
               i.e. almost certainly the page's own LCP candidate. */}
           <Image src={heroImageUrl} alt="" fill sizes="100vw" className="object-cover object-top" priority />
-          {/* Much lighter than the first pass — Terry: it was drowning
-              Charlie's photo in navy. Just enough at the bottom for the
-              tagline strip to read; the headline/search area now leans on
-              its own drop-shadow and the search box's solid white card for
-              contrast instead of a dark scrim over the whole image. */}
-          <div className="absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/20 to-transparent" />
+          {/* Lighter again, second pass — the new hero photo has "Germany
+              Feels Like Home" baked into its own bottom-right corner now
+              (see the removed scriptTagline overlay above), and the
+              original from-ink/55 was dark enough to wash that out. Just
+              enough left for the mono tagline strip (bottom-left) to
+              read; the headline/search area leans on its own drop-shadow
+              and the search box's solid white card for contrast, not
+              this gradient. */}
+          <div className="absolute inset-0 bg-gradient-to-t from-ink/35 via-ink/10 to-transparent" />
         </div>
 
         <div className="relative mx-auto flex min-h-[420px] max-w-[1600px] flex-col justify-start px-8 pb-12 pt-8 sm:min-h-[480px] sm:pb-16 sm:pt-10 lg:min-h-[620px] xl:min-h-[680px]">
@@ -163,8 +166,17 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
               Unconstrained (full-width, left-aligned) below lg, same as
               before. 760px, not the original 620px — Charlie's later ask
               for a wider search bar; still comfortably inside the hero's
-              own open-sky area on the right at lg+. */}
-          <div className="lg:ml-auto lg:max-w-[760px]">
+              own open-sky area on the right at lg+. lg:w-full alongside
+              lg:ml-auto is required, not decorative — a flex-col child
+              with an auto margin on its cross axis (left/right, here)
+              disables the default stretch-to-fill behavior per the
+              flexbox spec, so without an explicit width this div (and
+              everything in it — headline, subhead, search form) was
+              shrink-wrapping to whichever child's content happened to be
+              narrowest, instead of all sharing one consistent 760px box;
+              that's what was reading as "not lined up" against Charlie's
+              mockup. */}
+          <div className="lg:ml-auto lg:w-full lg:max-w-[760px]">
             <h1 className="mb-3 font-display text-4xl font-bold leading-[1.1] tracking-tight text-paper drop-shadow-[0_2px_16px_rgba(0,0,0,0.55)] lg:text-5xl">
               {t("headlineLine1")} {t("headlineLine2")}
             </h1>
