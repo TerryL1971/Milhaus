@@ -61,12 +61,18 @@ export async function SiteFooter() {
     {
       heading: t("aboutHeading"),
       links: [
-        // Both Terms and Impressum now have real pages — Charlie sent
-        // the ToS text 2026-10-22 (src/app/[locale]/terms) and the
-        // remaining Impressum facts (phone/VAT ID/address/Handelsregister
-        // status/VSBG stance) the same day (src/app/[locale]/impressum).
+        // Terms, Impressum, and Privacy now all have real pages —
+        // Charlie sent the ToS text 2026-10-22 (src/app/[locale]/terms)
+        // and the remaining Impressum facts (phone/VAT ID/address/
+        // Handelsregister status/VSBG stance) the same day
+        // (src/app/[locale]/impressum). Privacy (src/app/[locale]/privacy)
+        // was drafted 2026-10-26 at Terry's request, from GDPR's own
+        // requirements plus the real facts already in Terms/Impressum —
+        // see that page's own header comment for what still needs a
+        // lawyer's/Charlie's confirmation before treating it as final.
         { label: t("contact"), href: "mailto:info@milhaus.de" },
         { label: t("terms"), href: "/terms" },
+        { label: t("privacy"), href: "/privacy" },
         { label: t("impressum"), href: "/impressum" },
       ],
     },

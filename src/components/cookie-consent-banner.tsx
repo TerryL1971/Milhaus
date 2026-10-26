@@ -11,6 +11,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { getStoredConsent, setStoredConsent } from "@/lib/cookie-consent";
 
 export function CookieConsentBanner() {
@@ -37,7 +38,12 @@ export function CookieConsentBanner() {
   return (
     <div className="fixed inset-x-0 bottom-0 z-50 border-t border-canvas-deep bg-paper px-4 py-3 shadow-[0_-4px_16px_rgba(27,42,58,0.12)]">
       <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-3">
-        <p className="max-w-[70ch] text-sm text-charcoal">{t("message")}</p>
+        <p className="max-w-[70ch] text-sm text-charcoal">
+          {t("message")}{" "}
+          <Link href="/privacy" className="font-semibold text-olive-deep hover:underline">
+            {t("learnMore")}
+          </Link>
+        </p>
         <div className="flex flex-shrink-0 gap-2">
           <button
             type="button"

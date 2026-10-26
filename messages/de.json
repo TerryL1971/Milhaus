@@ -62,13 +62,15 @@
     "aboutHeading": "Über uns",
     "contact": "Kontakt",
     "terms": "AGB",
+    "privacy": "Datenschutz",
     "impressum": "Impressum",
     "tagline": "Eine Anlaufstelle für die amerikanische Community in Deutschland. Nicht verbunden mit dem US-Verteidigungsministerium."
   },
   "CookieConsent": {
     "message": "Wir möchten datenschutzfreundliche Analysen nutzen, um zu sehen, wie Milhaus verwendet wird. Wir aktivieren dies erst, wenn Sie zustimmen — die Seite funktioniert in jedem Fall gleich.",
     "accept": "Akzeptieren",
-    "decline": "Ablehnen"
+    "decline": "Ablehnen",
+    "learnMore": "Mehr erfahren"
   },
   "HomePage": {
     "eyebrow": "Für Amerikaner, die nach Deutschland ziehen",
