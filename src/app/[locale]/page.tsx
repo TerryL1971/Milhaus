@@ -136,28 +136,40 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
           from this dropdown — businesses/events have no dropdown entry
           of their own, so they're only ever part of "all categories". */}
       <section className="relative min-h-[420px] overflow-hidden bg-ink sm:min-h-[480px] lg:min-h-[620px] xl:min-h-[680px]">
-        <div className="absolute inset-0">
-          {/* object-contain, not object-cover: this photo has important
-              content at BOTH the top (flag/house) and the bottom-right
-              ("Germany Feels Like Home," baked into the photo itself) —
-              object-cover can only keep one edge fully in frame at a
-              time (object-top kept the flag but cropped the corner text
-              out entirely, not just darkened it), so cropping of any
-              kind can't show both. object-contain shows the whole photo,
-              un-cropped, on every viewport — the section's own bg-ink
-              fills whatever letterbox space is left around it, since the
-              image won't fill the box edge-to-edge any more. priority —
+        <div className="absolute inset-x-0 top-0">
+          {/* No `fill` any more — intrinsic width/height (the photo's own
+              846x310) scaled to w-full/h-auto instead. `fill` + any
+              object-fit always means either cropping (cover) or side
+              letterboxing (contain) whenever the section's own box ratio
+              doesn't exactly match the photo's — and those ratios
+              disagreed at different breakpoints in different directions
+              (sometimes needing to crop top/bottom, sometimes left/
+              right), which is why nothing looked right at every screen
+              size. Sizing the image by its own aspect ratio instead
+              means it always spans the full width with zero side bars
+              and zero cropping — both the flag/house (top) and "Germany
+              Feels Like Home" (bottom-right, baked into the photo) are
+              always fully visible. The image is naturally shorter than
+              the section's own min-height on most viewports (e.g. phones
+              — narrow width means a short proportional height here); the
+              section's bg-ink fills that remaining space below the photo
+              itself, which is also where the search form ends up sitting
+              once there isn't enough photo to put it over. priority —
               this is the largest above-the-fold element on the homepage,
               i.e. almost certainly the page's own LCP candidate. */}
-          <Image src={heroImageUrl} alt="" fill sizes="100vw" className="object-contain" priority />
+          <Image src={heroImageUrl} alt="" width={846} height={310} sizes="100vw" className="block h-auto w-full" priority />
           {/* Lighter again, second pass — the new hero photo has "Germany
               Feels Like Home" baked into its own bottom-right corner now
               (see the removed scriptTagline overlay above), and the
               original from-ink/55 was dark enough to wash that out. Just
-              enough left for the mono tagline strip (bottom-left) to
-              read; the headline/search area leans on its own drop-shadow
-              and the search box's solid white card for contrast, not
-              this gradient. */}
+              enough left for the mono tagline strip (when it lands over
+              the photo rather than the plain bg-ink below it) to read;
+              the headline/search area leans on its own drop-shadow and
+              the search box's solid white card for contrast, not this
+              gradient. Sized to exactly match the image above (this div
+              is a sibling, same parent, so it stretches to the parent's
+              content-driven height — the image's own natural height, not
+              the full section). */}
           <div className="absolute inset-0 bg-gradient-to-t from-ink/35 via-ink/10 to-transparent" />
         </div>
 
