@@ -28,7 +28,7 @@
   "SiteHeader": {
     "browseListings": "Browse listings",
     "homes": "Homes",
-    "buySell": "Buy & Sell",
+    "specialOffers": "Special Offers",
     "postAd": "Post An Ad",
     "cars": "Cars",
     "listYourHome": "List your home",
@@ -54,9 +54,8 @@
     "carsHeading": "Cars",
     "browseCars": "Browse cars",
     "sellYourCar": "Sell your car",
-    "productsHeading": "Items for sale",
-    "browseProducts": "Browse items",
-    "sellSomething": "Sell something",
+    "productsHeading": "Special Offers",
+    "browseProducts": "View offers",
     "servicesHeading": "Services",
     "browseServices": "Browse services",
     "suggestBusiness": "List your business",
@@ -431,22 +430,11 @@
     "body": "A few details and some photos — it goes live right away on the Cars page (or as soon as payment clears, if this category currently charges a posting fee)."
   },
   "ProductsPage": {
-    "metaTitle": "Items for sale",
-    "metaDescription": "Items for sale from Americans in Germany — furniture, electronics, household goods, and more, all reviewed before they're listed.",
-    "eyebrow": "Items for sale",
-    "heading": "Items for sale",
-    "subhead": "PCSing out and selling what you can't take with you? Listed by the community, reviewed the same way every home on this site is.",
-    "sellSomething": "Sell something",
-    "searchPlaceholder": "Search by title, city, or category…",
-    "allBases": "All bases",
-    "allCategories": "All categories",
-    "allConditions": "All conditions",
-    "filterBase": "Base",
-    "filterCategory": "Category",
-    "filterCondition": "Condition",
-    "filtersLabel": "Filters",
-    "emptyNone": "Nothing listed right now — check back soon, or be the first.",
-    "emptyNoMatch": "Nothing matches that search."
+    "metaTitle": "Special Offers",
+    "metaDescription": "Special promotions and offers for the American and expat community in Germany, curated by Milhaus.",
+    "heading": "Special Offers",
+    "subhead": "Promotions and deals from businesses that work well with Americans in Germany.",
+    "emptyNone": "Nothing here right now — check back soon."
   },
   "ProductCard": {
     "available": "Available",
@@ -601,8 +589,6 @@
     "rentalBody": "List a place you're moving out of.",
     "carHeading": "A Car",
     "carBody": "PCSing out, or just upgrading.",
-    "productHeading": "An Item",
-    "productBody": "Furniture, electronics, anything else.",
     "serviceHeading": "A Business or Service",
     "serviceBody": "List your own business in the directory.",
     "freeLabel": "Free"

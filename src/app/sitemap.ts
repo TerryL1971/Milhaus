@@ -10,6 +10,10 @@
 // (/services/{id}) — that's the old pre-Businesses-directory feature,
 // still postable via /post-service but with no page anywhere left that
 // browses or links to it (see that route's own noindex, same reasoning).
+// Same reasoning for individual /products/{id} pages now too — /products
+// itself became Charlie's "Special Offers" page (still a real, crawlable
+// page, kept below), but the real self-listed items it used to browse
+// have no page linking to them any more either.
 // A sitemap is a crawl-priority signal; there's no reason to prioritize
 // crawling pages no real visitor can ever reach by browsing the site.
 
@@ -27,10 +31,9 @@ function withLanguageAlternates(path: string) {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [rentals, cars, products, businesses, events] = await Promise.all([
+  const [rentals, cars, businesses, events] = await Promise.all([
     getActiveListings("rental"),
     getActiveListings("car"),
-    getActiveListings("product"),
     getActiveBusinesses(),
     getActiveEvents(),
   ]);
@@ -84,13 +87,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "daily" as const,
       priority: 0.8,
       alternates: { languages: withLanguageAlternates(`/cars/${listing.id}`) },
-    })),
-    ...products.map((listing) => ({
-      url: `${SITE_URL}/products/${listing.id}`,
-      lastModified: new Date(listing.updatedAt),
-      changeFrequency: "daily" as const,
-      priority: 0.8,
-      alternates: { languages: withLanguageAlternates(`/products/${listing.id}`) },
     })),
     ...businesses.map((business) => ({
       url: `${SITE_URL}/businesses/${business.id}`,

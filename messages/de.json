@@ -28,7 +28,7 @@
   "SiteHeader": {
     "browseListings": "Angebote durchsuchen",
     "homes": "Wohnen",
-    "buySell": "Kaufen & Verkaufen",
+    "specialOffers": "Sonderangebote",
     "postAd": "Anzeige aufgeben",
     "cars": "Autos",
     "listYourHome": "Zuhause inserieren",
@@ -54,9 +54,8 @@
     "carsHeading": "Autos",
     "browseCars": "Autos durchsuchen",
     "sellYourCar": "Auto verkaufen",
-    "productsHeading": "Artikel",
-    "browseProducts": "Artikel durchsuchen",
-    "sellSomething": "Etwas verkaufen",
+    "productsHeading": "Sonderangebote",
+    "browseProducts": "Angebote ansehen",
     "servicesHeading": "Dienstleistungen",
     "browseServices": "Dienstleistungen durchsuchen",
     "suggestBusiness": "Ihr Unternehmen eintragen",
@@ -431,22 +430,11 @@
     "body": "Ein paar Details und einige Fotos — es geht sofort auf der Autos-Seite live (oder sobald die Zahlung eingegangen ist, falls für diese Kategorie derzeit eine Gebühr anfällt)."
   },
   "ProductsPage": {
-    "metaTitle": "Artikel zu verkaufen",
-    "metaDescription": "Artikel von Amerikanern in Deutschland — Möbel, Elektronik, Haushaltswaren und mehr, alle geprüft, bevor sie online gehen.",
-    "eyebrow": "Artikel zu verkaufen",
-    "heading": "Artikel zu verkaufen",
-    "subhead": "Ziehen Sie um und verkaufen, was Sie nicht mitnehmen können? Von der Community inseriert, genauso geprüft wie jedes Zuhause auf dieser Seite.",
-    "sellSomething": "Etwas verkaufen",
-    "searchPlaceholder": "Suche nach Titel, Stadt oder Kategorie…",
-    "allBases": "Alle Standorte",
-    "allCategories": "Alle Kategorien",
-    "allConditions": "Alle Zustände",
-    "filterBase": "Garnison",
-    "filterCategory": "Kategorie",
-    "filterCondition": "Zustand",
-    "filtersLabel": "Filter",
-    "emptyNone": "Gerade nichts gelistet — schauen Sie bald wieder vorbei, oder seien Sie die/der Erste.",
-    "emptyNoMatch": "Nichts passt zu dieser Suche."
+    "metaTitle": "Sonderangebote",
+    "metaDescription": "Sonderaktionen und Angebote für die amerikanische und Expat-Community in Deutschland, ausgewählt von Milhaus.",
+    "heading": "Sonderangebote",
+    "subhead": "Aktionen und Angebote von Unternehmen, die gut mit Amerikanern in Deutschland zusammenarbeiten.",
+    "emptyNone": "Gerade nichts hier — schauen Sie bald wieder vorbei."
   },
   "ProductCard": {
     "available": "Verfügbar",
@@ -601,8 +589,6 @@
     "rentalBody": "Inserieren Sie einen Ort, aus dem Sie ausziehen.",
     "carHeading": "Ein Auto",
     "carBody": "PCS-Umzug oder einfach ein Upgrade.",
-    "productHeading": "Einen Artikel",
-    "productBody": "Möbel, Elektronik, alles andere.",
     "serviceHeading": "Ein Unternehmen",
     "serviceBody": "Tragen Sie Ihr eigenes Unternehmen in das Verzeichnis ein.",
     "freeLabel": "Kostenlos"

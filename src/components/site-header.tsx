@@ -82,7 +82,7 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
             {t("cars")}
           </Link>
           <Link href="/products" className="opacity-85 transition-opacity hover:opacity-100">
-            {t("buySell")}
+            {t("specialOffers")}
           </Link>
           <Link href="/services" className="opacity-85 transition-opacity hover:opacity-100">
             {t("services")}
@@ -112,6 +112,15 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
                   pattern used elsewhere (SellerCard, /sellers/[id]). */}
               <Link href="/my-listings" title={accountName} className="opacity-85 hover:opacity-100">
                 <Avatar name={accountName} photoUrl={accountPhotoUrl} size="sm" />
+              </Link>
+              {/* Post An Ad sits immediately before the auth button in
+                  both states (Sign Out here, Log In when signed out) —
+                  Charlie's ask; this used to render after Sign Out. */}
+              <Link
+                href="/post-ad"
+                className="rounded-md border border-paper/35 px-5 py-2.5 text-base font-semibold transition-[transform,box-shadow] hover:-translate-y-px hover:border-paper/70"
+              >
+                {t("postAd")}
               </Link>
               <form action="/auth/sign-out" method="post">
                 <button
@@ -147,14 +156,6 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
                 {t("signIn")}
               </Link>
             </>
-          )}
-          {user && (
-            <Link
-              href="/post-ad"
-              className="rounded-md border border-paper/35 px-5 py-2.5 text-base font-semibold transition-[transform,box-shadow] hover:-translate-y-px hover:border-paper/70"
-            >
-              {t("postAd")}
-            </Link>
           )}
         </div>
 

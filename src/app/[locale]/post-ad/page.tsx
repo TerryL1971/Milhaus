@@ -38,15 +38,13 @@ export default async function PostAdPage() {
   const profile = user ? await getProfile(user.id) : null;
   const isIndividual = profile?.isIndividualLister ?? false;
 
+  // No "sell an item" option any more — /products became Charlie's
+  // Special Offers page (promo cards, not self-listed items), so
+  // /post-product isn't promoted from anywhere public any more either.
+  // The form itself still works for whoever already has the direct link.
   const options = [
     { href: "/post", heading: t("rentalHeading"), body: t("rentalBody"), priceEur: isIndividual ? 0 : prices.rental },
     { href: "/post-car", heading: t("carHeading"), body: t("carBody"), priceEur: isIndividual ? 0 : prices.car },
-    {
-      href: "/post-product",
-      heading: t("productHeading"),
-      body: t("productBody"),
-      priceEur: isIndividual ? 0 : prices.product,
-    },
     { href: "/post-business", heading: t("serviceHeading"), body: t("serviceBody"), priceEur: prices.business },
   ];
 

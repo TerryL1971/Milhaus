@@ -2,6 +2,13 @@
 // Product listing detail page — mirrors the car detail page structure
 // (same photo gallery, same public SellerCard), swapped to product
 // fields (category + condition instead of make/model/year/mileage).
+//
+// Orphaned since 2026-10-26, same as /services/[id]: /products itself
+// became Charlie's "Special Offers" page (real promo cards, not these
+// self-listed items), so nothing browses or links to these individual
+// listings any more. Still postable via /post-product, still a real
+// page if someone has the direct link — just unconditionally noindexed
+// and out of the sitemap, matching /services/[id]'s own treatment.
 
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -52,7 +59,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       description: listing.description || listing.title,
       images: listing.photos[0] ? [listing.photos[0]] : undefined,
     },
-    robots: listing.status === "active" ? { index: true, follow: true } : { index: false, follow: false },
+    robots: { index: false, follow: false },
   };
 }
 
