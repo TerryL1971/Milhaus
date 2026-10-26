@@ -17,10 +17,10 @@
 //     region is still correct and that this framing is acceptable (vs.
 //     e.g. migrating the project to an actual EU region).
 //   - "How to exercise your rights" below describes what's *actually
-//     built* today (self-service account deletion on /my-listings;
-//     everything else — including a full data export — is a manual
-//     email request to info@milhaus.de) rather than promising a
-//     self-service data-export button that doesn't exist yet.
+//     built* today — self-service account deletion AND a self-service
+//     data export both exist on /my-listings (the export shipped
+//     2026-10-26, same day as this policy); anything beyond what those
+//     two cover is still a manual email request to info@milhaus.de.
 //   - English only, on purpose, same reasoning as /terms: this is
 //     operative legal text, not UI copy, and a mistranslation risk here
 //     is worse than the inconvenience of one language. A German version
@@ -151,8 +151,9 @@ const SECTIONS: Section[] = [
           "Lodge a complaint with a data protection supervisory authority — in Germany, the authority for the state where Milhaus is based.",
         ],
       },
-      "9.2. You can delete your own account at any time from your profile page (My Listings → Danger zone) — this permanently removes your profile, listings, favorites, and business profiles, with the one exception described in section 8.3.",
-      "9.3. For anything else — requesting a copy of your data, correcting something you can't edit yourself, or any other request under section 9.1 — email info@milhaus.de. We will respond within one month, as required by the GDPR.",
+      "9.2. You can download a copy of everything Milhaus holds about you at any time from your profile page (My Listings → Download your data) — your profile, listings, favorites, business profiles, reports you've filed, and cart items, as a single file.",
+      "9.3. You can delete your own account at any time from the same page (My Listings → Danger zone) — this permanently removes your profile, listings, favorites, and business profiles, with the one exception described in section 8.3.",
+      "9.4. For anything else — correcting something you can't edit yourself, or any other request under section 9.1 — email info@milhaus.de. We will respond within one month, as required by the GDPR.",
     ],
   },
   {
