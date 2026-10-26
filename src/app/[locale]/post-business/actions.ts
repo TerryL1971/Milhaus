@@ -133,6 +133,7 @@ export async function submitBusiness(formData: FormData) {
   const admin = createAdminClient();
   await admin.from("business_consent_log").insert({
     business_id: created.id,
+    business_name: created.name,
     event_type: "requested",
     email,
     token: created.consent_token,

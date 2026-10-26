@@ -127,6 +127,7 @@ export async function createBusiness(formData: FormData) {
   const admin = createAdminClient();
   await admin.from("business_consent_log").insert({
     business_id: created.id,
+    business_name: created.name,
     event_type: consentMethod === "email" ? "requested" : "confirmed",
     email,
     token: created.consent_token,
@@ -175,7 +176,7 @@ export async function recordManualConsent(formData: FormData) {
   const now = new Date().toISOString();
 
   const supabase = await createClient();
-  const { data: business } = await supabase.from("businesses").select("email").eq("id", id).single();
+  const { data: business } = await supabase.from("businesses").select("email, name").eq("id", id).single();
   if (!business) throw new Error("Business not found.");
 
   let consentProofUrl: string | null = null;
@@ -204,6 +205,7 @@ export async function recordManualConsent(formData: FormData) {
   const admin = createAdminClient();
   await admin.from("business_consent_log").insert({
     business_id: id,
+    business_name: business.name,
     event_type: "confirmed",
     email: business.email ?? "",
     consent_method: consentMethod,
@@ -245,6 +247,7 @@ export async function resendConsentEmail(formData: FormData) {
   }
   await admin.from("business_consent_log").insert({
     business_id: id,
+    business_name: business.name,
     event_type: "resubmitted",
     email: business.email,
     token: business.consent_token,

@@ -25,7 +25,7 @@ export async function confirmConsent(formData: FormData) {
   const admin = createAdminClient();
   const { data: business } = await admin
     .from("businesses")
-    .select("id, email, consent_status")
+    .select("id, name, email, consent_status")
     .eq("consent_token", token)
     .maybeSingle();
 
@@ -40,6 +40,7 @@ export async function confirmConsent(formData: FormData) {
 
   await admin.from("business_consent_log").insert({
     business_id: business.id,
+    business_name: business.name,
     event_type: "confirmed",
     email: business.email ?? "",
     ip_address: ip,
@@ -62,7 +63,7 @@ export async function declineConsent(formData: FormData) {
   const admin = createAdminClient();
   const { data: business } = await admin
     .from("businesses")
-    .select("id, email")
+    .select("id, name, email")
     .eq("consent_token", token)
     .maybeSingle();
 
@@ -74,6 +75,7 @@ export async function declineConsent(formData: FormData) {
 
   await admin.from("business_consent_log").insert({
     business_id: business.id,
+    business_name: business.name,
     event_type: "revoked",
     email: business.email ?? "",
     ip_address: ip,
