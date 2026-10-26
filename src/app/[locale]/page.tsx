@@ -114,7 +114,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
         name: "Milhaus",
         url: SITE_URL,
         logo: `${SITE_URL}/brand/milhaus-logo-full-color-horizontal.png`,
-        description: t("subhead"),
+        description: `${t("subheadCategories")} — ${t("subheadAudience")}`,
       },
       {
         "@type": "WebSite",
@@ -133,11 +133,6 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
     <main className="flex-1">
       {/* Static JSON we built above, not user input. */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      {/* One site-wide scrolling banner instead of the four separate
-          per-card "Sponsored spot" boxes this replaced — its own small
-          cream strip above the hero, not floating on the photo (tried
-          that; Terry wanted the cream strip back, just kept small). */}
-      <SponsorBannerCarousel />
 
       {/* ---------- PHOTO HERO + UNIFIED SEARCH ---------- */}
       {/* One search box across all four categories, not four separate
@@ -180,8 +175,14 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
               {t("headlineLine1")} {t("headlineLine2")}
             </h1>
 
+            {/* Two lines per Charlie's updated mockup (was one combined
+                sentence) — the categories list and the audience line read
+                as two distinct ideas there, not one run-on. */}
+            <p className="max-w-[56ch] text-lg text-paper/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)]">
+              {t("subheadCategories")}
+            </p>
             <p className="mb-6 max-w-[56ch] text-lg text-paper/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)]">
-              {t("subhead")}
+              {t("subheadAudience")}
             </p>
 
             {/* search/page.tsx redirects here with ?searchFailed=<query>
@@ -261,22 +262,28 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
               </button>
             </form>
 
-            <div className="mt-4 flex flex-wrap items-end justify-between gap-3">
-              {/* Both were sitting right over the photo's brightest part
-                  (sunset sky) with no backing — same drop-shadow fix as
-                  the headline/subhead above, plus full opacity instead of
-                  /70 on the mono line, which read as barely-there against
-                  that bright a background. */}
+            <div className="mt-4 flex flex-wrap items-end gap-3">
+              {/* Same drop-shadow fix as the headline/subhead above, plus
+                  full opacity instead of /70, which read as barely-there
+                  against the photo's bright sunset sky. The script
+                  "Germany Feels Like Home" tagline that used to render
+                  here as a separate <p> is gone — Charlie's new hero
+                  photo has that same line baked into the photo itself
+                  (bottom-right corner), so the HTML version would've
+                  just duplicated it. */}
               <p className="font-mono text-xs uppercase tracking-[0.1em] text-paper drop-shadow-[0_1px_6px_rgba(0,0,0,0.65)]">
                 {t("heroTagline")}
-              </p>
-              <p className="font-[family-name:var(--font-script)] text-2xl text-brass drop-shadow-[0_1px_6px_rgba(0,0,0,0.5)]">
-                {t("scriptTagline")}
               </p>
             </div>
           </div>
         </div>
       </section>
+
+      {/* One site-wide scrolling banner instead of the four separate
+          per-card "Sponsored spot" boxes this replaced — moved to right
+          below the hero (Charlie's call; used to sit above it) so the
+          photo itself is the first thing a visitor sees. */}
+      <SponsorBannerCarousel />
 
       {/* ---------- FEATURED HOMES / FEATURED CARS ---------- */}
       {/* Per Charlie's frontpage mockup — dedicated rows with the full
