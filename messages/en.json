@@ -65,6 +65,11 @@
     "impressum": "Impressum",
     "tagline": "A resource for the American community living in Germany. Not affiliated with the U.S. Department of Defense."
   },
+  "CookieConsent": {
+    "message": "We'd like to use privacy-friendly analytics to see how Milhaus is used. We won't turn this on until you say it's okay — the site keeps working the same either way.",
+    "accept": "Accept",
+    "decline": "Decline"
+  },
   "HomePage": {
     "eyebrow": "For Americans moving to Germany",
     "headlineStart": "Find your home",

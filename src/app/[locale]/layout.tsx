@@ -8,8 +8,9 @@ import { hasLocale } from "next-intl";
 import { NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { Analytics } from "@vercel/analytics/next";
 import { Dancing_Script, IBM_Plex_Mono, Work_Sans, Libre_Baskerville } from "next/font/google";
+import { ConditionalAnalytics } from "@/components/conditional-analytics";
+import { CookieConsentBanner } from "@/components/cookie-consent-banner";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { WelcomeBanner } from "@/components/welcome-banner";
@@ -109,9 +110,12 @@ export default async function LocaleLayout({
           <WelcomeBanner />
           <div className="flex flex-1 flex-col">{children}</div>
           <SiteFooter />
+          <CookieConsentBanner />
         </NextIntlClientProvider>
-        {/* No-op until deployed to Vercel — that's what activates it. */}
-        <Analytics />
+        {/* No-op until deployed to Vercel (that's what activates it) —
+            and now also until a visitor accepts the cookie banner above;
+            see ConditionalAnalytics' own comment for why. */}
+        <ConditionalAnalytics />
       </body>
     </html>
   );
