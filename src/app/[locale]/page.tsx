@@ -91,7 +91,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
     { num: "03", heading: t("how3Heading"), body: t("how3Body") },
   ];
 
-  const heroImageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/listing-photos/_site/hero-home.jpg`;
+  const heroImageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/listing-photos/_site/hero-home (1).jpg`;
   const searchAction = getPathname({ href: "/search", locale });
 
   // Organization + WebSite structured data — the entity schema Google/AI
