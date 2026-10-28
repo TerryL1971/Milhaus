@@ -84,7 +84,6 @@
     "heroAllCategories": "Categories",
     "heroCategoryRentals": "Rentals",
     "heroCategoryCars": "Cars",
-    "heroCategoryItems": "Items for sale",
     "heroCategoryServices": "Services",
     "heroTagline": "A stronger community. A smoother life abroad.",
     "rentalCardEyebrow": "Housing",
@@ -264,7 +263,14 @@
     "saveFailed": "Could not save the listing.",
     "photoUploadFailed": "Photo upload failed: {message}",
     "lowMileageLabel": "Mark as Low Mileage",
-    "isNewLabel": "Mark as a New listing"
+    "isNewLabel": "Mark as a New listing",
+    "sectionBasics": "Basics",
+    "sectionVehicleDetails": "Vehicle details",
+    "sectionItemDetails": "Item details",
+    "sectionServiceDetails": "Service details",
+    "sectionLocation": "Location",
+    "sectionPriceAndDetails": "Price & details",
+    "sectionPhotos": "Photos"
   },
   "ListingDetail": {
     "backToListings": "← Back to listings",
@@ -319,7 +325,8 @@
     "checkEmailBody": "We sent a sign-in link and a code to <strong>{email}</strong>. Click the link, or enter the code below.",
     "codeLabel": "Code from the email",
     "verifyCode": "Sign in with code",
-    "verifying": "Verifying…"
+    "verifying": "Verifying…",
+    "newHere": "New here? This same box creates your account, too."
   },
   "ForLandlords": {
     "eyebrow": "For landlords",
@@ -645,5 +652,11 @@
     "ownerConfirmation": "I confirm I am the owner of this business, or an authorized representative with permission to list it on Milhaus — including the right to use any logo, image, and contact information (email, phone, social media) submitted here.",
     "consentEmailNotice": "We'll send a confirmation email to the business email address above — this listing won't go live until that's confirmed, even once it's paid for.",
     "ownerConfirmationRequired": "You must confirm you have the authority to list this business."
+  },
+  "Errors": {
+    "generic": "Something went wrong on our end — please try again in a few minutes, or email info@milhaus.de if it keeps happening.",
+    "rateLimit": "Too many attempts in a row — please wait a few minutes before trying again.",
+    "codeInvalid": "That link or code didn't work (it may have expired). Request a new one below.",
+    "network": "We couldn't reach the server — check your connection and try again."
   }
 }

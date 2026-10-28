@@ -17,6 +17,7 @@ import {
   relistListing,
   setFeatured,
 } from "@/app/admin/actions";
+import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { getOpenReports } from "@/lib/listing-reports";
 import { getArchivedListings, getLiveListings, getPendingListings } from "@/lib/listings";
 import { getAllProfiles } from "@/lib/profiles";
@@ -80,48 +81,55 @@ export default async function AdminPage() {
             <h1 className="mb-1 font-display text-3xl font-semibold text-ink">Admin</h1>
             <p className="text-ink-soft">Review submissions and manage what&apos;s live.</p>
           </div>
-          <div className="flex gap-2">
-            <Link
-              href="/admin/reports"
-              className="relative rounded-md border border-canvas-deep px-5 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-ink hover:text-ink"
-            >
-              Reports
-              {reports.length > 0 && (
-                <span className="ml-1.5 rounded-full bg-rust px-2 py-0.5 align-middle font-mono text-xs font-semibold text-paper">
-                  {reports.length}
-                </span>
-              )}
-            </Link>
-            <Link
-              href="/admin/users"
-              className="rounded-md border border-canvas-deep px-5 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-ink hover:text-ink"
-            >
-              Users
-            </Link>
-            <Link
-              href="/admin/pricing"
-              className="rounded-md border border-canvas-deep px-5 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-ink hover:text-ink"
-            >
-              Pricing
-            </Link>
-            <Link
-              href="/admin/businesses"
-              className="rounded-md border border-canvas-deep px-5 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-ink hover:text-ink"
-            >
-              Businesses
-            </Link>
-            <Link
-              href="/admin/ads"
-              className="rounded-md border border-canvas-deep px-5 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-ink hover:text-ink"
-            >
-              Ad slots
-            </Link>
-            <Link
-              href="/admin/events"
-              className="rounded-md border border-canvas-deep px-5 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-ink hover:text-ink"
-            >
-              Events
-            </Link>
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Everything Charlie manages, grouped together — kept apart
+                from "+ Add listing" below (a different kind of action, not
+                a management page) by a visual gap + divider rather than
+                leaving all seven buttons the same flat row. */}
+            <div className="flex flex-wrap gap-2">
+              <Link
+                href="/admin/reports"
+                className="relative rounded-md border border-canvas-deep px-5 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-ink hover:text-ink"
+              >
+                Reports
+                {reports.length > 0 && (
+                  <span className="ml-1.5 rounded-full bg-rust px-2 py-0.5 align-middle font-mono text-xs font-semibold text-paper">
+                    {reports.length}
+                  </span>
+                )}
+              </Link>
+              <Link
+                href="/admin/users"
+                className="rounded-md border border-canvas-deep px-5 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-ink hover:text-ink"
+              >
+                Users
+              </Link>
+              <Link
+                href="/admin/pricing"
+                className="rounded-md border border-canvas-deep px-5 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-ink hover:text-ink"
+              >
+                Pricing
+              </Link>
+              <Link
+                href="/admin/businesses"
+                className="rounded-md border border-canvas-deep px-5 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-ink hover:text-ink"
+              >
+                Businesses
+              </Link>
+              <Link
+                href="/admin/ads"
+                className="rounded-md border border-canvas-deep px-5 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-ink hover:text-ink"
+              >
+                Ad slots
+              </Link>
+              <Link
+                href="/admin/events"
+                className="rounded-md border border-canvas-deep px-5 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-ink hover:text-ink"
+              >
+                Events
+              </Link>
+            </div>
+            <div className="mx-1 hidden h-7 w-px bg-canvas-deep sm:block" aria-hidden="true" />
             <Link
               href="/admin/listings/new"
               className="rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
@@ -209,12 +217,12 @@ export default async function AdminPage() {
                       </form>
                       <form action={rejectListing}>
                         <input type="hidden" name="id" value={listing.id} />
-                        <button
-                          type="submit"
+                        <ConfirmSubmitButton
+                          confirmMessage={`Reject "${listing.title}"? It moves to Archived — you can relist it later if you change your mind.`}
                           className="rounded-md border border-canvas-deep px-4 py-2 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-rust hover:text-rust"
                         >
                           Reject
-                        </button>
+                        </ConfirmSubmitButton>
                       </form>
                     </div>
                   </div>
@@ -336,12 +344,12 @@ export default async function AdminPage() {
                           )}
                           <form action={archiveListing}>
                             <input type="hidden" name="id" value={listing.id} />
-                            <button
-                              type="submit"
+                            <ConfirmSubmitButton
+                              confirmMessage={`Take "${listing.title}" off the live site? It moves to Archived — you can relist it later if you change your mind.`}
                               className="rounded-md border border-canvas-deep px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-rust hover:text-rust"
                             >
                               Archive
-                            </button>
+                            </ConfirmSubmitButton>
                           </form>
                         </div>
                       </td>

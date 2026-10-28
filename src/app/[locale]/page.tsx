@@ -243,7 +243,6 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
                 <option value="">{t("heroAllCategories")}</option>
                 <option value="rental">{t("heroCategoryRentals")}</option>
                 <option value="car">{t("heroCategoryCars")}</option>
-                <option value="product">{t("heroCategoryItems")}</option>
                 <option value="service">{t("heroCategoryServices")}</option>
               </select>
               {/* A fixed-list <select> rather than free-text — "Location"

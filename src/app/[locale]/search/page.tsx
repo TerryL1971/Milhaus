@@ -7,14 +7,14 @@
 // earlier redirect-to-the-right-category work this builds on).
 // This route never renders anything now, purely a server-side redirect:
 //
-// NOTE: "product" still redirects to /offers for nav consistency (it's
-// the only page left at that position), but /offers doesn't actually
-// read ?q=/?base= at all — it's a static grid of Charlie's ad cards now,
-// not a searchable listing grid, since real self-listed items have no
-// browse page any more (see /offers' own header comment). A real
-// "product" search silently lands on /offers with its query ignored —
-// a known, not-yet-addressed gap from the Buy & Sell retirement, not
-// something this rename fixes.
+// "product" has no entry below on purpose: /offers (where it used to
+// redirect) is a static grid of Charlie's ad cards now, not a searchable
+// listing grid, since real self-listed items have no browse page any
+// more (see /offers' own header comment) — sending a search there would
+// silently ignore the query and show unrelated paid ads. The hero
+// search's category dropdown no longer offers "Items" either; an old
+// bookmark/link with ?category=product just falls through to the
+// all-categories best-match logic below instead.
 //
 // - A specific category (?category=rental/car/product/service) goes
 //   straight to that category's own page, same as before.
@@ -42,10 +42,9 @@ import type { Listing, ListingType } from "@/lib/types";
 
 type SearchParams = Promise<{ q?: string; category?: string; base?: string }>;
 
-const CATEGORY_REDIRECT_PATHS: Record<ListingType, string> = {
+const CATEGORY_REDIRECT_PATHS: Partial<Record<ListingType, string>> = {
   rental: "/listings",
   car: "/cars",
-  product: "/offers",
   service: "/services",
 };
 
@@ -61,17 +60,16 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
   const locale = await getLocale();
   const query = buildQueryString(q, base);
 
-  if (category && category in CATEGORY_REDIRECT_PATHS) {
-    const path = CATEGORY_REDIRECT_PATHS[category as ListingType];
-    redirect({ href: query ? `${path}?${query}` : path, locale });
+  const redirectPath = category ? CATEGORY_REDIRECT_PATHS[category as ListingType] : undefined;
+  if (redirectPath) {
+    redirect({ href: query ? `${redirectPath}?${query}` : redirectPath, locale });
   }
 
   const lowerQ = (q ?? "").trim().toLowerCase();
 
-  const [rentals, cars, products, services, businesses, events] = await Promise.all([
+  const [rentals, cars, services, businesses, events] = await Promise.all([
     getActiveListings("rental"),
     getActiveListings("car"),
-    getActiveListings("product"),
     getActiveListings("service"),
     getActiveBusinesses(),
     getActiveEvents(),
@@ -100,7 +98,6 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
   const counts = [
     { path: "/listings", count: countListings(rentals) },
     { path: "/cars", count: countListings(cars) },
-    { path: "/products", count: countListings(products) },
     { path: "/services", count: countListings(services) + businessCount },
     { path: "/events", count: eventCount },
   ];

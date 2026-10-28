@@ -13,8 +13,13 @@
 
 import { useTranslations } from "next-intl";
 
+// md was 52px/8px text — a rotated two-line label at that size tested as a
+// real legibility risk on a phone-width card thumbnail for a trust signal
+// CLAUDE.md calls out as meant to be told apart at a glance. Bumped both the
+// circle and the text up a step; lg (the listing detail page) was already
+// large enough.
 const SIZES = {
-  md: { box: "h-13 w-13", text: "text-[0.5rem]" },
+  md: { box: "h-14 w-14", text: "text-[0.62rem]" },
   lg: { box: "h-16 w-16", text: "text-[0.62rem]" },
 };
 

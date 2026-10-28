@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { deleteMyAccount, exportMyData } from "@/app/[locale]/my-listings/actions";
 import { Avatar } from "@/components/avatar";
+import { classifyFormError } from "@/lib/friendly-error";
 import { createClient } from "@/lib/supabase/client";
 import type { Profile } from "@/lib/profiles";
 
@@ -24,6 +25,7 @@ const inputClass =
 
 export function ProfileEditor({ profile }: { profile: Profile }) {
   const t = useTranslations("ProfileEditor");
+  const tErrors = useTranslations("Errors");
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const coverFileInputRef = useRef<HTMLInputElement>(null);
@@ -151,7 +153,7 @@ export function ProfileEditor({ profile }: { profile: Profile }) {
 
     if (error) {
       setStatus("error");
-      setErrorMessage(error.message);
+      setErrorMessage(tErrors(classifyFormError(error.message)));
       return;
     }
     setStatus("saved");

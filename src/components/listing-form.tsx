@@ -29,6 +29,7 @@ import { Link } from "@/i18n/navigation";
 import { AMENITY_KEYS } from "@/lib/amenities";
 import { BASE_NAMES } from "@/lib/bases";
 import { CAR_BODY_TYPE_KEYS, CAR_BODY_TYPE_LABELS } from "@/lib/car-body-types";
+import { classifyFormError } from "@/lib/friendly-error";
 import { publishFreeListing } from "@/lib/listing-publish";
 import { NEARBY_AMENITY_KEYS } from "@/lib/nearby-amenities";
 import { CONDITION_KEYS, CONDITION_LABELS, PRODUCT_CATEGORY_KEYS, PRODUCT_CATEGORY_LABELS } from "@/lib/product-categories";
@@ -43,6 +44,13 @@ type Kind = "rental" | "car" | "product" | "service";
 const labelClass = "mb-1 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75";
 const inputClass =
   "w-full rounded-md border border-canvas-deep bg-paper px-3 py-2 text-[0.95rem] text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none";
+// This form can run to ~18 fields for a rental with no visual grouping at
+// all — just one undifferentiated wall of inputs, worse under time
+// pressure on a phone. These act as lightweight section dividers, not
+// real <fieldset>s, since the fields inside each "section" are already
+// just consecutive sibling divs rather than a wrapped group.
+const sectionHeadingClass =
+  "mt-2 border-t border-canvas-deep pt-5 font-display text-sm font-semibold text-ink first:mt-0 first:border-t-0 first:pt-0";
 
 export function ListingForm({
   variant,
@@ -58,6 +66,7 @@ export function ListingForm({
   priceEur?: number | null;
 }) {
   const t = useTranslations("ListingForm");
+  const tErrors = useTranslations("Errors");
   const tAmenities = useTranslations("Amenities");
   const tNearbyAmenities = useTranslations("NearbyAmenities");
   const router = useRouter();
@@ -123,7 +132,7 @@ export function ListingForm({
 
     if (insertError || !created) {
       setStatus("error");
-      setErrorMessage(insertError?.message ?? t("saveFailed"));
+      setErrorMessage(insertError ? tErrors(classifyFormError(insertError.message)) : t("saveFailed"));
       return;
     }
     const listingId = created.id as string;
@@ -177,7 +186,7 @@ export function ListingForm({
     }
     if (detailsError) {
       setStatus("error");
-      setErrorMessage(detailsError.message);
+      setErrorMessage(tErrors(classifyFormError(detailsError.message)));
       return;
     }
 
@@ -191,7 +200,7 @@ export function ListingForm({
         .upload(path, file, { upsert: true });
       if (uploadError) {
         setStatus("error");
-        setErrorMessage(t("photoUploadFailed", { message: uploadError.message }));
+        setErrorMessage(t("photoUploadFailed", { message: tErrors(classifyFormError(uploadError.message)) }));
         return;
       }
       const { data: publicUrlData } = supabase.storage.from("listing-photos").getPublicUrl(path);
@@ -215,7 +224,7 @@ export function ListingForm({
 
     if (updateError) {
       setStatus("error");
-      setErrorMessage(updateError.message);
+      setErrorMessage(tErrors(classifyFormError(updateError.message)));
       return;
     }
 
@@ -225,7 +234,7 @@ export function ListingForm({
         .insert({ user_id: user.id, listing_id: listingId, price_eur: priceEur });
       if (cartError) {
         setStatus("error");
-        setErrorMessage(cartError.message);
+        setErrorMessage(tErrors(classifyFormError(cartError.message)));
         return;
       }
       router.push("/cart");
@@ -241,7 +250,7 @@ export function ListingForm({
         await publishFreeListing(listingId);
       } catch (error) {
         setStatus("error");
-        setErrorMessage(error instanceof Error ? error.message : t("saveFailed"));
+        setErrorMessage(error instanceof Error ? tErrors(classifyFormError(error.message)) : t("saveFailed"));
         return;
       }
     }
@@ -325,6 +334,8 @@ export function ListingForm({
         </div>
       )}
 
+      <p className={sectionHeadingClass}>{t("sectionBasics")}</p>
+
       <div>
         <label htmlFor="title" className={labelClass}>
           {t("title")}
@@ -368,7 +379,9 @@ export function ListingForm({
       </div>
 
       {isCar && (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <>
+          <p className={sectionHeadingClass}>{t("sectionVehicleDetails")}</p>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           <div>
             <label htmlFor="year" className={labelClass}>
               {t("year")}
@@ -434,7 +447,8 @@ export function ListingForm({
               <option value="no">{t("usSpecNo")}</option>
             </select>
           </div>
-        </div>
+          </div>
+        </>
       )}
 
       {isCar && (
@@ -445,7 +459,9 @@ export function ListingForm({
       )}
 
       {isProduct && (
-        <div className="grid grid-cols-2 gap-4">
+        <>
+          <p className={sectionHeadingClass}>{t("sectionItemDetails")}</p>
+          <div className="grid grid-cols-2 gap-4">
           <div>
             <label htmlFor="productCategory" className={labelClass}>
               {t("productCategory")}
@@ -476,26 +492,32 @@ export function ListingForm({
               ))}
             </select>
           </div>
-        </div>
+          </div>
+        </>
       )}
 
       {isService && (
-        <div>
-          <label htmlFor="serviceCategory" className={labelClass}>
-            {t("serviceCategory")}
-          </label>
-          <select id="serviceCategory" name="serviceCategory" required className={inputClass} defaultValue="">
-            <option value="" disabled>
-              {t("chooseOne")}
-            </option>
-            {SERVICE_CATEGORY_KEYS.map((key) => (
-              <option key={key} value={key}>
-                {SERVICE_CATEGORY_LABELS[key]}
+        <>
+          <p className={sectionHeadingClass}>{t("sectionServiceDetails")}</p>
+          <div>
+            <label htmlFor="serviceCategory" className={labelClass}>
+              {t("serviceCategory")}
+            </label>
+            <select id="serviceCategory" name="serviceCategory" required className={inputClass} defaultValue="">
+              <option value="" disabled>
+                {t("chooseOne")}
               </option>
-            ))}
-          </select>
-        </div>
+              {SERVICE_CATEGORY_KEYS.map((key) => (
+                <option key={key} value={key}>
+                  {SERVICE_CATEGORY_LABELS[key]}
+                </option>
+              ))}
+            </select>
+          </div>
+        </>
       )}
+
+      <p className={sectionHeadingClass}>{t("sectionLocation")}</p>
 
       {isRental && (
         <div className="grid grid-cols-2 gap-4">
@@ -595,6 +617,8 @@ export function ListingForm({
           </div>
         </div>
       )}
+
+      <p className={sectionHeadingClass}>{t("sectionPriceAndDetails")}</p>
 
       {!isRental ? (
         <div>
@@ -797,6 +821,8 @@ export function ListingForm({
           <span>{t("isNewLabel")}</span>
         </label>
       )}
+
+      <p className={sectionHeadingClass}>{t("sectionPhotos")}</p>
 
       <div>
         <label htmlFor="photos" className={labelClass}>

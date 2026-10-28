@@ -84,7 +84,6 @@
     "heroAllCategories": "Kategorien",
     "heroCategoryRentals": "Mietobjekte",
     "heroCategoryCars": "Autos",
-    "heroCategoryItems": "Artikel",
     "heroCategoryServices": "Dienstleistungen",
     "heroTagline": "Eine stärkere Community. Ein leichteres Leben im Ausland.",
     "rentalCardEyebrow": "Wohnen",
@@ -264,7 +263,14 @@
     "saveFailed": "Das Angebot konnte nicht gespeichert werden.",
     "photoUploadFailed": "Foto-Upload fehlgeschlagen: {message}",
     "lowMileageLabel": "Als niedrige Laufleistung markieren",
-    "isNewLabel": "Als neues Angebot markieren"
+    "isNewLabel": "Als neues Angebot markieren",
+    "sectionBasics": "Grundlagen",
+    "sectionVehicleDetails": "Fahrzeugdetails",
+    "sectionItemDetails": "Artikeldetails",
+    "sectionServiceDetails": "Details zur Dienstleistung",
+    "sectionLocation": "Standort",
+    "sectionPriceAndDetails": "Preis & Details",
+    "sectionPhotos": "Fotos"
   },
   "ListingDetail": {
     "backToListings": "← Zurück zu den Angeboten",
@@ -319,7 +325,8 @@
     "checkEmailBody": "Wir haben einen Anmeldelink und einen Code an <strong>{email}</strong> gesendet. Klicken Sie auf den Link oder geben Sie den Code unten ein.",
     "codeLabel": "Code aus der E-Mail",
     "verifyCode": "Mit Code anmelden",
-    "verifying": "Wird geprüft…"
+    "verifying": "Wird geprüft…",
+    "newHere": "Neu hier? Dasselbe Feld erstellt auch Ihr Konto."
   },
   "ForLandlords": {
     "eyebrow": "Für Vermieter",
@@ -645,5 +652,11 @@
     "ownerConfirmation": "Ich bestätige, dass ich Inhaber dieses Unternehmens bin oder als bevollmächtigter Vertreter zur Eintragung auf Milhaus berechtigt bin — einschließlich des Rechts, das hier angegebene Logo, Bilder und Kontaktdaten (E-Mail, Telefon, soziale Medien) zu verwenden.",
     "consentEmailNotice": "Wir senden eine Bestätigungs-E-Mail an die oben angegebene geschäftliche E-Mail-Adresse — diese Anzeige geht erst online, wenn das bestätigt wurde, auch wenn sie bereits bezahlt ist.",
     "ownerConfirmationRequired": "Sie müssen bestätigen, dass Sie zur Eintragung dieses Unternehmens berechtigt sind."
+  },
+  "Errors": {
+    "generic": "Auf unserer Seite ist etwas schiefgelaufen — bitte versuchen Sie es in ein paar Minuten erneut oder schreiben Sie an info@milhaus.de, falls es weiterhin auftritt.",
+    "rateLimit": "Zu viele Versuche hintereinander — bitte warten Sie ein paar Minuten, bevor Sie es erneut versuchen.",
+    "codeInvalid": "Der Link oder Code hat nicht funktioniert (er ist möglicherweise abgelaufen). Fordern Sie unten einen neuen an.",
+    "network": "Der Server konnte nicht erreicht werden — prüfen Sie Ihre Verbindung und versuchen Sie es erneut."
   }
 }

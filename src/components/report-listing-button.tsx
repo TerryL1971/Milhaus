@@ -12,12 +12,14 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useRouter } from "@/i18n/navigation";
+import { classifyFormError } from "@/lib/friendly-error";
 import { createClient } from "@/lib/supabase/client";
 
 type State = "idle" | "open" | "submitting" | "submitted" | "error";
 
 export function ReportListingButton({ listingId, returnPath }: { listingId: string; returnPath: string }) {
   const t = useTranslations("ReportListing");
+  const tErrors = useTranslations("Errors");
   const router = useRouter();
   const [state, setState] = useState<State>("idle");
   const [reason, setReason] = useState("");
@@ -42,7 +44,7 @@ export function ReportListingButton({ listingId, returnPath }: { listingId: stri
 
     if (error) {
       setState("error");
-      setErrorMessage(error.message);
+      setErrorMessage(tErrors(classifyFormError(error.message)));
       return;
     }
     setState("submitted");

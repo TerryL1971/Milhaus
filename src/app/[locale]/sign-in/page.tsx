@@ -41,7 +41,8 @@ export default async function SignInPage({
         <h1 className="mb-2 text-center font-display text-3xl font-semibold text-ink">
           {t("heading")}
         </h1>
-        <p className="mb-6 text-center text-sm text-ink-soft">{t("subhead")}</p>
+        <p className="mb-2 text-center text-sm text-ink-soft">{t("subhead")}</p>
+        <p className="mb-6 text-center text-sm text-ink-soft">{t("newHere")}</p>
 
         {error === "link-expired" && (
           <p className="mb-4 rounded-md bg-rust/10 px-4 py-3 text-center text-sm text-rust">

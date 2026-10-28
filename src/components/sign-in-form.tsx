@@ -14,6 +14,7 @@
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { classifyAuthError } from "@/lib/friendly-error";
 import { createClient } from "@/lib/supabase/client";
 
 type Status = "idle" | "sending" | "sent" | "error";
@@ -21,6 +22,7 @@ type CodeStatus = "idle" | "verifying" | "error";
 
 export function SignInForm({ next }: { next: string }) {
   const t = useTranslations("SignIn");
+  const tErrors = useTranslations("Errors");
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -49,7 +51,7 @@ export function SignInForm({ next }: { next: string }) {
 
     if (error) {
       setStatus("error");
-      setErrorMessage(error.message);
+      setErrorMessage(tErrors(classifyAuthError(error.message)));
       return;
     }
     setStatus("sent");
@@ -69,7 +71,7 @@ export function SignInForm({ next }: { next: string }) {
 
     if (error) {
       setCodeStatus("error");
-      setCodeError(error.message);
+      setCodeError(tErrors(classifyAuthError(error.message)));
       return;
     }
     // Full navigation, not a client-side push — the session cookie was
