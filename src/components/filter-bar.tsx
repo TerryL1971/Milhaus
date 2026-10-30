@@ -56,7 +56,7 @@ export function FilterBar({
         value={keyword}
         onChange={(event) => onKeywordChange(event.target.value)}
         placeholder={keywordPlaceholder}
-        className="min-w-[180px] flex-1 rounded-md border border-canvas-deep bg-paper px-3.5 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none"
+        className="min-w-[180px] flex-1 basis-full rounded-md sm:basis-auto border border-canvas-deep bg-paper px-3.5 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none"
       />
       {activeCount > 0 && (
         <span className="whitespace-nowrap font-mono text-xs font-semibold uppercase tracking-wide text-brass-deep">

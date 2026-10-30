@@ -135,8 +135,13 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
           for sale/Services) unless a specific listing category is picked
           from this dropdown — businesses/events have no dropdown entry
           of their own, so they're only ever part of "all categories". */}
-      <section className="relative min-h-[420px] overflow-hidden bg-ink sm:min-h-[480px] lg:min-h-[620px] xl:min-h-[680px]">
-        <div className="absolute inset-x-0 top-0">
+      {/* Below lg the photo is in normal flow and the text stacks under it:
+          a 2.73:1 photo at phone width is only ~140px tall, so overlaying
+          the headline left it half on the photo, half off — unreadable and
+          visibly broken. lg+ keeps the overlay, where the text sits over
+          the photo's open sky on the right. */}
+      <section className="relative overflow-hidden bg-ink lg:min-h-[620px] xl:min-h-[680px]">
+        <div className="relative lg:absolute lg:inset-x-0 lg:top-0">
           {/* No `fill` any more — intrinsic width/height (the photo's own
               846x310) scaled to w-full/h-auto instead. `fill` + any
               object-fit always means either cropping (cover) or side
@@ -173,7 +178,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
           <div className="absolute inset-0 bg-gradient-to-t from-ink/35 via-ink/10 to-transparent" />
         </div>
 
-        <div className="relative mx-auto flex min-h-[420px] max-w-[1600px] flex-col justify-start px-8 pb-12 pt-8 sm:min-h-[480px] sm:pb-16 sm:pt-10 lg:min-h-[620px] xl:min-h-[680px]">
+        <div className="relative mx-auto flex max-w-[1600px] flex-col justify-start px-5 pb-10 pt-6 sm:px-8 sm:pb-14 sm:pt-8 lg:min-h-[620px] lg:pb-16 lg:pt-10 xl:min-h-[680px]">
           {/* Charlie's new hero photo has its visual interest (the house,
               flag) on the left — per his annotated mockup, the text and
               search bar move to the right half on larger screens so they
@@ -261,7 +266,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
                 // read as too much padding. A real selection longer than
                 // this box just displays truncated, same trade-off any
                 // fixed-width select makes.
-                className="w-28 flex-none rounded-md border border-canvas-deep bg-canvas py-2.5 pl-2.5 pr-1 text-sm text-charcoal focus:border-olive focus:outline-none"
+                className="w-full flex-none rounded-md sm:w-28 border border-canvas-deep bg-canvas py-2.5 pl-2.5 pr-1 text-sm text-charcoal focus:border-olive focus:outline-none"
               >
                 <option value="">{t("heroLocationPlaceholder")}</option>
                 {BASE_NAMES.map((base) => (

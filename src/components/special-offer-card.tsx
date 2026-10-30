@@ -21,7 +21,9 @@ export function SpecialOfferCard({ offer, priority }: { offer: AdSlot; priority?
       href={offer.linkUrl}
       target={offer.linkUrl.startsWith("http") ? "_blank" : undefined}
       rel={offer.linkUrl.startsWith("http") ? "noopener noreferrer" : undefined}
-      className="block h-[600px] w-full overflow-hidden rounded-md border border-canvas-deep bg-paper transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(27,42,58,0.12)]"
+      // Below sm: the spec'd ~500x600 (5:6) shape instead of a fixed 600px
+      // at full phone width — that was a near-full-screen photo per card.
+      className="block aspect-[5/6] w-full overflow-hidden sm:aspect-auto sm:h-[600px] rounded-md border border-canvas-deep bg-paper transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(27,42,58,0.12)]"
     >
       {offer.imageUrl ? (
         <div className="relative h-full w-full">
