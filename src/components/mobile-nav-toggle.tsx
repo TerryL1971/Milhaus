@@ -3,7 +3,7 @@
 // right-side actions are both `hidden` below md with no mobile
 // alternative at all today, so on a phone there's currently no way to
 // reach Homes/Cars/Buy & sell/Services, or Sign in/Post an ad, from the
-// header. This renders instead, `md:hidden`, as a dropdown panel under
+// header. This renders instead, `xl:hidden`, as a dropdown panel under
 // the sticky header with everything SiteHeader normally spreads across
 // those two desktop clusters, stacked.
 //
@@ -53,7 +53,7 @@ export function MobileNavToggle({
   const close = () => setOpen(false);
 
   return (
-    <div className="md:hidden">
+    <div className="xl:hidden">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}

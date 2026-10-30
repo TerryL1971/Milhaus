@@ -135,12 +135,19 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
           for sale/Services) unless a specific listing category is picked
           from this dropdown — businesses/events have no dropdown entry
           of their own, so they're only ever part of "all categories". */}
-      {/* Below lg the photo is in normal flow and the text stacks under it:
-          a 2.73:1 photo at phone width is only ~140px tall, so overlaying
-          the headline left it half on the photo, half off — unreadable and
-          visibly broken. lg+ keeps the overlay, where the text sits over
-          the photo's open sky on the right. */}
-      <section className="relative overflow-hidden bg-ink lg:min-h-[620px] xl:min-h-[680px]">
+      {/* Below lg the photo is in normal flow: a 2.73:1 photo at phone
+          width is only ~140px tall, so the old fixed text-4xl headline ran
+          half on the photo, half off it. Now the headline alone stays on
+          the photo there (absolute, pinned to the section's top, with a
+          viewport-scaled font size so it always fits inside the photo's own
+          height), and the subheads + search sit below on bg-ink. lg+ keeps
+          the full overlay, with the text over the open sky on the right. */}
+      {/* lg:min-h = the photo's own height (310/846 of the width), so the
+          section is never shorter than the photo (fixed 620/680px used to
+          crop its bottom on wide screens) nor needlessly taller (an empty
+          navy band at ~1024px). Update this ratio if the photo's shape
+          changes. */}
+      <section className="relative overflow-hidden bg-ink lg:min-h-[36.65vw]">
         <div className="relative lg:absolute lg:inset-x-0 lg:top-0">
           {/* No `fill` any more — intrinsic width/height (the photo's own
               846x310) scaled to w-full/h-auto instead. `fill` + any
@@ -176,9 +183,15 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
               content-driven height — the image's own natural height, not
               the full section). */}
           <div className="absolute inset-0 bg-gradient-to-t from-ink/35 via-ink/10 to-transparent" />
+          {/* Phones/tablets only — the headline sits over the photo's top
+              there, where the sky is light; this keeps white text legible. */}
+          <div className="absolute inset-x-0 top-0 h-3/4 bg-gradient-to-b from-ink/55 to-transparent lg:hidden" />
         </div>
 
-        <div className="relative mx-auto flex max-w-[1600px] flex-col justify-start px-5 pb-10 pt-6 sm:px-8 sm:pb-14 sm:pt-8 lg:min-h-[620px] lg:pb-16 lg:pt-10 xl:min-h-[680px]">
+        {/* Not `relative` below lg on purpose: the headline inside is
+            absolutely positioned against the section itself (i.e. the top
+            of the photo) there. */}
+        <div className="mx-auto flex max-w-[1600px] flex-col justify-start px-5 pb-10 pt-6 sm:px-8 sm:pb-14 sm:pt-8 lg:relative lg:pb-10 lg:pt-10">
           {/* Charlie's new hero photo has its visual interest (the house,
               flag) on the left — per his annotated mockup, the text and
               search bar move to the right half on larger screens so they
@@ -197,7 +210,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
               that's what was reading as "not lined up" against Charlie's
               mockup. */}
           <div className="lg:ml-auto lg:w-full lg:max-w-[760px]">
-            <h1 className="mb-3 font-display text-4xl font-bold leading-[1.1] tracking-tight text-paper drop-shadow-[0_2px_16px_rgba(0,0,0,0.55)] lg:text-5xl">
+            <h1 className="absolute inset-x-0 top-0 px-5 pt-[4vw] font-display text-[clamp(1.4rem,7vw,3rem)] font-bold leading-[1.1] tracking-tight text-paper drop-shadow-[0_2px_16px_rgba(0,0,0,0.55)] sm:px-8 lg:static lg:mb-3 lg:px-0 lg:pt-0 lg:text-5xl">
               {t("headlineLine1")} {t("headlineLine2")}
             </h1>
 

@@ -46,7 +46,7 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
 
   return (
     <header className="sticky top-0 z-50 bg-ink text-paper">
-      <div className="relative mx-auto flex max-w-[1600px] items-center justify-between gap-6 px-8 py-[18px]">
+      <div className="relative mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-5 py-[18px] sm:gap-6 sm:px-8">
         <HomeLink className="flex flex-shrink-0 items-center">
           {/* h-7, not h-10, below md — this logo file is a ~8.5:1 wide
               lockup; at h-10 it renders ~338px wide, which alone exceeds
@@ -74,7 +74,11 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
             itself a discoverability win, on top of the hero's unified
             search being the primary way to find something now. Events
             added back as a 5th per Charlie's ideas slide (2026-10-14). */}
-        <nav className="hidden gap-6 whitespace-nowrap text-[0.92rem] font-medium md:flex">
+        {/* xl, not md: logo + 5 links + DE/Post An Ad/Log In need ~1200px.
+            Switching at md pushed the right-side buttons off-screen (and
+            gave the page a horizontal scrollbar) on every tablet and small
+            laptop between 768 and ~1200px; those get the hamburger now. */}
+        <nav className="hidden gap-6 whitespace-nowrap text-[0.92rem] font-medium xl:flex">
           <Link href="/listings" className="opacity-85 transition-opacity hover:opacity-100">
             {t("homes")}
           </Link>
@@ -92,7 +96,7 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
           </Link>
         </nav>
 
-        <div className="hidden flex-shrink-0 items-center gap-3 md:flex">
+        <div className="hidden flex-shrink-0 items-center gap-3 xl:flex">
           {/* Same slot/style as the Admin link — DE/EN always shows here;
               Admin joins it alongside for admins, rather than replacing it. */}
           <LanguageToggle className={toggleButtonClass} preservePath={translatedPage} />
