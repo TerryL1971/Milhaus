@@ -209,7 +209,7 @@ export function ListingsGrid({
   return (
     <>
       <div className="mb-5">
-        <h2 className="font-display text-[2rem] font-semibold text-ink">{t("heading")}</h2>
+        <h2 className="font-display text-[clamp(1.5rem,7.5vw,2rem)] font-semibold text-ink">{t("heading")}</h2>
       </div>
 
       {noResults && !alertDismissed && (

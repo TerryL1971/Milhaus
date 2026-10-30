@@ -28,7 +28,7 @@ export default async function EventsPage({ searchParams }: { searchParams: Searc
       <SponsorBannerCarousel />
       <div className="mx-auto max-w-[1600px] px-8 py-8 sm:py-11 lg:py-14">
         <div className="mb-8">
-          <h1 className="font-display text-[2rem] font-semibold text-ink">{t("heading")}</h1>
+          <h1 className="font-display text-[clamp(1.5rem,7.5vw,2rem)] font-semibold text-ink">{t("heading")}</h1>
           <p className="mt-1 max-w-[52ch] text-ink-soft">{t("subhead")}</p>
         </div>
 

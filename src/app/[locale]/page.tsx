@@ -137,10 +137,10 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
           of their own, so they're only ever part of "all categories". */}
       {/* Below lg the photo is in normal flow: a 2.73:1 photo at phone
           width is only ~140px tall, so the old fixed text-4xl headline ran
-          half on the photo, half off it. Now the headline alone stays on
+          half on the photo, half off it. Now the headline + subheads stay on
           the photo there (absolute, pinned to the section's top, with a
           viewport-scaled font size so it always fits inside the photo's own
-          height), and the subheads + search sit below on bg-ink. lg+ keeps
+          height), and only the search form sits below on bg-ink. lg+ keeps
           the full overlay, with the text over the open sky on the right. */}
       {/* lg:min-h = the photo's own height (310/846 of the width), so the
           section is never shorter than the photo (fixed 620/680px used to
@@ -183,9 +183,9 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
               content-driven height — the image's own natural height, not
               the full section). */}
           <div className="absolute inset-0 bg-gradient-to-t from-ink/35 via-ink/10 to-transparent" />
-          {/* Phones/tablets only — the headline sits over the photo's top
-              there, where the sky is light; this keeps white text legible. */}
-          <div className="absolute inset-x-0 top-0 h-3/4 bg-gradient-to-b from-ink/55 to-transparent lg:hidden" />
+          {/* Phones/tablets only — the headline + subheads sit over the
+              photo's light sky there; this keeps white text legible. */}
+          <div className="absolute inset-0 bg-gradient-to-b from-ink/60 via-ink/30 to-transparent lg:hidden" />
         </div>
 
         {/* Not `relative` below lg on purpose: the headline inside is
@@ -210,19 +210,25 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
               that's what was reading as "not lined up" against Charlie's
               mockup. */}
           <div className="lg:ml-auto lg:w-full lg:max-w-[760px]">
-            <h1 className="absolute inset-x-0 top-0 px-5 pt-[4vw] font-display text-[clamp(1.4rem,7vw,3rem)] font-bold leading-[1.1] tracking-tight text-paper drop-shadow-[0_2px_16px_rgba(0,0,0,0.55)] sm:px-8 lg:static lg:mb-3 lg:px-0 lg:pt-0 lg:text-5xl">
-              {t("headlineLine1")} {t("headlineLine2")}
-            </h1>
+            {/* Headline + both subhead lines are one block, on the photo at
+                every size. Below lg it's absolute against the section's top
+                (the photo) with vw-scaled type so all of it fits inside the
+                photo's own ~36.65vw height; lg+ it's back in normal flow. */}
+            <div className="absolute inset-x-0 top-0 px-5 pt-[3.5vw] sm:px-8 lg:static lg:mb-6 lg:px-0 lg:pt-0">
+              <h1 className="mb-[1.5vw] font-display text-[clamp(1.25rem,6.2vw,3rem)] font-bold leading-[1.1] tracking-tight text-paper drop-shadow-[0_2px_16px_rgba(0,0,0,0.55)] lg:mb-3 lg:text-5xl">
+                {t("headlineLine1")} {t("headlineLine2")}
+              </h1>
 
-            {/* Two lines per Charlie's updated mockup (was one combined
-                sentence) — the categories list and the audience line read
-                as two distinct ideas there, not one run-on. */}
-            <p className="max-w-[56ch] text-lg text-paper/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)]">
-              {t("subheadCategories")}
-            </p>
-            <p className="mb-6 max-w-[56ch] text-lg text-paper/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)]">
-              {t("subheadAudience")}
-            </p>
+              {/* Two lines per Charlie's updated mockup (was one combined
+                  sentence) — the categories list and the audience line read
+                  as two distinct ideas there, not one run-on. */}
+              <p className="max-w-[56ch] text-[clamp(0.78rem,3.5vw,1.125rem)] leading-snug text-paper/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.6)] lg:text-lg">
+                {t("subheadCategories")}
+              </p>
+              <p className="max-w-[56ch] text-[clamp(0.78rem,3.5vw,1.125rem)] leading-snug text-paper/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.6)] lg:text-lg">
+                {t("subheadAudience")}
+              </p>
+            </div>
 
             {/* search/page.tsx redirects here with ?searchFailed=<query>
                 when nothing matched in any category — the one case that
@@ -331,7 +337,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
       <section className="py-11">
         <div className="mx-auto max-w-[1600px] px-8">
           <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-            <h2 className="font-display text-[2rem] font-semibold text-ink">{t("featuredHomesHeading")}</h2>
+            <h2 className="font-display text-[clamp(1.5rem,7.5vw,2rem)] font-semibold text-ink">{t("featuredHomesHeading")}</h2>
             <Link href="/listings" className="text-sm font-semibold text-olive-deep hover:underline">
               {t("featuredHomesViewAll")} →
             </Link>
@@ -351,7 +357,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
       <section className="bg-canvas-deep py-11">
         <div className="mx-auto max-w-[1600px] px-8">
           <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-            <h2 className="font-display text-[2rem] font-semibold text-ink">{t("featuredCarsHeading")}</h2>
+            <h2 className="font-display text-[clamp(1.5rem,7.5vw,2rem)] font-semibold text-ink">{t("featuredCarsHeading")}</h2>
             <Link href="/cars" className="text-sm font-semibold text-olive-deep hover:underline">
               {t("featuredCarsViewAll")} →
             </Link>
@@ -373,7 +379,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
       <section className="py-11">
         <div className="mx-auto max-w-[1600px] px-8">
           <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-            <h2 className="font-display text-[2rem] font-semibold text-ink">{t("businessesHeading")}</h2>
+            <h2 className="font-display text-[clamp(1.5rem,7.5vw,2rem)] font-semibold text-ink">{t("businessesHeading")}</h2>
             <Link href="/services" className="text-sm font-semibold text-olive-deep hover:underline">
               {t("businessesViewAll")} →
             </Link>
@@ -410,7 +416,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
         <section className="bg-canvas-deep py-11">
           <div className="mx-auto max-w-[1600px] px-8">
             <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-              <h2 className="font-display text-[2rem] font-semibold text-ink">{t("specialOffersHeading")}</h2>
+              <h2 className="font-display text-[clamp(1.5rem,7.5vw,2rem)] font-semibold text-ink">{t("specialOffersHeading")}</h2>
             </div>
             <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
               {specialOffers.slice(0, 3).map((offer, index) => (
@@ -424,7 +430,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
       {/* ---------- HOW IT WORKS ---------- */}
       <section id="how" className="py-18">
         <div className="mx-auto max-w-[1600px] px-8">
-          <h2 className="font-display text-[2rem] font-semibold text-ink">{t("howHeading")}</h2>
+          <h2 className="font-display text-[clamp(1.5rem,7.5vw,2rem)] font-semibold text-ink">{t("howHeading")}</h2>
           <div className="mt-8.5 grid grid-cols-1 gap-7.5 md:grid-cols-3">
             {howSteps.map((step) => (
               <div key={step.heading}>
