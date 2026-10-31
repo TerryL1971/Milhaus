@@ -91,7 +91,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
     { num: "03", heading: t("how3Heading"), body: t("how3Body") },
   ];
 
-  const heroImageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/listing-photos/_site/hero-image-home.jpg`;
+  const heroImageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/listing-photos/_site/hero-home-2026-10-31.jpg`;
   const searchAction = getPathname({ href: "/search", locale });
 
   // Organization + WebSite structured data — the entity schema Google/AI
@@ -135,22 +135,22 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
           for sale/Services) unless a specific listing category is picked
           from this dropdown — businesses/events have no dropdown entry
           of their own, so they're only ever part of "all categories". */}
-      {/* Below lg the photo is in normal flow: a 2.73:1 photo at phone
-          width is only ~140px tall, so the old fixed text-4xl headline ran
+      {/* Below lg the photo is in normal flow: a ~2.36:1 photo at phone
+          width is only ~165px tall, so the old fixed text-4xl headline ran
           half on the photo, half off it. Now the headline + subheads stay on
           the photo there (absolute, pinned to the section's top, with a
           viewport-scaled font size so it always fits inside the photo's own
           height), and only the search form sits below on bg-ink. lg+ keeps
           the full overlay, with the text over the open sky on the right. */}
-      {/* lg:min-h = the photo's own height (310/846 of the width), so the
+      {/* lg:min-h = the photo's own height (672/1584 of the width), so the
           section is never shorter than the photo (fixed 620/680px used to
           crop its bottom on wide screens) nor needlessly taller (an empty
           navy band at ~1024px). Update this ratio if the photo's shape
           changes. */}
-      <section className="relative overflow-hidden bg-ink lg:min-h-[36.65vw]">
+      <section className="relative overflow-hidden bg-ink lg:min-h-[42.42vw]">
         <div className="relative lg:absolute lg:inset-x-0 lg:top-0">
           {/* No `fill` any more — intrinsic width/height (the photo's own
-              846x310) scaled to w-full/h-auto instead. `fill` + any
+              1584x672) scaled to w-full/h-auto instead. `fill` + any
               object-fit always means either cropping (cover) or side
               letterboxing (contain) whenever the section's own box ratio
               doesn't exactly match the photo's — and those ratios
@@ -169,7 +169,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
               once there isn't enough photo to put it over. priority —
               this is the largest above-the-fold element on the homepage,
               i.e. almost certainly the page's own LCP candidate. */}
-          <Image src={heroImageUrl} alt="" width={846} height={310} sizes="100vw" className="block h-auto w-full" priority />
+          <Image src={heroImageUrl} alt="" width={1584} height={672} sizes="100vw" className="block h-auto w-full" priority />
           {/* Lighter again, second pass — the new hero photo has "Germany
               Feels Like Home" baked into its own bottom-right corner now
               (see the removed scriptTagline overlay above), and the
@@ -213,7 +213,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
             {/* Headline + both subhead lines are one block, on the photo at
                 every size. Below lg it's absolute against the section's top
                 (the photo) with vw-scaled type so all of it fits inside the
-                photo's own ~36.65vw height; lg+ it's back in normal flow. */}
+                photo's own ~42.42vw height; lg+ it's back in normal flow. */}
             <div className="absolute inset-x-0 top-0 px-5 pt-[3.5vw] sm:px-8 lg:static lg:mb-6 lg:px-0 lg:pt-0">
               <h1 className="mb-[1.5vw] font-display text-[clamp(1.25rem,6.2vw,3rem)] font-bold leading-[1.1] tracking-tight text-paper drop-shadow-[0_2px_16px_rgba(0,0,0,0.55)] lg:mb-3 lg:text-5xl">
                 {t("headlineLine1")} {t("headlineLine2")}
