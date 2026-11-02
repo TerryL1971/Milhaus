@@ -276,7 +276,16 @@
     "availableTo": "Available to",
     "availableToMilitaryOnly": "US Military only",
     "availableToMilitaryAndExpats": "US Military & Expats",
-    "availableToEveryone": "Everyone"
+    "availableToEveryone": "Everyone",
+    "saveChanges": "Save changes",
+    "successEditTitle": "Changes saved",
+    "successEditBody": "Your listing has been updated — the changes are live now.",
+    "viewListing": "View listing",
+    "currentPhotos": "Current photos",
+    "removePhoto": "Remove",
+    "undoRemovePhoto": "Undo",
+    "addPhotos": "Add more photos",
+    "photoNumber": "Photo {number}"
   },
   "ListingDetail": {
     "backToListings": "← Back to listings",
@@ -598,7 +607,8 @@
     "markUnavailable": "Mark unavailable",
     "withdraw": "Withdraw",
     "discard": "Discard",
-    "postAgain": "Post again"
+    "postAgain": "Post again",
+    "edit": "Edit"
   },
   "ReportListing": {
     "button": "Report this listing",
@@ -667,5 +677,9 @@
     "rateLimit": "Too many attempts in a row — please wait a few minutes before trying again.",
     "codeInvalid": "That link or code didn't work (it may have expired). Request a new one below.",
     "network": "We couldn't reach the server — check your connection and try again."
+  },
+  "EditListingPage": {
+    "heading": "Edit your listing",
+    "body": "Change anything below and press Save changes. If the listing is live, it stays live."
   }
 }

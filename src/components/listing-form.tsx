@@ -15,6 +15,12 @@
 //   and services have no housing-office equivalent, so admin-add for any
 //   of them skips the source picker entirely and is always self_listed.
 //
+// Passing `existing` switches it into edit mode (/edit-listing/[id]):
+// every field starts pre-filled, current photos can be removed or added
+// to, and saving updates the rows in place — status is never touched, so
+// a live listing stays live (Terry's call, 2026-11-02, matching the
+// auto-publish setup). Admin-variant edits keep the rental source picker.
+//
 // Kept as one component with variant + kind props, not several near-
 // duplicates: the FormData/event.currentTarget bug found earlier this
 // session was exactly the kind of thing that's easy to fix in one copy
@@ -30,12 +36,13 @@ import { AMENITY_KEYS } from "@/lib/amenities";
 import { BASE_NAMES } from "@/lib/bases";
 import { CAR_BODY_TYPE_KEYS, CAR_BODY_TYPE_LABELS } from "@/lib/car-body-types";
 import { classifyFormError } from "@/lib/friendly-error";
+import { createListingPhotoUploads, deleteRemovedListingPhotos } from "@/lib/listing-edit";
 import { publishFreeListing } from "@/lib/listing-publish";
 import { NEARBY_AMENITY_KEYS } from "@/lib/nearby-amenities";
 import { CONDITION_KEYS, CONDITION_LABELS, PRODUCT_CATEGORY_KEYS, PRODUCT_CATEGORY_LABELS } from "@/lib/product-categories";
 import { SERVICE_CATEGORY_KEYS, SERVICE_CATEGORY_LABELS } from "@/lib/service-categories";
 import { createClient } from "@/lib/supabase/client";
-import type { ListingSource } from "@/lib/types";
+import type { Listing, ListingSource } from "@/lib/types";
 
 type Status = "idle" | "submitting" | "success" | "error";
 type Variant = "self-list" | "admin-add";
@@ -52,13 +59,79 @@ const inputClass =
 const sectionHeadingClass =
   "mt-2 border-t border-canvas-deep pt-5 font-display text-sm font-semibold text-ink first:mt-0 first:border-t-0 first:pt-0";
 
+function fileExtension(file: File) {
+  return file.name.split(".").pop() || "jpg";
+}
+
+// The type-specific half of a save — one copy shared by create and edit,
+// so a field added to one can't silently go missing from the other.
+function detailsPayload(kind: Kind, formData: FormData) {
+  if (kind === "car") {
+    return {
+      table: "car_details",
+      values: {
+        make: formData.get("make"),
+        model: formData.get("model"),
+        year: Number(formData.get("year")),
+        mileage_km: formData.get("mileageKm") ? Number(formData.get("mileageKm")) : null,
+        transmission: formData.get("transmission") || null,
+        us_spec: formData.get("usSpec") ? formData.get("usSpec") === "yes" : null,
+        body_type: formData.get("bodyType") || null,
+        low_mileage: formData.get("lowMileage") === "on",
+      } as Record<string, unknown>,
+    };
+  }
+  if (kind === "product") {
+    return {
+      table: "product_details",
+      values: {
+        product_category: formData.get("productCategory"),
+        condition: formData.get("condition"),
+      } as Record<string, unknown>,
+    };
+  }
+  if (kind === "service") {
+    return {
+      table: "service_details",
+      values: {
+        service_category: formData.get("serviceCategory"),
+        price_is_estimate: formData.get("priceIsEstimate") === "on",
+        pricing_note: formData.get("pricingNote") || null,
+      } as Record<string, unknown>,
+    };
+  }
+  return {
+    table: "rental_details",
+    values: {
+      address: formData.get("address"),
+      bedrooms: Number(formData.get("bedrooms")),
+      bathrooms: Number(formData.get("bathrooms")),
+      size_sqm: formData.get("sizeSqm") ? Number(formData.get("sizeSqm")) : null,
+      available_from: (formData.get("availableFrom") as string) || null,
+      amenities: formData.getAll("amenities"),
+      parking_spaces: formData.get("parkingSpaces") ? Number(formData.get("parkingSpaces")) : null,
+      nearby_amenities: formData.getAll("nearbyAmenities"),
+      internet_type: formData.get("internetType") || null,
+      internet_speed_mbps: formData.get("internetSpeedMbps") ? Number(formData.get("internetSpeedMbps")) : null,
+      heat_type: formData.get("heatType") || null,
+      stove_type: formData.get("stoveType") || null,
+      is_new: formData.get("isNew") === "on",
+      available_to: formData.get("availableTo") || null,
+    } as Record<string, unknown>,
+  };
+}
+
 export function ListingForm({
   variant,
   kind = "rental",
   priceEur = null,
+  existing,
 }: {
   variant: Variant;
   kind?: Kind;
+  /** Set on /edit-listing/[id] — pre-fills every field and saves as an
+   * update instead of a new listing. */
+  existing?: Listing;
   /** Set when this category currently costs something to post (see
    * getPostingPrice) — instead of submitting straight to
    * pending_review, the listing is saved as a draft and added to the
@@ -76,7 +149,13 @@ export function ListingForm({
   // Cars only — a dealer isn't tied to one base the way a rental is, so
   // this can be several (or "every location") instead of the single
   // <select> every other kind uses.
-  const [carBases, setCarBases] = useState<string[]>([]);
+  const [carBases, setCarBases] = useState<string[]>(
+    existing?.bases ?? (existing?.base ? [existing.base] : []),
+  );
+  // Edit mode only — the listing's current photos, minus any the editor
+  // has clicked Remove on (Undo puts one back).
+  const [keptPhotos, setKeptPhotos] = useState<string[]>(existing?.photos ?? []);
+  const isEdit = !!existing;
 
   const isAdminAdd = variant === "admin-add";
   const isRental = kind === "rental";
@@ -104,6 +183,10 @@ export function ListingForm({
     }
 
     const files = (formData.getAll("photos") as File[]).filter((file) => file.size > 0);
+    if (existing) {
+      await saveEdit(existing, formData, files);
+      return;
+    }
     // Cars and products have no housing-office equivalent — always
     // self_listed, regardless of variant. Rentals keep the admin's choice.
     const source: ListingSource =
@@ -140,60 +223,18 @@ export function ListingForm({
     // Type-specific fields live on their own details table now (one row
     // per listing, listing_id as the PK/FK) rather than on `listings`
     // itself — see supabase/migrations/20260926180000_split_listing_types_and_trust_safety.sql.
-    let detailsError;
-    if (isCar) {
-      ({ error: detailsError } = await supabase.from("car_details").insert({
-        listing_id: listingId,
-        make: formData.get("make"),
-        model: formData.get("model"),
-        year: Number(formData.get("year")),
-        mileage_km: formData.get("mileageKm") ? Number(formData.get("mileageKm")) : null,
-        transmission: formData.get("transmission") || null,
-        us_spec: formData.get("usSpec") ? formData.get("usSpec") === "yes" : null,
-        body_type: formData.get("bodyType") || null,
-        low_mileage: formData.get("lowMileage") === "on",
-      }));
-    } else if (isProduct) {
-      ({ error: detailsError } = await supabase.from("product_details").insert({
-        listing_id: listingId,
-        product_category: formData.get("productCategory"),
-        condition: formData.get("condition"),
-      }));
-    } else if (isService) {
-      ({ error: detailsError } = await supabase.from("service_details").insert({
-        listing_id: listingId,
-        service_category: formData.get("serviceCategory"),
-        price_is_estimate: formData.get("priceIsEstimate") === "on",
-        pricing_note: formData.get("pricingNote") || null,
-      }));
-    } else {
-      const rentalDetails = {
-        listing_id: listingId,
-        address: formData.get("address"),
-        bedrooms: Number(formData.get("bedrooms")),
-        bathrooms: Number(formData.get("bathrooms")),
-        size_sqm: formData.get("sizeSqm") ? Number(formData.get("sizeSqm")) : null,
-        available_from: (formData.get("availableFrom") as string) || null,
-        amenities: formData.getAll("amenities"),
-        parking_spaces: formData.get("parkingSpaces") ? Number(formData.get("parkingSpaces")) : null,
-        nearby_amenities: formData.getAll("nearbyAmenities"),
-        internet_type: formData.get("internetType") || null,
-        internet_speed_mbps: formData.get("internetSpeedMbps") ? Number(formData.get("internetSpeedMbps")) : null,
-        heat_type: formData.get("heatType") || null,
-        stove_type: formData.get("stoveType") || null,
-        is_new: formData.get("isNew") === "on",
-        available_to: formData.get("availableTo") || null,
-      };
-      ({ error: detailsError } = await supabase.from("rental_details").insert(rentalDetails));
-      // PGRST204 = PostgREST doesn't know the available_to column yet,
-      // i.e. 20261102120000_add_rental_available_to.sql hasn't been run on
-      // this database. Save the home without it rather than failing the
-      // whole post over one optional badge.
-      if (detailsError?.code === "PGRST204") {
-        ({ error: detailsError } = await supabase
-          .from("rental_details")
-          .insert({ ...rentalDetails, available_to: undefined }));
-      }
+    const details = detailsPayload(kind, formData);
+    let { error: detailsError } = await supabase
+      .from(details.table)
+      .insert({ listing_id: listingId, ...details.values });
+    // PGRST204 = PostgREST doesn't know the available_to column yet,
+    // i.e. 20261102120000_add_rental_available_to.sql hasn't been run on
+    // this database. Save the home without it rather than failing the
+    // whole post over one optional badge.
+    if (detailsError?.code === "PGRST204" && isRental) {
+      ({ error: detailsError } = await supabase
+        .from(details.table)
+        .insert({ listing_id: listingId, ...details.values, available_to: undefined }));
     }
     if (detailsError) {
       setStatus("error");
@@ -270,6 +311,109 @@ export function ListingForm({
     router.refresh();
   }
 
+  async function saveEdit(listing: Listing, formData: FormData, files: File[]) {
+    const supabase = createClient();
+    setProgress(t("progressSaving"));
+
+    // New photos first, so a failed upload leaves the listing untouched
+    // rather than half-saved.
+    const newPhotoUrls: string[] = [];
+    try {
+      const uploads = files.length > 0 ? await createListingPhotoUploads(listing.id, files.map(fileExtension)) : [];
+      for (const [index, upload] of uploads.entries()) {
+        setProgress(t("progressUploading", { current: index + 1, total: uploads.length }));
+        const { error: uploadError } = await supabase.storage
+          .from("listing-photos")
+          .uploadToSignedUrl(upload.path, upload.token, files[index]);
+        if (uploadError) throw uploadError;
+        newPhotoUrls.push(upload.publicUrl);
+      }
+    } catch (error) {
+      setStatus("error");
+      setErrorMessage(
+        t("photoUploadFailed", {
+          message: tErrors(classifyFormError(error instanceof Error ? error.message : String(error))),
+        }),
+      );
+      return;
+    }
+
+    // Same rule as create: only rentals added/edited by an admin can be
+    // housing-office sourced; everything else stays as it was.
+    const sourceUpdate = isAdminAdd && isRental ? { source: (formData.get("source") as ListingSource) ?? listing.source } : {};
+    const { error: listingError } = await supabase
+      .from("listings")
+      .update({
+        title: formData.get("title"),
+        description: formData.get("description") || "",
+        city: formData.get("city"),
+        base: isCar ? (carBases[0] ?? null) : formData.get("base") || null,
+        bases: isCar && carBases.length > 1 ? carBases : null,
+        distance_to_base: formData.get("distanceToBase") || null,
+        price_eur_month: Number(formData.get("priceEurMonth")),
+        photos: [...keptPhotos, ...newPhotoUrls],
+        ...sourceUpdate,
+      })
+      .eq("id", listing.id);
+    if (listingError) {
+      setStatus("error");
+      setErrorMessage(tErrors(classifyFormError(listingError.message)));
+      return;
+    }
+
+    const details = detailsPayload(kind, formData);
+    let { error: detailsError } = await supabase.from(details.table).update(details.values).eq("listing_id", listing.id);
+    if (detailsError?.code === "PGRST204" && isRental) {
+      ({ error: detailsError } = await supabase
+        .from(details.table)
+        .update({ ...details.values, available_to: undefined })
+        .eq("listing_id", listing.id));
+    }
+    if (detailsError) {
+      setStatus("error");
+      setErrorMessage(tErrors(classifyFormError(detailsError.message)));
+      return;
+    }
+
+    const removed = listing.photos.filter((url) => !keptPhotos.includes(url));
+    if (removed.length > 0) {
+      try {
+        await deleteRemovedListingPhotos(listing.id, removed);
+      } catch {
+        // Cleanup only — the listing itself is already saved.
+      }
+    }
+
+    setStatus("success");
+    router.refresh();
+  }
+
+  if (status === "success" && existing) {
+    return (
+      <div className="rounded-md border border-canvas-deep bg-paper p-6 text-center">
+        <p className="mb-1 font-display text-xl font-semibold text-ink">{t("successEditTitle")}</p>
+        <p className="mb-4 text-sm text-ink-soft">{t("successEditBody")}</p>
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+          <Link
+            href={`${isCar ? "/cars" : isProduct ? "/products" : isService ? "/services" : "/listings"}/${existing.id}`}
+            className="text-sm font-semibold text-olive-deep hover:underline"
+          >
+            {t("viewListing")}
+          </Link>
+          {isAdminAdd ? (
+            <Link href="/admin" className="text-sm font-semibold text-ink-soft hover:text-ink">
+              {t("backToAdmin")}
+            </Link>
+          ) : (
+            <Link href="/my-listings" className="text-sm font-semibold text-ink-soft hover:text-ink">
+              {t("goToMyListings")}
+            </Link>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   if (status === "success") {
     return (
       <div className="rounded-md border border-canvas-deep bg-paper p-6 text-center">
@@ -338,7 +482,7 @@ export function ListingForm({
           <label htmlFor="source" className={labelClass}>
             {t("source")}
           </label>
-          <select id="source" name="source" className={inputClass} defaultValue="housing_office">
+          <select id="source" name="source" className={inputClass} defaultValue={existing?.source ?? "housing_office"}>
             <option value="housing_office">{t("sourceHousingOffice")}</option>
             <option value="self_listed">{t("sourceSelfListed")}</option>
           </select>
@@ -355,6 +499,7 @@ export function ListingForm({
           id="title"
           name="title"
           required
+          defaultValue={existing?.title}
           placeholder={
             isCar
               ? t("carTitlePlaceholder")
@@ -376,6 +521,7 @@ export function ListingForm({
           id="description"
           name="description"
           rows={4}
+          defaultValue={existing?.description}
           placeholder={
             isCar
               ? t("carDescriptionPlaceholder")
@@ -404,6 +550,7 @@ export function ListingForm({
               min="1900"
               max="2100"
               required
+              defaultValue={existing?.year ?? undefined}
               className={inputClass}
             />
           </div>
@@ -411,19 +558,19 @@ export function ListingForm({
             <label htmlFor="make" className={labelClass}>
               {t("make")}
             </label>
-            <input id="make" name="make" required placeholder={t("makePlaceholder")} className={inputClass} />
+            <input id="make" name="make" required defaultValue={existing?.make ?? undefined} placeholder={t("makePlaceholder")} className={inputClass} />
           </div>
           <div>
             <label htmlFor="model" className={labelClass}>
               {t("model")}
             </label>
-            <input id="model" name="model" required placeholder={t("modelPlaceholder")} className={inputClass} />
+            <input id="model" name="model" required defaultValue={existing?.model ?? undefined} placeholder={t("modelPlaceholder")} className={inputClass} />
           </div>
           <div>
             <label htmlFor="bodyType" className={labelClass}>
               {t("bodyType")}
             </label>
-            <select id="bodyType" name="bodyType" className={inputClass} defaultValue="">
+            <select id="bodyType" name="bodyType" className={inputClass} defaultValue={existing?.bodyType ?? ""}>
               <option value="">{t("notSpecified")}</option>
               {CAR_BODY_TYPE_KEYS.map((key) => (
                 <option key={key} value={key}>
@@ -436,13 +583,20 @@ export function ListingForm({
             <label htmlFor="mileageKm" className={labelClass}>
               {t("mileageKm")}
             </label>
-            <input id="mileageKm" name="mileageKm" type="number" min="0" className={inputClass} />
+            <input
+              id="mileageKm"
+              name="mileageKm"
+              type="number"
+              min="0"
+              defaultValue={existing?.mileageKm ?? undefined}
+              className={inputClass}
+            />
           </div>
           <div>
             <label htmlFor="transmission" className={labelClass}>
               {t("transmission")}
             </label>
-            <select id="transmission" name="transmission" className={inputClass} defaultValue="">
+            <select id="transmission" name="transmission" className={inputClass} defaultValue={existing?.transmission ?? ""}>
               <option value="">{t("notSpecified")}</option>
               <option value="automatic">{t("transmissionAutomatic")}</option>
               <option value="manual">{t("transmissionManual")}</option>
@@ -452,7 +606,12 @@ export function ListingForm({
             <label htmlFor="usSpec" className={labelClass}>
               {t("usSpec")}
             </label>
-            <select id="usSpec" name="usSpec" className={inputClass} defaultValue="">
+            <select
+              id="usSpec"
+              name="usSpec"
+              className={inputClass}
+              defaultValue={existing?.usSpec == null ? "" : existing.usSpec ? "yes" : "no"}
+            >
               <option value="">{t("notSpecified")}</option>
               <option value="yes">{t("usSpecYes")}</option>
               <option value="no">{t("usSpecNo")}</option>
@@ -464,7 +623,7 @@ export function ListingForm({
 
       {isCar && (
         <label className="flex items-center gap-2 text-sm text-charcoal">
-          <input type="checkbox" name="lowMileage" className="h-4 w-4 rounded border-canvas-deep text-olive focus:ring-olive" />
+          <input type="checkbox" name="lowMileage" defaultChecked={existing?.lowMileage} className="h-4 w-4 rounded border-canvas-deep text-olive focus:ring-olive" />
           <span>{t("lowMileageLabel")}</span>
         </label>
       )}
@@ -477,7 +636,13 @@ export function ListingForm({
             <label htmlFor="productCategory" className={labelClass}>
               {t("productCategory")}
             </label>
-            <select id="productCategory" name="productCategory" required className={inputClass} defaultValue="">
+            <select
+              id="productCategory"
+              name="productCategory"
+              required
+              className={inputClass}
+              defaultValue={existing?.productCategory ?? ""}
+            >
               <option value="" disabled>
                 {t("chooseOne")}
               </option>
@@ -492,7 +657,7 @@ export function ListingForm({
             <label htmlFor="condition" className={labelClass}>
               {t("condition")}
             </label>
-            <select id="condition" name="condition" required className={inputClass} defaultValue="">
+            <select id="condition" name="condition" required className={inputClass} defaultValue={existing?.condition ?? ""}>
               <option value="" disabled>
                 {t("chooseOne")}
               </option>
@@ -514,7 +679,13 @@ export function ListingForm({
             <label htmlFor="serviceCategory" className={labelClass}>
               {t("serviceCategory")}
             </label>
-            <select id="serviceCategory" name="serviceCategory" required className={inputClass} defaultValue="">
+            <select
+              id="serviceCategory"
+              name="serviceCategory"
+              required
+              className={inputClass}
+              defaultValue={existing?.serviceCategory ?? ""}
+            >
               <option value="" disabled>
                 {t("chooseOne")}
               </option>
@@ -536,13 +707,13 @@ export function ListingForm({
             <label htmlFor="address" className={labelClass}>
               {t("address")}
             </label>
-            <input id="address" name="address" required className={inputClass} />
+            <input id="address" name="address" required defaultValue={existing?.address ?? undefined} className={inputClass} />
           </div>
           <div>
             <label htmlFor="city" className={labelClass}>
               {t("city")}
             </label>
-            <input id="city" name="city" required className={inputClass} />
+            <input id="city" name="city" required defaultValue={existing?.city} className={inputClass} />
           </div>
         </div>
       )}
@@ -552,7 +723,7 @@ export function ListingForm({
           <label htmlFor="city" className={labelClass}>
             {t("city")}
           </label>
-          <input id="city" name="city" required className={inputClass} />
+          <input id="city" name="city" required defaultValue={existing?.city} className={inputClass} />
         </div>
       )}
 
@@ -565,6 +736,7 @@ export function ListingForm({
             <input
               id="distanceToBase"
               name="distanceToBase"
+              defaultValue={existing?.distanceToBase ?? undefined}
               placeholder={t("distanceToBasePlaceholder")}
               className={inputClass}
             />
@@ -604,7 +776,7 @@ export function ListingForm({
             <label htmlFor="base" className={labelClass}>
               {t("nearestBase")}
             </label>
-            <select id="base" name="base" className={inputClass} defaultValue="">
+            <select id="base" name="base" className={inputClass} defaultValue={existing?.base ?? ""}>
               <option value="" disabled>
                 {t("chooseOne")}
               </option>
@@ -622,6 +794,7 @@ export function ListingForm({
             <input
               id="distanceToBase"
               name="distanceToBase"
+              defaultValue={existing?.distanceToBase ?? undefined}
               placeholder={t("distanceToBasePlaceholder")}
               className={inputClass}
             />
@@ -642,6 +815,7 @@ export function ListingForm({
             type="number"
             min="0"
             required
+            defaultValue={existing?.priceEurMonth}
             className={inputClass}
           />
           {isService && (
@@ -650,6 +824,7 @@ export function ListingForm({
                 <input
                   type="checkbox"
                   name="priceIsEstimate"
+                  defaultChecked={existing?.priceIsEstimate}
                   className="h-4 w-4 rounded border-canvas-deep text-olive focus:ring-olive"
                 />
                 <span>{t("priceIsEstimate")}</span>
@@ -657,6 +832,7 @@ export function ListingForm({
               <textarea
                 name="pricingNote"
                 rows={2}
+                defaultValue={existing?.pricingNote ?? undefined}
                 placeholder={t("pricingNotePlaceholder")}
                 className={`${inputClass} mt-2`}
               />
@@ -675,6 +851,7 @@ export function ListingForm({
               type="number"
               min="0"
               required
+              defaultValue={existing?.priceEurMonth}
               className={inputClass}
             />
           </div>
@@ -682,7 +859,15 @@ export function ListingForm({
             <label htmlFor="bedrooms" className={labelClass}>
               {t("bedrooms")}
             </label>
-            <input id="bedrooms" name="bedrooms" type="number" min="0" required className={inputClass} />
+            <input
+              id="bedrooms"
+              name="bedrooms"
+              type="number"
+              min="0"
+              required
+              defaultValue={existing?.bedrooms ?? undefined}
+              className={inputClass}
+            />
           </div>
           <div>
             <label htmlFor="bathrooms" className={labelClass}>
@@ -694,6 +879,7 @@ export function ListingForm({
               type="number"
               min="0"
               required
+              defaultValue={existing?.bathrooms ?? undefined}
               className={inputClass}
             />
           </div>
@@ -701,7 +887,14 @@ export function ListingForm({
             <label htmlFor="sizeSqm" className={labelClass}>
               {t("sizeSqm")}
             </label>
-            <input id="sizeSqm" name="sizeSqm" type="number" min="0" className={inputClass} />
+            <input
+              id="sizeSqm"
+              name="sizeSqm"
+              type="number"
+              min="0"
+              defaultValue={existing?.sizeSqm ?? undefined}
+              className={inputClass}
+            />
           </div>
         </div>
       )}
@@ -711,7 +904,13 @@ export function ListingForm({
           <label htmlFor="availableFrom" className={labelClass}>
             {t("availableFrom")}
           </label>
-          <input id="availableFrom" name="availableFrom" type="date" className={inputClass} />
+          <input
+            id="availableFrom"
+            name="availableFrom"
+            type="date"
+            defaultValue={existing?.availableFrom?.slice(0, 10) ?? undefined}
+            className={inputClass}
+          />
         </div>
       )}
 
@@ -728,6 +927,7 @@ export function ListingForm({
                   type="checkbox"
                   name="amenities"
                   value={key}
+                  defaultChecked={existing?.amenities.includes(key)}
                   className="h-4 w-4 flex-shrink-0 rounded border-canvas-deep text-olive focus:ring-olive"
                 />
                 <span>{tAmenities(key)}</span>
@@ -747,6 +947,7 @@ export function ListingForm({
             name="parkingSpaces"
             type="number"
             min="0"
+            defaultValue={existing?.parkingSpaces ?? undefined}
             placeholder={t("parkingSpacesPlaceholder")}
             className={inputClass}
           />
@@ -763,6 +964,7 @@ export function ListingForm({
                   type="checkbox"
                   name="nearbyAmenities"
                   value={key}
+                  defaultChecked={existing?.nearbyAmenities.includes(key)}
                   className="h-4 w-4 flex-shrink-0 rounded border-canvas-deep text-olive focus:ring-olive"
                 />
                 <span>{tNearbyAmenities(key)}</span>
@@ -778,7 +980,7 @@ export function ListingForm({
             <label htmlFor="internetType" className={labelClass}>
               {t("internetType")}
             </label>
-            <select id="internetType" name="internetType" className={inputClass} defaultValue="">
+            <select id="internetType" name="internetType" className={inputClass} defaultValue={existing?.internetType ?? ""}>
               <option value="">{t("notSpecified")}</option>
               <option value="dsl">{t("internetTypeDsl")}</option>
               <option value="cable">{t("internetTypeCable")}</option>
@@ -794,6 +996,7 @@ export function ListingForm({
               name="internetSpeedMbps"
               type="number"
               min="0"
+              defaultValue={existing?.internetSpeedMbps ?? undefined}
               className={inputClass}
             />
           </div>
@@ -806,7 +1009,7 @@ export function ListingForm({
             <label htmlFor="heatType" className={labelClass}>
               {t("heatType")}
             </label>
-            <select id="heatType" name="heatType" className={inputClass} defaultValue="">
+            <select id="heatType" name="heatType" className={inputClass} defaultValue={existing?.heatType ?? ""}>
               <option value="">{t("notSpecified")}</option>
               <option value="gas">{t("heatTypeGas")}</option>
               <option value="oil">{t("heatTypeOil")}</option>
@@ -817,7 +1020,7 @@ export function ListingForm({
             <label htmlFor="stoveType" className={labelClass}>
               {t("stoveType")}
             </label>
-            <select id="stoveType" name="stoveType" className={inputClass} defaultValue="">
+            <select id="stoveType" name="stoveType" className={inputClass} defaultValue={existing?.stoveType ?? ""}>
               <option value="">{t("notSpecified")}</option>
               <option value="induction">{t("stoveTypeInduction")}</option>
               <option value="standard">{t("stoveTypeStandard")}</option>
@@ -828,7 +1031,7 @@ export function ListingForm({
 
       {isRental && (
         <label className="flex items-center gap-2 text-sm text-charcoal">
-          <input type="checkbox" name="isNew" className="h-4 w-4 rounded border-canvas-deep text-olive focus:ring-olive" />
+          <input type="checkbox" name="isNew" defaultChecked={existing?.isNew} className="h-4 w-4 rounded border-canvas-deep text-olive focus:ring-olive" />
           <span>{t("isNewLabel")}</span>
         </label>
       )}
@@ -849,7 +1052,7 @@ export function ListingForm({
                   type="radio"
                   name="availableTo"
                   value={value}
-                  defaultChecked={value === "everyone"}
+                  defaultChecked={value === (existing?.availableTo ?? "everyone")}
                   className="sr-only"
                 />
                 {value === "everyone"
@@ -865,9 +1068,45 @@ export function ListingForm({
 
       <p className={sectionHeadingClass}>{t("sectionPhotos")}</p>
 
+      {existing && existing.photos.length > 0 && (
+        <div>
+          <span className={labelClass}>{t("currentPhotos")}</span>
+          <div className="flex flex-wrap gap-3">
+            {existing.photos.map((url, index) => {
+              const kept = keptPhotos.includes(url);
+              return (
+                <div key={url} className="flex w-24 flex-col items-center gap-1.5">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- tiny preview thumbnails */}
+                  <img
+                    src={url}
+                    alt={t("photoNumber", { number: index + 1 })}
+                    className={`h-24 w-24 rounded-md border border-canvas-deep object-cover ${kept ? "" : "opacity-30 grayscale"}`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setKeptPhotos((prev) =>
+                        kept ? prev.filter((u) => u !== url) : existing.photos.filter((u) => u === url || prev.includes(u)),
+                      )
+                    }
+                    className={`w-full rounded-md border px-2 py-1 text-xs font-semibold ${
+                      kept
+                        ? "border-canvas-deep text-ink-soft hover:border-rust hover:text-rust"
+                        : "border-olive text-olive-deep"
+                    }`}
+                  >
+                    {kept ? t("removePhoto") : t("undoRemovePhoto")}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <div>
         <label htmlFor="photos" className={labelClass}>
-          {t("photos")}
+          {isEdit ? t("addPhotos") : t("photos")}
         </label>
         <input
           id="photos"
@@ -907,7 +1146,9 @@ export function ListingForm({
       >
         {status === "submitting"
           ? progress || t("submitting")
-          : isAdminAdd
+          : isEdit
+            ? t("saveChanges")
+            : isAdminAdd
             ? isCar
               ? t("submitAdminAddCar")
               : isProduct

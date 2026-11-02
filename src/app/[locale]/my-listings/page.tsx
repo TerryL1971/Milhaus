@@ -6,8 +6,8 @@
 // place to keep up with everything posted under it, same idea as
 // bookoo's "My Items" — styled like the rest of Milhaus, not like bookoo.
 //
-// No content editing yet (title/price/photos are fixed after submission)
-// — status changes only for now; full edit is a fast-follow.
+// Content editing lives at /edit-listing/[id] (the Edit button on each
+// row); the status buttons here stay one-click.
 
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -155,6 +155,12 @@ export default async function MyListingsPage() {
                         </p>
                       </div>
                       <div className="flex gap-2">
+                        <Link
+                          href={`/edit-listing/${listing.id}`}
+                          className="rounded-md border border-canvas-deep px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-olive hover:text-olive-deep"
+                        >
+                          {t("edit")}
+                        </Link>
                         {status === "active" && (
                           <form action={markMyListingRented}>
                             <input type="hidden" name="id" value={listing.id} />

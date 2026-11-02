@@ -276,7 +276,16 @@
     "availableTo": "Verfügbar für",
     "availableToMilitaryOnly": "Nur US-Militär",
     "availableToMilitaryAndExpats": "US-Militär & Expats",
-    "availableToEveryone": "Alle"
+    "availableToEveryone": "Alle",
+    "saveChanges": "Änderungen speichern",
+    "successEditTitle": "Änderungen gespeichert",
+    "successEditBody": "Ihr Inserat wurde aktualisiert — die Änderungen sind jetzt online.",
+    "viewListing": "Inserat ansehen",
+    "currentPhotos": "Aktuelle Fotos",
+    "removePhoto": "Entfernen",
+    "undoRemovePhoto": "Rückgängig",
+    "addPhotos": "Weitere Fotos hinzufügen",
+    "photoNumber": "Foto {number}"
   },
   "ListingDetail": {
     "backToListings": "← Zurück zu den Angeboten",
@@ -598,7 +607,8 @@
     "markUnavailable": "Als nicht verfügbar markieren",
     "withdraw": "Zurückziehen",
     "discard": "Verwerfen",
-    "postAgain": "Erneut inserieren"
+    "postAgain": "Erneut inserieren",
+    "edit": "Bearbeiten"
   },
   "ReportListing": {
     "button": "Anzeige melden",
@@ -667,5 +677,9 @@
     "rateLimit": "Zu viele Versuche hintereinander — bitte warten Sie ein paar Minuten, bevor Sie es erneut versuchen.",
     "codeInvalid": "Der Link oder Code hat nicht funktioniert (er ist möglicherweise abgelaufen). Fordern Sie unten einen neuen an.",
     "network": "Der Server konnte nicht erreicht werden — prüfen Sie Ihre Verbindung und versuchen Sie es erneut."
+  },
+  "EditListingPage": {
+    "heading": "Inserat bearbeiten",
+    "body": "Ändern Sie unten, was Sie möchten, und klicken Sie auf „Änderungen speichern“. Ein aktives Inserat bleibt online."
   }
 }

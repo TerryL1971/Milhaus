@@ -206,6 +206,12 @@ export default async function AdminPage() {
                       </div>
                     </div>
                     <div className="flex gap-2">
+                      <Link
+                        href={`/edit-listing/${listing.id}`}
+                        className="rounded-md border border-canvas-deep px-4 py-2 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-olive hover:text-olive-deep"
+                      >
+                        Edit
+                      </Link>
                       <form action={approveListing}>
                         <input type="hidden" name="id" value={listing.id} />
                         <button
@@ -315,6 +321,12 @@ export default async function AdminPage() {
                       </td>
                       <td className="px-4 py-3 text-right">
                         <div className="flex justify-end gap-2">
+                          <Link
+                            href={`/edit-listing/${listing.id}`}
+                            className="rounded-md border border-canvas-deep px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-olive hover:text-olive-deep"
+                          >
+                            Edit
+                          </Link>
                           {listing.status === "active" && (
                             <form action={setFeatured}>
                               <input type="hidden" name="id" value={listing.id} />
@@ -401,6 +413,13 @@ export default async function AdminPage() {
                         {dateFormatter.format(new Date(listing.statusChangedAt))}
                       </td>
                       <td className="px-4 py-3 text-right">
+                        <div className="flex justify-end gap-2">
+                        <Link
+                          href={`/edit-listing/${listing.id}`}
+                          className="rounded-md border border-canvas-deep px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-olive hover:text-olive-deep"
+                        >
+                          Edit
+                        </Link>
                         <form action={relistListing}>
                           <input type="hidden" name="id" value={listing.id} />
                           <button
@@ -410,6 +429,7 @@ export default async function AdminPage() {
                             Relist
                           </button>
                         </form>
+                        </div>
                       </td>
                     </tr>
                   ))}
