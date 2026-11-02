@@ -285,7 +285,8 @@
     "removePhoto": "Remove",
     "undoRemovePhoto": "Undo",
     "addPhotos": "Add more photos",
-    "photoNumber": "Photo {number}"
+    "photoNumber": "Photo {number}",
+    "availableToNotSaved": "Everything else was saved, but \"Available to\" couldn't be yet — the site's database still needs a one-time update. Once that's done, edit this listing and set it again."
   },
   "ListingDetail": {
     "backToListings": "← Back to listings",

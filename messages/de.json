@@ -285,7 +285,8 @@
     "removePhoto": "Entfernen",
     "undoRemovePhoto": "Rückgängig",
     "addPhotos": "Weitere Fotos hinzufügen",
-    "photoNumber": "Foto {number}"
+    "photoNumber": "Foto {number}",
+    "availableToNotSaved": "Alles andere wurde gespeichert, aber „Verfügbar für“ noch nicht — die Datenbank der Website braucht noch ein einmaliges Update. Danach dieses Inserat bearbeiten und die Auswahl erneut setzen."
   },
   "ListingDetail": {
     "backToListings": "← Zurück zu den Angeboten",

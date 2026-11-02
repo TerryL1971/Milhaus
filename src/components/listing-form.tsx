@@ -146,6 +146,10 @@ export function ListingForm({
   const [status, setStatus] = useState<Status>("idle");
   const [progress, setProgress] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  // True when the save went through but "Available to" had to be left
+  // out (the PGRST204 fallback below) — said out loud on the success
+  // screen rather than silently dropping what the lister picked.
+  const [availableToSkipped, setAvailableToSkipped] = useState(false);
   // Cars only — a dealer isn't tied to one base the way a rental is, so
   // this can be several (or "every location") instead of the single
   // <select> every other kind uses.
@@ -232,6 +236,7 @@ export function ListingForm({
     // this database. Save the home without it rather than failing the
     // whole post over one optional badge.
     if (detailsError?.code === "PGRST204" && isRental) {
+      setAvailableToSkipped(formData.get("availableTo") !== "everyone");
       ({ error: detailsError } = await supabase
         .from(details.table)
         .insert({ listing_id: listingId, ...details.values, available_to: undefined }));
@@ -364,6 +369,7 @@ export function ListingForm({
     const details = detailsPayload(kind, formData);
     let { error: detailsError } = await supabase.from(details.table).update(details.values).eq("listing_id", listing.id);
     if (detailsError?.code === "PGRST204" && isRental) {
+      setAvailableToSkipped(formData.get("availableTo") !== "everyone");
       ({ error: detailsError } = await supabase
         .from(details.table)
         .update({ ...details.values, available_to: undefined })
@@ -393,6 +399,11 @@ export function ListingForm({
       <div className="rounded-md border border-canvas-deep bg-paper p-6 text-center">
         <p className="mb-1 font-display text-xl font-semibold text-ink">{t("successEditTitle")}</p>
         <p className="mb-4 text-sm text-ink-soft">{t("successEditBody")}</p>
+        {availableToSkipped && (
+          <p className="mb-4 rounded-md border border-rust/40 bg-rust/10 px-3 py-2 text-sm text-rust">
+            {t("availableToNotSaved")}
+          </p>
+        )}
         <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
           <Link
             href={`${isCar ? "/cars" : isProduct ? "/products" : isService ? "/services" : "/listings"}/${existing.id}`}
@@ -439,6 +450,11 @@ export function ListingForm({
                   ? t("successSelfListServiceBody")
                   : t("successSelfListBody")}
         </p>
+        {availableToSkipped && (
+          <p className="mb-4 rounded-md border border-rust/40 bg-rust/10 px-3 py-2 text-sm text-rust">
+            {t("availableToNotSaved")}
+          </p>
+        )}
         {isAdminAdd ? (
           <Link href="/admin" className="text-sm font-semibold text-olive-deep hover:underline">
             {t("backToAdmin")}
