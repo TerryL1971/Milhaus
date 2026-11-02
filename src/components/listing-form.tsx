@@ -833,15 +833,14 @@ export function ListingForm({
         </label>
       )}
 
-      {/* Charlie's "available to" ask — a two-way toggle rather than a
-          checkbox so neither choice reads as the "off" state. Defaults to
-          the open-to-everyone option; a lister flips it only when the
-          home is military-only. */}
+      {/* Charlie's "available to" ask — a three-way toggle rather than
+          checkboxes so exactly one is always picked. Defaults to Everyone
+          (no badge); a lister flips it only when the home is restricted. */}
       {isRental && (
         <fieldset>
           <legend className={labelClass}>{t("availableTo")}</legend>
-          <div className="grid max-w-md grid-cols-2 overflow-hidden rounded-md border border-canvas-deep">
-            {(["military_and_expats", "military_only"] as const).map((value) => (
+          <div className="grid max-w-lg grid-cols-1 divide-y divide-canvas-deep overflow-hidden rounded-md border border-canvas-deep sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+            {(["everyone", "military_and_expats", "military_only"] as const).map((value) => (
               <label
                 key={value}
                 className="flex cursor-pointer items-center justify-center px-3 py-2 text-center text-sm text-charcoal transition-colors has-[:checked]:bg-ink has-[:checked]:text-paper has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-olive"
@@ -850,10 +849,14 @@ export function ListingForm({
                   type="radio"
                   name="availableTo"
                   value={value}
-                  defaultChecked={value === "military_and_expats"}
+                  defaultChecked={value === "everyone"}
                   className="sr-only"
                 />
-                {value === "military_only" ? t("availableToMilitaryOnly") : t("availableToMilitaryAndExpats")}
+                {value === "everyone"
+                  ? t("availableToEveryone")
+                  : value === "military_only"
+                    ? t("availableToMilitaryOnly")
+                    : t("availableToMilitaryAndExpats")}
               </label>
             ))}
           </div>

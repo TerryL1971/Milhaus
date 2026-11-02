@@ -77,8 +77,9 @@ export interface Listing {
    * computed from created_at). Defaults false. */
   isNew: boolean;
   /** Rental only — who the home is open to, Charlie's "available to"
-   * badge. Null on listings posted before the field existed. */
-  availableTo: "military_only" | "military_and_expats" | null;
+   * badge. "everyone" shows no badge; null on listings posted before
+   * the field existed. */
+  availableTo: "everyone" | "military_and_expats" | "military_only" | null;
   /** Car only — null on a rental. */
   make: string | null;
   /** Car only — null on a rental. */

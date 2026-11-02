@@ -96,8 +96,9 @@ export function ListingCard({
           </div>
         )}
         {/* Bottom-left so it never competes with the top-left badge stack
-            or the favorite heart top-right. */}
-        {listing.availableTo && (
+            or the favorite heart top-right. "everyone" is the unrestricted
+            default, so it gets no badge. */}
+        {listing.availableTo && listing.availableTo !== "everyone" && (
           <span className="absolute bottom-2.5 left-2.5 rounded-[3px] bg-ink/90 px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
             {listing.availableTo === "military_only" ? t("availableToMilitaryOnly") : t("availableToMilitaryAndExpats")}
           </span>

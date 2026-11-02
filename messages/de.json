@@ -275,7 +275,8 @@
     "sectionPhotos": "Fotos",
     "availableTo": "Verfügbar für",
     "availableToMilitaryOnly": "Nur US-Militär",
-    "availableToMilitaryAndExpats": "US-Militär & Expats"
+    "availableToMilitaryAndExpats": "US-Militär & Expats",
+    "availableToEveryone": "Alle"
   },
   "ListingDetail": {
     "backToListings": "← Zurück zu den Angeboten",
