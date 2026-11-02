@@ -10,6 +10,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { extendExpiry } from "@/lib/listing-expiry";
+import { isAdminRole } from "@/lib/roles";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
 async function updateListingStatus(id: string, status: string) {
@@ -51,6 +54,29 @@ export async function archiveListing(formData: FormData) {
 // so this doesn't route back through pending_review.
 export async function relistListing(formData: FormData) {
   await updateListingStatus(formData.get("id") as string, "active");
+}
+
+// Charlie's override (2026-11-02): another 30 days on any active or
+// expired listing, never charged — whatever the poster would otherwise
+// owe for renewing. Same extendExpiry as a poster's own renewal
+// (expired -> live for 30 days; active -> 30 days on top of what's
+// left). Unlike the other actions here this one can't lean on RLS, since
+// extendExpiry writes with the service-role client, so it checks admin
+// itself first.
+export async function grantFreeThirtyDays(formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const { data: profile } = user
+    ? await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle()
+    : { data: null };
+  if (!isAdminRole(profile?.role)) {
+    throw new Error("That didn't go through — you may not have permission to do this.");
+  }
+
+  await extendExpiry(createAdminClient(), [formData.get("id") as string]);
+  revalidatePath("/admin");
 }
 
 export async function setFeatured(formData: FormData) {

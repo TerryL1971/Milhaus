@@ -12,6 +12,7 @@ import { redirect } from "next/navigation";
 import {
   approveListing,
   archiveListing,
+  grantFreeThirtyDays,
   markRented,
   rejectListing,
   relistListing,
@@ -349,6 +350,18 @@ export default async function AdminPage() {
                             </form>
                           )}
                           {listing.status === "active" && (
+                            <form action={grantFreeThirtyDays}>
+                              <input type="hidden" name="id" value={listing.id} />
+                              <button
+                                type="submit"
+                                title="Another 30 days on the site, no charge to the poster"
+                                className="rounded-md border border-canvas-deep px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-olive hover:text-olive-deep"
+                              >
+                                +30 days free
+                              </button>
+                            </form>
+                          )}
+                          {listing.status === "active" && (
                             <form action={markRented}>
                               <input type="hidden" name="id" value={listing.id} />
                               <button
@@ -433,13 +446,16 @@ export default async function AdminPage() {
                         >
                           Edit
                         </Link>
-                        <form action={relistListing}>
+                        {/* An expired listing's Relist *is* the free 30 days —
+                            labeled as such so Charlie knows the poster isn't
+                            charged for it. */}
+                        <form action={listing.status === "expired" ? grantFreeThirtyDays : relistListing}>
                           <input type="hidden" name="id" value={listing.id} />
                           <button
                             type="submit"
                             className="rounded-md border border-canvas-deep px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-olive hover:text-olive-deep"
                           >
-                            Relist
+                            {listing.status === "expired" ? "+30 days free" : "Relist"}
                           </button>
                         </form>
                         </div>

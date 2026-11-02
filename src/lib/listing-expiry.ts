@@ -37,4 +37,10 @@ export async function extendExpiry(admin: ReturnType<typeof createAdminClient>, 
     const { error: updateError } = await admin.from("listings").update(update).eq("id", listing.id);
     if (updateError) throw new Error(updateError.message);
   }
+
+  // A renewal still sitting unpaid in the poster's cart is settled now —
+  // e.g. Charlie granted the free 30 days after they'd pressed Renew on
+  // a paid category. Leaving the cart line would let them pay for days
+  // they already have.
+  await admin.from("cart_items").delete().in("listing_id", listingIds);
 }
