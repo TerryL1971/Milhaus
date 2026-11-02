@@ -6,8 +6,10 @@
 // `draft` listing or business, owned by the signed-in caller (ListingForm
 // and the business-posting form both insert into cart_items right after
 // saving their draft), or an active/expired listing being renewed for
-// another 30 days from My Listings — this just prices and pays for all of them at
-// once, then publishes every one. Listings go straight to active —
+// another 30 days from My Listings, or an ad order from /advertise —
+// this just prices and pays for all of them at once, then publishes
+// every one (an ad order becomes its hidden ad spots, see
+// src/lib/ad-orders.ts). Listings go straight to active —
 // Charlie's call (2026-10-15): with volume potentially in the hundreds a
 // day, payment itself is the gate now, not his manual review; he
 // monitors the live site and takes down anything that's cheating instead
@@ -31,6 +33,8 @@ import { getStripe } from "@/lib/stripe";
 import { SITE_URL } from "@/lib/site-url";
 import { tryActivateBusiness } from "@/lib/businesses-queries";
 import { extendExpiry } from "@/lib/listing-expiry";
+import { fulfillAdOrder } from "@/lib/ad-orders";
+import { getAdOrderNames } from "@/lib/ad-orders-queries";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -42,21 +46,25 @@ async function getCart(userId: string) {
 
   const listingIds = items.filter((i) => i.listing_id).map((i) => i.listing_id as string);
   const businessIds = items.filter((i) => i.business_id).map((i) => i.business_id as string);
+  const adOrderIds = items.filter((i) => i.ad_order_id).map((i) => i.ad_order_id as string);
 
-  const [{ data: listings }, { data: businesses }] = await Promise.all([
+  const [{ data: listings }, { data: businesses }, adOrderNames] = await Promise.all([
     listingIds.length > 0
       ? supabase.from("listings").select("id, title").in("id", listingIds)
       : Promise.resolve({ data: [] as { id: string; title: string }[] }),
     businessIds.length > 0
       ? supabase.from("businesses").select("id, name").in("id", businessIds)
       : Promise.resolve({ data: [] as { id: string; name: string }[] }),
+    getAdOrderNames(adOrderIds),
   ]);
 
   return items.map((item) => ({
     ...item,
     name: item.listing_id
       ? (listings?.find((l) => l.id === item.listing_id)?.title ?? "Listing fee")
-      : (businesses?.find((b) => b.id === item.business_id)?.name ?? "Business listing fee"),
+      : item.business_id
+        ? (businesses?.find((b) => b.id === item.business_id)?.name ?? "Business listing fee")
+        : (adOrderNames.get(item.ad_order_id as string) ?? "Advertising"),
   }));
 }
 
@@ -76,11 +84,23 @@ export async function removeFromCart(formData: FormData) {
   const supabase = await createClient();
   const { data: item } = await supabase
     .from("cart_items")
-    .select("listing_id, business_id")
+    .select("listing_id, business_id, ad_order_id")
     .eq("id", cartItemId)
     .eq("user_id", user.id)
     .single();
   if (!item) return;
+
+  // An unpaid ad order only ever exists for its cart line; deleting it
+  // takes the cart line with it (on delete cascade). Service-role since
+  // buyers can only read ad_orders, guarded to this buyer's unpaid one.
+  if (item.ad_order_id) {
+    await createAdminClient()
+      .from("ad_orders")
+      .delete()
+      .eq("id", item.ad_order_id)
+      .eq("user_id", user.id)
+      .eq("status", "cart");
+  }
 
   // An abandoned draft has no other path to ever going live — clean it
   // up along with the cart entry rather than leaving an orphaned row.
@@ -120,6 +140,7 @@ export async function startCartStripeCheckout() {
     items.map((item) => ({
       listing_id: item.listing_id,
       business_id: item.business_id,
+      ad_order_id: item.ad_order_id,
       provider: "stripe",
       provider_reference: session.id,
       amount_eur: item.price_eur,
@@ -143,7 +164,7 @@ export async function settleCartPayment(providerReference: string) {
 
   const { data: payments } = await admin
     .from("listing_payments")
-    .select("listing_id, business_id")
+    .select("listing_id, business_id, ad_order_id")
     .eq("provider_reference", providerReference)
     .eq("status", "pending");
 
@@ -157,6 +178,7 @@ export async function settleCartPayment(providerReference: string) {
 
   const listingIds = payments.filter((p) => p.listing_id).map((p) => p.listing_id as string);
   const businessIds = payments.filter((p) => p.business_id).map((p) => p.business_id as string);
+  const adOrderIds = payments.filter((p) => p.ad_order_id).map((p) => p.ad_order_id as string);
 
   if (listingIds.length > 0) {
     // A cart line for a listing that's already active or expired is a
@@ -191,15 +213,23 @@ export async function settleCartPayment(providerReference: string) {
     }
   }
 
+  for (const adOrderId of adOrderIds) {
+    await fulfillAdOrder(admin, adOrderId);
+  }
+
   // Find whoever owns these and clear their cart — a payment reference
   // only ever belongs to one user's checkout.
-  const ownerId = await findPaymentOwner(listingIds, businessIds);
+  const ownerId = await findPaymentOwner(listingIds, businessIds, adOrderIds);
   if (ownerId) {
     await admin.from("cart_items").delete().eq("user_id", ownerId);
   }
 }
 
-async function findPaymentOwner(listingIds: string[], businessIds: string[]): Promise<string | null> {
+async function findPaymentOwner(
+  listingIds: string[],
+  businessIds: string[],
+  adOrderIds: string[],
+): Promise<string | null> {
   const admin = createAdminClient();
   if (listingIds.length > 0) {
     const { data } = await admin.from("listings").select("owner_id").eq("id", listingIds[0]).single();
@@ -208,6 +238,10 @@ async function findPaymentOwner(listingIds: string[], businessIds: string[]): Pr
   if (businessIds.length > 0) {
     const { data } = await admin.from("businesses").select("owner_id").eq("id", businessIds[0]).single();
     return data?.owner_id ?? null;
+  }
+  if (adOrderIds.length > 0) {
+    const { data } = await admin.from("ad_orders").select("user_id").eq("id", adOrderIds[0]).single();
+    return data?.user_id ?? null;
   }
   return null;
 }

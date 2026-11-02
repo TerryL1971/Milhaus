@@ -64,7 +64,8 @@
     "terms": "Terms & Conditions",
     "privacy": "Privacy Policy",
     "impressum": "Impressum",
-    "tagline": "A resource for the American community living in Germany. Not affiliated with the U.S. Department of Defense."
+    "tagline": "A resource for the American community living in Germany. Not affiliated with the U.S. Department of Defense.",
+    "advertise": "Advertise with us"
   },
   "CookieConsent": {
     "message": "We'd like to use privacy-friendly analytics to see how Milhaus is used. We won't turn this on until you say it's okay — the site keeps working the same either way.",
@@ -616,7 +617,8 @@
     "expiredHeading": "Expired",
     "expiredNote": "Off the site after 30 days. Renew to put it back up for another 30.",
     "expiresOn": "Live until {date}",
-    "renew": "Renew for 30 days"
+    "renew": "Renew for 30 days",
+    "myAds": "My ads"
   },
   "ReportListing": {
     "button": "Report this listing",
@@ -689,5 +691,68 @@
   "EditListingPage": {
     "heading": "Edit your listing",
     "body": "Change anything below and press Save changes. If the listing is live, it stays live."
+  },
+  "AdvertisePage": {
+    "metaTitle": "Advertise on Milhaus",
+    "metaDescription": "Put your business in front of Americans living in Germany — banner, Cars sidebar and Special Offers ad spots for 30 days up to several years.",
+    "heading": "Advertise on Milhaus",
+    "subhead": "Put your business in front of the American military and expat community in Germany. Buy one spot or twenty, for 30 days or several years — the longer you book, the less you pay per month.",
+    "site_bannerName": "Site banner",
+    "site_bannerWhere": "A full-width strip on the homepage and every category page.",
+    "site_bannerSize": "Design at 1536 × 96 px",
+    "cars_sidebarName": "Cars sidebar",
+    "cars_sidebarWhere": "A tall ad next to every car on the Cars page.",
+    "cars_sidebarSize": "Design at 300 × 600 px",
+    "special_offersName": "Special Offers card",
+    "special_offersWhere": "A large card on the homepage's Special Offers row and the Offers page.",
+    "special_offersSize": "Design at 500 × 600 px",
+    "term30": "30 days",
+    "term90": "90 days",
+    "term180": "6 months",
+    "termYears": "{count, plural, =1 {1 year} other {# years}}",
+    "save": "Save {pct}%",
+    "askUs": "Ask us for a price",
+    "longerNote": "Prices are per ad spot. More than a year is charged at the 1-year price for each year. When several ads share a spot, they take turns.",
+    "buyHeading": "Buy ad spots",
+    "buyBody": "Add as many as you like to your cart, then pay for everything at once by card, Apple Pay, Google Pay or PayPal.",
+    "businessName": "Your business name",
+    "placement": "Ad spot",
+    "quantity": "How many",
+    "howLong": "How long",
+    "clockNote": "After paying, you upload your artwork under My ads. Each spot's time only starts counting once it goes live.",
+    "addToCart": "Add to cart",
+    "signInToBuy": "Sign in to buy",
+    "notOnSale": "Online booking isn't open yet. Email us and we'll send you a quote:",
+    "invoiceHeading": "Prefer an invoice?",
+    "invoiceBody": "For a bigger campaign, or if you'd rather pay by invoice, email us what you have in mind. We'll send an itemized invoice you can pay online or by bank transfer.",
+    "invoiceSubject": "Advertising on Milhaus",
+    "invoiceCta": "Email us for an invoice"
+  },
+  "MyAdsPage": {
+    "heading": "My ads",
+    "subhead": "The ad spots you've bought. Add your artwork to put each one live.",
+    "buyMore": "Buy more ad spots",
+    "empty": "You haven't bought any ad spots yet.",
+    "needsArtworkHeading": "Waiting for artwork",
+    "needsArtworkNote": "Paid for and ready. Each one's time starts when you put it live.",
+    "liveHeading": "Live",
+    "liveNote": "You can swap the artwork or link at any time.",
+    "finishedHeading": "Finished",
+    "finishedNote": "These have run their time. Buy new spots to keep advertising.",
+    "placement_site_banner": "Site banner",
+    "placement_cars_sidebar": "Cars sidebar",
+    "placement_special_offers": "Special Offers card",
+    "spotNumber": "spot {number}",
+    "runsFor": "Runs {days} days once live",
+    "liveUntil": "Live until {date}",
+    "endedOn": "Ended {date}",
+    "linkUrl": "Where the ad links to (your website)",
+    "image": "Your artwork (image, up to 1 MB)",
+    "replaceImage": "Replace the artwork (image, up to 1 MB)",
+    "textInstead": "No artwork yet? Show a plain text ad instead",
+    "textHeading": "Heading",
+    "textBody": "Short line under it",
+    "putLive": "Put it live",
+    "saveChanges": "Save changes"
   }
 }

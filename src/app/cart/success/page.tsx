@@ -47,11 +47,16 @@ function Confirmation() {
         <p className="mb-2 font-display text-xl font-semibold text-ink">Payment received</p>
         <p className="mb-4 text-sm text-ink-soft">
           Listings are live now. Any business listing goes live as soon as its consent email is
-          confirmed.
+          confirmed. Bought ad spots? Add your artwork in My ads to put them live.
         </p>
-        <Link href="/my-listings" className="text-sm font-semibold text-olive-deep hover:underline">
-          Go to My listings
-        </Link>
+        <div className="flex justify-center gap-6">
+          <Link href="/my-listings" className="text-sm font-semibold text-olive-deep hover:underline">
+            Go to My listings
+          </Link>
+          <Link href="/my-ads" className="text-sm font-semibold text-olive-deep hover:underline">
+            Go to My ads
+          </Link>
+        </div>
       </div>
     </main>
   );

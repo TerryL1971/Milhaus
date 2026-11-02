@@ -7,7 +7,7 @@
 import { createClient } from "@/lib/supabase/server";
 import type { AdSlot, AdPlacement } from "@/lib/ad-slots";
 
-function mapRow(row: Record<string, unknown>): AdSlot {
+export function mapAdSlotRow(row: Record<string, unknown>): AdSlot {
   return {
     id: row.id as string,
     placement: row.placement as AdPlacement,
@@ -15,16 +15,23 @@ function mapRow(row: Record<string, unknown>): AdSlot {
     imageUrl: (row.image_url as string | null) ?? null,
     heading: (row.heading as string | null) ?? null,
     bodyText: (row.body_text as string | null) ?? null,
-    linkUrl: row.link_url as string,
+    // Only a bought spot still waiting on artwork has no link, and that
+    // one is never live (ad_slots_live_needs_link).
+    linkUrl: (row.link_url as string | null) ?? "",
     isActive: Boolean(row.is_active),
     sortOrder: Number(row.sort_order),
     createdAt: row.created_at as string,
+    durationDays: (row.duration_days as number | null) ?? null,
+    endsAt: (row.ends_at as string | null) ?? null,
+    ownerId: (row.owner_id as string | null) ?? null,
   };
 }
 
 /** The public-facing read — SponsorBannerCarousel and CarsSidebarBanner
  * both just need "every active ad for this placement, in display
- * order." RLS already restricts anon/public reads to is_active=true. */
+ * order." RLS already restricts anon/public reads to live ones; the
+ * ends_at filter is for admins and a spot's own buyer, whom RLS also
+ * shows finished spots that the daily cron hasn't hidden yet. */
 export async function getActiveAdSlots(placement: AdPlacement): Promise<AdSlot[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -32,13 +39,14 @@ export async function getActiveAdSlots(placement: AdPlacement): Promise<AdSlot[]
     .select("*")
     .eq("placement", placement)
     .eq("is_active", true)
+    .or(`ends_at.is.null,ends_at.gt.${new Date().toISOString()}`)
     .order("sort_order", { ascending: true });
 
   if (error) {
     console.error("getActiveAdSlots failed:", error.message);
     return [];
   }
-  return (data ?? []).map(mapRow);
+  return (data ?? []).map(mapAdSlotRow);
 }
 
 /** Every ad slot regardless of active state — /admin/ads. */
@@ -54,5 +62,5 @@ export async function getAllAdSlots(): Promise<AdSlot[]> {
     console.error("getAllAdSlots failed:", error.message);
     return [];
   }
-  return (data ?? []).map(mapRow);
+  return (data ?? []).map(mapAdSlotRow);
 }

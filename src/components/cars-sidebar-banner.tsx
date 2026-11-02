@@ -34,10 +34,13 @@ const FALLBACK_AD: AdSlot = {
   imageUrl: null,
   heading: "Advertise here",
   bodyText: "Click to find out how",
-  linkUrl: "mailto:info@milhaus.de?subject=Advertising%20on%20Milhaus",
+  linkUrl: "/advertise",
   isActive: true,
   sortOrder: 0,
   createdAt: "",
+  durationDays: null,
+  endsAt: null,
+  ownerId: null,
 };
 
 const VISIBLE_SECONDS = 6;

@@ -76,7 +76,12 @@ export default async function MyListingsPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/sign-in?next=/my-listings");
 
-  const [listings, profile] = await Promise.all([getMyListings(user.id), getProfile(user.id)]);
+  const [listings, profile, { count: adSpotCount }] = await Promise.all([
+    getMyListings(user.id),
+    getProfile(user.id),
+    // Only advertisers get the My ads button — most posters never buy one.
+    supabase.from("ad_slots").select("id", { count: "exact", head: true }).eq("owner_id", user.id),
+  ]);
 
   const groups: { status: ListingStatus; heading: string; empty: string }[] = [
     { status: "pending_review", heading: t("pendingHeading"), empty: t("pendingEmpty") },
@@ -95,7 +100,15 @@ export default async function MyListingsPage() {
             <h1 className="mb-1 font-display text-3xl font-semibold text-ink">{t("heading")}</h1>
             <p className="text-ink-soft">{t("subhead")}</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
+            {(adSpotCount ?? 0) > 0 && (
+              <Link
+                href="/my-ads"
+                className="rounded-md border border-ink px-4 py-2.5 text-sm font-semibold text-ink transition-[transform] hover:-translate-y-px hover:border-brass hover:text-brass-deep"
+              >
+                {t("myAds")}
+              </Link>
+            )}
             <Link
               href="/post"
               className="rounded-md border border-canvas-deep px-4 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-olive hover:text-olive-deep"

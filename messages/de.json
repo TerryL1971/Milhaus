@@ -64,7 +64,8 @@
     "terms": "AGB",
     "privacy": "Datenschutz",
     "impressum": "Impressum",
-    "tagline": "Eine Anlaufstelle für die amerikanische Community in Deutschland. Nicht verbunden mit dem US-Verteidigungsministerium."
+    "tagline": "Eine Anlaufstelle für die amerikanische Community in Deutschland. Nicht verbunden mit dem US-Verteidigungsministerium.",
+    "advertise": "Bei uns werben"
   },
   "CookieConsent": {
     "message": "Wir möchten datenschutzfreundliche Analysen nutzen, um zu sehen, wie Milhaus verwendet wird. Wir aktivieren dies erst, wenn Sie zustimmen — die Seite funktioniert in jedem Fall gleich.",
@@ -616,7 +617,8 @@
     "expiredHeading": "Abgelaufen",
     "expiredNote": "Nach 30 Tagen von der Website genommen. Verlängern, um es weitere 30 Tage online zu stellen.",
     "expiresOn": "Online bis {date}",
-    "renew": "Um 30 Tage verlängern"
+    "renew": "Um 30 Tage verlängern",
+    "myAds": "Meine Anzeigen"
   },
   "ReportListing": {
     "button": "Anzeige melden",
@@ -689,5 +691,68 @@
   "EditListingPage": {
     "heading": "Inserat bearbeiten",
     "body": "Ändern Sie unten, was Sie möchten, und klicken Sie auf „Änderungen speichern“. Ein aktives Inserat bleibt online."
+  },
+  "AdvertisePage": {
+    "metaTitle": "Werben auf Milhaus",
+    "metaDescription": "Erreichen Sie Amerikaner in Deutschland — Banner-, Auto-Seitenleisten- und Sonderangebots-Werbeplätze von 30 Tagen bis zu mehreren Jahren.",
+    "heading": "Werben auf Milhaus",
+    "subhead": "Präsentieren Sie Ihr Unternehmen der amerikanischen Militär- und Expat-Community in Deutschland. Buchen Sie einen Werbeplatz oder zwanzig, für 30 Tage oder mehrere Jahre — je länger Sie buchen, desto weniger zahlen Sie pro Monat.",
+    "site_bannerName": "Seitenbanner",
+    "site_bannerWhere": "Ein Streifen über die volle Breite auf der Startseite und jeder Kategorieseite.",
+    "site_bannerSize": "Gestaltung in 1536 × 96 px",
+    "cars_sidebarName": "Auto-Seitenleiste",
+    "cars_sidebarWhere": "Eine hohe Anzeige neben allen Autos auf der Autos-Seite.",
+    "cars_sidebarSize": "Gestaltung in 300 × 600 px",
+    "special_offersName": "Sonderangebots-Karte",
+    "special_offersWhere": "Eine große Karte in der Sonderangebote-Reihe der Startseite und auf der Angebote-Seite.",
+    "special_offersSize": "Gestaltung in 500 × 600 px",
+    "term30": "30 Tage",
+    "term90": "90 Tage",
+    "term180": "6 Monate",
+    "termYears": "{count, plural, =1 {1 Jahr} other {# Jahre}}",
+    "save": "{pct} % sparen",
+    "askUs": "Preis auf Anfrage",
+    "longerNote": "Preise gelten pro Werbeplatz. Mehr als ein Jahr wird pro Jahr zum 1-Jahres-Preis berechnet. Teilen sich mehrere Anzeigen einen Platz, wechseln sie sich ab.",
+    "buyHeading": "Werbeplätze kaufen",
+    "buyBody": "Legen Sie so viele in den Warenkorb, wie Sie möchten, und bezahlen Sie alles auf einmal per Karte, Apple Pay, Google Pay oder PayPal.",
+    "businessName": "Name Ihres Unternehmens",
+    "placement": "Werbeplatz",
+    "quantity": "Anzahl",
+    "howLong": "Laufzeit",
+    "clockNote": "Nach der Zahlung laden Sie Ihr Motiv unter „Meine Anzeigen“ hoch. Die Laufzeit jedes Platzes beginnt erst, wenn er online geht.",
+    "addToCart": "In den Warenkorb",
+    "signInToBuy": "Zum Kaufen anmelden",
+    "notOnSale": "Die Online-Buchung ist noch nicht geöffnet. Schreiben Sie uns, wir senden Ihnen ein Angebot:",
+    "invoiceHeading": "Lieber auf Rechnung?",
+    "invoiceBody": "Für eine größere Kampagne oder wenn Sie lieber per Rechnung zahlen, schreiben Sie uns, was Sie vorhaben. Wir senden Ihnen eine aufgeschlüsselte Rechnung, die Sie online oder per Überweisung bezahlen können.",
+    "invoiceSubject": "Werbung auf Milhaus",
+    "invoiceCta": "Rechnung per E-Mail anfragen"
+  },
+  "MyAdsPage": {
+    "heading": "Meine Anzeigen",
+    "subhead": "Ihre gekauften Werbeplätze. Fügen Sie Ihr Motiv hinzu, um jeden Platz online zu stellen.",
+    "buyMore": "Weitere Werbeplätze kaufen",
+    "empty": "Sie haben noch keine Werbeplätze gekauft.",
+    "needsArtworkHeading": "Warten auf Motiv",
+    "needsArtworkNote": "Bezahlt und bereit. Die Laufzeit beginnt, wenn Sie den Platz online stellen.",
+    "liveHeading": "Online",
+    "liveNote": "Sie können Motiv oder Link jederzeit austauschen.",
+    "finishedHeading": "Abgelaufen",
+    "finishedNote": "Diese sind abgelaufen. Kaufen Sie neue Plätze, um weiter zu werben.",
+    "placement_site_banner": "Seitenbanner",
+    "placement_cars_sidebar": "Auto-Seitenleiste",
+    "placement_special_offers": "Sonderangebots-Karte",
+    "spotNumber": "Platz {number}",
+    "runsFor": "Läuft {days} Tage ab Freischaltung",
+    "liveUntil": "Online bis {date}",
+    "endedOn": "Beendet am {date}",
+    "linkUrl": "Wohin die Anzeige verlinkt (Ihre Website)",
+    "image": "Ihr Motiv (Bild, bis 1 MB)",
+    "replaceImage": "Motiv ersetzen (Bild, bis 1 MB)",
+    "textInstead": "Noch kein Motiv? Stattdessen eine reine Textanzeige zeigen",
+    "textHeading": "Überschrift",
+    "textBody": "Kurze Zeile darunter",
+    "putLive": "Online stellen",
+    "saveChanges": "Änderungen speichern"
   }
 }

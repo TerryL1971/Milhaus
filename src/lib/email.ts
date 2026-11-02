@@ -13,6 +13,9 @@ type SendEmailInput = {
   to: string;
   subject: string;
   html: string;
+  /** Where a reply goes instead of the no-reply sender — e.g. an
+   * advertiser replying with their artwork. */
+  replyTo?: string;
 };
 
 /** Best-effort: logs and returns false instead of throwing when email
@@ -20,7 +23,7 @@ type SendEmailInput = {
  * request that can't be emailed yet shouldn't block the submission
  * itself — Charlie can still record consent manually (paper form,
  * verbal) while Resend isn't set up. */
-export async function sendEmail({ to, subject, html }: SendEmailInput): Promise<boolean> {
+export async function sendEmail({ to, subject, html, replyTo }: SendEmailInput): Promise<boolean> {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.EMAIL_FROM;
 
@@ -40,7 +43,7 @@ export async function sendEmail({ to, subject, html }: SendEmailInput): Promise<
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ from, to, subject, html }),
+      body: JSON.stringify({ from, to, subject, html, ...(replyTo ? { reply_to: replyTo } : {}) }),
     });
 
     if (!response.ok) {

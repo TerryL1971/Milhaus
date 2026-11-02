@@ -19,6 +19,7 @@ function revalidateAdPaths() {
   revalidatePath("/listings");
   revalidatePath("/offers");
   revalidatePath("/services");
+  revalidatePath("/my-ads");
 }
 
 export async function createAdSlot(formData: FormData) {
@@ -61,4 +62,49 @@ export async function deleteAdSlot(formData: FormData) {
   const { error } = await supabase.from("ad_slots").delete().eq("id", id);
   if (error) throw new Error(error.message);
   revalidateAdPaths();
+}
+
+/** /admin/ads/[id] — change any ad, including putting artwork on a spot
+ * someone bought (an invoiced advertiser emails it to Charlie). A file
+ * upload wins over the image URL field. A bought spot that's never been
+ * live goes live on save, same as when the buyer does it from My ads;
+ * every other ad keeps whatever Hide/Unhide state it had. */
+export async function updateAdSlot(formData: FormData) {
+  const id = formData.get("id") as string;
+  const linkUrl = ((formData.get("linkUrl") as string | null) ?? "").trim();
+  const heading = ((formData.get("heading") as string | null) ?? "").trim() || null;
+  const image = formData.get("image") as File | null;
+  let imageUrl = ((formData.get("imageUrl") as string | null) ?? "").trim() || null;
+  if (!linkUrl) throw new Error("Enter where the ad links to.");
+
+  const supabase = await createClient();
+  if (image && image.size > 0) {
+    const ext = image.name.split(".").pop() || "jpg";
+    const path = `_ads/${id}/${Date.now()}.${ext}`;
+    const { error: uploadError } = await supabase.storage.from("listing-photos").upload(path, image);
+    if (uploadError) throw new Error(uploadError.message);
+    imageUrl = supabase.storage.from("listing-photos").getPublicUrl(path).data.publicUrl;
+  }
+  if (!imageUrl && !heading) throw new Error("Upload an image, or type a heading for a text ad.");
+
+  const { data: current } = await supabase.from("ad_slots").select("duration_days, ends_at").eq("id", id).single();
+  const firstTimeLive = Boolean(current?.duration_days) && !current?.ends_at;
+  const sortOrderRaw = formData.get("sortOrder") as string;
+
+  const { error } = await supabase
+    .from("ad_slots")
+    .update({
+      advertiser_name: formData.get("advertiserName"),
+      image_url: imageUrl,
+      heading,
+      body_text: formData.get("bodyText") || null,
+      link_url: linkUrl,
+      sort_order: sortOrderRaw ? Number(sortOrderRaw) : 0,
+      updated_at: new Date().toISOString(),
+      ...(firstTimeLive ? { is_active: true } : {}),
+    })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+  revalidateAdPaths();
+  redirect("/admin/ads");
 }

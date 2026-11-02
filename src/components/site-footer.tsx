@@ -49,7 +49,10 @@ export async function SiteFooter() {
       // "sell something" link here any more (/post-product still works,
       // just isn't promoted from anywhere public, same as /post-service).
       heading: t("offersHeading"),
-      links: [{ label: t("browseOffers"), href: "/offers" }],
+      links: [
+        { label: t("browseOffers"), href: "/offers" },
+        { label: t("advertise"), href: "/advertise" },
+      ],
     },
     {
       heading: t("servicesHeading"),

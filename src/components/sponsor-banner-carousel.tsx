@@ -36,7 +36,7 @@ const FALLBACK_SLIDE: Slide = {
   kind: "text",
   heading: "Advertise here",
   body: "Click to find out how",
-  href: "mailto:info@milhaus.de?subject=Advertising%20on%20Milhaus",
+  href: "/advertise",
 };
 
 const VISIBLE_SECONDS = 6;

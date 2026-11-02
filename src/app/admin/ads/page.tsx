@@ -3,13 +3,15 @@
 // advertisers for here, instead of asking for a code change every time
 // someone buys or drops a spot. Covers both real placements: the
 // site-wide banner carousel (homepage + every category page) and the
-// single /cars sidebar slot.
+// single /cars sidebar slot — and, since 2026-11-03, the spots
+// advertisers buy (/advertise or an emailed invoice, see
+// /admin/ads/orders), which arrive here as "Needs artwork" rows.
 
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { deleteAdSlot, toggleAdSlotActive } from "@/app/admin/ads/actions";
-import { AD_PLACEMENT_LABELS, AD_PLACEMENT_SIZES, AD_PLACEMENTS } from "@/lib/ad-slots";
+import { AD_PLACEMENT_LABELS, AD_PLACEMENT_SIZES, AD_PLACEMENTS, type AdSlot } from "@/lib/ad-slots";
 import { getAllAdSlots } from "@/lib/ad-slots-queries";
 import { isAdminRole } from "@/lib/roles";
 import { createClient } from "@/lib/supabase/server";
@@ -46,12 +48,20 @@ export default async function AdminAdsPage() {
               payment), or delete it for good.
             </p>
           </div>
-          <Link
-            href="/admin/ads/new"
-            className="whitespace-nowrap rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
-          >
-            Add an ad
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/admin/ads/orders"
+              className="whitespace-nowrap rounded-md border border-ink px-5 py-2.5 text-sm font-semibold text-ink hover:border-brass hover:text-brass-deep"
+            >
+              Orders &amp; invoices
+            </Link>
+            <Link
+              href="/admin/ads/new"
+              className="whitespace-nowrap rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+            >
+              Add an ad
+            </Link>
+          </div>
         </div>
 
         <div className="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -90,26 +100,28 @@ export default async function AdminAdsPage() {
                       {ad.imageUrl ? "Image" : ad.heading ? `Text: "${ad.heading}"` : "—"}
                     </td>
                     <td className="px-4 py-3">
-                      <span
-                        className={`rounded-[3px] px-2 py-0.5 font-mono text-[0.66rem] font-semibold uppercase tracking-wider ${
-                          ad.isActive ? "bg-olive/15 text-olive-deep" : "bg-rust/15 text-rust"
-                        }`}
-                      >
-                        {ad.isActive ? "Active" : "Hidden"}
-                      </span>
+                      <AdStatus ad={ad} />
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex justify-end gap-2">
-                        <form action={toggleAdSlotActive}>
-                          <input type="hidden" name="id" value={ad.id} />
-                          <input type="hidden" name="isActive" value={String(ad.isActive)} />
-                          <button
-                            type="submit"
-                            className="rounded-md border border-canvas-deep px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-olive hover:text-olive-deep"
-                          >
-                            {ad.isActive ? "Hide" : "Unhide"}
-                          </button>
-                        </form>
+                        <Link
+                          href={`/admin/ads/${ad.id}`}
+                          className="rounded-md border border-canvas-deep px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-olive hover:text-olive-deep"
+                        >
+                          {ad.linkUrl ? "Edit" : "Add artwork"}
+                        </Link>
+                        {ad.linkUrl && (
+                          <form action={toggleAdSlotActive}>
+                            <input type="hidden" name="id" value={ad.id} />
+                            <input type="hidden" name="isActive" value={String(ad.isActive)} />
+                            <button
+                              type="submit"
+                              className="rounded-md border border-canvas-deep px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-olive hover:text-olive-deep"
+                            >
+                              {ad.isActive ? "Hide" : "Unhide"}
+                            </button>
+                          </form>
+                        )}
                         <form action={deleteAdSlot}>
                           <input type="hidden" name="id" value={ad.id} />
                           <button
@@ -129,5 +141,27 @@ export default async function AdminAdsPage() {
         )}
       </div>
     </main>
+  );
+}
+
+// A bought spot runs for a set time from when it first goes live;
+// Charlie's own hand-added ads (no duration) just show Active/Hidden.
+function AdStatus({ ad }: { ad: AdSlot }) {
+  const chip = "rounded-[3px] px-2 py-0.5 font-mono text-[0.66rem] font-semibold uppercase tracking-wider";
+  const date = (iso: string) => new Date(iso).toLocaleDateString("en-US", { dateStyle: "medium" });
+  if (ad.durationDays && !ad.linkUrl) {
+    return <span className={`${chip} bg-brass/15 text-brass-deep`}>Needs artwork</span>;
+  }
+  // eslint-disable-next-line react-hooks/purity -- a server render, once per request
+  if (ad.endsAt && new Date(ad.endsAt).getTime() <= Date.now()) {
+    return <span className={`${chip} bg-canvas-deep text-ink-soft`}>Ended {date(ad.endsAt)}</span>;
+  }
+  return (
+    <div className="flex flex-col items-start gap-1">
+      <span className={`${chip} ${ad.isActive ? "bg-olive/15 text-olive-deep" : "bg-rust/15 text-rust"}`}>
+        {ad.isActive ? "Active" : "Hidden"}
+      </span>
+      {ad.endsAt && <span className="text-xs text-ink-soft">until {date(ad.endsAt)}</span>}
+    </div>
   );
 }

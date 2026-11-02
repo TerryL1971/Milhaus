@@ -12,11 +12,18 @@
 //    best-effort via sendEmail — if Resend isn't configured the listing
 //    still expires on schedule, the poster just isn't warned.
 //
+// 3. The same for ad spots (20261103120000_add_ad_orders.sql): hide
+//    any bought spot past its ends_at — RLS already stops the public
+//    seeing it, this just keeps /admin/ads honest — and settle any
+//    emailed ad invoice paid since the last check, in case Charlie
+//    hasn't opened /admin/ads/orders (which does the same).
+//
 // expires_at itself is set by a database trigger whenever a listing goes
 // live (20261102150000_add_listing_expiry.sql), so this never decides
 // *when* something expires, only acts on it.
 
 import { NextResponse, type NextRequest } from "next/server";
+import { syncOpenAdInvoices } from "@/lib/ad-orders";
 import { sendEmail } from "@/lib/email";
 import { SITE_URL } from "@/lib/site-url";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -71,7 +78,20 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  return NextResponse.json({ expired: expired?.length ?? 0, warned });
+  const { data: finishedAds } = await admin
+    .from("ad_slots")
+    .update({ is_active: false })
+    .eq("is_active", true)
+    .lte("ends_at", now.toISOString())
+    .select("id");
+  const adInvoicesSettled = await syncOpenAdInvoices(admin);
+
+  return NextResponse.json({
+    expired: expired?.length ?? 0,
+    warned,
+    adsFinished: finishedAds?.length ?? 0,
+    adInvoicesSettled,
+  });
 }
 
 // The poster's own contact email if they set one on their profile,

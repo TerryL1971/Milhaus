@@ -75,6 +75,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
       alternates: { languages: withLanguageAlternates("/events") },
     },
+    {
+      url: `${SITE_URL}/advertise`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.5,
+      alternates: { languages: withLanguageAlternates("/advertise") },
+    },
     ...rentals.map((listing) => ({
       url: `${SITE_URL}/listings/${listing.id}`,
       lastModified: new Date(listing.updatedAt),

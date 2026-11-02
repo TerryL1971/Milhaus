@@ -10,6 +10,18 @@ export const AD_PLACEMENT_LABELS = {
 } as const;
 
 export type AdPlacement = keyof typeof AD_PLACEMENT_LABELS;
+
+/** Where advertisers write — replies to the "ad spots ready" email and
+ * the "ask for an invoice" button on /advertise. */
+export const ADVERTISING_CONTACT_EMAIL = "info@milhaus.de";
+
+/** For order lines, the cart and Stripe invoices, where the long labels
+ * above don't fit. */
+export const AD_PLACEMENT_SHORT_LABELS: Record<AdPlacement, string> = {
+  site_banner: "Site banner",
+  cars_sidebar: "Cars sidebar",
+  special_offers: "Special Offers card",
+};
 export const AD_PLACEMENTS = Object.keys(AD_PLACEMENT_LABELS) as AdPlacement[];
 
 // What to tell an advertiser to design at, per placement — shown on
@@ -37,4 +49,10 @@ export interface AdSlot {
   isActive: boolean;
   sortOrder: number;
   createdAt: string;
+  /** Set on a spot someone bought (an ad order); null on Charlie's own
+   * hand-added ads, which never expire. */
+  durationDays: number | null;
+  /** When a bought spot comes down — null until it first goes live. */
+  endsAt: string | null;
+  ownerId: string | null;
 }

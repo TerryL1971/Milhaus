@@ -8,6 +8,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { removeFromCart, startCartStripeCheckout } from "@/app/cart/actions";
+import { getAdOrderNames } from "@/lib/ad-orders-queries";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -26,20 +27,22 @@ export default async function CartPage() {
 
   const { data: items } = await supabase
     .from("cart_items")
-    .select("id, listing_id, business_id, price_eur, created_at")
+    .select("id, listing_id, business_id, ad_order_id, price_eur, created_at")
     .eq("user_id", user.id)
     .order("created_at", { ascending: true });
 
   const listingIds = (items ?? []).filter((i) => i.listing_id).map((i) => i.listing_id as string);
   const businessIds = (items ?? []).filter((i) => i.business_id).map((i) => i.business_id as string);
+  const adOrderIds = (items ?? []).filter((i) => i.ad_order_id).map((i) => i.ad_order_id as string);
 
-  const [{ data: listings }, { data: businesses }] = await Promise.all([
+  const [{ data: listings }, { data: businesses }, adOrderNames] = await Promise.all([
     listingIds.length > 0
       ? supabase.from("listings").select("id, title, type").in("id", listingIds)
       : Promise.resolve({ data: [] as { id: string; title: string; type: string }[] }),
     businessIds.length > 0
       ? supabase.from("businesses").select("id, name, category").in("id", businessIds)
       : Promise.resolve({ data: [] as { id: string; name: string; category: string }[] }),
+    getAdOrderNames(adOrderIds),
   ]);
 
   const rows = (items ?? []).map((item) => {
@@ -47,8 +50,12 @@ export default async function CartPage() {
     const business = item.business_id ? businesses?.find((b) => b.id === item.business_id) : null;
     return {
       cartItemId: item.id as string,
-      name: listing?.title ?? business?.name ?? "Untitled",
-      category: listing?.type ?? business?.category ?? "",
+      name:
+        listing?.title ??
+        business?.name ??
+        (item.ad_order_id ? adOrderNames.get(item.ad_order_id as string) : null) ??
+        "Untitled",
+      category: listing?.type ?? business?.category ?? (item.ad_order_id ? "Ad spots" : ""),
       priceEur: Number(item.price_eur),
     };
   });
@@ -70,7 +77,8 @@ export default async function CartPage() {
         ) : (
           <>
             <p className="mb-2 text-ink-soft">
-              Each of these is saved and ready — they're submitted for review as soon as you pay.
+              Each of these is saved and ready — it goes live as soon as you pay (ad spots go live
+              once you&apos;ve added your artwork).
             </p>
             {/* Listing multiple properties/cars and paying once, in one
                 checkout, already just works — the cart is per-user, not
