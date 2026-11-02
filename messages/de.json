@@ -612,7 +612,11 @@
     "withdraw": "Zurückziehen",
     "discard": "Verwerfen",
     "postAgain": "Erneut inserieren",
-    "edit": "Bearbeiten"
+    "edit": "Bearbeiten",
+    "expiredHeading": "Abgelaufen",
+    "expiredNote": "Nach 30 Tagen von der Website genommen. Verlängern, um es weitere 30 Tage online zu stellen.",
+    "expiresOn": "Online bis {date}",
+    "renew": "Um 30 Tage verlängern"
   },
   "ReportListing": {
     "button": "Anzeige melden",

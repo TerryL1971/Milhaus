@@ -76,6 +76,7 @@ export function mapRow(row: Record<string, unknown>): Listing {
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
     statusChangedAt: row.status_changed_at as string,
+    expiresAt: (row.expires_at as string | null) ?? null,
   };
 }
 
@@ -273,7 +274,8 @@ export async function getLiveListings(): Promise<Listing[]> {
 }
 
 /** Admin dashboard: everything archived — a rejected submission, or a
- * house that came off the market. Once a listing hits `archived` it drops
+ * house that came off the market, or one that expired after 30 days
+ * without being renewed. Once a listing hits `archived`/`expired` it drops
  * out of getLiveListings entirely, so this is the only place an admin can
  * find it again to bring it back with Relist. */
 export async function getArchivedListings(): Promise<Listing[]> {
@@ -281,7 +283,7 @@ export async function getArchivedListings(): Promise<Listing[]> {
   const { data, error } = await supabase
     .from("listings")
     .select(LISTING_SELECT)
-    .eq("status", "archived")
+    .in("status", ["archived", "expired"])
     .order("status_changed_at", { ascending: false });
 
   if (error) {

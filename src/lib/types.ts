@@ -12,7 +12,10 @@ export type ListingStatus =
   | "pending_review"
   | "active"
   | "rented"
-  | "archived";
+  | "archived"
+  /** 30 days after going live with no renewal — see
+   * 20261102150000_add_listing_expiry.sql. Renewable from My Listings. */
+  | "expired";
 
 export type ProfileRole =
   | "owner"
@@ -132,4 +135,7 @@ export interface Listing {
   createdAt: string;
   updatedAt: string;
   statusChangedAt: string;
+  /** When an active listing comes down unless renewed. Null before it
+   * has ever gone live (or before the expiry migration was run). */
+  expiresAt: string | null;
 }

@@ -318,6 +318,11 @@ export default async function AdminPage() {
                         >
                           {listing.status}
                         </span>
+                        {listing.status === "active" && listing.expiresAt && (
+                          <p className="mt-1 text-xs text-ink-soft">
+                            until {dateFormatter.format(new Date(listing.expiresAt))}
+                          </p>
+                        )}
                       </td>
                       <td className="px-4 py-3 text-right">
                         <div className="flex justify-end gap-2">
@@ -376,8 +381,9 @@ export default async function AdminPage() {
         <section className="mt-14">
           <h2 className="mb-4 font-display text-xl font-semibold text-ink">Archived</h2>
           <p className="mb-4 text-sm text-ink-soft">
-            Off the site — a rejected submission, or a house that came off the market. Relist to
-            bring one back live if it&apos;s available again.
+            Off the site — a rejected submission, a house that came off the market, or a listing
+            that expired after 30 days without being renewed. Relist to bring one back live (for
+            another 30 days) if it&apos;s available again.
           </p>
 
           {archived.length === 0 ? (
@@ -398,7 +404,14 @@ export default async function AdminPage() {
                   {archived.map((listing) => (
                     <tr key={listing.id} className="border-b border-canvas-deep last:border-0">
                       <td className="px-4 py-3">
-                        <p className="font-medium text-ink">{listing.title}</p>
+                        <p className="font-medium text-ink">
+                          {listing.status === "expired" && (
+                            <span className="mr-1.5 rounded-full bg-rust/10 px-1.5 py-0.5 align-middle font-mono text-[0.58rem] uppercase tracking-wider text-rust">
+                              Expired
+                            </span>
+                          )}
+                          {listing.title}
+                        </p>
                         <p className="text-xs text-ink-soft">
                           {listing.city}
                           {listing.base ? ` · ${listing.base}` : ""}

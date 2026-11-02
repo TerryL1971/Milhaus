@@ -612,7 +612,11 @@
     "withdraw": "Withdraw",
     "discard": "Discard",
     "postAgain": "Post again",
-    "edit": "Edit"
+    "edit": "Edit",
+    "expiredHeading": "Expired",
+    "expiredNote": "Off the site after 30 days. Renew to put it back up for another 30.",
+    "expiresOn": "Live until {date}",
+    "renew": "Renew for 30 days"
   },
   "ReportListing": {
     "button": "Report this listing",

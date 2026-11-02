@@ -33,6 +33,8 @@ function isOutsideLocaleRouting(pathname: string): boolean {
     pathname === "/admin" ||
     pathname.startsWith("/admin/") ||
     pathname.startsWith("/auth/") ||
+    // Route handlers (the daily listing-expiry cron) — never localized.
+    pathname.startsWith("/api/") ||
     pathname === "/cart" ||
     pathname.startsWith("/cart/") ||
     pathname === "/consent" ||

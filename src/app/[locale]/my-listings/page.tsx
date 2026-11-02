@@ -10,9 +10,9 @@
 // row); the status buttons here stay one-click.
 
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
-import { archiveMyListing, markMyListingRented, resubmitMyListing } from "./actions";
+import { archiveMyListing, markMyListingRented, renewMyListing, resubmitMyListing } from "./actions";
 import { ProfileEditor } from "@/components/profile-editor";
 import { Link } from "@/i18n/navigation";
 import { getMyListings } from "@/lib/listings";
@@ -59,8 +59,17 @@ function listingHref(listing: Listing): string {
   return `${LISTING_PATH[listing.type]}/${listing.id}`;
 }
 
+// Matches the 3-day warning email (src/app/api/cron/expire-listings) —
+// the Renew button shows up on a live listing from the moment that email
+// could have gone out, so its link always lands on a button.
+const RENEW_WINDOW_MS = 3 * 24 * 60 * 60 * 1000;
+
 export default async function MyListingsPage() {
   const t = await getTranslations("MyListings");
+  const locale = await getLocale();
+  const expiryFormatter = new Intl.DateTimeFormat(locale, { month: "short", day: "numeric" });
+  // eslint-disable-next-line react-hooks/purity -- server component, rendered per request
+  const now = Date.now();
   const supabase = await createClient();
   const {
     data: { user },
@@ -72,6 +81,7 @@ export default async function MyListingsPage() {
   const groups: { status: ListingStatus; heading: string; empty: string }[] = [
     { status: "pending_review", heading: t("pendingHeading"), empty: t("pendingEmpty") },
     { status: "active", heading: t("activeHeading"), empty: t("activeEmpty") },
+    { status: "expired", heading: t("expiredHeading"), empty: "" },
     { status: "rented", heading: t("rentedHeading"), empty: t("rentedEmpty") },
     { status: "archived", heading: t("archivedHeading"), empty: t("archivedEmpty") },
     { status: "draft", heading: t("draftHeading"), empty: "" },
@@ -121,7 +131,9 @@ export default async function MyListingsPage() {
 
         {groups.map(({ status, heading, empty }) => {
           const rows = listings.filter((listing) => listing.status === status);
-          if (status === "draft" && rows.length === 0) return null; // don't show an empty "stuck submissions" section
+          // No empty "stuck submissions" or "expired" sections — both are
+          // the exception, not something every poster needs to see.
+          if ((status === "draft" || status === "expired") && rows.length === 0) return null;
           return (
             <section key={status} className="mb-8">
               <h2 className="mb-3 font-display text-lg font-semibold text-ink">
@@ -153,6 +165,14 @@ export default async function MyListingsPage() {
                           {listing.type === "rental" ? t("perMonth") : ""} · {listing.city} ·{" "}
                           {t("viewCount", { count: listing.viewCount })}
                         </p>
+                        {status === "active" && listing.expiresAt && (
+                          <p className="font-mono text-xs text-ink-soft/80">
+                            {t("expiresOn", { date: expiryFormatter.format(new Date(listing.expiresAt)) })}
+                          </p>
+                        )}
+                        {status === "expired" && (
+                          <p className="text-xs text-rust">{t("expiredNote")}</p>
+                        )}
                       </div>
                       <div className="flex gap-2">
                         <Link
@@ -161,6 +181,20 @@ export default async function MyListingsPage() {
                         >
                           {t("edit")}
                         </Link>
+                        {(status === "expired" ||
+                          (status === "active" &&
+                            listing.expiresAt &&
+                            new Date(listing.expiresAt).getTime() - now <= RENEW_WINDOW_MS)) && (
+                          <form action={renewMyListing}>
+                            <input type="hidden" name="id" value={listing.id} />
+                            <button
+                              type="submit"
+                              className="rounded-md bg-brass px-3 py-1.5 text-xs font-semibold text-paper hover:bg-brass-deep"
+                            >
+                              {t("renew")}
+                            </button>
+                          </form>
+                        )}
                         {status === "active" && (
                           <form action={markMyListingRented}>
                             <input type="hidden" name="id" value={listing.id} />
@@ -176,7 +210,7 @@ export default async function MyListingsPage() {
                             </button>
                           </form>
                         )}
-                        {(status === "active" || status === "rented" || status === "draft") && (
+                        {(status === "active" || status === "rented" || status === "draft" || status === "expired") && (
                           <form action={archiveMyListing}>
                             <input type="hidden" name="id" value={listing.id} />
                             <button

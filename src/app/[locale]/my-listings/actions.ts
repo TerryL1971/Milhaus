@@ -47,6 +47,45 @@ export async function resubmitMyListing(formData: FormData) {
   await updateOwnListingStatus(formData.get("id") as string, "pending_review");
 }
 
+// The 30-day limit's way back (20261102150000_add_listing_expiry.sql):
+// another 30 days, live immediately — unlike resubmitMyListing, this
+// skips review, since an expired listing was already live and nothing
+// about it has changed. Works on an active listing too, so the "expires
+// in 3 days" email's Renew link can be acted on before it comes down.
+// Same trusted-path pattern as publishFreeListing: ownership checked via
+// the caller's own session, then the admin client writes, because both
+// the review gate and the expiry trigger refuse this from a plain
+// signed-in session on purpose.
+export async function renewMyListing(formData: FormData) {
+  const id = formData.get("id") as string;
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not signed in.");
+
+  const { data: listing } = await supabase
+    .from("listings")
+    .select("id, status")
+    .eq("id", id)
+    .eq("owner_id", user.id)
+    .maybeSingle();
+  if (!listing || (listing.status !== "active" && listing.status !== "expired")) {
+    throw new Error("That didn't go through — this may not be your listing.");
+  }
+
+  const { error } = await createAdminClient()
+    .from("listings")
+    .update({
+      status: "active",
+      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      expiry_warning_sent_at: null,
+    })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+  revalidatePath("/my-listings");
+}
+
 // Self-service account deletion — a consumer-protection requirement
 // (GDPR's right to erasure), not something to build only when asked;
 // flagged alongside no self-serve Privacy Policy page yet (that one
