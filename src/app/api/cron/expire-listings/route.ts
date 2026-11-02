@@ -98,8 +98,9 @@ function sendExpiryWarning({ to, title, expiresAt }: { to: string; title: string
           listings stay up for 30 days at a time.
         </p>
         <p style="margin:0 0 24px;color:#22201B;">
-          Still available? Renew it in one click from My Listings and it stays up for another 30 days.
-          If it's already gone, you don't need to do anything.
+          Still available? Renew it from My Listings to keep it up for another 30 days — renewing
+          now adds the 30 days on top of the time it has left. If it's already gone, you don't need
+          to do anything.
         </p>
 
         <a href="${renewUrl}" style="display:inline-block;background:#C0392B;color:#FBFAF6;padding:12px 24px;border-radius:6px;font-weight:600;text-decoration:none;">

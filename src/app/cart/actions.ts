@@ -5,7 +5,8 @@
 // version this generalizes). Every item in the cart is already a saved
 // `draft` listing or business, owned by the signed-in caller (ListingForm
 // and the business-posting form both insert into cart_items right after
-// saving their draft) — this just prices and pays for all of them at
+// saving their draft), or an active/expired listing being renewed for
+// another 30 days from My Listings — this just prices and pays for all of them at
 // once, then publishes every one. Listings go straight to active —
 // Charlie's call (2026-10-15): with volume potentially in the hundreds a
 // day, payment itself is the gate now, not his manual review; he
@@ -29,6 +30,7 @@ import { redirect } from "next/navigation";
 import { getStripe } from "@/lib/stripe";
 import { SITE_URL } from "@/lib/site-url";
 import { tryActivateBusiness } from "@/lib/businesses-queries";
+import { extendExpiry } from "@/lib/listing-expiry";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -157,11 +159,23 @@ export async function settleCartPayment(providerReference: string) {
   const businessIds = payments.filter((p) => p.business_id).map((p) => p.business_id as string);
 
   if (listingIds.length > 0) {
+    // A cart line for a listing that's already active or expired is a
+    // paid 30-day renewal from My Listings (renewMyListing), not a new
+    // post — looked up before the draft update below, which would
+    // otherwise make a brand-new listing look like a renewal too.
+    const { data: renewals } = await admin
+      .from("listings")
+      .select("id")
+      .in("id", listingIds)
+      .in("status", ["active", "expired"]);
+
     await admin
       .from("listings")
       .update({ status: "active", status_changed_at: new Date().toISOString() })
       .in("id", listingIds)
       .eq("status", "draft");
+
+    await extendExpiry(admin, (renewals ?? []).map((listing) => listing.id as string));
   }
   if (businessIds.length > 0) {
     await admin

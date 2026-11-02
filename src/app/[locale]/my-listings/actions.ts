@@ -15,6 +15,9 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { extendExpiry } from "@/lib/listing-expiry";
+import { getPostingPriceForProfile, type PriceableType } from "@/lib/listing-prices";
+import { getProfile } from "@/lib/profiles";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -47,11 +50,18 @@ export async function resubmitMyListing(formData: FormData) {
   await updateOwnListingStatus(formData.get("id") as string, "pending_review");
 }
 
-// The 30-day limit's way back (20261102150000_add_listing_expiry.sql):
-// another 30 days, live immediately — unlike resubmitMyListing, this
-// skips review, since an expired listing was already live and nothing
-// about it has changed. Works on an active listing too, so the "expires
-// in 3 days" email's Renew link can be acted on before it comes down.
+// The 30-day limit's way back (20261102150000_add_listing_expiry.sql).
+// Charlie's call (2026-11-02): renewing costs the same as posting it new
+// — so a category with a fee owing goes through the cart like a fresh
+// post, and only a free one (individual lister, free category, or the
+// free-until launch promo) renews right here. Either way it goes live
+// without review: it was already live and nothing about it changed.
+//
+// Works on an active listing too, so the "expires in 3 days" email's
+// link can be acted on before it comes down; early renewal adds 30 days
+// on top of what's left rather than restarting the clock, so nobody
+// loses days by renewing early (see extendExpiry).
+//
 // Same trusted-path pattern as publishFreeListing: ownership checked via
 // the caller's own session, then the admin client writes, because both
 // the review gate and the expiry trigger refuse this from a plain
@@ -66,7 +76,7 @@ export async function renewMyListing(formData: FormData) {
 
   const { data: listing } = await supabase
     .from("listings")
-    .select("id, status")
+    .select("id, type, status")
     .eq("id", id)
     .eq("owner_id", user.id)
     .maybeSingle();
@@ -74,15 +84,25 @@ export async function renewMyListing(formData: FormData) {
     throw new Error("That didn't go through — this may not be your listing.");
   }
 
-  const { error } = await createAdminClient()
-    .from("listings")
-    .update({
-      status: "active",
-      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-      expiry_warning_sent_at: null,
-    })
-    .eq("id", id);
-  if (error) throw new Error(error.message);
+  const profile = await getProfile(user.id);
+  const priceEur = await getPostingPriceForProfile(listing.type as PriceableType, profile?.isIndividualLister ?? false);
+
+  if (priceEur && priceEur > 0) {
+    // One cart line per listing — pressing Renew twice shouldn't charge twice.
+    const { data: existing } = await supabase
+      .from("cart_items")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("listing_id", id)
+      .maybeSingle();
+    if (!existing) {
+      const { error } = await supabase.from("cart_items").insert({ user_id: user.id, listing_id: id, price_eur: priceEur });
+      if (error) throw new Error(error.message);
+    }
+    redirect("/cart");
+  }
+
+  await extendExpiry(createAdminClient(), [id]);
   revalidatePath("/my-listings");
 }
 
