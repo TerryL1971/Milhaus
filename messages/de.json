@@ -405,7 +405,10 @@
     "filterPrice": "Preis",
     "filterCategorySpecifics": "Kategoriespezifisch",
     "filterFeatures": "Merkmale / Badges",
-    "housingApprovedOnly": "Nur Housing-Office genehmigt"
+    "housingApprovedOnly": "Nur Housing-Office genehmigt",
+    "availableToHeading": "Verfügbar für",
+    "availableToMilitaryOnly": "Nur US-Militär",
+    "availableToMilitaryAndExpats": "US-Militär & Expats"
   },
   "StampBadge": {
     "line1": "Housing",

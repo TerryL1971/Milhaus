@@ -405,7 +405,10 @@
     "filterPrice": "Price",
     "filterCategorySpecifics": "Category Specifics",
     "filterFeatures": "Features / Badges",
-    "housingApprovedOnly": "Housing Approved only"
+    "housingApprovedOnly": "Housing Approved only",
+    "availableToHeading": "Available to",
+    "availableToMilitaryOnly": "US Military only",
+    "availableToMilitaryAndExpats": "US Military & Expats"
   },
   "StampBadge": {
     "line1": "Housing",

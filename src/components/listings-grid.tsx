@@ -29,7 +29,7 @@ import { BASE_NAMES } from "@/lib/bases";
 import { firstPhotoIndices } from "@/lib/priority-indices";
 import { matchesListing } from "@/lib/search-matching";
 import type { Listing } from "@/lib/types";
-import { useListingFilters } from "@/lib/use-listing-filters";
+import { AVAILABLE_TO_FILTER_KEYS, type AvailableToFilterKey, useListingFilters } from "@/lib/use-listing-filters";
 
 const PHOTO_GRADIENTS = [
   "linear-gradient(135deg,#D8C9A8,#A9AE83)",
@@ -99,6 +99,7 @@ export function ListingsGrid({
     priceMin,
     priceMax,
     housingOfficeOnly,
+    activeAvailableTo,
     activeCount,
     applyFilters,
     clearAll,
@@ -125,6 +126,7 @@ export function ListingsGrid({
   const [pendingPriceMin, setPendingPriceMin] = useState(priceMin);
   const [pendingPriceMax, setPendingPriceMax] = useState(priceMax);
   const [pendingHousingOnly, setPendingHousingOnly] = useState(housingOfficeOnly);
+  const [pendingAvailableTo, setPendingAvailableTo] = useState<AvailableToFilterKey[]>(activeAvailableTo);
 
   function handleApply() {
     applyFilters({
@@ -135,6 +137,7 @@ export function ListingsGrid({
       priceMin: pendingPriceMin,
       priceMax: pendingPriceMax,
       housingOfficeOnly: pendingHousingOnly,
+      availableTo: pendingAvailableTo,
     });
     setAlertDismissed(false);
   }
@@ -147,6 +150,7 @@ export function ListingsGrid({
     setPendingPriceMin(null);
     setPendingPriceMax(null);
     setPendingHousingOnly(false);
+    setPendingAvailableTo([]);
     setKeyword("");
     setAlertDismissed(false);
     clearAll();
@@ -173,10 +177,17 @@ export function ListingsGrid({
       if (priceMin != null && listing.priceEurMonth < priceMin) return false;
       if (priceMax != null && listing.priceEurMonth > priceMax) return false;
       if (housingOfficeOnly && listing.source !== "housing_office") return false;
+      // OR within this group — ticking both badges means "either one",
+      // unlike amenities' AND (a home can only have one of these).
+      if (
+        activeAvailableTo.length > 0 &&
+        !activeAvailableTo.includes(listing.availableTo as AvailableToFilterKey)
+      )
+        return false;
       if (!q) return true;
       return matchesListing(listing, q);
     });
-  }, [listings, keyword, activeBases, minBedrooms, moveIn, activeAmenities, priceMin, priceMax, housingOfficeOnly]);
+  }, [listings, keyword, activeBases, minBedrooms, moveIn, activeAmenities, priceMin, priceMax, housingOfficeOnly, activeAvailableTo]);
 
   // Favorited listings first — a stable sort (Array.prototype.sort is
   // stable per spec) so everything else keeps its existing relative
@@ -290,7 +301,7 @@ export function ListingsGrid({
         <FilterCluster
           label={tFilter("filterFeatures")}
           icon="⭐"
-          badge={pendingAmenities.length + (pendingHousingOnly ? 1 : 0) || undefined}
+          badge={pendingAmenities.length + (pendingHousingOnly ? 1 : 0) + pendingAvailableTo.length || undefined}
         >
           <div className="flex flex-col gap-4">
             <label className="flex items-center gap-2 text-sm text-charcoal">
@@ -302,6 +313,19 @@ export function ListingsGrid({
               />
               <span>{tFilter("housingApprovedOnly")}</span>
             </label>
+            <div>
+              <span className="mb-1.5 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
+                {tFilter("availableToHeading")}
+              </span>
+              <FilterCheckboxList
+                options={AVAILABLE_TO_FILTER_KEYS.map((key) => ({
+                  value: key,
+                  label: key === "military_only" ? tFilter("availableToMilitaryOnly") : tFilter("availableToMilitaryAndExpats"),
+                }))}
+                selected={pendingAvailableTo}
+                onToggle={(value) => setPendingAvailableTo((prev) => toggleIn(prev, value as AvailableToFilterKey))}
+              />
+            </div>
             <div>
               <span className="mb-1.5 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
                 {t("filterAmenities")}

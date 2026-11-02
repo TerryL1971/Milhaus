@@ -14,6 +14,11 @@ import { useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { AMENITY_KEYS, type AmenityKey } from "@/lib/amenities";
 
+// The two "Available to" values that show a badge — "everyone" is the
+// unrestricted default with no badge, so there's nothing to filter to.
+export const AVAILABLE_TO_FILTER_KEYS = ["military_only", "military_and_expats"] as const;
+export type AvailableToFilterKey = (typeof AVAILABLE_TO_FILTER_KEYS)[number];
+
 export interface ListingFiltersUpdate {
   bases?: string[];
   amenities?: AmenityKey[];
@@ -22,6 +27,7 @@ export interface ListingFiltersUpdate {
   priceMin?: number | null;
   priceMax?: number | null;
   housingOfficeOnly?: boolean;
+  availableTo?: AvailableToFilterKey[];
 }
 
 export function useListingFilters() {
@@ -56,6 +62,13 @@ export function useListingFilters() {
   const priceMin = priceMinRaw ? Number(priceMinRaw) : null;
   const priceMax = priceMaxRaw ? Number(priceMaxRaw) : null;
   const housingOfficeOnly = searchParams.get("housingApproved") === "1";
+  const activeAvailableTo = useMemo(
+    () =>
+      (searchParams.get("availableTo") ?? "")
+        .split(",")
+        .filter((key): key is AvailableToFilterKey => AVAILABLE_TO_FILTER_KEYS.includes(key as AvailableToFilterKey)),
+    [searchParams],
+  );
 
   function applyFilters(updates: ListingFiltersUpdate) {
     const params = new URLSearchParams(searchParams.toString());
@@ -71,6 +84,7 @@ export function useListingFilters() {
     if (updates.priceMin !== undefined) set("priceMin", updates.priceMin != null ? String(updates.priceMin) : null);
     if (updates.priceMax !== undefined) set("priceMax", updates.priceMax != null ? String(updates.priceMax) : null);
     if (updates.housingOfficeOnly !== undefined) set("housingApproved", updates.housingOfficeOnly ? "1" : null);
+    if (updates.availableTo !== undefined) set("availableTo", updates.availableTo.length > 0 ? updates.availableTo.join(",") : null);
 
     const query = params.toString();
     router.replace(`${pathname}${query ? `?${query}` : ""}#listings`, { scroll: false });
@@ -87,7 +101,8 @@ export function useListingFilters() {
     activeAmenities.length +
     (priceMin != null ? 1 : 0) +
     (priceMax != null ? 1 : 0) +
-    (housingOfficeOnly ? 1 : 0);
+    (housingOfficeOnly ? 1 : 0) +
+    activeAvailableTo.length;
 
   return {
     ALL_BASES,
@@ -98,6 +113,7 @@ export function useListingFilters() {
     priceMin,
     priceMax,
     housingOfficeOnly,
+    activeAvailableTo,
     activeCount,
     applyFilters,
     clearAll,
