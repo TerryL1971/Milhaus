@@ -161,7 +161,9 @@
     "listedByFamily": "Listed by outgoing family",
     "housingApprovedBadge": "Housing Approved",
     "newBadge": "New",
-    "noPhotoYet": "No photo yet"
+    "noPhotoYet": "No photo yet",
+    "availableToMilitaryOnly": "US Military only",
+    "availableToMilitaryAndExpats": "Military & Expats"
   },
   "ListingForm": {
     "source": "Source",
@@ -270,7 +272,10 @@
     "sectionServiceDetails": "Service details",
     "sectionLocation": "Location",
     "sectionPriceAndDetails": "Price & details",
-    "sectionPhotos": "Photos"
+    "sectionPhotos": "Photos",
+    "availableTo": "Available to",
+    "availableToMilitaryOnly": "US Military only",
+    "availableToMilitaryAndExpats": "US Military & Expats"
   },
   "ListingDetail": {
     "backToListings": "← Back to listings",
@@ -307,7 +312,10 @@
       "standard": "Standard"
     },
     "featuresHeading": "Features",
-    "nearbyHeading": "Nearby"
+    "nearbyHeading": "Nearby",
+    "availableToLabel": "Available to",
+    "availableToMilitaryOnly": "US Military only",
+    "availableToMilitaryAndExpats": "US Military & Expats"
   },
   "PostPage": {
     "heading": "List your home",

@@ -95,6 +95,13 @@ export function ListingCard({
             )}
           </div>
         )}
+        {/* Bottom-left so it never competes with the top-left badge stack
+            or the favorite heart top-right. */}
+        {listing.availableTo && (
+          <span className="absolute bottom-2.5 left-2.5 rounded-[3px] bg-ink/90 px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
+            {listing.availableTo === "military_only" ? t("availableToMilitaryOnly") : t("availableToMilitaryAndExpats")}
+          </span>
+        )}
       </div>
       <div className="px-4 pb-4 pt-3.5">
         {/* Price and the bed/bath/sqm row below used to be font-mono, per

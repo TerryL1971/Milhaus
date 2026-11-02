@@ -54,6 +54,7 @@ export function mapRow(row: Record<string, unknown>): Listing {
     heatType: (details.heat_type as Listing["heatType"]) ?? null,
     stoveType: (details.stove_type as Listing["stoveType"]) ?? null,
     isNew: Boolean(details.is_new),
+    availableTo: (details.available_to as Listing["availableTo"]) ?? null,
     make: (details.make as string | null) ?? null,
     model: (details.model as string | null) ?? null,
     year: details.year === null || details.year === undefined ? null : Number(details.year),

@@ -167,7 +167,7 @@ export function ListingForm({
         pricing_note: formData.get("pricingNote") || null,
       }));
     } else {
-      ({ error: detailsError } = await supabase.from("rental_details").insert({
+      const rentalDetails = {
         listing_id: listingId,
         address: formData.get("address"),
         bedrooms: Number(formData.get("bedrooms")),
@@ -182,7 +182,18 @@ export function ListingForm({
         heat_type: formData.get("heatType") || null,
         stove_type: formData.get("stoveType") || null,
         is_new: formData.get("isNew") === "on",
-      }));
+        available_to: formData.get("availableTo") || null,
+      };
+      ({ error: detailsError } = await supabase.from("rental_details").insert(rentalDetails));
+      // PGRST204 = PostgREST doesn't know the available_to column yet,
+      // i.e. 20261102120000_add_rental_available_to.sql hasn't been run on
+      // this database. Save the home without it rather than failing the
+      // whole post over one optional badge.
+      if (detailsError?.code === "PGRST204") {
+        ({ error: detailsError } = await supabase
+          .from("rental_details")
+          .insert({ ...rentalDetails, available_to: undefined }));
+      }
     }
     if (detailsError) {
       setStatus("error");
@@ -820,6 +831,33 @@ export function ListingForm({
           <input type="checkbox" name="isNew" className="h-4 w-4 rounded border-canvas-deep text-olive focus:ring-olive" />
           <span>{t("isNewLabel")}</span>
         </label>
+      )}
+
+      {/* Charlie's "available to" ask — a two-way toggle rather than a
+          checkbox so neither choice reads as the "off" state. Defaults to
+          the open-to-everyone option; a lister flips it only when the
+          home is military-only. */}
+      {isRental && (
+        <fieldset>
+          <legend className={labelClass}>{t("availableTo")}</legend>
+          <div className="grid max-w-md grid-cols-2 overflow-hidden rounded-md border border-canvas-deep">
+            {(["military_and_expats", "military_only"] as const).map((value) => (
+              <label
+                key={value}
+                className="flex cursor-pointer items-center justify-center px-3 py-2 text-center text-sm text-charcoal transition-colors has-[:checked]:bg-ink has-[:checked]:text-paper has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-olive"
+              >
+                <input
+                  type="radio"
+                  name="availableTo"
+                  value={value}
+                  defaultChecked={value === "military_and_expats"}
+                  className="sr-only"
+                />
+                {value === "military_only" ? t("availableToMilitaryOnly") : t("availableToMilitaryAndExpats")}
+              </label>
+            ))}
+          </div>
+        </fieldset>
       )}
 
       <p className={sectionHeadingClass}>{t("sectionPhotos")}</p>

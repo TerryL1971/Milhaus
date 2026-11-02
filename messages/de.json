@@ -161,7 +161,9 @@
     "listedByFamily": "Von ausziehender Familie",
     "housingApprovedBadge": "Housing-Office genehmigt",
     "newBadge": "Neu",
-    "noPhotoYet": "Noch kein Foto"
+    "noPhotoYet": "Noch kein Foto",
+    "availableToMilitaryOnly": "Nur US-Militär",
+    "availableToMilitaryAndExpats": "Militär & Expats"
   },
   "ListingForm": {
     "source": "Quelle",
@@ -270,7 +272,10 @@
     "sectionServiceDetails": "Details zur Dienstleistung",
     "sectionLocation": "Standort",
     "sectionPriceAndDetails": "Preis & Details",
-    "sectionPhotos": "Fotos"
+    "sectionPhotos": "Fotos",
+    "availableTo": "Verfügbar für",
+    "availableToMilitaryOnly": "Nur US-Militär",
+    "availableToMilitaryAndExpats": "US-Militär & Expats"
   },
   "ListingDetail": {
     "backToListings": "← Zurück zu den Angeboten",
@@ -307,7 +312,10 @@
       "standard": "Standard"
     },
     "featuresHeading": "Ausstattung",
-    "nearbyHeading": "In der Nähe"
+    "nearbyHeading": "In der Nähe",
+    "availableToLabel": "Verfügbar für",
+    "availableToMilitaryOnly": "Nur US-Militär",
+    "availableToMilitaryAndExpats": "US-Militär & Expats"
   },
   "PostPage": {
     "heading": "Zuhause inserieren",

@@ -164,6 +164,12 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
               {listing.distanceToBase ? ` · ${listing.distanceToBase}` : ""}
             </h1>
             <p className="mt-1 text-ink-soft">{listing.address}</p>
+            {listing.availableTo && (
+              <p className="mt-2 inline-flex items-center gap-1.5 rounded-[3px] bg-ink px-2.5 py-1 font-mono text-[0.72rem] font-semibold uppercase tracking-wider text-paper">
+                <span className="opacity-70">{t("availableToLabel")}:</span>
+                {listing.availableTo === "military_only" ? t("availableToMilitaryOnly") : t("availableToMilitaryAndExpats")}
+              </p>
+            )}
           </div>
           <div className="text-right">
             <div className="font-mono text-2xl font-semibold text-ink">
