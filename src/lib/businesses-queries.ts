@@ -136,5 +136,7 @@ export async function tryActivateBusiness(businessId: string) {
   if (business.status !== "pending_review") return;
   if (business.consent_status !== "confirmed") return;
 
-  await admin.from("businesses").update({ status: "active" }).eq("id", businessId);
+  // is_active is what the public directory actually reads — status alone
+  // left a confirmed business marked live but still invisible.
+  await admin.from("businesses").update({ status: "active", is_active: true }).eq("id", businessId);
 }
