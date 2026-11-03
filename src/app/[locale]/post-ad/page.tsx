@@ -12,6 +12,7 @@
 
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { CartLink } from "@/components/cart-link";
 import { Link } from "@/i18n/navigation";
 import { getListingPrices } from "@/lib/listing-prices";
 import { getProfile } from "@/lib/profiles";
@@ -51,8 +52,13 @@ export default async function PostAdPage() {
   return (
     <main className="flex-1 py-14">
       <div className="mx-auto max-w-[760px] px-8">
-        <h1 className="mb-2 font-display text-3xl font-semibold text-ink">{t("heading")}</h1>
-        <p className="mb-8 text-ink-soft">{t("subhead")}</p>
+        <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="mb-2 font-display text-3xl font-semibold text-ink">{t("heading")}</h1>
+            <p className="text-ink-soft">{t("subhead")}</p>
+          </div>
+          <CartLink />
+        </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {options.map((option) => (

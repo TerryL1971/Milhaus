@@ -755,5 +755,9 @@
     "textBody": "Kurze Zeile darunter",
     "putLive": "Online stellen",
     "saveChanges": "Änderungen speichern"
+  },
+  "CartLink": {
+    "empty": "Warenkorb",
+    "withItems": "Warenkorb ({count, plural, =1 {1 Artikel} other {# Artikel}})"
   }
 }

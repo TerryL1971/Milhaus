@@ -755,5 +755,9 @@
     "textBody": "Short line under it",
     "putLive": "Put it live",
     "saveChanges": "Save changes"
+  },
+  "CartLink": {
+    "empty": "Cart",
+    "withItems": "Cart ({count, plural, =1 {1 item} other {# items}})"
   }
 }

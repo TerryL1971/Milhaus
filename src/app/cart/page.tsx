@@ -5,6 +5,7 @@
 // doesn't need i18n routing, matching that existing precedent.
 
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { removeFromCart, startCartStripeCheckout } from "@/app/cart/actions";
@@ -62,17 +63,24 @@ export default async function CartPage() {
 
   const total = rows.reduce((sum, row) => sum + row.priceEur, 0);
 
+  // "Continue shopping" goes back where they came from: the Advertise
+  // page (either language) if that's where they added something, the
+  // Post an ad chooser otherwise.
+  const referer = (await headers()).get("referer") ?? "";
+  const backHref = /\/(de\/)?advertise(\b|$)/.test(new URL(referer, "http://x").pathname) ? "/advertise" : "/post-ad";
+
   return (
     <main className="flex-1 py-14">
       <div className="mx-auto max-w-[640px] px-8">
+        <Link href={backHref} className="mb-4 inline-block text-sm text-ink-soft hover:text-ink">
+          ← Continue shopping
+        </Link>
         <h1 className="mb-2 font-display text-3xl font-semibold text-ink">Your cart</h1>
 
         {rows.length === 0 ? (
           <div className="rounded-md border border-canvas-deep bg-paper p-6 text-center">
             <p className="mb-2 text-ink-soft">Nothing waiting on payment right now.</p>
-            <Link href="/post-ad" className="text-sm font-semibold text-olive-deep hover:underline">
-              Post something →
-            </Link>
+            <ContinueShopping centered />
           </div>
         ) : (
           <>
@@ -84,9 +92,9 @@ export default async function CartPage() {
                 checkout, already just works — the cart is per-user, not
                 per-session — it just wasn't visible from this page that
                 you could keep adding before checking out. */}
-            <Link href="/post-ad" className="mb-8 inline-block text-sm font-semibold text-olive-deep hover:underline">
-              + Add another listing
-            </Link>
+            <div className="mb-8">
+              <ContinueShopping />
+            </div>
 
             <div className="mb-6 flex flex-col gap-3">
               {rows.map((row) => (
@@ -140,5 +148,19 @@ export default async function CartPage() {
         )}
       </div>
     </main>
+  );
+}
+
+// Back to the two places things go into the cart from.
+function ContinueShopping({ centered = false }: { centered?: boolean }) {
+  return (
+    <div className={`flex flex-wrap gap-x-6 gap-y-2 ${centered ? "justify-center" : ""}`}>
+      <Link href="/post-ad" className="text-sm font-semibold text-olive-deep hover:underline">
+        + Post another listing
+      </Link>
+      <Link href="/advertise" className="text-sm font-semibold text-olive-deep hover:underline">
+        + Buy more ad spots
+      </Link>
+    </div>
   );
 }

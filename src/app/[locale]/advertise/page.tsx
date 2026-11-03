@@ -11,6 +11,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { addAdToCart } from "@/app/[locale]/advertise/actions";
+import { CartLink } from "@/components/cart-link";
 import { AD_BASE_TERMS, AD_MAX_QUANTITY, AD_TERM_OPTIONS, adUnitPrice, termPrice } from "@/lib/ad-pricing";
 import { getAdPriceList } from "@/lib/ad-pricing-queries";
 import { AD_PLACEMENTS, ADVERTISING_CONTACT_EMAIL, type AdPlacement } from "@/lib/ad-slots";
@@ -51,9 +52,12 @@ export default async function AdvertisePage() {
   return (
     <main className="flex-1 py-14">
       <div className="mx-auto max-w-[1000px] px-8">
-        <h1 className="mb-3 font-display text-4xl font-semibold leading-[1.05] tracking-tight text-ink">
-          {t("heading")}
-        </h1>
+        <div className="mb-3 flex flex-wrap items-start justify-between gap-4">
+          <h1 className="font-display text-4xl font-semibold leading-[1.05] tracking-tight text-ink">
+            {t("heading")}
+          </h1>
+          <CartLink />
+        </div>
         <p className="mb-10 max-w-[60ch] text-lg text-ink-soft">{t("subhead")}</p>
 
         <div className="mb-12 grid grid-cols-1 gap-5 md:grid-cols-3">
