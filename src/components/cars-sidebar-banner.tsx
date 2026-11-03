@@ -78,8 +78,9 @@ export async function CarsSidebarBanner() {
             style={
               animated
                 ? {
-                    animation: `cars-sidebar-fade ${totalSeconds}s ease-in-out infinite`,
-                    animationDelay: `${-(index * perSlideSeconds)}s`,
+                    // Delay inside the shorthand, not a separate animationDelay —
+                    // React warns when the two are mixed on one element.
+                    animation: `cars-sidebar-fade ${totalSeconds}s ease-in-out ${-(index * perSlideSeconds)}s infinite`,
                   }
                 : undefined
             }

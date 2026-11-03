@@ -56,6 +56,7 @@ export default function ConsentLayout({ children }: { children: React.ReactNode 
                 alt="Milhaus"
                 width={1994}
                 height={236}
+                priority
                 className="h-7 w-auto md:h-10"
               />
             </a>
