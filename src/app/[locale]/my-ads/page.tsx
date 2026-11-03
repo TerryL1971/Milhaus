@@ -41,6 +41,14 @@ export default async function MyAdsPage() {
     .eq("owner_id", user.id)
     .order("created_at", { ascending: true });
   const spots = (data ?? []).map(mapAdSlotRow);
+  // "Site banner · spot 2" stays the same spot as it moves between
+  // groups, so number per placement in buying order, not per group.
+  const spotNumber = new Map<string, number>();
+  const perPlacement: Record<string, number> = {};
+  for (const spot of spots) {
+    perPlacement[spot.placement] = (perPlacement[spot.placement] ?? 0) + 1;
+    spotNumber.set(spot.id, perPlacement[spot.placement]);
+  }
 
   // eslint-disable-next-line react-hooks/purity -- a server render, once per request
   const now = Date.now();
@@ -80,16 +88,18 @@ export default async function MyAdsPage() {
                 </h2>
                 <p className="mb-4 text-sm text-ink-soft">{t(`${group.key}Note`)}</p>
                 <div className="flex flex-col gap-4">
-                  {group.spots.map((spot, index) => (
+                  {group.spots.map((spot) => (
                     <div key={spot.id} className="rounded-md border border-canvas-deep bg-paper p-5">
                       <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
                         <p className="font-semibold text-ink">
-                          {t(`placement_${spot.placement}`)} · {t("spotNumber", { number: index + 1 })}
+                          {t(`placement_${spot.placement}`)} · {t("spotNumber", { number: spotNumber.get(spot.id) ?? 1 })}
                         </p>
                         <p className="font-mono text-xs uppercase tracking-wider text-ink-soft/75">
                           {spot.endsAt
                             ? t(finished(spot) ? "endedOn" : "liveUntil", { date: dateFormat.format(new Date(spot.endsAt)) })
-                            : t("runsFor", { days: spot.durationDays ?? 0 })}
+                            : (spot.durationDays ?? 0) % 365 === 0
+                              ? t("runsForYears", { count: (spot.durationDays ?? 0) / 365 })
+                              : t("runsFor", { days: spot.durationDays ?? 0 })}
                         </p>
                       </div>
 

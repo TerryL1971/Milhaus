@@ -744,6 +744,7 @@
     "placement_special_offers": "Sonderangebots-Karte",
     "spotNumber": "Platz {number}",
     "runsFor": "Läuft {days} Tage ab Freischaltung",
+    "runsForYears": "Läuft {count, plural, =1 {1 Jahr} other {# Jahre}} ab Freischaltung",
     "liveUntil": "Online bis {date}",
     "endedOn": "Beendet am {date}",
     "linkUrl": "Wohin die Anzeige verlinkt (Ihre Website)",

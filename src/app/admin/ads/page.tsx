@@ -31,7 +31,9 @@ export default async function AdminAdsPage() {
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
   if (!isAdminRole(profile?.role)) redirect("/");
 
-  const ads = await getAllAdSlots();
+  // Bought spots still waiting on artwork first — they're Charlie's to-do.
+  const needsArtwork = (ad: AdSlot) => Boolean(ad.durationDays) && !ad.linkUrl;
+  const ads = (await getAllAdSlots()).sort((a, b) => Number(needsArtwork(b)) - Number(needsArtwork(a)));
 
   return (
     <main className="flex-1 py-12">
@@ -150,7 +152,7 @@ function AdStatus({ ad }: { ad: AdSlot }) {
   const chip = "rounded-[3px] px-2 py-0.5 font-mono text-[0.66rem] font-semibold uppercase tracking-wider";
   const date = (iso: string) => new Date(iso).toLocaleDateString("en-US", { dateStyle: "medium" });
   if (ad.durationDays && !ad.linkUrl) {
-    return <span className={`${chip} bg-brass/15 text-brass-deep`}>Needs artwork</span>;
+    return <span className={`${chip} whitespace-nowrap bg-brass/15 text-brass-deep`}>Needs artwork</span>;
   }
   // eslint-disable-next-line react-hooks/purity -- a server render, once per request
   if (ad.endsAt && new Date(ad.endsAt).getTime() <= Date.now()) {

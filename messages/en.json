@@ -744,6 +744,7 @@
     "placement_special_offers": "Special Offers card",
     "spotNumber": "spot {number}",
     "runsFor": "Runs {days} days once live",
+    "runsForYears": "Runs {count, plural, =1 {1 year} other {# years}} once live",
     "liveUntil": "Live until {date}",
     "endedOn": "Ended {date}",
     "linkUrl": "Where the ad links to (your website)",
