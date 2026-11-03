@@ -217,7 +217,7 @@ export default async function AdminBusinessesPage() {
                   {b.consentStatus !== "confirmed" && (
                     <tr className="border-b border-canvas-deep bg-canvas/30 last:border-0">
                       <td colSpan={7} className="px-4 py-3">
-                        <form action={recordManualConsent} encType="multipart/form-data" className="flex flex-wrap items-end gap-3">
+                        <form action={recordManualConsent} className="flex flex-wrap items-end gap-3">
                           <input type="hidden" name="id" value={b.id} />
                           <div>
                             <label className="mb-1 block font-mono text-[0.64rem] uppercase tracking-wider text-ink-soft/75">

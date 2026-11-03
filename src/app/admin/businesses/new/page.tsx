@@ -43,7 +43,7 @@ export default async function AdminNewBusinessPage() {
           not the newest — everything active shows, featured ones also get the homepage strip).
         </p>
 
-        <form action={createBusiness} encType="multipart/form-data" className="flex flex-col gap-5">
+        <form action={createBusiness} className="flex flex-col gap-5">
           <div>
             <label htmlFor="name" className={labelClass}>
               Business name

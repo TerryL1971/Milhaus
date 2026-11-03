@@ -50,7 +50,7 @@ export default async function PostBusinessPage() {
         <p className="mb-8 text-ink-soft">{t("body")}</p>
         {priceEur !== null && <PostingPriceNotice priceEur={priceEur} />}
 
-        <form action={submitBusiness} encType="multipart/form-data" className="flex flex-col gap-5">
+        <form action={submitBusiness} className="flex flex-col gap-5">
           <div>
             <label htmlFor="name" className={labelClass}>
               {t("name")}

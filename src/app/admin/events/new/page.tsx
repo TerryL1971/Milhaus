@@ -43,7 +43,7 @@ export default async function AdminNewEventPage() {
         <h1 className="mb-2 font-display text-3xl font-semibold text-ink">Add an event</h1>
         <p className="mb-8 text-ink-soft">Shows up on the public Events page right away.</p>
 
-        <form action={createEvent} encType="multipart/form-data" className="flex flex-col gap-5">
+        <form action={createEvent} className="flex flex-col gap-5">
           <div>
             <label htmlFor="title" className={labelClass}>
               Title
