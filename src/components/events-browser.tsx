@@ -15,7 +15,8 @@
 // these use only what an event already has): When (upcoming by default,
 // so finished events stop crowding the list; this week / this weekend /
 // this month; or past), Where (the event's base, else its city) and
-// Organizer. They apply as soon as they're ticked — events are all
+// Organizer (shown even with a single choice, so Charlie can always see
+// what's filterable). They apply as soon as they're ticked — events are all
 // loaded client-side, so there's no Apply step to wait on. Clicking a
 // calendar day overrides When, so a past day can still be looked at.
 
@@ -285,7 +286,7 @@ export function EventsBrowser({
                 ))}
               </div>
             </FilterCluster>
-            {areaOptions.length > 1 && (
+            {areaOptions.length > 0 && (
               <FilterCluster label="Where" icon="📍" badge={areas.length || undefined}>
                 <FilterCheckboxList
                   options={areaOptions.map((area) => ({ value: area, label: area }))}
@@ -297,7 +298,7 @@ export function EventsBrowser({
                 />
               </FilterCluster>
             )}
-            {organizerOptions.length > 1 && (
+            {organizerOptions.length > 0 && (
               <FilterCluster label="Organizer" icon="🎟️" badge={organizers.length || undefined}>
                 <FilterCheckboxList
                   options={organizerOptions.map((name) => ({ value: name, label: name }))}
