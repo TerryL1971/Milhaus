@@ -1,11 +1,11 @@
 // scripts/seed-demo-listings.mjs
-// Seeds demo listings for showing the site to Charlie before real housing
-// office / self-listed data exists. Creates two demo auth accounts (one
-// "housing office", one "family") as the owners, uploads a small set of
+// Seeds demo listings for showing the site to Charlie before real
+// self-listed data exists. Creates two demo auth accounts (one landlord,
+// "Böblingen Rentals (demo)", one "family") as the owners, uploads a small set of
 // real (CC0, see scripts/demo-photos/SOURCES.md) stock photos per rental
 // listing to the real listing-photos bucket, then the listings themselves.
 // Also seeds a handful of demo car ads (type="car", always self_listed —
-// no housing-office equivalent for cars) under the same "family" account,
+// same as every listing) under the same "family" account,
 // photo-less: CarListingCard already falls back to a gradient tile with no
 // photo, and there's no CC0 car-photo set sourced yet (see SOURCES.md if
 // that changes — same upload path would work for cars too).
@@ -54,6 +54,10 @@ const supabase = createClient(url, serviceRoleKey, {
 });
 
 const DEMO_EMAIL_DOMAIN = "@milhaus.internal";
+// The email still says "housing-office" so a rerun replaces the account
+// already live under it — the account itself is a plain landlord now
+// (2026-11-04: nothing may look like the on-base Housing Office listed a
+// home; see CLAUDE.md).
 const DEMO_HOUSING_OFFICE_EMAIL = "demo-housing-office" + DEMO_EMAIL_DOMAIN;
 const DEMO_FAMILY_EMAIL = "demo-family" + DEMO_EMAIL_DOMAIN;
 
@@ -111,7 +115,7 @@ async function main() {
 
   const { error: roleError } = await supabase
     .from("profiles")
-    .update({ role: "housing_office_partner", display_name: "Panzer Kaserne Housing Office (demo)" })
+    .update({ role: "landlord", display_name: "Böblingen Rentals (demo)" })
     .eq("id", housingOfficeId);
   if (roleError) throw roleError;
 
@@ -137,7 +141,7 @@ async function main() {
       bathrooms: 2,
       size_sqm: 110,
       available_from: "2026-09-15",
-      source: "housing_office",
+      source: "self_listed",
       owner_id: housingOfficeId,
       photoSet: ["exterior-1.jpg", "kitchen-1.webp", "bathroom-1.webp"],
     },
@@ -170,7 +174,7 @@ async function main() {
       bathrooms: 2,
       size_sqm: 142,
       available_from: "2026-09-01",
-      source: "housing_office",
+      source: "self_listed",
       owner_id: housingOfficeId,
       photoSet: ["exterior-1.jpg", "bedroom-1.webp", "living-room-1.webp"],
     },
@@ -193,7 +197,7 @@ async function main() {
     },
     {
       title: "3-bedroom house, walk to base",
-      description: "Housing office listing just minutes from the gate — 3 bed, 2 bath, move-in ready.",
+      description: "Just minutes from the gate — 3 bed, 2 bath, move-in ready.",
       address: "Schulstraße 5",
       city: "Ramstein-Miesenbach",
       base: "Ramstein",
@@ -203,7 +207,7 @@ async function main() {
       bathrooms: 2,
       size_sqm: 118,
       available_from: "2026-09-01",
-      source: "housing_office",
+      source: "self_listed",
       owner_id: housingOfficeId,
       photoSet: ["exterior-1.jpg", "bathroom-1.webp"],
     },
@@ -236,7 +240,7 @@ async function main() {
       bathrooms: 2,
       size_sqm: 102,
       available_from: "2026-09-10",
-      source: "housing_office",
+      source: "self_listed",
       owner_id: housingOfficeId,
       photoSet: ["exterior-1.jpg", "kitchen-1.webp", "living-room-1.webp"],
     },
