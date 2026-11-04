@@ -52,7 +52,10 @@ export default async function AdminBusinessesPage() {
 
   return (
     <main className="flex-1 py-12">
-      <div className="mx-auto max-w-[1000px] px-8">
+      {/* Wider than the other admin pages — this table carries a full row
+          of action buttons plus the consent form, and at 1000px the last
+          buttons were cut off (Terry, 2026-11-04). */}
+      <div className="mx-auto max-w-[1400px] px-8">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
           <div>
             <Link href="/admin" className="mb-2 inline-block text-sm text-ink-soft hover:text-ink">
@@ -156,27 +159,27 @@ export default async function AdminBusinessesPage() {
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex justify-end gap-2">
+                      <div className="flex min-w-[260px] flex-wrap justify-end gap-2">
                         {b.status === "pending_review" &&
                           (b.consentStatus === "confirmed" ? (
                             <form action={approveBusiness}>
                               <input type="hidden" name="id" value={b.id} />
                               <button
                                 type="submit"
-                                className="rounded-md bg-olive px-3 py-1.5 text-xs font-semibold text-paper hover:bg-olive-deep"
+                                className="rounded-md bg-olive whitespace-nowrap px-3 py-1.5 text-xs font-semibold text-paper hover:bg-olive-deep"
                               >
                                 Approve
                               </button>
                             </form>
                           ) : (
-                            <span className="self-center text-xs text-ink-soft/75">Needs consent first</span>
+                            <span className="self-center whitespace-nowrap text-xs text-ink-soft/75">Needs consent first</span>
                           ))}
                         {b.consentStatus === "pending" && b.consentMethod === "email" && (
                           <form action={resendConsentEmail}>
                             <input type="hidden" name="id" value={b.id} />
                             <button
                               type="submit"
-                              className="rounded-md border border-canvas-deep px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-olive hover:text-olive-deep"
+                              className="rounded-md border border-canvas-deep whitespace-nowrap px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-olive hover:text-olive-deep"
                             >
                               Resend email
                             </button>
@@ -187,7 +190,7 @@ export default async function AdminBusinessesPage() {
                           <input type="hidden" name="isActive" value={String(b.isActive)} />
                           <button
                             type="submit"
-                            className="rounded-md border border-canvas-deep px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-olive hover:text-olive-deep"
+                            className="rounded-md border border-canvas-deep whitespace-nowrap px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-olive hover:text-olive-deep"
                           >
                             {b.isActive ? "Hide" : "Unhide"}
                           </button>
@@ -197,7 +200,7 @@ export default async function AdminBusinessesPage() {
                           <input type="hidden" name="isFeatured" value={String(b.isFeatured)} />
                           <button
                             type="submit"
-                            className="rounded-md border border-canvas-deep px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-brass hover:text-brass-deep"
+                            className="rounded-md border border-canvas-deep whitespace-nowrap px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-brass hover:text-brass-deep"
                           >
                             {b.isFeatured ? "Unfeature" : "Feature"}
                           </button>
@@ -206,7 +209,7 @@ export default async function AdminBusinessesPage() {
                           <input type="hidden" name="id" value={b.id} />
                           <button
                             type="submit"
-                            className="rounded-md border border-canvas-deep px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-rust hover:text-rust"
+                            className="rounded-md border border-canvas-deep whitespace-nowrap px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-rust hover:text-rust"
                           >
                             Delete
                           </button>
@@ -245,7 +248,7 @@ export default async function AdminBusinessesPage() {
                           />
                           <button
                             type="submit"
-                            className="rounded-md bg-ink px-3 py-1.5 text-xs font-semibold text-paper hover:bg-ink-soft"
+                            className="rounded-md bg-ink whitespace-nowrap px-3 py-1.5 text-xs font-semibold text-paper hover:bg-ink-soft"
                           >
                             Mark consent confirmed
                           </button>
