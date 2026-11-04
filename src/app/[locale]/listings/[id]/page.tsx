@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const listing = await getListingById(id);
   if (!listing) return { title: "Listing not found", robots: { index: false, follow: false } };
 
-  const title = `${listing.city} · ${currencyFormatter.format(listing.priceEurMonth)}/mo`;
+  const title = `${listing.city} · ${currencyFormatter.format(listing.priceEurMonth)}${listing.offerType === "sale" ? " · for sale" : "/mo"}`;
   const description = listing.description || `${listing.bedrooms}-bedroom home in ${listing.city}.`;
   const url = `${SITE_URL}/listings/${listing.id}`;
 
@@ -69,6 +69,7 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
   const dateFormatter = new Intl.DateTimeFormat(locale, { month: "long", day: "numeric", year: "numeric" });
 
   const isRented = listing.status === "rented";
+  const isForSale = listing.offerType === "sale";
 
   const supabase = await createClient();
   const {
@@ -135,7 +136,9 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Milhaus", item: SITE_URL },
-      { "@type": "ListItem", position: 2, name: "Homes", item: `${SITE_URL}/listings` },
+      isForSale
+        ? { "@type": "ListItem", position: 2, name: "Homes for sale", item: `${SITE_URL}/listings?for=sale` }
+        : { "@type": "ListItem", position: 2, name: "Homes", item: `${SITE_URL}/listings` },
       { "@type": "ListItem", position: 3, name: listing.title, item: `${SITE_URL}/listings/${listing.id}` },
     ],
   };
@@ -146,7 +149,7 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <div className="mx-auto max-w-[860px] px-8">
-        <Link href="/#listings" className="mb-6 inline-block text-sm text-ink-soft hover:text-ink">
+        <Link href={isForSale ? "/listings?for=sale" : "/listings"} className="mb-6 inline-block text-sm text-ink-soft hover:text-ink">
           {t("backToListings")}
         </Link>
 
@@ -172,14 +175,14 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
           <div className="text-right">
             <div className="font-mono text-2xl font-semibold text-ink">
               {currencyFormatter.format(listing.priceEurMonth)}
-              <span className="text-base font-normal text-ink-soft"> / mo</span>
+              {!isForSale && <span className="text-base font-normal text-ink-soft"> / mo</span>}
             </div>
             <span
               className={`mt-1 inline-block rounded-[3px] px-2 py-0.5 font-mono text-[0.7rem] font-semibold uppercase tracking-wider ${
                 isRented ? "bg-rust/10 text-rust line-through" : "bg-olive/15 text-olive-deep"
               }`}
             >
-              {isRented ? t("rented") : t("availableStatus")}
+              {isRented ? (isForSale ? t("sold") : t("rented")) : isForSale ? t("forSale") : t("availableStatus")}
             </span>
             {canSeeViewCount && (
               <p className="mt-1 font-mono text-xs text-ink-soft">{t("viewCount", { count: listing.viewCount })}</p>

@@ -16,7 +16,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { extendExpiry } from "@/lib/listing-expiry";
-import { getPostingPriceForProfile, type PriceableType } from "@/lib/listing-prices";
+import { getPostingPriceForProfile, priceableType } from "@/lib/listing-prices";
 import { getProfile } from "@/lib/profiles";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -76,7 +76,7 @@ export async function renewMyListing(formData: FormData) {
 
   const { data: listing } = await supabase
     .from("listings")
-    .select("id, type, status")
+    .select("id, type, offer_type, status")
     .eq("id", id)
     .eq("owner_id", user.id)
     .maybeSingle();
@@ -85,7 +85,10 @@ export async function renewMyListing(formData: FormData) {
   }
 
   const profile = await getProfile(user.id);
-  const priceEur = await getPostingPriceForProfile(listing.type as PriceableType, profile?.isIndividualLister ?? false);
+  const priceEur = await getPostingPriceForProfile(
+    priceableType(listing.type as string, listing.offer_type as string | null),
+    profile?.isIndividualLister ?? false,
+  );
 
   if (priceEur && priceEur > 0) {
     // One cart line per listing — pressing Renew twice shouldn't charge twice.

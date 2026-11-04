@@ -37,6 +37,9 @@ export function mapRow(row: Record<string, unknown>): Listing {
     bases: (row.bases as string[] | null) ?? null,
     distanceToBase: (row.distance_to_base as string | null) ?? null,
     priceEurMonth: Number(row.price_eur_month),
+    // Rows from before 20261104120000_add_homes_for_sale.sql have no
+    // offer_type at all; they were all rentals.
+    offerType: row.offer_type === "sale" ? "sale" : "rent",
     bedrooms: details.bedrooms === null || details.bedrooms === undefined ? null : Number(details.bedrooms),
     bathrooms: details.bathrooms === null || details.bathrooms === undefined ? null : Number(details.bathrooms),
     sizeSqm: details.size_sqm === null || details.size_sqm === undefined ? null : Number(details.size_sqm),

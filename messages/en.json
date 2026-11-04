@@ -83,7 +83,6 @@
     "heroSearchPlaceholder": "What are you looking for?",
     "heroSearchNoResults": "No results for “{query}” — try different words.",
     "heroAllCategories": "Categories",
-    "heroCategoryRentals": "Rentals",
     "heroCategoryCars": "Cars",
     "heroCategoryServices": "Services",
     "heroTagline": "A stronger community. A smoother life abroad.",
@@ -128,7 +127,9 @@
     "carsComingSoonHeading": "Featured Cars coming soon",
     "carsComingSoonBody": "Cars for sale from the community will appear here.",
     "businessesComingSoonHeading": "Businesses coming soon",
-    "businessesComingSoonBody": "Military-friendly businesses will appear here."
+    "businessesComingSoonBody": "Military-friendly businesses will appear here.",
+    "heroCategoryHomesForRent": "Homes for Rent",
+    "heroCategoryHomesForSale": "Homes for Sale"
   },
   "ListingsGrid": {
     "heading": "Open right now",
@@ -161,7 +162,9 @@
     "newBadge": "New",
     "noPhotoYet": "No photo yet",
     "availableToMilitaryOnly": "US Military only",
-    "availableToMilitaryAndExpats": "Military & Expats"
+    "availableToMilitaryAndExpats": "Military & Expats",
+    "forSaleBadge": "For sale",
+    "sold": "Sold"
   },
   "ListingForm": {
     "title": "Title",
@@ -281,7 +284,8 @@
     "undoRemovePhoto": "Undo",
     "addPhotos": "Add more photos",
     "photoNumber": "Photo {number}",
-    "availableToNotSaved": "Everything else was saved, but \"Available to\" couldn't be yet — the site's database still needs a one-time update. Once that's done, edit this listing and set it again."
+    "availableToNotSaved": "Everything else was saved, but \"Available to\" couldn't be yet — the site's database still needs a one-time update. Once that's done, edit this listing and set it again.",
+    "salePrice": "Asking price (€)"
   },
   "ListingDetail": {
     "backToListings": "← Back to listings",
@@ -319,11 +323,15 @@
     "nearbyHeading": "Nearby",
     "availableToLabel": "Available to",
     "availableToMilitaryOnly": "US Military only",
-    "availableToMilitaryAndExpats": "US Military & Expats"
+    "availableToMilitaryAndExpats": "US Military & Expats",
+    "sold": "Sold",
+    "forSale": "For sale"
   },
   "PostPage": {
     "heading": "List your home",
-    "body": "A few details and some photos — it goes live right away (or as soon as payment clears, if this category currently charges a posting fee)."
+    "body": "A few details and some photos — it goes live right away (or as soon as payment clears, if this category currently charges a posting fee).",
+    "saleHeading": "Sell your home",
+    "saleBody": "A few details and some photos — it goes live right away (or as soon as payment clears, if selling a home currently has a posting fee)."
   },
   "SignIn": {
     "heading": "Sign in",
@@ -618,20 +626,30 @@
     "metaTitle": "Post an ad",
     "heading": "What are you posting?",
     "subhead": "Pick a category to get started.",
-    "rentalHeading": "A Home",
+    "rentalHeading": "A Home for Rent",
     "rentalBody": "List a place you're moving out of.",
     "carHeading": "A Car",
     "carBody": "PCSing out, or just upgrading.",
     "serviceHeading": "A Business or Service",
     "serviceBody": "List your own business in the directory.",
-    "freeLabel": "Free"
+    "freeLabel": "Free",
+    "saleHeading": "A Home for Sale",
+    "saleBody": "Selling a house or apartment you own."
   },
   "ListingsPage": {
     "metaTitle": "Homes for rent",
     "metaDescription": "Rentals from landlords and outgoing families near US military bases in Germany — checked, and taken down the day they're gone.",
     "heading": "Homes for rent",
     "subhead": "Homes listed by landlords and outgoing families, checked before they go live.",
-    "postAHome": "List your home"
+    "postAHome": "List your home",
+    "tabsLabel": "Homes for rent or for sale",
+    "tabRent": "For rent",
+    "tabSale": "For sale",
+    "saleHeading": "Homes for sale",
+    "saleSubhead": "Homes for sale near US military bases in Germany, listed by their owners.",
+    "saleMetaTitle": "Homes for sale",
+    "saleMetaDescription": "Homes for sale near US military bases in Germany, listed by their owners — taken down the day they're sold.",
+    "postAHomeForSale": "Sell your home"
   },
   "PostBusinessPage": {
     "heading": "List your business",

@@ -265,7 +265,8 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
                 className="flex-none rounded-md border border-canvas-deep bg-canvas py-2.5 pl-2.5 pr-1 text-sm text-charcoal focus:border-olive focus:outline-none"
               >
                 <option value="">{t("heroAllCategories")}</option>
-                <option value="rental">{t("heroCategoryRentals")}</option>
+                <option value="rental">{t("heroCategoryHomesForRent")}</option>
+                <option value="rental_sale">{t("heroCategoryHomesForSale")}</option>
                 <option value="car">{t("heroCategoryCars")}</option>
                 <option value="service">{t("heroCategoryServices")}</option>
               </select>

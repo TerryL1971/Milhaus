@@ -32,7 +32,8 @@ export const metadata: Metadata = {
 };
 
 const TYPE_LABELS: Record<PriceableType, string> = {
-  rental: "Rentals",
+  rental: "Homes for rent",
+  rental_sale: "Homes for sale",
   car: "Cars",
   product: "Items for sale",
   service: "Services",

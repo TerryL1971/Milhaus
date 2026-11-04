@@ -41,7 +41,7 @@ import { NEARBY_AMENITY_KEYS } from "@/lib/nearby-amenities";
 import { CONDITION_KEYS, CONDITION_LABELS, PRODUCT_CATEGORY_KEYS, PRODUCT_CATEGORY_LABELS } from "@/lib/product-categories";
 import { SERVICE_CATEGORY_KEYS, SERVICE_CATEGORY_LABELS } from "@/lib/service-categories";
 import { createClient } from "@/lib/supabase/client";
-import type { Listing, ListingSource } from "@/lib/types";
+import type { Listing, ListingSource, OfferType } from "@/lib/types";
 
 type Status = "idle" | "submitting" | "success" | "error";
 type Variant = "self-list" | "admin-add";
@@ -123,11 +123,15 @@ function detailsPayload(kind: Kind, formData: FormData) {
 export function ListingForm({
   variant,
   kind = "rental",
+  offerType = "rent",
   priceEur = null,
   existing,
 }: {
   variant: Variant;
   kind?: Kind;
+  /** Homes only — a home for rent or for sale (/post vs /post?for=sale).
+   * Ignored when editing: an existing listing keeps its own. */
+  offerType?: OfferType;
   /** Set on /edit-listing/[id] — pre-fills every field and saves as an
    * update instead of a new listing. */
   existing?: Listing;
@@ -162,6 +166,7 @@ export function ListingForm({
 
   const isAdminAdd = variant === "admin-add";
   const isRental = kind === "rental";
+  const isForSale = isRental && (existing?.offerType ?? offerType) === "sale";
   const isCar = kind === "car";
   const isProduct = kind === "product";
   const isService = kind === "service";
@@ -202,6 +207,7 @@ export function ListingForm({
       bases: isCar && carBases.length > 1 ? carBases : null,
       distance_to_base: formData.get("distanceToBase") || null,
       price_eur_month: Number(formData.get("priceEurMonth")),
+      offer_type: isForSale ? "sale" : "rent",
       source,
       status: "draft",
       owner_id: user.id,
@@ -842,7 +848,7 @@ export function ListingForm({
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           <div>
             <label htmlFor="priceEurMonth" className={labelClass}>
-              {t("priceEurMonth")}
+              {isForSale ? t("salePrice") : t("priceEurMonth")}
             </label>
             <input
               id="priceEurMonth"

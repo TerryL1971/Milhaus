@@ -175,7 +175,7 @@ export default async function MyListingsPage() {
                         </Link>
                         <p className="font-mono text-xs text-ink-soft">
                           {formatListingPrice(listing)}
-                          {listing.type === "rental" ? t("perMonth") : ""} · {listing.city} ·{" "}
+                          {listing.type === "rental" && listing.offerType === "rent" ? t("perMonth") : ""} · {listing.city} ·{" "}
                           {t("viewCount", { count: listing.viewCount })}
                         </p>
                         {status === "active" && listing.expiresAt && (
@@ -215,7 +215,7 @@ export default async function MyListingsPage() {
                               type="submit"
                               className="rounded-md border border-canvas-deep px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-olive hover:text-olive-deep"
                             >
-                              {listing.type === "car" || listing.type === "product"
+                              {listing.type === "car" || listing.type === "product" || listing.offerType === "sale"
                                 ? t("markSold")
                                 : listing.type === "service"
                                   ? t("markUnavailable")

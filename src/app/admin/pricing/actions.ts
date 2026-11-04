@@ -10,7 +10,7 @@ import { AD_PLACEMENTS, type AdPlacement } from "@/lib/ad-slots";
 import { createClient } from "@/lib/supabase/server";
 import type { PriceableType } from "@/lib/listing-prices";
 
-const VALID_TYPES: PriceableType[] = ["rental", "car", "product", "service", "business"];
+const VALID_TYPES: PriceableType[] = ["rental", "rental_sale", "car", "product", "service", "business"];
 
 export async function setListingPrice(formData: FormData) {
   const type = formData.get("type") as string;

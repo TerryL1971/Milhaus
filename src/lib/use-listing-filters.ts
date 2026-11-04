@@ -88,7 +88,10 @@ export function useListingFilters() {
   }
 
   function clearAll() {
-    router.replace(`${pathname}#listings`, { scroll: false });
+    // Keep which half of the Homes page they're on (?for=sale) — that's
+    // a tab, not a filter.
+    const forSale = searchParams.get("for") === "sale";
+    router.replace(`${pathname}${forSale ? "?for=sale" : ""}#listings`, { scroll: false });
   }
 
   const activeCount =

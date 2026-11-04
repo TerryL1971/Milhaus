@@ -45,6 +45,12 @@ export default async function PostAdPage() {
   // The form itself still works for whoever already has the direct link.
   const options = [
     { href: "/post", heading: t("rentalHeading"), body: t("rentalBody"), priceEur: isIndividual ? 0 : prices.rental },
+    {
+      href: "/post?for=sale",
+      heading: t("saleHeading"),
+      body: t("saleBody"),
+      priceEur: isIndividual ? 0 : prices.rental_sale,
+    },
     { href: "/post-car", heading: t("carHeading"), body: t("carBody"), priceEur: isIndividual ? 0 : prices.car },
     { href: "/post-business", heading: t("serviceHeading"), body: t("serviceBody"), priceEur: prices.business },
   ];

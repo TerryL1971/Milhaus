@@ -83,7 +83,6 @@
     "heroSearchPlaceholder": "Wonach suchen Sie?",
     "heroSearchNoResults": "Keine Ergebnisse für „{query}“ — versuchen Sie andere Begriffe.",
     "heroAllCategories": "Kategorien",
-    "heroCategoryRentals": "Mietobjekte",
     "heroCategoryCars": "Autos",
     "heroCategoryServices": "Dienstleistungen",
     "heroTagline": "Eine stärkere Community. Ein leichteres Leben im Ausland.",
@@ -128,7 +127,9 @@
     "carsComingSoonHeading": "Empfohlene Autos folgen bald",
     "carsComingSoonBody": "Autos aus der Community erscheinen hier.",
     "businessesComingSoonHeading": "Unternehmen folgen bald",
-    "businessesComingSoonBody": "Militärfreundliche Unternehmen erscheinen hier."
+    "businessesComingSoonBody": "Militärfreundliche Unternehmen erscheinen hier.",
+    "heroCategoryHomesForRent": "Wohnungen zur Miete",
+    "heroCategoryHomesForSale": "Immobilien zum Kauf"
   },
   "ListingsGrid": {
     "heading": "Gerade verfügbar",
@@ -161,7 +162,9 @@
     "newBadge": "Neu",
     "noPhotoYet": "Noch kein Foto",
     "availableToMilitaryOnly": "Nur US-Militär",
-    "availableToMilitaryAndExpats": "Militär & Expats"
+    "availableToMilitaryAndExpats": "Militär & Expats",
+    "forSaleBadge": "Zu verkaufen",
+    "sold": "Verkauft"
   },
   "ListingForm": {
     "title": "Titel",
@@ -281,7 +284,8 @@
     "undoRemovePhoto": "Rückgängig",
     "addPhotos": "Weitere Fotos hinzufügen",
     "photoNumber": "Foto {number}",
-    "availableToNotSaved": "Alles andere wurde gespeichert, aber „Verfügbar für“ noch nicht — die Datenbank der Website braucht noch ein einmaliges Update. Danach dieses Inserat bearbeiten und die Auswahl erneut setzen."
+    "availableToNotSaved": "Alles andere wurde gespeichert, aber „Verfügbar für“ noch nicht — die Datenbank der Website braucht noch ein einmaliges Update. Danach dieses Inserat bearbeiten und die Auswahl erneut setzen.",
+    "salePrice": "Kaufpreis (€)"
   },
   "ListingDetail": {
     "backToListings": "← Zurück zu den Angeboten",
@@ -319,11 +323,15 @@
     "nearbyHeading": "In der Nähe",
     "availableToLabel": "Verfügbar für",
     "availableToMilitaryOnly": "Nur US-Militär",
-    "availableToMilitaryAndExpats": "US-Militär & Expats"
+    "availableToMilitaryAndExpats": "US-Militär & Expats",
+    "sold": "Verkauft",
+    "forSale": "Zu verkaufen"
   },
   "PostPage": {
     "heading": "Zuhause inserieren",
-    "body": "Ein paar Details und einige Fotos — es geht sofort live (oder sobald die Zahlung eingegangen ist, falls für diese Kategorie derzeit eine Gebühr anfällt)."
+    "body": "Ein paar Details und einige Fotos — es geht sofort live (oder sobald die Zahlung eingegangen ist, falls für diese Kategorie derzeit eine Gebühr anfällt).",
+    "saleHeading": "Immobilie verkaufen",
+    "saleBody": "Ein paar Details und einige Fotos — es geht sofort live (oder sobald die Zahlung eingegangen ist, falls für den Verkauf einer Immobilie derzeit eine Gebühr anfällt)."
   },
   "SignIn": {
     "heading": "Anmelden",
@@ -618,20 +626,30 @@
     "metaTitle": "Anzeige aufgeben",
     "heading": "Was möchten Sie inserieren?",
     "subhead": "Wählen Sie eine Kategorie, um loszulegen.",
-    "rentalHeading": "Ein Zuhause",
+    "rentalHeading": "Ein Zuhause zur Miete",
     "rentalBody": "Inserieren Sie einen Ort, aus dem Sie ausziehen.",
     "carHeading": "Ein Auto",
     "carBody": "PCS-Umzug oder einfach ein Upgrade.",
     "serviceHeading": "Ein Unternehmen",
     "serviceBody": "Tragen Sie Ihr eigenes Unternehmen in das Verzeichnis ein.",
-    "freeLabel": "Kostenlos"
+    "freeLabel": "Kostenlos",
+    "saleHeading": "Eine Immobilie zum Kauf",
+    "saleBody": "Verkaufen Sie ein Haus oder eine Wohnung, die Ihnen gehört."
   },
   "ListingsPage": {
     "metaTitle": "Wohnungen zur Miete",
     "metaDescription": "Mietwohnungen von Vermietern und ausziehenden Familien nahe US-Stützpunkten in Deutschland — geprüft und am Tag der Vermietung entfernt.",
     "heading": "Wohnungen zur Miete",
     "subhead": "Wohnungen von Vermietern und ausziehenden Familien, geprüft bevor sie live gehen.",
-    "postAHome": "Wohnung inserieren"
+    "postAHome": "Wohnung inserieren",
+    "tabsLabel": "Wohnungen zur Miete oder zum Kauf",
+    "tabRent": "Zur Miete",
+    "tabSale": "Zum Kauf",
+    "saleHeading": "Immobilien zum Kauf",
+    "saleSubhead": "Häuser und Wohnungen zum Kauf nahe US-Stützpunkten in Deutschland, von den Eigentümern inseriert.",
+    "saleMetaTitle": "Immobilien zum Kauf",
+    "saleMetaDescription": "Häuser und Wohnungen zum Kauf nahe US-Stützpunkten in Deutschland, von den Eigentümern inseriert — am Tag des Verkaufs entfernt.",
+    "postAHomeForSale": "Immobilie verkaufen"
   },
   "PostBusinessPage": {
     "heading": "Ihr Unternehmen eintragen",

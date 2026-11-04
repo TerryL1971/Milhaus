@@ -48,11 +48,11 @@ const PHOTO_GRADIENTS = [
 // filter is active — padding a filtered, specific result set with generic
 // filler would be actively misleading ("3 listings near Ramstein" when
 // there's really 1), not just decorative.
-function PlaceholderCard({ variant }: { variant: 0 | 1 | 2 }) {
+function PlaceholderCard({ variant, forSale }: { variant: 0 | 1 | 2; forSale: boolean }) {
   const t = useTranslations("ListingsGrid");
   const content: { heading: string; body: string; ctaLabel?: string; ctaHref?: string }[] = [
     { heading: t("placeholder1Heading"), body: t("placeholder1Body") },
-    { heading: t("placeholder2Heading"), body: t("placeholder2Body"), ctaLabel: t("placeholder2Cta"), ctaHref: "/post" },
+    { heading: t("placeholder2Heading"), body: t("placeholder2Body"), ctaLabel: t("placeholder2Cta"), ctaHref: forSale ? "/post?for=sale" : "/post" },
     { heading: t("placeholder3Heading"), body: t("placeholder3Body"), ctaLabel: t("placeholder3Cta"), ctaHref: "/for-landlords" },
   ];
   const { heading, body, ctaLabel, ctaHref } = content[variant];
@@ -74,8 +74,12 @@ export function ListingsGrid({
   listings,
   favoriteIds,
   initialQuery = "",
+  forSale = false,
 }: {
   listings: Listing[];
+  /** The Homes page's For sale tab — only changes where "List your
+   * home" placeholder links go; the page already passes only those. */
+  forSale?: boolean;
   /** null = signed-out visitor (no hearts at all); array (possibly
    * empty) = signed in, these listing IDs are favorited. */
   favoriteIds: string[] | null;
@@ -338,7 +342,7 @@ export function ListingsGrid({
             />
           ))}
           {Array.from({ length: placeholderCount }).map((_, index) => (
-            <PlaceholderCard key={`placeholder-${index}`} variant={index as 0 | 1 | 2} />
+            <PlaceholderCard key={`placeholder-${index}`} variant={index as 0 | 1 | 2} forSale={forSale} />
           ))}
         </div>
       )}

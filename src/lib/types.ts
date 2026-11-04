@@ -4,6 +4,7 @@
 // Supabase is wired up, and the real Supabase queries later, share a shape.
 
 export type ListingType = "rental" | "car" | "product" | "service";
+export type OfferType = "rent" | "sale";
 
 export type ListingSource = "housing_office" | "self_listed";
 
@@ -46,10 +47,13 @@ export interface Listing {
    * the form) means "just `base`". */
   bases: string[] | null;
   distanceToBase: string | null;
-  /** The listing's asking price — monthly rent for a rental, one-time
-   * asking price for a car. Only display formatting is type-conditional
-   * (the "/ mo" suffix); the column itself isn't. */
+  /** The listing's asking price — monthly rent for a home for rent,
+   * one-time asking price for a home for sale or a car. Only display
+   * formatting is conditional (the "/ mo" suffix); the column isn't. */
   priceEurMonth: number;
+  /** Homes only: for rent, or for sale (2026-11-04). Always "rent" on
+   * every other type. */
+  offerType: OfferType;
   /** Rental only — null on a car listing. */
   bedrooms: number | null;
   /** Rental only — null on a car listing. */

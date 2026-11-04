@@ -187,7 +187,8 @@ export default async function AdminPage() {
                         <span>
                           {listing.priceIsEstimate ? "from " : ""}
                           {formatListingPrice(listing)}
-                          {isRental ? "/mo" : ""}
+                          {isRental && listing.offerType === "rent" ? "/mo" : ""}
+                          {listing.offerType === "sale" ? " · for sale" : ""}
                         </span>
                         {isCar ? (
                           listing.mileageKm != null && <span>{listing.mileageKm.toLocaleString("en-US")} km</span>
@@ -312,7 +313,8 @@ export default async function AdminPage() {
                       </td>
                       <td className="px-4 py-3 font-mono">
                         {formatListingPrice(listing)}
-                        {listing.type === "rental" ? "/mo" : ""}
+                        {listing.type === "rental" && listing.offerType === "rent" ? "/mo" : ""}
+                        {listing.offerType === "sale" ? " · for sale" : ""}
                       </td>
                       <td className="px-4 py-3 font-mono text-ink-soft">{listing.viewCount}</td>
                       <td className="px-4 py-3">

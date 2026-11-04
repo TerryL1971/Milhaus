@@ -10,10 +10,17 @@
 import { createClient } from "@/lib/supabase/server";
 import { getFreeUntilStatus } from "@/lib/site-settings";
 
-export type PriceableType = "rental" | "car" | "product" | "service" | "business";
+// "rental_sale" is a home for sale — still a type='rental' listing, with
+// its own posting price (Terry, 2026-11-04). priceableType() maps one.
+export type PriceableType = "rental" | "rental_sale" | "car" | "product" | "service" | "business";
 export type ListingPrices = Record<PriceableType, number>;
 
-const DEFAULT_PRICES: ListingPrices = { rental: 0, car: 0, product: 0, service: 0, business: 0 };
+const DEFAULT_PRICES: ListingPrices = { rental: 0, rental_sale: 0, car: 0, product: 0, service: 0, business: 0 };
+
+/** Which posting price a listing pays — a home for sale has its own. */
+export function priceableType(type: string, offerType?: string | null): PriceableType {
+  return type === "rental" && offerType === "sale" ? "rental_sale" : (type as PriceableType);
+}
 
 function mapRows(rows: { type: string; price_eur: string | number }[]): ListingPrices {
   const prices = { ...DEFAULT_PRICES };

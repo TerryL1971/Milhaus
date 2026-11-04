@@ -42,8 +42,11 @@ import type { Listing, ListingType } from "@/lib/types";
 
 type SearchParams = Promise<{ q?: string; category?: string; base?: string }>;
 
-const CATEGORY_REDIRECT_PATHS: Partial<Record<ListingType, string>> = {
+// rental_sale is the homepage's "Homes for Sale" option — the For sale
+// half of the Homes page, not a listing type of its own.
+const CATEGORY_REDIRECT_PATHS: Partial<Record<ListingType | "rental_sale", string>> = {
   rental: "/listings",
+  rental_sale: "/listings?for=sale",
   car: "/cars",
   service: "/services",
 };
@@ -60,9 +63,9 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
   const locale = await getLocale();
   const query = buildQueryString(q, base);
 
-  const redirectPath = category ? CATEGORY_REDIRECT_PATHS[category as ListingType] : undefined;
+  const redirectPath = category ? CATEGORY_REDIRECT_PATHS[category as ListingType | "rental_sale"] : undefined;
   if (redirectPath) {
-    redirect({ href: query ? `${redirectPath}?${query}` : redirectPath, locale });
+    redirect({ href: withQuery(redirectPath, query), locale });
   }
 
   const lowerQ = (q ?? "").trim().toLowerCase();
@@ -96,7 +99,8 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
   }).length;
 
   const counts = [
-    { path: "/listings", count: countListings(rentals) },
+    { path: "/listings", count: countListings(rentals.filter((home) => home.offerType === "rent")) },
+    { path: "/listings?for=sale", count: countListings(rentals.filter((home) => home.offerType === "sale")) },
     { path: "/cars", count: countListings(cars) },
     { path: "/services", count: countListings(services) + businessCount },
     { path: "/events", count: eventCount },
@@ -110,5 +114,12 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
     redirect({ href: params.toString() ? `/?${params.toString()}` : "/", locale });
   }
 
-  redirect({ href: query ? `${best.path}?${query}` : best.path, locale });
+  redirect({ href: withQuery(best.path, query), locale });
+}
+
+/** Appends the carried-over search to a path that may already have its
+ * own query (/listings?for=sale). */
+function withQuery(path: string, query: string): string {
+  if (!query) return path;
+  return `${path}${path.includes("?") ? "&" : "?"}${query}`;
 }

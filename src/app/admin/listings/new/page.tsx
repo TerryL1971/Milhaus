@@ -3,7 +3,8 @@
 // but for entering a listing directly on someone's behalf (a rental, a
 // car ad, an item for sale, or a service for someone who can't post it
 // themselves). Goes straight to `active`: the admin adding it is the
-// review. ?type=car / ?type=product / ?type=service switch ListingForm to
+// review. ?type=sale is a home for sale. ?type=car / ?type=product /
+// ?type=service switch ListingForm to
 // that field set.
 
 import type { Metadata } from "next";
@@ -22,8 +23,9 @@ export const metadata: Metadata = {
 
 const currencyFormatter = new Intl.NumberFormat("en-US", { style: "currency", currency: "EUR" });
 
-const TYPE_LABELS: Record<ListingType, string> = {
-  rental: "Rental",
+const TYPE_LABELS: Record<ListingType | "rental_sale", string> = {
+  rental: "Home for rent",
+  rental_sale: "Home for sale",
   car: "Car",
   product: "Item for sale",
   service: "Service",
@@ -49,6 +51,7 @@ export default async function AdminNewListingPage({
   const isCar = type === "car";
   const isProduct = type === "product";
   const isService = type === "service";
+  const isSale = type === "sale";
   const kind = isCar ? "car" : isProduct ? "product" : isService ? "service" : "rental";
   const prices = await getListingPrices();
 
@@ -59,19 +62,27 @@ export default async function AdminNewListingPage({
           ← Back to admin
         </Link>
         <h1 className="mb-2 font-display text-3xl font-semibold text-ink">
-          Add a {isCar ? "car ad" : isProduct ? "item for sale" : isService ? "service" : "listing"}
+          Add a {isCar ? "car ad" : isProduct ? "item for sale" : isService ? "service" : isSale ? "home for sale" : "home for rent"}
         </h1>
         <p className="mb-4 text-ink-soft">
           Goes live immediately — no review step, since you&apos;re the reviewer.
         </p>
-        <div className="mb-8 flex gap-2 text-sm font-semibold">
+        <div className="mb-8 flex flex-wrap gap-2 text-sm font-semibold">
           <Link
             href="/admin/listings/new"
             className={`rounded-md border px-3.5 py-1.5 ${
-              kind === "rental" ? "border-olive bg-olive/15 text-olive-deep" : "border-canvas-deep text-ink-soft"
+              kind === "rental" && !isSale ? "border-olive bg-olive/15 text-olive-deep" : "border-canvas-deep text-ink-soft"
             }`}
           >
-            Rental
+            Home for rent
+          </Link>
+          <Link
+            href="/admin/listings/new?type=sale"
+            className={`rounded-md border px-3.5 py-1.5 ${
+              isSale ? "border-olive bg-olive/15 text-olive-deep" : "border-canvas-deep text-ink-soft"
+            }`}
+          >
+            Home for sale
           </Link>
           <Link
             href="/admin/listings/new?type=car"
@@ -107,8 +118,11 @@ export default async function AdminNewListingPage({
           <span className="font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
             Posting prices
           </span>
-          {(Object.keys(TYPE_LABELS) as ListingType[]).map((t) => (
-            <span key={t} className={t === kind ? "font-semibold text-ink" : "text-ink-soft"}>
+          {(Object.keys(TYPE_LABELS) as (ListingType | "rental_sale")[]).map((t) => (
+            <span
+              key={t}
+              className={t === (isSale ? "rental_sale" : kind) ? "font-semibold text-ink" : "text-ink-soft"}
+            >
               {TYPE_LABELS[t]}: {currencyFormatter.format(prices[t])}
             </span>
           ))}
@@ -117,7 +131,7 @@ export default async function AdminNewListingPage({
           </Link>
         </div>
 
-        <ListingForm variant="admin-add" kind={kind} />
+        <ListingForm key={type ?? "rental"} variant="admin-add" kind={kind} offerType={isSale ? "sale" : "rent"} />
       </div>
     </main>
   );

@@ -49,6 +49,7 @@ export function ListingCard({
   const t = useTranslations("ListingCard");
   const tAmenities = useTranslations("Amenities");
   const isRented = listing.status === "rented";
+  const isForSale = listing.offerType === "sale";
 
   return (
     <div className="group relative">
@@ -70,8 +71,13 @@ export function ListingCard({
         ) : (
           <NoPhotoPlaceholder gradient={photoGradient} label={t("noPhotoYet")} />
         )}
-        {(listing.isNew || listing.amenities.includes("furnished") || listing.amenities.includes("pet_friendly")) && (
+        {(isForSale || listing.isNew || listing.amenities.includes("furnished") || listing.amenities.includes("pet_friendly")) && (
           <div className="absolute left-2.5 top-2.5 flex flex-wrap gap-1.5">
+            {isForSale && (
+              <span className="rounded-[3px] bg-ink px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
+                {t("forSaleBadge")}
+              </span>
+            )}
             {listing.isNew && (
               <span className="rounded-[3px] bg-brass px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
                 {t("newBadge")}
@@ -111,7 +117,8 @@ export function ListingCard({
             and still mono, same as every other card type. */}
         <div className="mb-1 flex items-start justify-between">
           <span className="font-body text-[1.08rem] font-semibold text-ink">
-            {currencyFormatter.format(listing.priceEurMonth)} {t("perMonth")}
+            {currencyFormatter.format(listing.priceEurMonth)}
+            {isForSale ? "" : ` ${t("perMonth")}`}
           </span>
           <span
             className={`rounded-[3px] px-2 py-0.5 font-mono text-[0.66rem] font-semibold uppercase tracking-wider ${
@@ -120,7 +127,7 @@ export function ListingCard({
                 : "bg-olive/15 text-olive-deep"
             }`}
           >
-            {isRented ? t("rented") : t("available")}
+            {isRented ? (isForSale ? t("sold") : t("rented")) : t("available")}
           </span>
         </div>
 
