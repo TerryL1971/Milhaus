@@ -71,11 +71,13 @@ export function ListingCard({
         ) : (
           <NoPhotoPlaceholder gradient={photoGradient} label={t("noPhotoYet")} />
         )}
-        {(isForSale || listing.isNew || listing.amenities.includes("furnished") || (!isForSale && listing.amenities.includes("pet_friendly"))) && (
+        {(listing.type === "rental" || listing.isNew || listing.amenities.includes("furnished") || (!isForSale && listing.amenities.includes("pet_friendly"))) && (
           <div className="absolute left-2.5 top-2.5 flex flex-wrap gap-1.5">
-            {isForSale && (
+            {/* For rent / For sale on every home (Charlie, 2026-11-04) —
+                they sit side by side on the homepage's Featured Homes. */}
+            {listing.type === "rental" && (
               <span className="rounded-[3px] bg-ink px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
-                {t("forSaleBadge")}
+                {isForSale ? t("forSaleBadge") : t("forRentBadge")}
               </span>
             )}
             {listing.isNew && (

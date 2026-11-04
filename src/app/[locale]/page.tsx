@@ -69,13 +69,19 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const [featuredRentals, featuredCars, featuredBusinesses, specialOffers, favoriteIds] = await Promise.all([
+  const [homesForRent, homesForSale, featuredCars, featuredBusinesses, specialOffers, favoriteIds] = await Promise.all([
     getFeaturedListings("rental", 3, "rent"),
+    getFeaturedListings("rental", 1, "sale"),
     getFeaturedListings("car", 3),
     getFeaturedBusinesses(3),
     getActiveAdSlots("special_offers"),
     getFavoriteListingIds(user?.id),
   ]);
+
+  // Featured Homes: two for rent and one for sale (Charlie, 2026-11-04),
+  // topped up from whichever kind there's more of so the row stays
+  // three wide while one side is thin.
+  const featuredRentals = [...homesForRent.slice(0, 3 - Math.min(homesForSale.length, 1)), ...homesForSale].slice(0, 3);
 
   // Every card in a Featured row's first (only) line is a real LCP
   // candidate, not just whichever renders a photo first — see
