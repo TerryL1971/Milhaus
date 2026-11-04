@@ -35,6 +35,7 @@ import { AMENITY_KEYS } from "@/lib/amenities";
 import { BASE_NAMES } from "@/lib/bases";
 import { CAR_BODY_TYPE_KEYS, CAR_BODY_TYPE_LABELS } from "@/lib/car-body-types";
 import { classifyFormError } from "@/lib/friendly-error";
+import { CHIP_CLASS, CHIP_GAP_PX, NARROWEST_CHIP_ROW_PX } from "@/components/card-chip-row";
 import { createListingPhotoUploads, deleteRemovedListingPhotos } from "@/lib/listing-edit";
 import { publishFreeListing } from "@/lib/listing-publish";
 import { NEARBY_AMENITY_KEYS } from "@/lib/nearby-amenities";
@@ -157,6 +158,9 @@ export function ListingForm({
   // out (the PGRST204 fallback below) — said out loud on the success
   // screen rather than silently dropping what the lister picked.
   const [availableToSkipped, setAvailableToSkipped] = useState(false);
+  // Why the last star was refused, if it was: already 3, or the card's
+  // one line is full.
+  const [highlightRefusal, setHighlightRefusal] = useState<HighlightRefusal>(null);
   // Cars only — a dealer isn't tied to one base the way a rental is, so
   // this can be several (or "every location") instead of the single
   // <select> every other kind uses.
@@ -933,10 +937,15 @@ export function ListingForm({
         <div>
           <span className={labelClass}>{t("features")}</span>
           <p className="mb-2 text-xs text-ink-soft">{t("highlightHint")}</p>
+          {highlightRefusal && (
+            <p role="alert" className="mb-2 rounded-md bg-brass/10 px-3 py-2 text-xs font-semibold text-brass-deep">
+              {highlightRefusal === "max" ? t("highlightsMax", { max: MAX_HIGHLIGHTS }) : t("highlightsFull")}
+            </p>
+          )}
           {/* Fixed at 2 columns, not 3 — German compounds ("Waschmaschine/
               Trockner") run long enough that a 3rd column left too little
               width per cell and the label overflowed into its neighbor. */}
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {/* No "Pet friendly" for a home for sale — a buyer's own house. */}
             {AMENITY_KEYS.filter((key) => !(isForSale && key === "pet_friendly")).map((key) => (
               <HighlightableCheckbox
@@ -944,9 +953,11 @@ export function ListingForm({
                 name="amenities"
                 value={key}
                 label={tAmenities(key)}
+                chipLabel={tAmenities(key)}
                 defaultChecked={existing?.amenities.includes(key)}
                 defaultStarred={existing?.highlights.includes(key)}
                 starLabel={t("highlightOnCard", { item: tAmenities(key) })}
+                onStarResult={setHighlightRefusal}
               />
             ))}
           </div>
@@ -973,16 +984,18 @@ export function ListingForm({
       {isRental && (
         <div>
           <span className={labelClass}>{t("nearbyAmenities")}</span>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {NEARBY_AMENITY_KEYS.map((key) => (
               <HighlightableCheckbox
                 key={key}
                 name="nearbyAmenities"
                 value={key}
                 label={tNearbyAmenities(key)}
+                chipLabel={`📍 ${tNearbyAmenities(key)}`}
                 defaultChecked={existing?.nearbyAmenities.includes(key)}
                 defaultStarred={existing?.highlights.includes(key)}
                 starLabel={t("highlightOnCard", { item: tNearbyAmenities(key) })}
+                onStarResult={setHighlightRefusal}
               />
             ))}
           </div>
@@ -1184,25 +1197,62 @@ export function ListingForm({
   );
 }
 
+/** At most three, matching the three spec chips on a car card (Terry,
+ * 2026-11-04) — and never more than fit on one line, whichever is
+ * reached first. */
+const MAX_HIGHLIGHTS = 3;
+type HighlightRefusal = null | "max" | "width";
+
+/** Would every starred chip (data-chip on each checked star) sit on one
+ * line of the narrowest card? Measured with the card's own chip styling,
+ * so it's the real label widths in whatever language the page is in. */
+function starredChipsFit(form: HTMLFormElement): boolean {
+  const labels = [...form.querySelectorAll<HTMLInputElement>('input[name="highlights"]:checked')].map(
+    (star) => star.dataset.chip ?? "",
+  );
+  const probe = document.createElement("div");
+  probe.style.cssText = "position:absolute;visibility:hidden;left:0;top:0;display:flex;";
+  for (const label of labels) {
+    const chip = document.createElement("span");
+    chip.className = CHIP_CLASS;
+    chip.textContent = label;
+    probe.appendChild(chip);
+  }
+  form.appendChild(probe);
+  const width =
+    [...probe.children].reduce((sum, chip) => sum + (chip as HTMLElement).offsetWidth, 0) +
+    Math.max(0, labels.length - 1) * CHIP_GAP_PX;
+  probe.remove();
+  return width <= NARROWEST_CHIP_ROW_PX;
+}
+
 /** A feature / what's-nearby checkbox with a ★ beside it for "show this
  * on the card". The star ticks the item too (you can't highlight what
  * the home doesn't have), and unticking the item clears its star; the
- * save keeps only stars on ticked items either way. Uncontrolled, like
+ * save keeps only stars on ticked items either way. A fourth star, or
+ * one that would push the card's one line past full, is refused
+ * (onStarResult says why, and the form shows it) — the lister can't see the card while
+ * filling this in, so the form does the fitting. Uncontrolled, like
  * every other field in this form. */
 function HighlightableCheckbox({
   name,
   value,
   label,
+  chipLabel,
   defaultChecked,
   defaultStarred,
   starLabel,
+  onStarResult,
 }: {
   name: "amenities" | "nearbyAmenities";
   value: string;
   label: string;
+  /** Exactly what the card's chip will say (nearby ones get a 📍). */
+  chipLabel: string;
   defaultChecked?: boolean;
   defaultStarred?: boolean;
   starLabel: string;
+  onStarResult: (refusal: HighlightRefusal) => void;
 }) {
   return (
     <div className="flex min-w-0 items-center gap-1">
@@ -1218,6 +1268,7 @@ function HighlightableCheckbox({
               `input[name="highlights"][value="${value}"]`,
             );
             if (star) star.checked = false;
+            onStarResult(null);
           }}
           className="h-4 w-4 flex-shrink-0 rounded border-canvas-deep text-olive focus:ring-olive"
         />
@@ -1229,12 +1280,25 @@ function HighlightableCheckbox({
           name="highlights"
           value={value}
           defaultChecked={defaultStarred}
+          data-chip={chipLabel}
           aria-label={starLabel}
           onChange={(event) => {
-            if (!event.currentTarget.checked) return;
-            const item = event.currentTarget.form?.querySelector<HTMLInputElement>(
-              `input[name="${name}"][value="${value}"]`,
-            );
+            const star = event.currentTarget;
+            const form = star.form;
+            if (!star.checked || !form) {
+              onStarResult(null);
+              return;
+            }
+            const starred = form.querySelectorAll('input[name="highlights"]:checked').length;
+            const refusal: HighlightRefusal =
+              starred > MAX_HIGHLIGHTS ? "max" : !starredChipsFit(form) ? "width" : null;
+            if (refusal) {
+              star.checked = false;
+              onStarResult(refusal);
+              return;
+            }
+            onStarResult(null);
+            const item = form.querySelector<HTMLInputElement>(`input[name="${name}"][value="${value}"]`);
             if (item) item.checked = true;
           }}
           className="peer sr-only"

@@ -288,8 +288,10 @@
     "photoNumber": "Foto {number}",
     "availableToNotSaved": "Alles andere wurde gespeichert, aber „Verfügbar für“ noch nicht — die Datenbank der Website braucht noch ein einmaliges Update. Danach dieses Inserat bearbeiten und die Auswahl erneut setzen.",
     "salePrice": "Kaufpreis (€)",
-    "highlightHint": "★ Markieren Sie, was auf der Karte Ihres Inserats erscheinen soll — so viel, wie in eine Zeile passt.",
-    "highlightOnCard": "{item} auf der Karte zeigen"
+    "highlightHint": "★ Markieren Sie bis zu 3, die auf der Karte Ihres Inserats erscheinen (bei langen Namen weniger — die Karte hat eine Zeile).",
+    "highlightOnCard": "{item} auf der Karte zeigen",
+    "highlightsFull": "Das passt nicht mehr — die Zeile auf Ihrer Karte ist schon voll. Entfernen Sie eine Markierung, um stattdessen diese zu wählen.",
+    "highlightsMax": "Sie können bis zu {max} hervorheben — entfernen Sie eine Markierung, um stattdessen diese zu wählen."
   },
   "ListingDetail": {
     "backToListings": "← Zurück zu den Angeboten",

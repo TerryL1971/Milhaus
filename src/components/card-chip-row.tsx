@@ -11,8 +11,15 @@
 import { useTranslations } from "next-intl";
 import { useLayoutEffect, useRef, useState } from "react";
 
-const GAP_PX = 6; // gap-1.5
-const chipClass = "whitespace-nowrap rounded-full bg-canvas px-2 py-0.5 text-[0.68rem] text-ink-soft";
+export const CHIP_GAP_PX = 6; // gap-1.5
+export const CHIP_CLASS = "whitespace-nowrap rounded-full bg-canvas px-2 py-0.5 text-[0.68rem] text-ink-soft";
+
+/** The chip row's width on the narrowest card the site ever renders —
+ * two columns at the 640px breakpoint: (640 − 64 page padding − 22 gap)
+ * / 2 = 277px card, minus 2px border and 32px padding = 243px. The home
+ * form won't let a lister star more than fits this, so a starred row is
+ * always whole on every screen (Terry, 2026-11-04: no half labels). */
+export const NARROWEST_CHIP_ROW_PX = 240;
 
 export function CardChipRow({ chips }: { chips: { key: string; label: string }[] }) {
   const t = useTranslations("ListingCard");
@@ -32,10 +39,10 @@ export function CardChipRow({ chips }: { chips: { key: string; label: string }[]
       let used = 0;
       let count = 0;
       for (const [index, width] of widths.entries()) {
-        const next = used + (count > 0 ? GAP_PX : 0) + width;
+        const next = used + (count > 0 ? CHIP_GAP_PX : 0) + width;
         const restHidden = index < widths.length - 1;
         // Leave room for "+N more" unless this is the very last chip.
-        if (next + (restHidden ? GAP_PX + moreWidth : 0) > available) break;
+        if (next + (restHidden ? CHIP_GAP_PX + moreWidth : 0) > available) break;
         used = next;
         count += 1;
       }
@@ -55,21 +62,21 @@ export function CardChipRow({ chips }: { chips: { key: string; label: string }[]
     <div className="relative mt-2">
       <div ref={rowRef} className="flex gap-1.5 overflow-hidden">
         {chips.slice(0, visible).map((chip) => (
-          <span key={chip.key} className={chipClass}>
+          <span key={chip.key} className={CHIP_CLASS}>
             {chip.label}
           </span>
         ))}
-        {hidden > 0 && <span className={chipClass}>{t("moreAmenities", { count: hidden })}</span>}
+        {hidden > 0 && <span className={CHIP_CLASS}>{t("moreAmenities", { count: hidden })}</span>}
       </div>
       {/* Off-screen copy of every chip (plus a "+N more" sized for the
           worst case) — what fit() measures. */}
       <div ref={measureRef} aria-hidden="true" className="invisible absolute left-0 top-0 flex gap-1.5">
         {chips.map((chip) => (
-          <span key={chip.key} className={chipClass}>
+          <span key={chip.key} className={CHIP_CLASS}>
             {chip.label}
           </span>
         ))}
-        <span className={chipClass}>{t("moreAmenities", { count: chips.length })}</span>
+        <span className={CHIP_CLASS}>{t("moreAmenities", { count: chips.length })}</span>
       </div>
     </div>
   );

@@ -288,8 +288,10 @@
     "photoNumber": "Photo {number}",
     "availableToNotSaved": "Everything else was saved, but \"Available to\" couldn't be yet — the site's database still needs a one-time update. Once that's done, edit this listing and set it again.",
     "salePrice": "Asking price (€)",
-    "highlightHint": "★ Star the ones to show on your listing's card — as many as fit on one line.",
-    "highlightOnCard": "Show {item} on the card"
+    "highlightHint": "★ Star up to 3 to show on your listing's card (fewer if the names are long — the card has one line).",
+    "highlightOnCard": "Show {item} on the card",
+    "highlightsFull": "That one won't fit — your card already has a full line of highlights. Remove a star to choose this instead.",
+    "highlightsMax": "You can highlight up to {max} — remove a star to choose this one instead."
   },
   "ListingDetail": {
     "backToListings": "← Back to listings",
