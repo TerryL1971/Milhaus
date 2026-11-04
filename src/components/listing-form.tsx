@@ -249,21 +249,27 @@ export function ListingForm({
       return;
     }
 
+    // Signed upload slots from the server (ownership checked there), not a
+    // direct browser upload: the live listing-photos storage policy was
+    // found refusing owners' own uploads on 2026-11-04, so posting with
+    // photos failed for everyone. Same path the edit flow already uses.
     const photoUrls: string[] = [];
-    for (const [index, file] of files.entries()) {
-      setProgress(t("progressUploading", { current: index + 1, total: files.length }));
-      const ext = file.name.split(".").pop() || "jpg";
-      const path = `${listingId}/photo-${index + 1}.${ext}`;
-      const { error: uploadError } = await supabase.storage
-        .from("listing-photos")
-        .upload(path, file, { upsert: true });
-      if (uploadError) {
-        setStatus("error");
-        setErrorMessage(t("photoUploadFailed", { message: tErrors(classifyFormError(uploadError.message)) }));
-        return;
+    try {
+      const uploads = files.length > 0 ? await createListingPhotoUploads(listingId, files.map(fileExtension)) : [];
+      for (const [index, upload] of uploads.entries()) {
+        setProgress(t("progressUploading", { current: index + 1, total: uploads.length }));
+        const { error: uploadError } = await supabase.storage
+          .from("listing-photos")
+          .uploadToSignedUrl(upload.path, upload.token, files[index]);
+        if (uploadError) throw uploadError;
+        photoUrls.push(upload.publicUrl);
       }
-      const { data: publicUrlData } = supabase.storage.from("listing-photos").getPublicUrl(path);
-      photoUrls.push(publicUrlData.publicUrl);
+    } catch (error) {
+      setStatus("error");
+      setErrorMessage(
+        t("photoUploadFailed", { message: tErrors(classifyFormError(error instanceof Error ? error.message : String(error))) }),
+      );
+      return;
     }
 
     const needsPayment = !isAdminAdd && !!priceEur && priceEur > 0;
@@ -469,7 +475,7 @@ export function ListingForm({
           // on the cart page.
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
             <Link
-              href={isCar ? "/post-car" : isProduct ? "/post-product" : isService ? "/post-service" : "/post"}
+              href={isCar ? "/post-car" : isProduct ? "/post-product" : isService ? "/post-service" : isForSale ? "/post?for=sale" : "/post"}
               className="text-sm font-semibold text-olive-deep hover:underline"
             >
               {isCar
@@ -926,7 +932,8 @@ export function ListingForm({
               Trockner") run long enough that a 3rd column left too little
               width per cell and the label overflowed into its neighbor. */}
           <div className="grid grid-cols-2 gap-2">
-            {AMENITY_KEYS.map((key) => (
+            {/* No "Pet friendly" for a home for sale — a buyer's own house. */}
+            {AMENITY_KEYS.filter((key) => !(isForSale && key === "pet_friendly")).map((key) => (
               <label key={key} className="flex min-w-0 items-center gap-2 text-sm text-charcoal">
                 <input
                   type="checkbox"
@@ -1043,8 +1050,9 @@ export function ListingForm({
 
       {/* Charlie's "available to" ask — a three-way toggle rather than
           checkboxes so exactly one is always picked. Defaults to Everyone
-          (no badge); a lister flips it only when the home is restricted. */}
-      {isRental && (
+          (no badge); a lister flips it only when the home is restricted.
+          Not asked for a home for sale: anyone can buy a house. */}
+      {isRental && !isForSale && (
         <fieldset>
           <legend className={labelClass}>{t("availableTo")}</legend>
           <div className="grid max-w-lg grid-cols-1 divide-y divide-canvas-deep overflow-hidden rounded-md border border-canvas-deep sm:grid-cols-3 sm:divide-x sm:divide-y-0">

@@ -6,7 +6,7 @@
 // would otherwise allow (e.g. an owner or admin viewing their own listing).
 
 import { createClient } from "@/lib/supabase/server";
-import type { Listing, ListingType } from "@/lib/types";
+import type { Listing, ListingType, OfferType } from "@/lib/types";
 
 // Every read below selects "*, rental_details(*), car_details(*),
 // product_details(*), service_details(*)" — PostgREST embeds each as a
@@ -109,14 +109,18 @@ export async function getActiveListings(type: ListingType = "rental"): Promise<L
  * with the most recent active listings of that type so there are always
  * up to `limit` cards even before an admin has featured anything for
  * that category. Defaults to rentals for the original single-category
- * caller; the 4-way homepage hero passes each type explicitly. */
-export async function getFeaturedListings(type: ListingType = "rental", limit = 3): Promise<Listing[]> {
+ * caller; the 4-way homepage hero passes each type explicitly. `offer`
+ * narrows homes to for rent or for sale — the homepage's Featured Homes
+ * row is rentals only, or the newest homes for sale crowd them out. */
+export async function getFeaturedListings(
+  type: ListingType = "rental",
+  limit = 3,
+  offer?: OfferType,
+): Promise<Listing[]> {
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("listings")
-    .select(LISTING_SELECT)
-    .eq("status", "active")
-    .eq("type", type)
+  let query = supabase.from("listings").select(LISTING_SELECT).eq("status", "active").eq("type", type);
+  if (offer) query = query.eq("offer_type", offer);
+  const { data, error } = await query
     .order("is_featured", { ascending: false })
     .order("created_at", { ascending: false })
     .limit(limit);
@@ -128,7 +132,7 @@ export async function getFeaturedListings(type: ListingType = "rental", limit = 
     // entire hero, just the featuring behavior on top of it.
     if (error.code === "42703") {
       const fallback = await getActiveListings(type);
-      return fallback.slice(0, limit);
+      return fallback.filter((listing) => !offer || listing.offerType === offer).slice(0, limit);
     }
     console.error("getFeaturedListings failed:", error.message);
     return [];

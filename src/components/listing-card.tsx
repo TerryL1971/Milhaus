@@ -71,7 +71,7 @@ export function ListingCard({
         ) : (
           <NoPhotoPlaceholder gradient={photoGradient} label={t("noPhotoYet")} />
         )}
-        {(isForSale || listing.isNew || listing.amenities.includes("furnished") || listing.amenities.includes("pet_friendly")) && (
+        {(isForSale || listing.isNew || listing.amenities.includes("furnished") || (!isForSale && listing.amenities.includes("pet_friendly"))) && (
           <div className="absolute left-2.5 top-2.5 flex flex-wrap gap-1.5">
             {isForSale && (
               <span className="rounded-[3px] bg-ink px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
@@ -88,7 +88,9 @@ export function ListingCard({
                 {tAmenities("furnished")}
               </span>
             )}
-            {listing.amenities.includes("pet_friendly") && (
+            {/* Not on a home for sale (Terry, 2026-11-04) — pets are a
+                renter's question, not a buyer's. */}
+            {!isForSale && listing.amenities.includes("pet_friendly") && (
               <span className="rounded-[3px] bg-ink px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
                 {tAmenities("pet_friendly")}
               </span>
@@ -97,8 +99,9 @@ export function ListingCard({
         )}
         {/* Bottom-left so it never competes with the top-left badge stack
             or the favorite heart top-right. "everyone" is the unrestricted
-            default, so it gets no badge. */}
-        {listing.availableTo && listing.availableTo !== "everyone" && (
+            default, so it gets no badge. Never on a home for sale: anyone
+            can buy a house (Terry, 2026-11-04). */}
+        {!isForSale && listing.availableTo && listing.availableTo !== "everyone" && (
           <span className="absolute bottom-2.5 left-2.5 rounded-[3px] bg-ink/90 px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
             {listing.availableTo === "military_only" ? t("availableToMilitaryOnly") : t("availableToMilitaryAndExpats")}
           </span>

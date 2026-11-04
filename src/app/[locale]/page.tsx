@@ -70,7 +70,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
     data: { user },
   } = await supabase.auth.getUser();
   const [featuredRentals, featuredCars, featuredBusinesses, specialOffers, favoriteIds] = await Promise.all([
-    getFeaturedListings("rental", 3),
+    getFeaturedListings("rental", 3, "rent"),
     getFeaturedListings("car", 3),
     getFeaturedBusinesses(3),
     getActiveAdSlots("special_offers"),

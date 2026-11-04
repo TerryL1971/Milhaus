@@ -7,6 +7,7 @@
 
 export const NEARBY_AMENITY_LABELS = {
   school: "School",
+  international_school: "International school",
   grocery_store: "Grocery store",
   movie_theater: "Movie theater",
   restaurant: "Restaurants",

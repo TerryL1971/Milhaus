@@ -17,6 +17,7 @@
   },
   "NearbyAmenities": {
     "school": "Schule",
+    "international_school": "Internationale Schule",
     "grocery_store": "Supermarkt",
     "movie_theater": "Kino",
     "restaurant": "Restaurants",

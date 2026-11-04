@@ -303,25 +303,32 @@ export function ListingsGrid({
           badge={pendingAmenities.length + pendingAvailableTo.length || undefined}
         >
           <div className="flex flex-col gap-4">
-            <div>
-              <span className="mb-1.5 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
-                {tFilter("availableToHeading")}
-              </span>
-              <FilterCheckboxList
-                options={AVAILABLE_TO_FILTER_KEYS.map((key) => ({
-                  value: key,
-                  label: key === "military_only" ? tFilter("availableToMilitaryOnly") : tFilter("availableToMilitaryAndExpats"),
-                }))}
-                selected={pendingAvailableTo}
-                onToggle={(value) => setPendingAvailableTo((prev) => toggleIn(prev, value as AvailableToFilterKey))}
-              />
-            </div>
+            {/* Homes for sale: no Available to (anyone can buy) and no
+                Pet friendly — see ListingCard. */}
+            {!forSale && (
+              <div>
+                <span className="mb-1.5 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
+                  {tFilter("availableToHeading")}
+                </span>
+                <FilterCheckboxList
+                  options={AVAILABLE_TO_FILTER_KEYS.map((key) => ({
+                    value: key,
+                    label: key === "military_only" ? tFilter("availableToMilitaryOnly") : tFilter("availableToMilitaryAndExpats"),
+                  }))}
+                  selected={pendingAvailableTo}
+                  onToggle={(value) => setPendingAvailableTo((prev) => toggleIn(prev, value as AvailableToFilterKey))}
+                />
+              </div>
+            )}
             <div>
               <span className="mb-1.5 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
                 {t("filterAmenities")}
               </span>
               <FilterCheckboxList
-                options={AMENITY_KEYS.map((key) => ({ value: key, label: tAmenities(key) }))}
+                options={AMENITY_KEYS.filter((key) => !(forSale && key === "pet_friendly")).map((key) => ({
+                  value: key,
+                  label: tAmenities(key),
+                }))}
                 selected={pendingAmenities}
                 onToggle={(value) => setPendingAmenities((prev) => toggleIn(prev, value as AmenityKey))}
               />

@@ -165,7 +165,7 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
               {listing.distanceToBase ? ` · ${listing.distanceToBase}` : ""}
             </h1>
             <p className="mt-1 text-ink-soft">{listing.address}</p>
-            {listing.availableTo && listing.availableTo !== "everyone" && (
+            {!isForSale && listing.availableTo && listing.availableTo !== "everyone" && (
               <p className="mt-2 inline-flex items-center gap-1.5 rounded-[3px] bg-ink px-2.5 py-1 font-mono text-[0.72rem] font-semibold uppercase tracking-wider text-paper">
                 <span className="opacity-70">{t("availableToLabel")}:</span>
                 {listing.availableTo === "military_only" ? t("availableToMilitaryOnly") : t("availableToMilitaryAndExpats")}
@@ -235,7 +235,7 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
               {t("featuresHeading")}
             </p>
             <div className="flex flex-wrap gap-2">
-              {listing.amenities.map((key) => (
+              {listing.amenities.filter((key) => !(isForSale && key === "pet_friendly")).map((key) => (
                 <span
                   key={key}
                   className="rounded-full border border-canvas-deep bg-canvas px-3 py-1 text-sm text-ink-soft"

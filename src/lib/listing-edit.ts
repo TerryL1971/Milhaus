@@ -1,7 +1,8 @@
 // src/lib/listing-edit.ts
-// Server actions behind ListingForm's edit mode (/edit-listing/[id]) — the
-// photo half of editing, which the browser's own Supabase session can't
-// always do by itself. The listing-photos storage policies only let a
+// Server actions behind ListingForm's photo uploads — edit mode
+// (/edit-listing/[id]) and, since 2026-11-04, new posts too: the photo
+// half, which the browser's own Supabase session can't always do by
+// itself. The listing-photos storage policies only let a
 // listing's *owner* write under `${listingId}/...`
 // (20260821205811_storage_ownership_via_listing.sql), so Charlie fixing
 // someone else's listing from /admin would be refused. Rather than a new
