@@ -12,11 +12,10 @@
 // Logo/cover are real file uploads now, not URL text fields (Charlie
 // couldn't make sense of "paste a URL" — see
 // supabase/migrations/20261021120000_add_business_logo_cover_upload_policy.sql).
-// The business row has to be inserted *before* uploading (that policy
-// checks ownership via an existing businesses row, same pattern
-// listing-photos itself uses), so this inserts with both image columns
-// null, uploads whichever files were provided using the new row's own
-// id as the storage path, then updates just those two columns — not a
+// The business row is inserted *before* uploading, so this inserts with
+// both image columns null, uploads whichever files were provided (with
+// the service-role client, see uploadBusinessImage) using the new row's
+// own id as the storage path, then updates just those two columns — not a
 // client-side multi-step form the way ListingForm is, just one extra
 // round trip inside the same server action.
 //
@@ -38,13 +37,14 @@ import { getPostingPrice } from "@/lib/listing-prices";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
-async function uploadBusinessImage(
-  supabase: Awaited<ReturnType<typeof createClient>>,
-  businessId: string,
-  file: File,
-  name: "logo" | "cover",
-): Promise<string | null> {
+// Service-role upload: the live listing-photos policy was found
+// refusing owners' own uploads on 2026-11-04 (logo/cover submissions
+// failed). Only ever called by submitBusiness right after it inserted
+// this businessId for the signed-in caller, so ownership is already
+// settled.
+async function uploadBusinessImage(businessId: string, file: File, name: "logo" | "cover"): Promise<string | null> {
   if (!file || file.size === 0) return null;
+  const supabase = createAdminClient();
   const ext = file.name.split(".").pop() || "jpg";
   const path = `${businessId}/${name}.${ext}`;
   const { error } = await supabase.storage.from("listing-photos").upload(path, file);
@@ -113,10 +113,10 @@ export async function submitBusiness(formData: FormData) {
 
   const logoFile = formData.get("logo") as File | null;
   const coverFile = formData.get("coverImage") as File | null;
-  const logoUrl = logoFile ? await uploadBusinessImage(supabase, businessId, logoFile, "logo") : null;
-  const coverUrl = coverFile ? await uploadBusinessImage(supabase, businessId, coverFile, "cover") : null;
+  const logoUrl = logoFile ? await uploadBusinessImage(businessId, logoFile, "logo") : null;
+  const coverUrl = coverFile ? await uploadBusinessImage(businessId, coverFile, "cover") : null;
   if (logoUrl || coverUrl) {
-    const { error: imageError } = await supabase
+    const { error: imageError } = await createAdminClient()
       .from("businesses")
       .update({
         ...(logoUrl ? { logo_url: logoUrl } : {}),
