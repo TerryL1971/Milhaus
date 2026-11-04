@@ -2,18 +2,18 @@
 // Renter-facing explainer, linked from the footer's "How verification
 // works" link (previously "#"). No external dependency — content mirrors
 // what's already true of the review pipeline (admin/actions.ts:
-// approveListing/rejectListing) and the stamp badge (StampBadge,
-// listings.source === "housing_office").
+// approveListing/rejectListing). The housing-office stamp section is
+// gone (2026-11-04, after Charlie and Terry met the on-base Housing
+// Office — nothing may suggest the Housing Office lists or approves homes).
 
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { StampBadge } from "@/components/stamp-badge";
 import { Link } from "@/i18n/navigation";
 
 export const metadata: Metadata = {
   title: "How verification works",
   description:
-    "How every milhaus listing gets checked before it goes live, and what the housing-office stamp means.",
+    "How every Milhaus listing gets checked before it goes live, and taken down once it's gone.",
 };
 
 export default async function HowVerificationWorksPage() {
@@ -50,21 +50,6 @@ export default async function HowVerificationWorksPage() {
                 <p className="max-w-[32ch] text-sm text-ink-soft">{step.body}</p>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ---------- THE STAMP ---------- */}
-      <section className="py-16">
-        <div className="mx-auto grid max-w-[1000px] grid-cols-1 items-center gap-10 px-8 md:grid-cols-[auto_1fr]">
-          <div className="flex justify-center">
-            <div className="relative h-16 w-16">
-              <StampBadge size="lg" className="left-0 top-0" />
-            </div>
-          </div>
-          <div>
-            <h2 className="mb-2 font-display text-xl font-semibold text-ink">{t("stampHeading")}</h2>
-            <p className="max-w-[56ch] text-sm text-ink-soft">{t("stampBody")}</p>
           </div>
         </div>
       </section>

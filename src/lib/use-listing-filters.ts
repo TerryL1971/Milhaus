@@ -26,7 +26,6 @@ export interface ListingFiltersUpdate {
   moveIn?: string;
   priceMin?: number | null;
   priceMax?: number | null;
-  housingOfficeOnly?: boolean;
   availableTo?: AvailableToFilterKey[];
 }
 
@@ -61,7 +60,6 @@ export function useListingFilters() {
   const priceMaxRaw = searchParams.get("priceMax");
   const priceMin = priceMinRaw ? Number(priceMinRaw) : null;
   const priceMax = priceMaxRaw ? Number(priceMaxRaw) : null;
-  const housingOfficeOnly = searchParams.get("housingApproved") === "1";
   const activeAvailableTo = useMemo(
     () =>
       (searchParams.get("availableTo") ?? "")
@@ -83,7 +81,6 @@ export function useListingFilters() {
     if (updates.moveIn !== undefined) set("movein", updates.moveIn || null);
     if (updates.priceMin !== undefined) set("priceMin", updates.priceMin != null ? String(updates.priceMin) : null);
     if (updates.priceMax !== undefined) set("priceMax", updates.priceMax != null ? String(updates.priceMax) : null);
-    if (updates.housingOfficeOnly !== undefined) set("housingApproved", updates.housingOfficeOnly ? "1" : null);
     if (updates.availableTo !== undefined) set("availableTo", updates.availableTo.length > 0 ? updates.availableTo.join(",") : null);
 
     const query = params.toString();
@@ -101,7 +98,6 @@ export function useListingFilters() {
     activeAmenities.length +
     (priceMin != null ? 1 : 0) +
     (priceMax != null ? 1 : 0) +
-    (housingOfficeOnly ? 1 : 0) +
     activeAvailableTo.length;
 
   return {
@@ -112,7 +108,6 @@ export function useListingFilters() {
     activeAmenities,
     priceMin,
     priceMax,
-    housingOfficeOnly,
     activeAvailableTo,
     activeCount,
     applyFilters,

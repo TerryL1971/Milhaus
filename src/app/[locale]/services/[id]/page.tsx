@@ -114,7 +114,7 @@ export default async function ServiceDetailPage({ params }: { params: Params }) 
           {t("backToServices")}
         </Link>
 
-        <ListingPhotoGallery photos={listing.photos} showStamp={false} alt={listing.title} />
+        <ListingPhotoGallery photos={listing.photos} alt={listing.title} />
 
         <div className="mt-6 flex flex-wrap items-start justify-between gap-3">
           <div>

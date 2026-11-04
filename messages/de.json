@@ -1,7 +1,7 @@
 {
   "Metadata": {
     "title": "milhaus — Ihr Zuhause, bevor Sie landen",
-    "description": "Ein Wohnungsmarktplatz für Amerikaner, die nach Deutschland ziehen – mit Angeboten des Housing Office auf dem Stützpunkt und selbst eingestellten Wohnungen von Familien, die weiterziehen."
+    "description": "Ein Wohnungsmarktplatz für Amerikaner, die nach Deutschland ziehen – mit Wohnungen von Vermietern und von Familien, die weiterziehen."
   },
   "Amenities": {
     "pet_friendly": "Haustiere erlaubt",
@@ -89,7 +89,7 @@
     "heroTagline": "Eine stärkere Community. Ein leichteres Leben im Ausland.",
     "rentalCardEyebrow": "Wohnen",
     "rentalCardHeading": "Mietobjekte",
-    "rentalCardSubhead": "Angebote vom Housing Office und von Familien selbst inseriert, geprüft bevor sie online gehen.",
+    "rentalCardSubhead": "Wohnungen von Vermietern und ausziehenden Familien, geprüft bevor sie online gehen.",
     "searchNearBase": "Nahe Stützpunkt",
     "searchAnyBase": "Alle Stützpunkte",
     "searchMoveIn": "Einzug",
@@ -98,7 +98,7 @@
     "searchButton": "Suchen",
     "sponsoredSpot": "Hier werben — Klicken für Details",
     "trust1Heading": "Aus der Community",
-    "trust1Body": "Angebote kommen direkt vom Housing Office und der militärischen Community selbst — nicht zusammengesucht oder geraten.",
+    "trust1Body": "Angebote kommen direkt aus der Militär- und Expat-Community selbst — nicht zusammengesucht oder geraten.",
     "trust2Heading": "Jedes Angebot geprüft",
     "trust2Body": "Selbst eingestellte Wohnungen werden geprüft, bevor sie online gehen – keine Karteileichen.",
     "trust3Heading": "Am Tag der Vermietung offline",
@@ -124,7 +124,7 @@
     "heroLocationPlaceholder": "Standort",
     "specialOffersHeading": "Sonderangebote",
     "homesComingSoonHeading": "Empfohlene Wohnungen folgen bald",
-    "homesComingSoonBody": "Wohnungen vom Housing Office und ausziehenden Familien erscheinen hier.",
+    "homesComingSoonBody": "Wohnungen von Vermietern und ausziehenden Familien erscheinen hier.",
     "carsComingSoonHeading": "Empfohlene Autos folgen bald",
     "carsComingSoonBody": "Autos aus der Community erscheinen hier.",
     "businessesComingSoonHeading": "Unternehmen folgen bald",
@@ -142,11 +142,11 @@
     "emptyAmenities": "mit {list}",
     "emptySuffix": "gerade jetzt.",
     "placeholder1Heading": "Bald neue Angebote",
-    "placeholder1Body": "Wohnungen vom Housing Office und von ausziehenden Familien werden laufend ergänzt, sobald sie geprüft sind — schauen Sie bald wieder vorbei.",
+    "placeholder1Body": "Wohnungen von Vermietern und ausziehenden Familien werden laufend ergänzt — schauen Sie bald wieder vorbei.",
     "placeholder2Heading": "Ziehen Sie aus?",
     "placeholder2Body": "Inserieren Sie Ihr Zuhause in fünf Minuten — keine Agentur, kein Papierkram.",
     "placeholder2Cta": "Zuhause inserieren",
-    "placeholder3Heading": "Vom Housing Office?",
+    "placeholder3Heading": "Mehrere Wohnungen zu vermieten?",
     "placeholder3Body": "Wir richten Ihre Angebote direkt für Sie ein.",
     "placeholder3Cta": "Kontakt aufnehmen",
     "searchPlaceholder": "Suche nach Stadt oder Adresse…"
@@ -158,18 +158,12 @@
     "bed": "Schlafz.",
     "bath": "Bad",
     "moreAmenities": "+{count} weitere",
-    "housingOfficeListing": "Vom Housing Office",
-    "listedByFamily": "Von ausziehender Familie",
-    "housingApprovedBadge": "Housing-Office genehmigt",
     "newBadge": "Neu",
     "noPhotoYet": "Noch kein Foto",
     "availableToMilitaryOnly": "Nur US-Militär",
     "availableToMilitaryAndExpats": "Militär & Expats"
   },
   "ListingForm": {
-    "source": "Quelle",
-    "sourceHousingOffice": "Housing Office",
-    "sourceSelfListed": "Selbst inseriert",
     "title": "Titel",
     "titlePlaceholder": "z. B. 3-Zimmer-Haus nahe Panzer Kaserne",
     "carTitlePlaceholder": "z. B. 2016 Volkswagen Jetta Sport",
@@ -298,8 +292,6 @@
     "rented": "Vermietet",
     "availableStatus": "Verfügbar",
     "viewCount": "{count, plural, =0 {Noch keine Aufrufe} =1 {1 Aufruf} other {# Aufrufe}}",
-    "housingOfficeListing": "Vom Housing Office",
-    "listedByFamily": "Von ausziehender Familie inseriert",
     "interestedHeading": "Interesse an dieser Wohnung?",
     "signInToContact": "Interesse an dieser Wohnung? Melden Sie sich an, um den Inserenten zu kontaktieren.",
     "signIn": "Anmelden",
@@ -357,7 +349,7 @@
     "onePropertyBody": "Inserieren Sie sie in wenigen Minuten selbst — Fotos, Preis und das verfügbare Datum. Wir prüfen es, meist noch am selben Tag, dann geht es live.",
     "onePropertyCta": "Immobilie inserieren",
     "multiUnitTag": "Mehrere Einheiten",
-    "multiUnitHeading": "Hausverwaltungen & Housing Offices",
+    "multiUnitHeading": "Hausverwaltungen & mehrere Einheiten",
     "multiUnitBody": "Verwalten Sie mehrere Immobilien nahe eines Stützpunkts? Wir richten Ihre Angebote direkt für Sie ein, statt dass Sie sie einzeln einstellen müssen.",
     "multiUnitCta": "Kontakt aufnehmen",
     "trust1Heading": "Jedes Angebot geprüft",
@@ -374,18 +366,16 @@
   "HowVerification": {
     "eyebrow": "So funktioniert's",
     "heading": "Nichts geht ungeprüft online.",
-    "subhead": "Jedes Angebot auf milhaus — ob vom Housing Office oder von einer ausziehenden Familie — wird geprüft, bevor es sichtbar ist, und noch am Tag der Vermietung wieder entfernt.",
+    "subhead": "Jedes Angebot auf Milhaus wird geprüft, bevor es sichtbar ist, und noch am Tag der Vermietung wieder entfernt.",
     "step1Num": "01",
     "step1Heading": "Jemand reicht es ein",
-    "step1Body": "Eine PCS-Familie inseriert die Wohnung, die sie verlässt, oder es kommt über den Feed des Housing Office auf dem Stützpunkt.",
+    "step1Body": "Ein Vermieter oder eine ausziehende PCS-Familie inseriert die Wohnung auf Milhaus.",
     "step2Num": "02",
     "step2Heading": "Wir prüfen es",
     "step2Body": "Jede selbst eingestellte Anzeige wird von Hand geprüft, bevor sie für irgendjemanden sichtbar ist — meist noch am selben Tag. Nichts geht automatisch online.",
     "step3Num": "03",
     "step3Heading": "Online — bis es das nicht mehr ist",
     "step3Body": "Ein Klick nimmt ein Angebot von der Seite, sobald es vermietet ist. Kein Anruf wegen einer Wohnung, die schon vor drei Wochen weg war.",
-    "stampHeading": "Der Stempel bedeutet: vom Housing Office",
-    "stampBody": "Angebote mit dieser Markierung stammen direkt aus dem Feed des Housing Office auf dem Stützpunkt — nicht zusammengesucht oder selbst eingestellt. Ein Angebot ohne diese Markierung ist eine selbst eingestellte Wohnung einer ausziehenden Familie — trotzdem genauso geprüft, nur anders beschafft. Beide durchlaufen dieselbe Prüfung, bevor sie sichtbar sind; der Stempel zeigt nur, woher ein Angebot stammt.",
     "ctaHeading": "Bereit zu schauen?",
     "ctaBody": "Jedes Angebot, das Sie sehen, hat das bereits durchlaufen.",
     "ctaButton": "Offene Angebote ansehen"
@@ -406,14 +396,9 @@
     "filterPrice": "Preis",
     "filterCategorySpecifics": "Kategoriespezifisch",
     "filterFeatures": "Merkmale / Badges",
-    "housingApprovedOnly": "Nur Housing-Office genehmigt",
     "availableToHeading": "Verfügbar für",
     "availableToMilitaryOnly": "Nur US-Militär",
     "availableToMilitaryAndExpats": "US-Militär & Expats"
-  },
-  "StampBadge": {
-    "line1": "Housing",
-    "line2": "Office"
   },
   "PhotoGallery": {
     "showPhoto": "Foto {number} anzeigen"
@@ -643,9 +628,9 @@
   },
   "ListingsPage": {
     "metaTitle": "Wohnungen zur Miete",
-    "metaDescription": "Mietwohnungen vom Housing Office und von ausziehenden Familien in Deutschland — geprüft und am Tag der Vermietung entfernt.",
+    "metaDescription": "Mietwohnungen von Vermietern und ausziehenden Familien nahe US-Stützpunkten in Deutschland — geprüft und am Tag der Vermietung entfernt.",
     "heading": "Wohnungen zur Miete",
-    "subhead": "Angebote vom Housing Office und selbst eingestellte Wohnungen, geprüft bevor sie live gehen.",
+    "subhead": "Wohnungen von Vermietern und ausziehenden Familien, geprüft bevor sie live gehen.",
     "postAHome": "Wohnung inserieren"
   },
   "PostBusinessPage": {

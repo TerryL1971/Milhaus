@@ -1,6 +1,6 @@
 // src/app/[locale]/post/page.tsx
-// Post-a-listing (build order step 6). Signed-in-only, always self-listed
-// — housing-office listings are added by an admin instead, at
+// Post-a-listing (build order step 6). Signed-in-only, always
+// self-listed — an admin can also add one directly at
 // /admin/listings/new (same form, different variant).
 
 import type { Metadata } from "next";

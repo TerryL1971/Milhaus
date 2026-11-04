@@ -1,8 +1,8 @@
 // src/app/[locale]/listings/[id]/page.tsx
-// Listing detail page (build order step 4). Shows the full graphical
-// StampBadge for housing_office listings — the grid card only has room for
-// the compact checkmark/dash line, but CLAUDE.md calls for the stamp to be
-// visible on both the grid and here.
+// Listing detail page (build order step 4). No housing-office stamp or
+// "Housing office listing" line any more — Charlie and Terry's meeting
+// with the on-base Housing Office (2026-11-04): nothing on the site may
+// suggest the Housing Office listed or approved a home.
 
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -69,7 +69,6 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
   const dateFormatter = new Intl.DateTimeFormat(locale, { month: "long", day: "numeric", year: "numeric" });
 
   const isRented = listing.status === "rented";
-  const isHousingOffice = listing.source === "housing_office";
 
   const supabase = await createClient();
   const {
@@ -153,7 +152,6 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
 
         <ListingPhotoGallery
           photos={listing.photos}
-          showStamp={isHousingOffice}
           alt={`${listing.bedrooms}-bedroom home in ${listing.city}`}
         />
 
@@ -263,15 +261,6 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
             </div>
           </div>
         )}
-
-        <p
-          className={`mt-6 flex items-center gap-1.5 text-sm ${
-            isHousingOffice ? "text-olive-deep" : "text-[#8A8272]"
-          }`}
-        >
-          <span className="font-bold">{isHousingOffice ? "✓" : "—"}</span>
-          {isHousingOffice ? t("housingOfficeListing") : t("listedByFamily")}
-        </p>
 
         {seller && (
           <SellerCard

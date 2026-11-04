@@ -2,8 +2,8 @@
 // Marketing page for property owners/managers — linked from the header and
 // footer's "For landlords" links (previously both pointed at "#"). Two
 // distinct paths on purpose: an individual with one property uses the same
-// self-list flow as a PCSing family; a property manager or on-base housing
-// office with multiple units isn't self-serve (CLAUDE.md rules out bulk-
+// self-list flow as a PCSing family; a property manager with multiple
+// units isn't self-serve (CLAUDE.md rules out bulk-
 // import tooling for MVP) and goes through Charlie by email instead.
 
 import type { Metadata } from "next";
@@ -13,7 +13,7 @@ import { Link } from "@/i18n/navigation";
 export const metadata: Metadata = {
   title: "For landlords",
   description:
-    "List a property with milhaus — for individual owners with one home, or property managers and on-base housing offices with multiple units.",
+    "List a property with Milhaus — for individual owners with one home, or property managers with multiple units.",
 };
 
 export default async function ForLandlordsPage() {

@@ -49,7 +49,6 @@ export function ListingCard({
   const t = useTranslations("ListingCard");
   const tAmenities = useTranslations("Amenities");
   const isRented = listing.status === "rented";
-  const isHousingOffice = listing.source === "housing_office";
 
   return (
     <div className="group relative">
@@ -71,13 +70,8 @@ export function ListingCard({
         ) : (
           <NoPhotoPlaceholder gradient={photoGradient} label={t("noPhotoYet")} />
         )}
-        {(isHousingOffice || listing.isNew || listing.amenities.includes("furnished") || listing.amenities.includes("pet_friendly")) && (
+        {(listing.isNew || listing.amenities.includes("furnished") || listing.amenities.includes("pet_friendly")) && (
           <div className="absolute left-2.5 top-2.5 flex flex-wrap gap-1.5">
-            {isHousingOffice && (
-              <span className="rounded-[3px] bg-ink px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
-                {t("housingApprovedBadge")}
-              </span>
-            )}
             {listing.isNew && (
               <span className="rounded-[3px] bg-brass px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
                 {t("newBadge")}
@@ -158,15 +152,6 @@ export function ListingCard({
             )}
           </div>
         )}
-
-        <p
-          className={`mt-2.5 flex items-center gap-1.5 text-[0.72rem] ${
-            isHousingOffice ? "text-olive-deep" : "text-[#8A8272]"
-          }`}
-        >
-          <span className="font-bold">{isHousingOffice ? "✓" : "—"}</span>
-          {isHousingOffice ? t("housingOfficeListing") : t("listedByFamily")}
-        </p>
       </div>
       </Link>
     </div>

@@ -1,8 +1,6 @@
 // src/app/[locale]/cars/[id]/page.tsx
 // Car listing detail page — mirrors src/app/[locale]/listings/[id]/page.tsx
-// (same photo gallery, same public SellerCard), swapped to car fields. No
-// stamp badge here: a car ad is always self_listed, there's no
-// housing-office equivalent for cars.
+// (same photo gallery, same public SellerCard), swapped to car fields.
 
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -141,7 +139,6 @@ export default async function CarDetailPage({ params }: { params: Params }) {
 
         <ListingPhotoGallery
           photos={listing.photos}
-          showStamp={false}
           alt={`${listing.year} ${listing.make} ${listing.model}`}
         />
 

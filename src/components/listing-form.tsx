@@ -8,12 +8,11 @@
 //
 // - self-list always submits source="self_listed" and lands on
 //   pending_review, same as any other self-submitted listing.
-// - admin-add lets the admin pick the source (defaulting to
-//   housing_office for rentals — that's the actual reason this exists,
-//   Charlie entering a housing-office home directly) and goes straight to
-//   active: an admin adding it themselves *is* the review. Cars, products,
-//   and services have no housing-office equivalent, so admin-add for any
-//   of them skips the source picker entirely and is always self_listed.
+// - admin-add goes straight to active: an admin adding it themselves
+//   *is* the review. It used to offer a "Housing office" source for
+//   rentals; that's gone (2026-11-04, after Charlie and Terry met the
+//   on-base Housing Office — nothing may look like the Housing Office
+//   listed a home), so every listing is self_listed now.
 //
 // Passing `existing` switches it into edit mode (/edit-listing/[id]):
 // every field starts pre-filled, current photos can be removed or added
@@ -191,10 +190,7 @@ export function ListingForm({
       await saveEdit(existing, formData, files);
       return;
     }
-    // Cars and products have no housing-office equivalent — always
-    // self_listed, regardless of variant. Rentals keep the admin's choice.
-    const source: ListingSource =
-      isAdminAdd && isRental ? ((formData.get("source") as ListingSource) ?? "housing_office") : "self_listed";
+    const source: ListingSource = "self_listed";
 
     setProgress(t("progressSaving"));
     const basePayload = {
@@ -343,9 +339,8 @@ export function ListingForm({
       return;
     }
 
-    // Same rule as create: only rentals added/edited by an admin can be
-    // housing-office sourced; everything else stays as it was.
-    const sourceUpdate = isAdminAdd && isRental ? { source: (formData.get("source") as ListingSource) ?? listing.source } : {};
+    // Saving any old housing-office listing turns it into a normal one.
+    const sourceUpdate = { source: "self_listed" as ListingSource };
     const { error: listingError } = await supabase
       .from("listings")
       .update({
@@ -493,18 +488,6 @@ export function ListingForm({
       onSubmit={handleSubmit}
       className="flex flex-col gap-5 rounded-md border border-canvas-deep bg-paper p-6 shadow-[0_8px_24px_rgba(27,42,58,0.08)]"
     >
-      {isAdminAdd && isRental && (
-        <div>
-          <label htmlFor="source" className={labelClass}>
-            {t("source")}
-          </label>
-          <select id="source" name="source" className={inputClass} defaultValue={existing?.source ?? "housing_office"}>
-            <option value="housing_office">{t("sourceHousingOffice")}</option>
-            <option value="self_listed">{t("sourceSelfListed")}</option>
-          </select>
-        </div>
-      )}
-
       <p className={sectionHeadingClass}>{t("sectionBasics")}</p>
 
       <div>

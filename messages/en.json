@@ -1,7 +1,7 @@
 {
   "Metadata": {
     "title": "milhaus — Find your home before you land",
-    "description": "A rental-listing marketplace for Americans relocating to Germany, combining on-base housing office listings with self-listed homes from families rotating out."
+    "description": "A rental-listing marketplace for Americans relocating to Germany — homes listed by landlords and by families rotating out."
   },
   "Amenities": {
     "pet_friendly": "Pet friendly",
@@ -89,7 +89,7 @@
     "heroTagline": "A stronger community. A smoother life abroad.",
     "rentalCardEyebrow": "Housing",
     "rentalCardHeading": "Rentals",
-    "rentalCardSubhead": "Housing-office listings and self-listed homes, reviewed before they go live.",
+    "rentalCardSubhead": "Homes listed by landlords and outgoing families, checked before they go live.",
     "searchNearBase": "Near base",
     "searchAnyBase": "Any base",
     "searchMoveIn": "Move-in",
@@ -98,7 +98,7 @@
     "searchButton": "Search",
     "sponsoredSpot": "Advertise here — click to find out how",
     "trust1Heading": "Sourced from the community",
-    "trust1Body": "Listings come straight from base housing and the military community itself — not scraped or guessed.",
+    "trust1Body": "Listings come straight from the military and expat community itself — not scraped or guessed.",
     "trust2Heading": "Every listing reviewed",
     "trust2Body": "Self-listed homes are checked before they go live — no ghost posts.",
     "trust3Heading": "Down the day it's rented",
@@ -124,7 +124,7 @@
     "heroLocationPlaceholder": "Location",
     "specialOffersHeading": "Special Offers",
     "homesComingSoonHeading": "Featured Homes coming soon",
-    "homesComingSoonBody": "Homes from the housing office and outgoing families will appear here.",
+    "homesComingSoonBody": "Homes from landlords and outgoing families will appear here.",
     "carsComingSoonHeading": "Featured Cars coming soon",
     "carsComingSoonBody": "Cars for sale from the community will appear here.",
     "businessesComingSoonHeading": "Businesses coming soon",
@@ -142,11 +142,11 @@
     "emptyAmenities": "with {list}",
     "emptySuffix": "right now.",
     "placeholder1Heading": "New listings soon",
-    "placeholder1Body": "Homes from the housing office and outgoing families are added as they're reviewed — check back soon.",
+    "placeholder1Body": "Homes from landlords and outgoing families are added as they come in — check back soon.",
     "placeholder2Heading": "Moving out?",
     "placeholder2Body": "List your home in five minutes — no agency, no paperwork.",
     "placeholder2Cta": "List your home",
-    "placeholder3Heading": "From the housing office?",
+    "placeholder3Heading": "Managing several homes?",
     "placeholder3Body": "We'll set your listings up directly.",
     "placeholder3Cta": "Get in touch",
     "searchPlaceholder": "Search by city or address…"
@@ -158,18 +158,12 @@
     "bed": "bed",
     "bath": "bath",
     "moreAmenities": "+{count} more",
-    "housingOfficeListing": "Housing office listing",
-    "listedByFamily": "Listed by outgoing family",
-    "housingApprovedBadge": "Housing Approved",
     "newBadge": "New",
     "noPhotoYet": "No photo yet",
     "availableToMilitaryOnly": "US Military only",
     "availableToMilitaryAndExpats": "Military & Expats"
   },
   "ListingForm": {
-    "source": "Source",
-    "sourceHousingOffice": "Housing office",
-    "sourceSelfListed": "Self-listed",
     "title": "Title",
     "titlePlaceholder": "e.g. 3-bedroom house near Panzer Kaserne",
     "carTitlePlaceholder": "e.g. 2016 Volkswagen Jetta Sport",
@@ -298,8 +292,6 @@
     "rented": "Rented",
     "availableStatus": "Available",
     "viewCount": "{count, plural, =0 {No views yet} =1 {1 view} other {# views}}",
-    "housingOfficeListing": "Housing office listing",
-    "listedByFamily": "Listed by outgoing family",
     "interestedHeading": "Interested in this home?",
     "signInToContact": "Interested in this home? Sign in to contact the lister.",
     "signIn": "Sign in",
@@ -357,7 +349,7 @@
     "onePropertyBody": "List it yourself in a few minutes — photos, price, and the date it's available. We review it, usually the same day, and it goes live.",
     "onePropertyCta": "List your property",
     "multiUnitTag": "Multiple units",
-    "multiUnitHeading": "Property managers & housing offices",
+    "multiUnitHeading": "Property managers & multiple units",
     "multiUnitBody": "Managing several properties near base? We'll set your listings up directly rather than have you post them one at a time.",
     "multiUnitCta": "Get in touch",
     "trust1Heading": "Every listing reviewed",
@@ -374,18 +366,16 @@
   "HowVerification": {
     "eyebrow": "How it works",
     "heading": "Nothing goes live unchecked.",
-    "subhead": "Every listing on milhaus — whether it came from the housing office or a family rotating out — is reviewed before it's visible, and taken down the day it's gone.",
+    "subhead": "Every listing on Milhaus is checked before it's visible, and taken down the day it's gone.",
     "step1Num": "01",
     "step1Heading": "Someone submits it",
-    "step1Body": "A PCSing family lists the home they're leaving, or it comes in through the on-base housing office feed.",
+    "step1Body": "A landlord, or a PCSing family moving out, lists the home on Milhaus.",
     "step2Num": "02",
     "step2Heading": "We check it",
     "step2Body": "Every self-listed submission is reviewed by hand before it's visible to anyone — usually the same day. Nothing goes live automatically.",
     "step3Num": "03",
     "step3Heading": "It's live — until it isn't",
     "step3Body": "One tap takes a listing off the site the moment it's rented. No calling about a place that's been gone for three weeks.",
-    "stampHeading": "The stamp means it came from the housing office",
-    "stampBody": "Listings with this mark are a direct feed from the on-base housing office, not scraped or self-submitted. A listing without it is a self-listed home from an outgoing family — still reviewed, just sourced differently. Both go through the same check before they're visible; the stamp only tells you where a listing came from.",
     "ctaHeading": "Ready to look?",
     "ctaBody": "Every listing you'll see has already been through this.",
     "ctaButton": "Browse open listings"
@@ -406,14 +396,9 @@
     "filterPrice": "Price",
     "filterCategorySpecifics": "Category Specifics",
     "filterFeatures": "Features / Badges",
-    "housingApprovedOnly": "Housing Approved only",
     "availableToHeading": "Available to",
     "availableToMilitaryOnly": "US Military only",
     "availableToMilitaryAndExpats": "US Military & Expats"
-  },
-  "StampBadge": {
-    "line1": "Housing",
-    "line2": "Office"
   },
   "PhotoGallery": {
     "showPhoto": "Show photo {number}"
@@ -643,9 +628,9 @@
   },
   "ListingsPage": {
     "metaTitle": "Homes for rent",
-    "metaDescription": "Rentals from the base housing office and outgoing families in Germany — verified, reviewed, and taken down the day they're gone.",
+    "metaDescription": "Rentals from landlords and outgoing families near US military bases in Germany — checked, and taken down the day they're gone.",
     "heading": "Homes for rent",
-    "subhead": "Housing-office listings and self-listed homes, reviewed before they go live.",
+    "subhead": "Homes listed by landlords and outgoing families, checked before they go live.",
     "postAHome": "List your home"
   },
   "PostBusinessPage": {

@@ -1,11 +1,10 @@
 // src/app/admin/listings/new/page.tsx
 // Admin's own "add a listing" form — same fields as /post or /post-car,
-// but for entering a listing directly on someone's behalf (a
-// housing-office rental, a car ad, an item for sale, or a service for
-// someone who can't post it themselves). Goes straight to `active`: the
-// admin adding it is the review. ?type=car / ?type=product / ?type=service
-// switch ListingForm to that field set — none of them has a
-// housing-office equivalent, so those variants skip the source picker.
+// but for entering a listing directly on someone's behalf (a rental, a
+// car ad, an item for sale, or a service for someone who can't post it
+// themselves). Goes straight to `active`: the admin adding it is the
+// review. ?type=car / ?type=product / ?type=service switch ListingForm to
+// that field set.
 
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";

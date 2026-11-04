@@ -8,15 +8,12 @@
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useState } from "react";
-import { StampBadge } from "@/components/stamp-badge";
 
 export function ListingPhotoGallery({
   photos,
-  showStamp,
   alt,
 }: {
   photos: string[];
-  showStamp: boolean;
   /** What this listing actually is, for descriptive alt text — e.g.
    * "2-bedroom home in Ramstein" or "2019 Toyota Camry SE". */
   alt: string;
@@ -36,7 +33,6 @@ export function ListingPhotoGallery({
             style={{ background: "linear-gradient(135deg, #C9B896, #8E9B7A 60%, #6B7353)" }}
           />
         )}
-        {showStamp && <StampBadge size="lg" className="right-4 top-4" />}
       </div>
 
       {photos.length > 1 && (

@@ -98,7 +98,6 @@ export function ListingsGrid({
     activeAmenities,
     priceMin,
     priceMax,
-    housingOfficeOnly,
     activeAvailableTo,
     activeCount,
     applyFilters,
@@ -125,7 +124,6 @@ export function ListingsGrid({
   const [pendingMoveIn, setPendingMoveIn] = useState(moveIn);
   const [pendingPriceMin, setPendingPriceMin] = useState(priceMin);
   const [pendingPriceMax, setPendingPriceMax] = useState(priceMax);
-  const [pendingHousingOnly, setPendingHousingOnly] = useState(housingOfficeOnly);
   const [pendingAvailableTo, setPendingAvailableTo] = useState<AvailableToFilterKey[]>(activeAvailableTo);
 
   function handleApply() {
@@ -136,7 +134,6 @@ export function ListingsGrid({
       moveIn: pendingMoveIn,
       priceMin: pendingPriceMin,
       priceMax: pendingPriceMax,
-      housingOfficeOnly: pendingHousingOnly,
       availableTo: pendingAvailableTo,
     });
     setAlertDismissed(false);
@@ -149,7 +146,6 @@ export function ListingsGrid({
     setPendingMoveIn("");
     setPendingPriceMin(null);
     setPendingPriceMax(null);
-    setPendingHousingOnly(false);
     setPendingAvailableTo([]);
     setKeyword("");
     setAlertDismissed(false);
@@ -176,7 +172,6 @@ export function ListingsGrid({
       if (activeAmenities.some((key) => !listing.amenities.includes(key))) return false;
       if (priceMin != null && listing.priceEurMonth < priceMin) return false;
       if (priceMax != null && listing.priceEurMonth > priceMax) return false;
-      if (housingOfficeOnly && listing.source !== "housing_office") return false;
       // OR within this group — ticking both badges means "either one",
       // unlike amenities' AND (a home can only have one of these).
       if (
@@ -187,7 +182,7 @@ export function ListingsGrid({
       if (!q) return true;
       return matchesListing(listing, q);
     });
-  }, [listings, keyword, activeBases, minBedrooms, moveIn, activeAmenities, priceMin, priceMax, housingOfficeOnly, activeAvailableTo]);
+  }, [listings, keyword, activeBases, minBedrooms, moveIn, activeAmenities, priceMin, priceMax, activeAvailableTo]);
 
   // Favorited listings first — a stable sort (Array.prototype.sort is
   // stable per spec) so everything else keeps its existing relative
@@ -301,18 +296,9 @@ export function ListingsGrid({
         <FilterCluster
           label={tFilter("filterFeatures")}
           icon="⭐"
-          badge={pendingAmenities.length + (pendingHousingOnly ? 1 : 0) + pendingAvailableTo.length || undefined}
+          badge={pendingAmenities.length + pendingAvailableTo.length || undefined}
         >
           <div className="flex flex-col gap-4">
-            <label className="flex items-center gap-2 text-sm text-charcoal">
-              <input
-                type="checkbox"
-                checked={pendingHousingOnly}
-                onChange={(event) => setPendingHousingOnly(event.target.checked)}
-                className="h-4 w-4 rounded border-canvas-deep text-olive focus:ring-olive"
-              />
-              <span>{tFilter("housingApprovedOnly")}</span>
-            </label>
             <div>
               <span className="mb-1.5 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
                 {tFilter("availableToHeading")}

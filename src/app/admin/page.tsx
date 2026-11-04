@@ -207,7 +207,7 @@ export default async function AdminPage() {
                           </>
                         )}
                         <span className="text-ink-soft">
-                          {listing.source === "housing_office" ? "Housing office" : "Self-listed"} · submitted{" "}
+                          Submitted{" "}
                           {dateFormatter.format(new Date(listing.createdAt))}
                         </span>
                       </div>

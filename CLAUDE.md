@@ -36,7 +36,7 @@ Body font:    'IBM Plex Sans' (UI, paragraphs)
 Mono font:    'IBM Plex Mono' (prices, specs, labels, eyebrows)
 ```
 
-Signature UI element: the "stamp" — a dashed-circle badge marking a listing as sourced from the on-base housing office, distinct from a self-listed (PCS family) home. This distinction is a core trust signal for users and should be visible on both the card grid and the listing detail page.
+~~Signature UI element: the "stamp"~~ — REMOVED 2026-11-04. After Charlie and Terry met the on-base Housing Office, nothing on the site may suggest the Housing Office listed, approved, or endorsed a home: no stamp, no "Housing Approved" badge or filter, no "Housing office listing" label, no housing-office wording in copy. Do not reintroduce any of it. The `source` column still exists in the database, but every listing is `self_listed` and the app no longer offers `housing_office`.
 
 ## Data model (MVP)
 
