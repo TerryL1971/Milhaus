@@ -325,7 +325,7 @@ export default async function AdminPage() {
                               : "bg-olive/15 text-olive-deep"
                           }`}
                         >
-                          {listing.status}
+                          {listing.status === "rented" ? soldWording(listing) : listing.status}
                         </span>
                         {listing.status === "active" && listing.expiresAt && (
                           <p className="mt-1 text-xs text-ink-soft">
@@ -376,7 +376,11 @@ export default async function AdminPage() {
                                 type="submit"
                                 className="rounded-md border border-canvas-deep px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-olive hover:text-olive-deep"
                               >
-                                Mark rented
+                                {soldWording(listing) === "rented"
+                                  ? "Mark rented"
+                                  : soldWording(listing) === "sold"
+                                    ? "Mark sold"
+                                    : "Mark unavailable"}
                               </button>
                             </form>
                           )}
@@ -478,4 +482,13 @@ export default async function AdminPage() {
       </div>
     </main>
   );
+}
+
+// The "rented" status reads differently per kind of listing — same
+// split as My listings' button: a home for sale, a car or an item is
+// sold, a service is unavailable, only a home for rent is rented.
+function soldWording(listing: Listing): "rented" | "sold" | "unavailable" {
+  if (listing.type === "service") return "unavailable";
+  if (listing.type === "rental" && listing.offerType === "rent") return "rented";
+  return "sold";
 }
