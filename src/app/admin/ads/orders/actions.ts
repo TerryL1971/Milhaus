@@ -14,7 +14,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { fulfillAdOrder } from "@/lib/ad-orders";
+import { fulfillAdOrder, sendAdInvoiceEmail } from "@/lib/ad-orders";
 import { AD_INVOICE_LINE_ROWS, AD_MAX_QUANTITY, adLineDescription, adUnitPrice, isAdTerm } from "@/lib/ad-pricing";
 import { getAdPriceList } from "@/lib/ad-pricing-queries";
 import { AD_PLACEMENTS, type AdPlacement } from "@/lib/ad-slots";
@@ -138,6 +138,22 @@ export async function createAdInvoice(formData: FormData) {
       .from("ad_orders")
       .update({ stripe_invoice_id: finalized.id, stripe_invoice_url: finalized.hosted_invoice_url ?? null })
       .eq("id", order.id);
+
+    // Milhaus's own copy, alongside Stripe's (see sendAdInvoiceEmail).
+    if (finalized.hosted_invoice_url) {
+      await sendAdInvoiceEmail({
+        to: advertiserEmail,
+        name: advertiserName,
+        lines: lines.map((line) => ({
+          description: `${adLineDescription(line.placement, line.days, line.quantity)} (${currency.format(line.unit_price_eur)} each)`,
+          amountEur: line.unit_price_eur * line.quantity,
+        })),
+        totalEur,
+        payUrl: finalized.hosted_invoice_url,
+        dueDate: finalized.due_date ? new Date(finalized.due_date * 1000) : null,
+        note,
+      });
+    }
   } catch (stripeError) {
     await admin.from("ad_orders").delete().eq("id", order.id);
     throw stripeError;
@@ -178,5 +194,37 @@ export async function cancelAdOrder(formData: FormData) {
     if (invoice.status === "open") await getStripe().invoices.voidInvoice(invoice.id!);
   }
   await admin.from("ad_orders").update({ status: "void" }).eq("id", id).eq("status", "open");
+  revalidateOrders();
+}
+
+/** Sends Milhaus's own invoice email again for an unpaid invoice — e.g.
+ * one created before that email existed, or after Resend is set up. */
+export async function resendAdInvoiceEmail(formData: FormData) {
+  await requireAdmin();
+  const id = formData.get("id") as string;
+
+  const admin = createAdminClient();
+  const { data: order } = await admin
+    .from("ad_orders")
+    .select("advertiser_name, advertiser_email, status, note, stripe_invoice_id, stripe_invoice_url, ad_order_lines(placement, days, quantity, unit_price_eur)")
+    .eq("id", id)
+    .single();
+  if (!order || order.status !== "open" || !order.stripe_invoice_url) return;
+
+  const lines = (order.ad_order_lines ?? []).map((line) => ({
+    description: `${adLineDescription(line.placement as AdPlacement, line.days as number, line.quantity as number)} (${currency.format(Number(line.unit_price_eur))} each)`,
+    amountEur: Number(line.unit_price_eur) * (line.quantity as number),
+  }));
+  const invoice = order.stripe_invoice_id ? await getStripe().invoices.retrieve(order.stripe_invoice_id as string) : null;
+
+  await sendAdInvoiceEmail({
+    to: order.advertiser_email as string,
+    name: order.advertiser_name as string,
+    lines,
+    totalEur: lines.reduce((sum, line) => sum + line.amountEur, 0),
+    payUrl: order.stripe_invoice_url as string,
+    dueDate: invoice?.due_date ? new Date(invoice.due_date * 1000) : null,
+    note: (order.note as string | null) ?? null,
+  });
   revalidateOrders();
 }

@@ -7,8 +7,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { cancelAdOrder, markAdOrderPaid } from "@/app/admin/ads/orders/actions";
+import { cancelAdOrder, markAdOrderPaid, resendAdInvoiceEmail } from "@/app/admin/ads/orders/actions";
 import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
+import { CopyLinkButton } from "@/components/copy-link-button";
 import { syncOpenAdInvoices } from "@/lib/ad-orders";
 import { getAllAdOrders, type AdOrder } from "@/lib/ad-orders-queries";
 import { adLineDescription } from "@/lib/ad-pricing";
@@ -54,7 +55,9 @@ export default async function AdminAdOrdersPage() {
             <h1 className="mb-1 font-display text-3xl font-semibold text-ink">Ad orders &amp; invoices</h1>
             <p className="max-w-[60ch] text-ink-soft">
               Everything bought on the Advertise page, and every invoice you&apos;ve emailed. When one is
-              paid, its ad spots appear in Ad slots marked &quot;Needs artwork&quot;.
+              paid, its ad spots appear in Ad slots marked &quot;Needs artwork&quot;. If an advertiser
+              hasn&apos;t received their invoice, use &quot;Copy invoice link&quot; and send them the link
+              yourself — by email, WhatsApp or text.
             </p>
           </div>
           <Link
@@ -120,6 +123,24 @@ export default async function AdminAdOrdersPage() {
                     >
                       View invoice
                     </a>
+                  )}
+                  {order.status === "open" && order.stripeInvoiceUrl && (
+                    <>
+                      <CopyLinkButton
+                        url={order.stripeInvoiceUrl}
+                        label="Copy invoice link"
+                        className="rounded-md border border-canvas-deep px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-olive hover:text-olive-deep"
+                      />
+                      <form action={resendAdInvoiceEmail}>
+                        <input type="hidden" name="id" value={order.id} />
+                        <button
+                          type="submit"
+                          className="rounded-md border border-canvas-deep px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-olive hover:text-olive-deep"
+                        >
+                          Email invoice again
+                        </button>
+                      </form>
+                    </>
                   )}
                   {order.status === "open" && (
                     <>
