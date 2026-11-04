@@ -52,11 +52,13 @@ export function ListingCard({
   const isForSale = listing.offerType === "sale";
 
   return (
-    <div className="group relative">
+    // h-full on both: a card fills its grid row, so one with feature
+    // chips doesn't stand taller than its neighbours (Featured Homes).
+    <div className="group relative h-full">
       {isFavorited !== undefined && <FavoriteButton listingId={listing.id} isFavorited={isFavorited} />}
       <Link
         href={`/listings/${listing.id}`}
-        className="block overflow-hidden rounded-md border border-canvas-deep bg-paper transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(27,42,58,0.12)]"
+        className="block h-full overflow-hidden rounded-md border border-canvas-deep bg-paper transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(27,42,58,0.12)]"
       >
       <div className={`relative ${aspectClassName}`}>
         {listing.photos[0] ? (
