@@ -287,7 +287,9 @@
     "addPhotos": "Add more photos",
     "photoNumber": "Photo {number}",
     "availableToNotSaved": "Everything else was saved, but \"Available to\" couldn't be yet — the site's database still needs a one-time update. Once that's done, edit this listing and set it again.",
-    "salePrice": "Asking price (€)"
+    "salePrice": "Asking price (€)",
+    "highlightHint": "★ Star the ones to show on your listing's card — as many as fit on one line.",
+    "highlightOnCard": "Show {item} on the card"
   },
   "ListingDetail": {
     "backToListings": "← Back to listings",

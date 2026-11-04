@@ -110,6 +110,10 @@ function detailsPayload(kind: Kind, formData: FormData) {
       amenities: formData.getAll("amenities"),
       parking_spaces: formData.get("parkingSpaces") ? Number(formData.get("parkingSpaces")) : null,
       nearby_amenities: formData.getAll("nearbyAmenities"),
+      // Only stars on items that are actually ticked count.
+      highlights: formData
+        .getAll("highlights")
+        .filter((key) => formData.getAll("amenities").includes(key) || formData.getAll("nearbyAmenities").includes(key)),
       internet_type: formData.get("internetType") || null,
       internet_speed_mbps: formData.get("internetSpeedMbps") ? Number(formData.get("internetSpeedMbps")) : null,
       heat_type: formData.get("heatType") || null,
@@ -928,22 +932,22 @@ export function ListingForm({
       {isRental && (
         <div>
           <span className={labelClass}>{t("features")}</span>
+          <p className="mb-2 text-xs text-ink-soft">{t("highlightHint")}</p>
           {/* Fixed at 2 columns, not 3 — German compounds ("Waschmaschine/
               Trockner") run long enough that a 3rd column left too little
               width per cell and the label overflowed into its neighbor. */}
           <div className="grid grid-cols-2 gap-2">
             {/* No "Pet friendly" for a home for sale — a buyer's own house. */}
             {AMENITY_KEYS.filter((key) => !(isForSale && key === "pet_friendly")).map((key) => (
-              <label key={key} className="flex min-w-0 items-center gap-2 text-sm text-charcoal">
-                <input
-                  type="checkbox"
-                  name="amenities"
-                  value={key}
-                  defaultChecked={existing?.amenities.includes(key)}
-                  className="h-4 w-4 flex-shrink-0 rounded border-canvas-deep text-olive focus:ring-olive"
-                />
-                <span>{tAmenities(key)}</span>
-              </label>
+              <HighlightableCheckbox
+                key={key}
+                name="amenities"
+                value={key}
+                label={tAmenities(key)}
+                defaultChecked={existing?.amenities.includes(key)}
+                defaultStarred={existing?.highlights.includes(key)}
+                starLabel={t("highlightOnCard", { item: tAmenities(key) })}
+              />
             ))}
           </div>
         </div>
@@ -971,16 +975,15 @@ export function ListingForm({
           <span className={labelClass}>{t("nearbyAmenities")}</span>
           <div className="grid grid-cols-2 gap-2">
             {NEARBY_AMENITY_KEYS.map((key) => (
-              <label key={key} className="flex min-w-0 items-center gap-2 text-sm text-charcoal">
-                <input
-                  type="checkbox"
-                  name="nearbyAmenities"
-                  value={key}
-                  defaultChecked={existing?.nearbyAmenities.includes(key)}
-                  className="h-4 w-4 flex-shrink-0 rounded border-canvas-deep text-olive focus:ring-olive"
-                />
-                <span>{tNearbyAmenities(key)}</span>
-              </label>
+              <HighlightableCheckbox
+                key={key}
+                name="nearbyAmenities"
+                value={key}
+                label={tNearbyAmenities(key)}
+                defaultChecked={existing?.nearbyAmenities.includes(key)}
+                defaultStarred={existing?.highlights.includes(key)}
+                starLabel={t("highlightOnCard", { item: tNearbyAmenities(key) })}
+              />
             ))}
           </div>
         </div>
@@ -1178,5 +1181,71 @@ export function ListingForm({
                   : t("submitSelfList")}
       </button>
     </form>
+  );
+}
+
+/** A feature / what's-nearby checkbox with a ★ beside it for "show this
+ * on the card". The star ticks the item too (you can't highlight what
+ * the home doesn't have), and unticking the item clears its star; the
+ * save keeps only stars on ticked items either way. Uncontrolled, like
+ * every other field in this form. */
+function HighlightableCheckbox({
+  name,
+  value,
+  label,
+  defaultChecked,
+  defaultStarred,
+  starLabel,
+}: {
+  name: "amenities" | "nearbyAmenities";
+  value: string;
+  label: string;
+  defaultChecked?: boolean;
+  defaultStarred?: boolean;
+  starLabel: string;
+}) {
+  return (
+    <div className="flex min-w-0 items-center gap-1">
+      <label className="flex min-w-0 flex-1 items-center gap-2 text-sm text-charcoal">
+        <input
+          type="checkbox"
+          name={name}
+          value={value}
+          defaultChecked={defaultChecked}
+          onChange={(event) => {
+            if (event.currentTarget.checked) return;
+            const star = event.currentTarget.form?.querySelector<HTMLInputElement>(
+              `input[name="highlights"][value="${value}"]`,
+            );
+            if (star) star.checked = false;
+          }}
+          className="h-4 w-4 flex-shrink-0 rounded border-canvas-deep text-olive focus:ring-olive"
+        />
+        <span className="min-w-0">{label}</span>
+      </label>
+      <label title={starLabel} className="flex-shrink-0 cursor-pointer p-1">
+        <input
+          type="checkbox"
+          name="highlights"
+          value={value}
+          defaultChecked={defaultStarred}
+          aria-label={starLabel}
+          onChange={(event) => {
+            if (!event.currentTarget.checked) return;
+            const item = event.currentTarget.form?.querySelector<HTMLInputElement>(
+              `input[name="${name}"][value="${value}"]`,
+            );
+            if (item) item.checked = true;
+          }}
+          className="peer sr-only"
+        />
+        <span
+          aria-hidden="true"
+          className="text-lg leading-none text-charcoal/25 transition-colors hover:text-brass/60 peer-checked:text-brass peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-olive"
+        >
+          ★
+        </span>
+      </label>
+    </div>
   );
 }

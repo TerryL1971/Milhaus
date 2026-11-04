@@ -5,7 +5,8 @@
 // move would write it. Photos are CC0 (see scripts/demo-photos/SOURCES.md)
 // and uploaded to the real listing-photos bucket.
 //
-// Needs 20261104120000_add_homes_for_sale.sql applied (offer_type).
+// Needs 20261104120000_add_homes_for_sale.sql (offer_type) and
+// 20261104170000_add_home_card_highlights.sql (highlights) applied.
 //
 // Rerunnable: deletes the demo-seller-* accounts first (which cascades
 // away their listings) along with their photos, then recreates
@@ -74,6 +75,7 @@ const HOMES = [
       amenities: ["garage", "garden", "washer_dryer", "dishwasher", "basement_storage", "parking"],
       parking_spaces: 3,
       nearby_amenities: ["school", "international_school", "grocery_store", "public_transit", "park"],
+      highlights: ["garden", "garage", "international_school", "public_transit"],
       internet_type: "fiber",
       internet_speed_mbps: 500,
       heat_type: "gas",
@@ -104,6 +106,7 @@ const HOMES = [
       amenities: ["parking", "washer_dryer", "dishwasher", "garden"],
       parking_spaces: 2,
       nearby_amenities: ["grocery_store", "restaurant", "gym", "pharmacy"],
+      highlights: ["parking", "dishwasher", "garden"],
       internet_type: "cable",
       internet_speed_mbps: 250,
       heat_type: "oil",
@@ -134,6 +137,7 @@ const HOMES = [
       amenities: ["garden", "basement_storage", "washer_dryer"],
       parking_spaces: 1,
       nearby_amenities: ["park", "public_transit", "restaurant", "school", "international_school"],
+      highlights: ["garden", "international_school", "park"],
       internet_type: "fiber",
       internet_speed_mbps: 1000,
       heat_type: "gas",
@@ -164,6 +168,7 @@ const HOMES = [
       amenities: ["garage", "garden", "basement_storage"],
       parking_spaces: 2,
       nearby_amenities: ["school", "grocery_store", "park"],
+      highlights: ["garage", "garden", "school"],
       internet_type: "dsl",
       internet_speed_mbps: 100,
       heat_type: "electric",

@@ -72,6 +72,9 @@ export interface Listing {
    * src/lib/nearby-amenities.ts (e.g. "school", "grocery_store"). Distinct
    * from `amenities` (in-unit features vs. neighborhood context). Rental only. */
   nearbyAmenities: string[];
+  /** Homes only — the amenity / nearby keys the lister starred to show
+   * on the card, in order. Empty = the card shows the first features. */
+  highlights: string[];
   /** Rental only — null on a car listing. */
   internetType: "dsl" | "cable" | "fiber" | null;
   /** Rental only — null on a car listing. */

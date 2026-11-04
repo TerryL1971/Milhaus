@@ -49,6 +49,7 @@ export function mapRow(row: Record<string, unknown>): Listing {
     parkingSpaces:
       details.parking_spaces === null || details.parking_spaces === undefined ? null : Number(details.parking_spaces),
     nearbyAmenities: (details.nearby_amenities as string[]) ?? [],
+    highlights: (details.highlights as string[] | null | undefined) ?? [],
     internetType: (details.internet_type as Listing["internetType"]) ?? null,
     internetSpeedMbps:
       details.internet_speed_mbps === null || details.internet_speed_mbps === undefined

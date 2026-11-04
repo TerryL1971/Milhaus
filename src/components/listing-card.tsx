@@ -4,10 +4,12 @@
 
 import { useTranslations } from "next-intl";
 import Image from "next/image";
+import { CardChipRow } from "@/components/card-chip-row";
 import { FavoriteButton } from "@/components/favorite-button";
 import { NoPhotoPlaceholder } from "@/components/no-photo-placeholder";
 import { Link } from "@/i18n/navigation";
 import type { AmenityKey } from "@/lib/amenities";
+import { NEARBY_AMENITY_KEYS, type NearbyAmenityKey } from "@/lib/nearby-amenities";
 import type { Listing } from "@/lib/types";
 
 // Homes and services price in EUR (actual German rents/quotes); cars and
@@ -48,6 +50,7 @@ export function ListingCard({
 }) {
   const t = useTranslations("ListingCard");
   const tAmenities = useTranslations("Amenities");
+  const tNearby = useTranslations("NearbyAmenities");
   const isRented = listing.status === "rented";
   const isForSale = listing.offerType === "sale";
 
@@ -149,23 +152,17 @@ export function ListingCard({
           {listing.sizeSqm != null && <span>{listing.sizeSqm} m²</span>}
         </div>
 
-        {listing.amenities.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {listing.amenities.slice(0, 3).map((key) => (
-              <span
-                key={key}
-                className="rounded-full bg-canvas px-2 py-0.5 text-[0.68rem] text-ink-soft"
-              >
-                {tAmenities(key as AmenityKey)}
-              </span>
-            ))}
-            {listing.amenities.length > 3 && (
-              <span className="rounded-full bg-canvas px-2 py-0.5 text-[0.68rem] text-ink-soft">
-                {t("moreAmenities", { count: listing.amenities.length - 3 })}
-              </span>
+        {/* What the lister starred (features and what's nearby), else
+            their first features — one line, see CardChipRow. */}
+        <CardChipRow
+          chips={(listing.highlights.length > 0 ? listing.highlights : listing.amenities)
+            .filter((key) => !(isForSale && key === "pet_friendly"))
+            .map((key) =>
+              (NEARBY_AMENITY_KEYS as string[]).includes(key)
+                ? { key, label: `📍 ${tNearby(key as NearbyAmenityKey)}` }
+                : { key, label: tAmenities(key as AmenityKey) },
             )}
-          </div>
-        )}
+        />
       </div>
       </Link>
     </div>

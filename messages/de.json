@@ -287,7 +287,9 @@
     "addPhotos": "Weitere Fotos hinzufügen",
     "photoNumber": "Foto {number}",
     "availableToNotSaved": "Alles andere wurde gespeichert, aber „Verfügbar für“ noch nicht — die Datenbank der Website braucht noch ein einmaliges Update. Danach dieses Inserat bearbeiten und die Auswahl erneut setzen.",
-    "salePrice": "Kaufpreis (€)"
+    "salePrice": "Kaufpreis (€)",
+    "highlightHint": "★ Markieren Sie, was auf der Karte Ihres Inserats erscheinen soll — so viel, wie in eine Zeile passt.",
+    "highlightOnCard": "{item} auf der Karte zeigen"
   },
   "ListingDetail": {
     "backToListings": "← Zurück zu den Angeboten",
