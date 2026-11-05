@@ -5,6 +5,7 @@
 
 import type { Metadata } from "next";
 import Image from "next/image";
+import { LightboxTrigger } from "@/components/photo-lightbox";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
@@ -94,6 +95,11 @@ export default async function EventDetailPage({ params }: { params: Params }) {
     ],
   };
 
+  // Cover first, then the gallery — all of them open in the full-screen
+  // viewer, where a flyer's small print or QR code can be zoomed into.
+  const allPhotos = [...(event.coverImageUrl ? [event.coverImageUrl] : []), ...event.photos];
+  const photoOffset = event.coverImageUrl ? 1 : 0;
+
   return (
     <main className="flex-1 pb-14">
       {/* Static JSON we built above, not user input. */}
@@ -107,9 +113,14 @@ export default async function EventDetailPage({ params }: { params: Params }) {
         // upscaling the image until it looked stretched/blurry. The
         // canvas-deep background fills in the letterboxing instead of
         // leaving it blank.
-        <div className="relative flex h-56 w-full items-center justify-center bg-canvas-deep sm:h-72">
+        <LightboxTrigger
+          photos={allPhotos}
+          index={0}
+          alt={event.title}
+          className="relative flex h-56 w-full items-center justify-center bg-canvas-deep sm:h-72"
+        >
           <Image src={event.coverImageUrl} alt={event.title} fill sizes="100vw" className="object-contain" priority />
-        </div>
+        </LightboxTrigger>
       ) : (
         <div className="h-56 w-full sm:h-72" style={{ background: COVER_GRADIENT }} />
       )}
@@ -146,10 +157,16 @@ export default async function EventDetailPage({ params }: { params: Params }) {
 
         {event.photos.length > 0 && (
           <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3">
-            {event.photos.map((url) => (
-              <div key={url} className="relative aspect-square w-full">
+            {event.photos.map((url, index) => (
+              <LightboxTrigger
+                key={url}
+                photos={allPhotos}
+                index={index + photoOffset}
+                alt={event.title}
+                className="relative aspect-square w-full"
+              >
                 <Image src={url} alt={event.title} fill sizes="(min-width: 640px) 33vw, 50vw" className="rounded-md object-cover" />
-              </div>
+              </LightboxTrigger>
             ))}
           </div>
         )}

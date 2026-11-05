@@ -415,7 +415,14 @@
     "availableToMilitaryAndExpats": "US-Militär & Expats"
   },
   "PhotoGallery": {
-    "showPhoto": "Foto {number} anzeigen"
+    "showPhoto": "Foto {number} anzeigen",
+    "enlarge": "Foto {number} vergrößern",
+    "enlargeBadge": "Vergrößern",
+    "close": "Schließen",
+    "previous": "Vorheriges Foto",
+    "next": "Nächstes Foto",
+    "counter": "{current} / {total}",
+    "zoomHint": "Zum Zoomen zusammenziehen, doppelt tippen oder scrollen · wischen für mehr"
   },
   "CarsPage": {
     "metaTitle": "Autos zu verkaufen",

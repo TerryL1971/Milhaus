@@ -415,7 +415,14 @@
     "availableToMilitaryAndExpats": "US Military & Expats"
   },
   "PhotoGallery": {
-    "showPhoto": "Show photo {number}"
+    "showPhoto": "Show photo {number}",
+    "enlarge": "Enlarge photo {number}",
+    "enlargeBadge": "Enlarge",
+    "close": "Close",
+    "previous": "Previous photo",
+    "next": "Next photo",
+    "counter": "{current} / {total}",
+    "zoomHint": "Pinch, double-tap or scroll to zoom · swipe for more"
   },
   "CarsPage": {
     "metaTitle": "Cars for sale",
