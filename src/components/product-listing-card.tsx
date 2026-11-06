@@ -42,11 +42,13 @@ export function ProductListingCard({
   const isSold = listing.status === "rented"; // same status column as every listing type; "rented" means "off the market"
 
   return (
-    <div className="group relative">
+    // h-full on both: fills its grid row, so cards with more spec badges
+    // don't stand taller than their neighbours (same as ListingCard).
+    <div className="group relative h-full">
       {isFavorited !== undefined && <FavoriteButton listingId={listing.id} isFavorited={isFavorited} />}
       <Link
         href={`/products/${listing.id}`}
-        className="block overflow-hidden rounded-md border border-canvas-deep bg-paper transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(27,42,58,0.12)]"
+        className="block h-full overflow-hidden rounded-md border border-canvas-deep bg-paper transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(27,42,58,0.12)]"
       >
       <div className={`relative ${aspectClassName}`}>
         {listing.photos[0] ? (
@@ -68,7 +70,7 @@ export function ProductListingCard({
             {currencyFormatter.format(listing.priceEurMonth)}
           </span>
           <span
-            className={`rounded-[3px] px-2 py-0.5 font-mono text-[0.66rem] font-semibold uppercase tracking-wider ${
+            className={`rounded-[3px] px-2 py-0.5 font-body text-[0.66rem] font-semibold uppercase tracking-wider ${
               isSold ? "bg-rust/10 text-rust line-through" : "bg-olive/15 text-olive-deep"
             }`}
           >
@@ -85,14 +87,14 @@ export function ProductListingCard({
 
         <div className="flex flex-wrap gap-1.5">
           {listing.condition === "like_new" && (
-            <span className="rounded-[3px] bg-brass px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
+            <span className="rounded-[3px] bg-brass px-2 py-0.5 font-body text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
               {t("likeNew")}
             </span>
           )}
           {/* Always shown, not conditional on any field — every item for
               sale here is self-listed with no shipping flow, so pickup
               is just a fact about every listing of this type. */}
-          <span className="rounded-[3px] bg-canvas-deep px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-ink-soft">
+          <span className="rounded-[3px] bg-canvas-deep px-2 py-0.5 font-body text-[0.64rem] font-semibold uppercase tracking-wider text-ink-soft">
             {t("pickUp")}
           </span>
         </div>

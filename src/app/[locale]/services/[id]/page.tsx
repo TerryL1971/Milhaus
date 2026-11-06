@@ -118,31 +118,31 @@ export default async function ServiceDetailPage({ params }: { params: Params }) 
 
         <div className="mt-6 flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h1 className="font-display text-3xl font-semibold text-ink">{listing.title}</h1>
+            <h1 className="font-body text-3xl font-semibold text-ink">{listing.title}</h1>
             <p className="mt-1 text-ink-soft">{listing.city}</p>
           </div>
           <div className="text-right">
-            <div className="font-mono text-2xl font-semibold text-ink">
+            <div className="font-body text-2xl font-semibold text-ink">
               {listing.priceIsEstimate && (
                 <span className="text-base font-normal text-ink-soft">{t("from")} </span>
               )}
               {currencyFormatter.format(listing.priceEurMonth)}
             </div>
             <span
-              className={`mt-1 inline-block rounded-[3px] px-2 py-0.5 font-mono text-[0.7rem] font-semibold uppercase tracking-wider ${
+              className={`mt-1 inline-block rounded-[3px] px-2 py-0.5 font-body text-[0.7rem] font-semibold uppercase tracking-wider ${
                 isUnavailable ? "bg-rust/10 text-rust line-through" : "bg-olive/15 text-olive-deep"
               }`}
             >
               {isUnavailable ? t("unavailable") : t("availableStatus")}
             </span>
             {canSeeViewCount && (
-              <p className="mt-1 font-mono text-xs text-ink-soft">{t("viewCount", { count: listing.viewCount })}</p>
+              <p className="mt-1 font-body text-xs text-ink-soft">{t("viewCount", { count: listing.viewCount })}</p>
             )}
           </div>
         </div>
 
         {(listing.serviceCategory || listing.pricingNote) && (
-          <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 border-y border-canvas-deep py-4 font-mono text-sm text-charcoal/80">
+          <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 border-y border-canvas-deep py-4 font-body text-sm text-charcoal/80">
             {listing.serviceCategory && (
               <span>{SERVICE_CATEGORY_LABELS[listing.serviceCategory as ServiceCategoryKey] ?? listing.serviceCategory}</span>
             )}

@@ -47,12 +47,12 @@ export function SellerCard({
         <Avatar name={name} photoUrl={seller.photoUrl} size="md" />
 
         <div className="min-w-0 flex-1">
-          <p className="font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
+          <p className="font-body text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
             {t("postedBy")}
           </p>
           <Link
             href={`/sellers/${ownerId}`}
-            className="font-display text-lg font-semibold text-ink hover:underline"
+            className="font-body text-lg font-semibold text-ink hover:underline"
           >
             {name}
           </Link>
@@ -104,7 +104,7 @@ export function SellerCard({
 
       {otherListings.length > 0 && (
         <div className="mt-6 border-t border-canvas-deep pt-5">
-          <p className="mb-3 font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
+          <p className="mb-3 font-body text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
             {t("moreFromSeller", { name })}
           </p>
           <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-4">

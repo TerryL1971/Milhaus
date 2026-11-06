@@ -44,11 +44,13 @@ export function CarListingCard({
   const isSold = listing.status === "rented"; // same status column as rentals; "rented" means "off the market" either way
 
   return (
-    <div className="group relative">
+    // h-full on both: fills its grid row, so cards with more spec badges
+    // don't stand taller than their neighbours (same as ListingCard).
+    <div className="group relative h-full">
       {isFavorited !== undefined && <FavoriteButton listingId={listing.id} isFavorited={isFavorited} />}
       <Link
         href={`/cars/${listing.id}`}
-        className="block overflow-hidden rounded-md border border-canvas-deep bg-paper transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(27,42,58,0.12)]"
+        className="block h-full overflow-hidden rounded-md border border-canvas-deep bg-paper transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(27,42,58,0.12)]"
       >
       <div className={`relative ${aspectClassName}`}>
         {listing.photos[0] ? (
@@ -70,7 +72,7 @@ export function CarListingCard({
             {currencyFormatter.format(listing.priceEurMonth)}
           </span>
           <span
-            className={`rounded-[3px] px-2 py-0.5 font-mono text-[0.66rem] font-semibold uppercase tracking-wider ${
+            className={`rounded-[3px] px-2 py-0.5 font-body text-[0.66rem] font-semibold uppercase tracking-wider ${
               isSold ? "bg-rust/10 text-rust line-through" : "bg-olive/15 text-olive-deep"
             }`}
           >
@@ -92,27 +94,27 @@ export function CarListingCard({
         {(listing.usSpec != null || listing.transmission || listing.lowMileage) && (
           <div className="flex flex-wrap gap-1.5">
             {listing.lowMileage && (
-              <span className="rounded-[3px] bg-brass px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
+              <span className="rounded-[3px] bg-brass px-2 py-0.5 font-body text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
                 {t("lowMileage")}
               </span>
             )}
             {listing.usSpec === true && (
-              <span className="rounded-[3px] bg-ink px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
+              <span className="rounded-[3px] bg-ink px-2 py-0.5 font-body text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
                 {t("usSpec")}
               </span>
             )}
             {listing.usSpec === false && (
-              <span className="rounded-[3px] bg-canvas-deep px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-ink-soft">
+              <span className="rounded-[3px] bg-canvas-deep px-2 py-0.5 font-body text-[0.64rem] font-semibold uppercase tracking-wider text-ink-soft">
                 {t("euSpec")}
               </span>
             )}
             {listing.transmission === "automatic" && (
-              <span className="rounded-[3px] bg-canvas-deep px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-ink-soft">
+              <span className="rounded-[3px] bg-canvas-deep px-2 py-0.5 font-body text-[0.64rem] font-semibold uppercase tracking-wider text-ink-soft">
                 {t("automatic")}
               </span>
             )}
             {listing.transmission === "manual" && (
-              <span className="rounded-[3px] bg-canvas-deep px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-ink-soft">
+              <span className="rounded-[3px] bg-canvas-deep px-2 py-0.5 font-body text-[0.64rem] font-semibold uppercase tracking-wider text-ink-soft">
                 {t("manual")}
               </span>
             )}

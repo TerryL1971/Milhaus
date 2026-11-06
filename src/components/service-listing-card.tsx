@@ -52,7 +52,7 @@ export function ServiceListingCard({
             {currencyFormatter.format(listing.priceEurMonth)}
           </span>
           <span
-            className={`rounded-[3px] px-2 py-0.5 font-mono text-[0.66rem] font-semibold uppercase tracking-wider ${
+            className={`rounded-[3px] px-2 py-0.5 font-body text-[0.66rem] font-semibold uppercase tracking-wider ${
               isUnavailable ? "bg-rust/10 text-rust line-through" : "bg-olive/15 text-olive-deep"
             }`}
           >

@@ -144,7 +144,7 @@ export default async function CarDetailPage({ params }: { params: Params }) {
 
         <div className="mt-6 flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h1 className="font-display text-3xl font-semibold text-ink">
+            <h1 className="font-body text-3xl font-semibold text-ink">
               {listing.year} {listing.make} {listing.model}
             </h1>
             <p className="mt-1 text-ink-soft">
@@ -158,24 +158,24 @@ export default async function CarDetailPage({ params }: { params: Params }) {
             )}
           </div>
           <div className="text-right">
-            <div className="font-mono text-2xl font-semibold text-ink">
+            <div className="font-body text-2xl font-semibold text-ink">
               {currencyFormatter.format(listing.priceEurMonth)}
             </div>
             <span
-              className={`mt-1 inline-block rounded-[3px] px-2 py-0.5 font-mono text-[0.7rem] font-semibold uppercase tracking-wider ${
+              className={`mt-1 inline-block rounded-[3px] px-2 py-0.5 font-body text-[0.7rem] font-semibold uppercase tracking-wider ${
                 isSold ? "bg-rust/10 text-rust line-through" : "bg-olive/15 text-olive-deep"
               }`}
             >
               {isSold ? t("sold") : t("availableStatus")}
             </span>
             {canSeeViewCount && (
-              <p className="mt-1 font-mono text-xs text-ink-soft">{t("viewCount", { count: listing.viewCount })}</p>
+              <p className="mt-1 font-body text-xs text-ink-soft">{t("viewCount", { count: listing.viewCount })}</p>
             )}
           </div>
         </div>
 
         {listing.mileageKm != null && (
-          <div className="mt-6 flex gap-6 border-y border-canvas-deep py-4 font-mono text-sm text-charcoal/80">
+          <div className="mt-6 flex gap-6 border-y border-canvas-deep py-4 font-body text-sm text-charcoal/80">
             <span>{t("mileage", { km: mileageFormatter.format(listing.mileageKm) })}</span>
           </div>
         )}

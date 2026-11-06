@@ -81,24 +81,24 @@ export function ListingCard({
             {/* For rent / For sale on every home (Charlie, 2026-11-04) —
                 they sit side by side on the homepage's Featured Homes. */}
             {listing.type === "rental" && (
-              <span className="rounded-[3px] bg-ink px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
+              <span className="rounded-[3px] bg-ink px-2 py-0.5 font-body text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
                 {isForSale ? t("forSaleBadge") : t("forRentBadge")}
               </span>
             )}
             {listing.isNew && (
-              <span className="rounded-[3px] bg-brass px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
+              <span className="rounded-[3px] bg-brass px-2 py-0.5 font-body text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
                 {t("newBadge")}
               </span>
             )}
             {listing.amenities.includes("furnished") && (
-              <span className="rounded-[3px] bg-ink px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
+              <span className="rounded-[3px] bg-ink px-2 py-0.5 font-body text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
                 {tAmenities("furnished")}
               </span>
             )}
             {/* Not on a home for sale (Terry, 2026-11-04) — pets are a
                 renter's question, not a buyer's. */}
             {!isForSale && listing.amenities.includes("pet_friendly") && (
-              <span className="rounded-[3px] bg-ink px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
+              <span className="rounded-[3px] bg-ink px-2 py-0.5 font-body text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
                 {tAmenities("pet_friendly")}
               </span>
             )}
@@ -109,29 +109,24 @@ export function ListingCard({
             default, so it gets no badge. Never on a home for sale: anyone
             can buy a house (Terry, 2026-11-04). */}
         {!isForSale && listing.availableTo && listing.availableTo !== "everyone" && (
-          <span className="absolute bottom-2.5 left-2.5 rounded-[3px] bg-ink/90 px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
+          <span className="absolute bottom-2.5 left-2.5 rounded-[3px] bg-ink/90 px-2 py-0.5 font-body text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
             {listing.availableTo === "military_only" ? t("availableToMilitaryOnly") : t("availableToMilitaryAndExpats")}
           </span>
         )}
       </div>
       <div className="px-4 pb-4 pt-3.5">
-        {/* Price and the bed/bath/sqm row below used to be font-mono, per
-            CLAUDE.md's original design tokens ("Mono font: prices, specs,
-            labels, eyebrows") — Charlie's later ask was to move away from
-            that for these two specifically, matching his own reference
-            mockup's card sample. Explicit font-body (IBM Plex Sans, the
-            project's body font — see globals.css) rather than just
-            dropping font-mono and relying on inheriting it from <body>,
-            so the choice is visible here, not implicit. Small uppercase
-            pill badges (status chip, amenity/feature tags) are untouched
-            and still mono, same as every other card type. */}
+        {/* Everything in a listing — cards and detail pages, every type —
+            is in the body font (Work Sans; see globals.css), including the
+            price, specs and the small uppercase badges that used to be
+            mono (Charlie, 2026-11-06). Spelled out as font-body rather
+            than inherited, so the choice is visible here. */}
         <div className="mb-1 flex items-start justify-between">
           <span className="font-body text-[1.08rem] font-semibold text-ink">
             {currencyFormatter.format(listing.priceEurMonth)}
             {isForSale ? "" : ` ${t("perMonth")}`}
           </span>
           <span
-            className={`rounded-[3px] px-2 py-0.5 font-mono text-[0.66rem] font-semibold uppercase tracking-wider ${
+            className={`rounded-[3px] px-2 py-0.5 font-body text-[0.66rem] font-semibold uppercase tracking-wider ${
               isRented
                 ? "bg-rust/10 text-rust line-through"
                 : "bg-olive/15 text-olive-deep"

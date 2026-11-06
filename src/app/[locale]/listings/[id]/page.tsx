@@ -160,37 +160,37 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
 
         <div className="mt-6 flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h1 className="font-display text-3xl font-semibold text-ink">
+            <h1 className="font-body text-3xl font-semibold text-ink">
               {listing.city}
               {listing.distanceToBase ? ` · ${listing.distanceToBase}` : ""}
             </h1>
             <p className="mt-1 text-ink-soft">{listing.address}</p>
             {!isForSale && listing.availableTo && listing.availableTo !== "everyone" && (
-              <p className="mt-2 inline-flex items-center gap-1.5 rounded-[3px] bg-ink px-2.5 py-1 font-mono text-[0.72rem] font-semibold uppercase tracking-wider text-paper">
+              <p className="mt-2 inline-flex items-center gap-1.5 rounded-[3px] bg-ink px-2.5 py-1 font-body text-[0.72rem] font-semibold uppercase tracking-wider text-paper">
                 <span className="opacity-70">{t("availableToLabel")}:</span>
                 {listing.availableTo === "military_only" ? t("availableToMilitaryOnly") : t("availableToMilitaryAndExpats")}
               </p>
             )}
           </div>
           <div className="text-right">
-            <div className="font-mono text-2xl font-semibold text-ink">
+            <div className="font-body text-2xl font-semibold text-ink">
               {currencyFormatter.format(listing.priceEurMonth)}
               {!isForSale && <span className="text-base font-normal text-ink-soft"> / mo</span>}
             </div>
             <span
-              className={`mt-1 inline-block rounded-[3px] px-2 py-0.5 font-mono text-[0.7rem] font-semibold uppercase tracking-wider ${
+              className={`mt-1 inline-block rounded-[3px] px-2 py-0.5 font-body text-[0.7rem] font-semibold uppercase tracking-wider ${
                 isRented ? "bg-rust/10 text-rust line-through" : "bg-olive/15 text-olive-deep"
               }`}
             >
               {isRented ? (isForSale ? t("sold") : t("rented")) : isForSale ? t("forSale") : t("availableStatus")}
             </span>
             {canSeeViewCount && (
-              <p className="mt-1 font-mono text-xs text-ink-soft">{t("viewCount", { count: listing.viewCount })}</p>
+              <p className="mt-1 font-body text-xs text-ink-soft">{t("viewCount", { count: listing.viewCount })}</p>
             )}
           </div>
         </div>
 
-        <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 border-y border-canvas-deep py-4 font-mono text-sm text-charcoal/80">
+        <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 border-y border-canvas-deep py-4 font-body text-sm text-charcoal/80">
           <span>{listing.bedrooms} {t("bed")}</span>
           <span>{listing.bathrooms} {t("bath")}</span>
           {listing.sizeSqm != null && <span>{listing.sizeSqm} m²</span>}
@@ -231,7 +231,7 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
 
         {listing.amenities.length > 0 && (
           <div className="mt-6">
-            <p className="mb-2 font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
+            <p className="mb-2 font-body text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
               {t("featuresHeading")}
             </p>
             <div className="flex flex-wrap gap-2">
@@ -249,7 +249,7 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
 
         {listing.nearbyAmenities.length > 0 && (
           <div className="mt-4">
-            <p className="mb-2 font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
+            <p className="mb-2 font-body text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
               {t("nearbyHeading")}
             </p>
             <div className="flex flex-wrap gap-2">
