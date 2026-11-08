@@ -15,8 +15,8 @@
 - bathroom-1.webp — rawpixel, "Modern bathroom interior", CC0
 
 These are generic stock photos standing in for real listing photos —
-not photos of the actual (fictional) addresses in mock-listings.ts /
-seed-demo-listings.mjs. Once real self-listed or housing-office
+not photos of the actual (fictional) addresses in
+seed-demo-listings.mjs. Once real self-listed
 submissions exist, this whole directory and its use in
 seed-demo-listings.mjs can go away.
 

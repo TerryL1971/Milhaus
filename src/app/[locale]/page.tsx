@@ -332,9 +332,8 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
 
       {/* ---------- FEATURED HOMES / FEATURED CARS ---------- */}
       {/* Per Charlie's frontpage mockup — dedicated rows with the full
-          card treatment (photo, badges, price/specs), distinct from the
-          hero's small mini-card fan above. All four rows below (these
-          two, Businesses, and Buy & Sell) always render — when a
+          card treatment (photo, badges, price/specs). The Featured rows
+          (these two and Businesses) always render — when a
           category has zero active listings (e.g. right after Charlie
           deletes the dev-only mock data, before real inventory exists),
           ComingSoonPanel takes the grid's place instead of the whole

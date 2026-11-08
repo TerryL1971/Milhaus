@@ -10,6 +10,7 @@
 
 export type FriendlyErrorKey = "generic" | "rateLimit" | "codeInvalid" | "network";
 
+/** Maps a sign-in error to a translated, plain-English message key. */
 export function classifyAuthError(message: string): FriendlyErrorKey {
   const text = message.toLowerCase();
   if (text.includes("rate limit")) return "rateLimit";
@@ -18,6 +19,7 @@ export function classifyAuthError(message: string): FriendlyErrorKey {
   return "generic";
 }
 
+/** Maps a form-save error (posting, editing) to a plain-English message key. */
 export function classifyFormError(message: string): FriendlyErrorKey {
   const text = message.toLowerCase();
   if (text.includes("fetch") || text.includes("network")) return "network";

@@ -52,8 +52,8 @@ export async function getListingPrice(type: PriceableType): Promise<number> {
  * does this category currently cost something? Returns the price to
  * show a "pay to post" gate for, or null if Charlie's left this
  * category free (price is 0), or the site-wide launch promo
- * (site_settings.free_until) is still running, and the form should just
- * submit straight to pending_review like it always did. */
+ * (site_settings.free_until) is still running, and the listing goes
+ * live straight away with no payment step. */
 export async function getPostingPrice(type: PriceableType): Promise<number | null> {
   const { isActive } = await getFreeUntilStatus();
   if (isActive) return null;

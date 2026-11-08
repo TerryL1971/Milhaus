@@ -110,7 +110,7 @@ export async function getActiveListings(type: ListingType = "rental"): Promise<L
  * with the most recent active listings of that type so there are always
  * up to `limit` cards even before an admin has featured anything for
  * that category. Defaults to rentals for the original single-category
- * caller; the 4-way homepage hero passes each type explicitly. `offer`
+ * caller; the homepage's Featured rows pass each type explicitly. `offer`
  * narrows homes to for rent or for sale — the homepage's Featured Homes
  * row is rentals only, or the newest homes for sale crowd them out. */
 export async function getFeaturedListings(

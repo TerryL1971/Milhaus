@@ -1,3 +1,6 @@
+# supabase/config.toml
+# Supabase CLI settings for running the project locally (`supabase start`).
+# The hosted project is configured in the Supabase dashboard instead.
 # For detailed configuration reference documentation, visit:
 # https://supabase.com/docs/guides/local-development/cli/config
 # A string used to distinguish different Supabase projects on the same host. Defaults to the

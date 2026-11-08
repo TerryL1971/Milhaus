@@ -1,4 +1,7 @@
 // src/app/[locale]/sign-in/page.tsx
+// Sign-in page. Already signed in → straight on to `?next=` (or home);
+// otherwise renders SignInForm (email → 6-digit code or magic link).
+// Kept out of search results.
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";

@@ -38,14 +38,19 @@ async function updateOwnListingStatus(id: string, status: string) {
   revalidatePath("/my-listings");
 }
 
+/** My listings → "Mark rented / sold / unavailable": takes the poster's own listing off the site. */
 export async function markMyListingRented(formData: FormData) {
   await updateOwnListingStatus(formData.get("id") as string, "rented");
 }
 
+/** My listings → "Withdraw": the poster takes their own listing down (kept, not deleted). */
 export async function archiveMyListing(formData: FormData) {
   await updateOwnListingStatus(formData.get("id") as string, "archived");
 }
 
+/** My listings → "Post again" for a withdrawn listing: puts it back on Charlie's
+ * "Needs review" list in Admin rather than straight live (owners can't
+ * make a listing active themselves — see the file header). */
 export async function resubmitMyListing(formData: FormData) {
   await updateOwnListingStatus(formData.get("id") as string, "pending_review");
 }

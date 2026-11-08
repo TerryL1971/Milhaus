@@ -11,6 +11,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Work_Sans, Libre_Baskerville } from "next/font/google";
 import Image from "next/image";
+import Link from "next/link";
 import "../globals.css";
 
 const libreBaskerville = Libre_Baskerville({
@@ -47,7 +48,7 @@ export default function ConsentLayout({ children }: { children: React.ReactNode 
       <body className="flex min-h-full flex-col font-body">
         <div className="border-b border-canvas-deep bg-ink">
           <div className="mx-auto max-w-[1600px] px-8 py-[18px]">
-            <a href="/" className="inline-flex items-center">
+            <Link href="/" className="inline-flex items-center">
               {/* h-7 below md — see site-header.tsx for why this logo
                   needs a smaller mobile size (it overflows a phone's
                   width at h-10). */}
@@ -59,7 +60,7 @@ export default function ConsentLayout({ children }: { children: React.ReactNode 
                 priority
                 className="h-7 w-auto md:h-10"
               />
-            </a>
+            </Link>
           </div>
         </div>
         {children}

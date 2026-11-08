@@ -7,6 +7,7 @@
 import { createClient } from "@/lib/supabase/server";
 import type { AdSlot, AdPlacement } from "@/lib/ad-slots";
 
+/** Turns an ad_slots database row into the app's AdSlot shape. */
 export function mapAdSlotRow(row: Record<string, unknown>): AdSlot {
   return {
     id: row.id as string,

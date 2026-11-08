@@ -101,7 +101,7 @@ export async function submitBusiness(formData: FormData) {
       email,
       consent_requested_at: now,
       owner_id: user.id,
-      is_active: false, // never publicly visible until Charlie approves AND consent is confirmed
+      is_active: false, // hidden until it's paid for (if priced) AND the business confirms consent
       status: priceEur ? "draft" : "pending_review",
     })
     .select("id, name, consent_token")

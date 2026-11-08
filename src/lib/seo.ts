@@ -36,6 +36,8 @@ export function metaDescription(text: string, max = 160): string {
   return `${cut.slice(0, Math.max(cut.lastIndexOf(" "), max - 30)).replace(/[\s,.;:—-]+$/, "")}…`;
 }
 
+/** Builds a public page's full metadata: title, trimmed description,
+ * canonical, en/de/x-default hreflang, and its Open Graph/Twitter card. */
 export function pageMetadata({
   locale,
   path,

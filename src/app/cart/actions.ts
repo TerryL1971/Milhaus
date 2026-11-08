@@ -1,8 +1,7 @@
 // src/app/cart/actions.ts
 // Server actions for the cart — checking out pays for every item in one
-// Stripe transaction rather than one per listing (see
-// src/app/checkout/[listingId]/actions.ts, the original single-item
-// version this generalizes). Every item in the cart is already a saved
+// Stripe transaction rather than one per listing (it replaced an
+// earlier single-item checkout route, since removed). Every item in the cart is already a saved
 // `draft` listing or business, owned by the signed-in caller (ListingForm
 // and the business-posting form both insert into cart_items right after
 // saving their draft), or an active/expired listing being renewed for

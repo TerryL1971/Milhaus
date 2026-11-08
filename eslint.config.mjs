@@ -1,4 +1,6 @@
 // eslint.config.mjs
+// Lint rules: Next.js's recommended set (Core Web Vitals + TypeScript)
+// with Next's default ignores. Run with `npm run lint`.
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";

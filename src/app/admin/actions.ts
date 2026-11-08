@@ -32,18 +32,22 @@ async function updateListingStatus(id: string, status: string) {
   revalidatePath("/admin");
 }
 
+/** Admin → Needs review → "Approve": puts the listing live. */
 export async function approveListing(formData: FormData) {
   await updateListingStatus(formData.get("id") as string, "active");
 }
 
+/** Admin → Needs review → "Reject": moves it to the archive instead of live. */
 export async function rejectListing(formData: FormData) {
   await updateListingStatus(formData.get("id") as string, "archived");
 }
 
+/** Admin → Live listings → "Mark rented / sold / unavailable". */
 export async function markRented(formData: FormData) {
   await updateListingStatus(formData.get("id") as string, "rented");
 }
 
+/** Admin → "Archive": takes a listing off the site but keeps it (Relist brings it back). */
 export async function archiveListing(formData: FormData) {
   await updateListingStatus(formData.get("id") as string, "archived");
 }
@@ -79,6 +83,7 @@ export async function grantFreeThirtyDays(formData: FormData) {
   revalidatePath("/admin");
 }
 
+/** Admin → "Feature" / "Unfeature": featured listings come first in the homepage rows. */
 export async function setFeatured(formData: FormData) {
   const id = formData.get("id") as string;
   const isFeatured = formData.get("isFeatured") === "true";

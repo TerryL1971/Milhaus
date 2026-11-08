@@ -11,7 +11,7 @@ export function PostingPriceNotice({ priceEur }: { priceEur: number }) {
   return (
     <div className="mb-5 rounded-md border border-brass/40 bg-brass/8 px-4 py-3 text-sm text-ink-soft">
       Posting in this category costs{" "}
-      <span className="font-semibold text-ink">{currencyFormatter.format(priceEur)}</span>. It's added to
+      <span className="font-semibold text-ink">{currencyFormatter.format(priceEur)}</span>. It&apos;s added to
       your cart after you fill out the details below — you can post more than one thing and pay for all
       of them together.
     </div>

@@ -2,7 +2,7 @@
 // A single car ad in the /cars browse grid. Deliberately a separate
 // component from ListingCard rather than branching that one on type — a
 // car's field set (year/make/model/mileage) and a rental's (bed/bath/
-// amenities/stamp) don't overlap enough for one component to stay
+// features/highlights) don't overlap enough for one component to stay
 // readable, and this way the working rental card is untouched.
 
 import { useTranslations } from "next-intl";
@@ -30,8 +30,8 @@ export function CarListingCard({
   listing: Listing;
   photoGradient: string;
   /** Cars' own category spec is 16:9 — the default. The homepage's
-   * Featured sections override this to one shared ratio across Homes/
-   * Cars/Buy & Sell; the dedicated /cars page doesn't pass this, so it
+   * Featured sections override this to one shared ratio across Homes,
+   * Cars and Businesses; the dedicated /cars page doesn't pass this, so it
    * keeps 16:9. */
   aspectClassName?: string;
   /** undefined = don't render the heart at all. */

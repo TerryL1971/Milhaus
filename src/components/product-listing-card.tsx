@@ -27,10 +27,9 @@ export function ProductListingCard({
 }: {
   listing: Listing;
   photoGradient: string;
-  /** Buy & Sell's own category spec is 1:1 — the default. The
-   * homepage's Featured sections override this to one shared ratio
-   * across Homes/Cars/Buy & Sell; the dedicated /products page doesn't
-   * pass this, so it keeps 1:1. */
+  /** Items are square (1:1) by default. Only seller profile pages show
+   * this card now — the public Buy & Sell section was retired in favour
+   * of Special Offers — and they don't override it. */
   aspectClassName?: string;
   /** undefined = don't render the heart at all. */
   isFavorited?: boolean;

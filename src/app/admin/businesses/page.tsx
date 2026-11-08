@@ -73,7 +73,7 @@ export default async function AdminBusinessesPage() {
               What the public Services page shows — you can add one by hand, or a business submits
               itself from /post-business and goes live automatically once it&apos;s paid for and the
               business confirms consent by email — no click needed from you. Featured ones also show
-              in the homepage&apos;s 4-card strip.
+              in the homepage&apos;s Featured Businesses row.
             </p>
           </div>
           <Link

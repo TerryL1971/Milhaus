@@ -1,4 +1,7 @@
 // next.config.ts
+// Next.js build/runtime config: allowed dev origins, which remote image
+// hosts next/image may optimize, the next-intl plugin (translations) and
+// the Sentry wrapper (error reporting + optional source-map upload).
 import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
 import createNextIntlPlugin from "next-intl/plugin";

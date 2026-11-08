@@ -36,6 +36,7 @@ async function uploadEventImage(
   return data.publicUrl;
 }
 
+/** Admin → Events → Add an event, with optional cover image and photos. */
 export async function createEvent(formData: FormData) {
   const title = (formData.get("title") as string | null)?.trim();
   const organizerName = (formData.get("organizerName") as string | null)?.trim();
@@ -80,6 +81,7 @@ export async function createEvent(formData: FormData) {
   revalidateEventPaths();
 }
 
+/** Admin → Events → "Hide" / "Unhide" on the public calendar. */
 export async function toggleEventActive(formData: FormData) {
   const id = formData.get("id") as string;
   const isActive = formData.get("isActive") === "true";
@@ -91,6 +93,7 @@ export async function toggleEventActive(formData: FormData) {
   revalidateEventPaths();
 }
 
+/** Admin → Events → "Delete". */
 export async function deleteEvent(formData: FormData) {
   const id = formData.get("id") as string;
 

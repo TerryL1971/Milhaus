@@ -32,6 +32,8 @@ function safeNext(value: string | undefined): string {
   return "/";
 }
 
+/** The "Confirm sign-in" button on /auth/confirm: completes the sign-in from
+ * the email link, then sends the user on to where they were going. */
 export async function confirmSignIn(formData: FormData) {
   const tokenHash = formData.get("token_hash");
   const type = formData.get("type");

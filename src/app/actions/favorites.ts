@@ -8,6 +8,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
+/** The heart on a card: saves or un-saves a listing for the signed-in user. */
 export async function toggleFavorite(formData: FormData) {
   const listingId = formData.get("listingId") as string;
   const wasFavorited = formData.get("wasFavorited") === "true";

@@ -1,7 +1,7 @@
 // src/components/filter-cluster.tsx
 // One labeled dropdown button in the unified top filter bar (Base,
 // Category Specifics, Price, Features/Badges — per the Unified Category
-// UX spec). Deliberately dumb: it just shows `children` in an anchored
+// UX spec). Deliberately simple: it just shows `children` in an anchored
 // popover and reports open/closed. The filter bar itself owns all the
 // pending-vs-applied state; this component has no opinion on what kind
 // of controls live inside (checkboxes, a price range, anything).

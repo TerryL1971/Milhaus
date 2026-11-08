@@ -56,6 +56,7 @@ export async function getAllEvents(): Promise<Event[]> {
   return (data ?? []).map(mapRow);
 }
 
+/** One event by id, for /events/[id] — null if missing or hidden. */
 export async function getEvent(id: string): Promise<Event | null> {
   const supabase = await createClient();
   const { data, error } = await supabase.from("events").select("*").eq("id", id).single();

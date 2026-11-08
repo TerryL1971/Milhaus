@@ -29,8 +29,8 @@ export function BusinessCard({
   priority?: boolean;
   /** 4:3 (matching Homes/Cars) is the default for /services' own grid.
    * The homepage's Featured rows override this to one shared 16:9 ratio
-   * across Homes/Cars/Businesses/Buy & Sell — same pattern ListingCard/
-   * CarListingCard/ProductListingCard already use for the same reason. */
+   * across Homes/Cars/Businesses — same pattern ListingCard and
+   * CarListingCard use for the same reason. */
   aspectClassName?: string;
 }) {
   const t = useTranslations("BusinessCard");

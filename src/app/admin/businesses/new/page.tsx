@@ -39,7 +39,7 @@ export default async function AdminNewBusinessPage() {
         </Link>
         <h1 className="mb-2 font-display text-3xl font-semibold text-ink">Add a business</h1>
         <p className="mb-8 text-ink-soft">
-          Shows up on the public Services page right away (unless you leave it unfeatured and it's
+          Shows up on the public Services page right away (unless you leave it unfeatured and it&apos;s
           not the newest — everything active shows, featured ones also get the homepage strip).
         </p>
 

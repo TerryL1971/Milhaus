@@ -6,8 +6,9 @@
 // update with the photo URLs and the final status) for every listing type,
 // just the field set and the insert payload branch on `kind`:
 //
-// - self-list always submits source="self_listed" and lands on
-//   pending_review, same as any other self-submitted listing.
+// - self-list always submits source="self_listed" and goes live as soon
+//   as it's paid for — straight away if posting is free (see the
+//   publishFreeListing call below); there's no manual review step.
 // - admin-add goes straight to active: an admin adding it themselves
 //   *is* the review. It used to offer a "Housing office" source for
 //   rentals; that's gone (2026-11-04, after Charlie and Terry met the

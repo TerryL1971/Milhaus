@@ -66,7 +66,7 @@ export async function getActiveBusinesses(): Promise<Business[]> {
   return (data ?? []).map(mapRow);
 }
 
-/** Featured active businesses for the homepage's 4-card strip. */
+/** Featured active businesses for the homepage's Featured Businesses row. */
 export async function getFeaturedBusinesses(limit = 4): Promise<Business[]> {
   const all = await getActiveBusinesses();
   return all.slice(0, limit);
@@ -87,6 +87,9 @@ export async function getAllBusinesses(): Promise<Business[]> {
   return (data ?? []).map(mapRow);
 }
 
+/** One business by id, for /businesses/[id] — null if it doesn't exist or
+ * the caller can't see it (a hidden business is visible only to admins and
+ * the account that submitted it). */
 export async function getBusiness(id: string): Promise<Business | null> {
   const supabase = await createClient();
   const { data, error } = await supabase.from("businesses").select("*").eq("id", id).single();

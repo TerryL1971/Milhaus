@@ -34,8 +34,8 @@ export function ListingCard({
   listing: Listing;
   photoGradient: string;
   /** Homes' own category spec is 4:3 — the default. The homepage's
-   * Featured sections override this to one shared ratio across Homes/
-   * Cars/Buy & Sell so those three rows look like the same card size;
+   * Featured sections override this to one shared ratio across Homes,
+   * Cars and Businesses so those rows look like the same card size;
    * the dedicated /listings page doesn't pass this, so it keeps 4:3. */
   aspectClassName?: string;
   /** undefined = don't render the heart at all (e.g. my-listings, a

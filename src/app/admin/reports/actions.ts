@@ -6,6 +6,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
+/** Admin → Reports → "Resolve": marks a visitor's report about a listing as dealt with. */
 export async function resolveReport(formData: FormData) {
   const id = formData.get("id") as string;
   const supabase = await createClient();

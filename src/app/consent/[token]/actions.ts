@@ -20,6 +20,8 @@ async function getRequestIp(): Promise<string | null> {
   return forwarded ? forwarded.split(",")[0].trim() : null;
 }
 
+/** The business clicked "Yes, list us" from its consent email: records it
+ * in the audit log and puts the business live if it's also paid for. */
 export async function confirmConsent(formData: FormData) {
   const token = formData.get("token") as string;
   const admin = createAdminClient();
@@ -58,6 +60,7 @@ export async function confirmConsent(formData: FormData) {
   revalidatePath("/");
 }
 
+/** The business clicked "No": hides it for good and records the refusal. */
 export async function declineConsent(formData: FormData) {
   const token = formData.get("token") as string;
   const admin = createAdminClient();

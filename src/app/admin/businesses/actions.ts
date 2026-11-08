@@ -37,6 +37,8 @@ function revalidateBusinessPaths() {
   revalidatePath("/");
 }
 
+/** Admin → Businesses → Add a business: Charlie adds one himself, choosing
+ * how its consent was (or will be) obtained — see the file header. */
 export async function createBusiness(formData: FormData) {
   const category = formData.get("category") as string;
   if (!BUSINESS_CATEGORY_KEYS.includes(category as BusinessCategoryKey)) {
@@ -257,6 +259,7 @@ export async function resendConsentEmail(formData: FormData) {
   revalidateBusinessPaths();
 }
 
+/** Admin → Businesses → "Hide" / "Unhide" in the public directory. */
 export async function toggleBusinessActive(formData: FormData) {
   const id = formData.get("id") as string;
   const isActive = formData.get("isActive") === "true";
@@ -268,6 +271,7 @@ export async function toggleBusinessActive(formData: FormData) {
   revalidateBusinessPaths();
 }
 
+/** Admin → Businesses → "Feature" / "Unfeature" on the homepage's Featured Businesses row. */
 export async function toggleBusinessFeatured(formData: FormData) {
   const id = formData.get("id") as string;
   const isFeatured = formData.get("isFeatured") === "true";
@@ -279,6 +283,8 @@ export async function toggleBusinessFeatured(formData: FormData) {
   revalidateBusinessPaths();
 }
 
+/** Admin → Businesses → "Delete". The consent audit log is kept (see
+ * 20261026140000_preserve_business_consent_log.sql). */
 export async function deleteBusiness(formData: FormData) {
   const id = formData.get("id") as string;
 

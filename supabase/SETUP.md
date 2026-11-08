@@ -1,19 +1,23 @@
 # supabase/SETUP.md
-# One-time setup for the milhaus Supabase project.
+# One-time setup for the Milhaus Supabase project.
 
 ## 1. Apply the schema
 
-`supabase/migrations/20260821095414_init_schema.sql` creates everything:
-the `profiles` and `listings` tables, their Row Level Security policies,
-and the `listing-photos` storage bucket.
+The database is built by **every file in `supabase/migrations/`, run in
+filename order** (the timestamp prefix sorts them). The first,
+`20260821095414_init_schema.sql`, creates the core `profiles` and
+`listings` tables; each later one adds to it — cars, businesses and
+consent, payments and the cart, events, ad slots and ad orders, listing
+expiry, homes for sale and so on — along with their Row Level Security
+policies, triggers and the `listing-photos`, `profile-photos` and
+`consent-documents` storage buckets. Later migrations are written to be
+safe to run more than once.
 
-**Easiest path — paste it into the dashboard:**
+**Easiest path — paste them into the dashboard:**
 
 1. Open your project at https://supabase.com/dashboard
 2. Go to **SQL Editor** → **New query**
-3. Paste the full contents of
-   `supabase/migrations/20260821095414_init_schema.sql`
-4. Run it. It's a one-shot script — safe to run once on a fresh project.
+3. Paste the contents of each migration file, oldest first, and run it.
 
 **Or, with the Supabase CLI** (already set up in this repo via `supabase
 init`): `supabase link --project-ref <your-project-ref>` (project ref is in

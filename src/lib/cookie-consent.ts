@@ -11,6 +11,7 @@ export const COOKIE_CONSENT_EVENT = "milhaus-cookie-consent-change";
 
 export type ConsentChoice = "accepted" | "declined";
 
+/** The visitor's saved analytics choice, or null if they haven't chosen yet. */
 export function getStoredConsent(): ConsentChoice | null {
   try {
     const value = localStorage.getItem(COOKIE_CONSENT_KEY);
@@ -23,6 +24,7 @@ export function getStoredConsent(): ConsentChoice | null {
   }
 }
 
+/** Saves the visitor's choice from the cookie banner (best-effort). */
 export function setStoredConsent(choice: ConsentChoice) {
   try {
     localStorage.setItem(COOKIE_CONSENT_KEY, choice);

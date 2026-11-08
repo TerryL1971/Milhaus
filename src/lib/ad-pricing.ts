@@ -36,10 +36,12 @@ export interface AdPriceList {
   overrides: Partial<Record<AdPlacement, Partial<Record<AdBaseTerm, number>>>>;
 }
 
+/** Is `days` one of the terms a buyer may pick (30 / 90 / 180 days or 1–5 years)? */
 export function isAdTerm(days: number): boolean {
   return AD_TERM_OPTIONS.includes(days);
 }
 
+/** "30 days", "6 months", "1 year", "2 years" — for admin, cart and invoices. */
 export function adTermLabel(days: number): string {
   if (days >= 365) {
     const years = days / 365;
@@ -58,6 +60,8 @@ export function calculatedTermPrice(list: AdPriceList, placement: AdPlacement, t
   return roundCents(list.monthlyEur[placement] * TERM_MONTHS[term] * (1 - list.discountPct[term] / 100));
 }
 
+/** One spot's price for a base term: Charlie's fixed price if he set one,
+ * otherwise the calculated price. */
 export function termPrice(list: AdPriceList, placement: AdPlacement, term: AdBaseTerm): number {
   return list.overrides[placement]?.[term] ?? calculatedTermPrice(list, placement, term);
 }

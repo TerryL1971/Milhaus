@@ -3,7 +3,7 @@
 // free-text search box — originally lived only in search-results-grid.tsx
 // (the cross-category /search page), but each category page's own grid
 // (ListingsGrid, CarsGrid, ProductsGrid, BusinessesGrid) used a much
-// dumber "does the whole typed phrase appear verbatim somewhere" check of
+// simpler "does the whole typed phrase appear verbatim somewhere" check of
 // its own. That gap was invisible as long as the homepage's hero search
 // always landed on /search — but once a specific category redirects
 // straight to its own page instead (see search/page.tsx), that page's
@@ -113,6 +113,8 @@ for (const group of SYNONYM_GROUPS) {
 // "items" or "stuff" alone.
 const FILLER_WORDS = new Set(["item", "items", "stuff", "thing", "things"]);
 
+/** True if every meaningful word of the search appears (as a whole word)
+ * somewhere in the given fields. Filler words ("the", "near"…) are ignored. */
 export function matchesAllWords(fields: (string | null | undefined)[], q: string): boolean {
   const words = q
     .split(/\s+/)
@@ -166,6 +168,8 @@ function makeAliasFields(make: string | null): string[] {
     .flatMap(([, aliases]) => aliases);
 }
 
+/** Search match for a home, car, service or item — also understands
+ * "3 bed", body types ("sedan", "truck") and make nicknames ("VW", "MB"). */
 export function matchesListing(listing: Listing, q: string): boolean {
   let freeTextQuery = q;
 
@@ -221,12 +225,14 @@ export function matchesListing(listing: Listing, q: string): boolean {
   return matchesAllWords(fields, freeTextQuery);
 }
 
+/** Search match for a directory business (name, city, base, category, description). */
 export function matchesBusiness(business: Business, q: string): boolean {
   const fields: (string | null | undefined)[] = [business.name, business.city, business.base, business.description];
   fields.push(BUSINESS_CATEGORY_LABELS[business.category]);
   return matchesAllWords(fields, q);
 }
 
+/** Search match for an event (title, organizer, city, base, description). */
 export function matchesEvent(event: Event, q: string): boolean {
   return matchesAllWords([event.title, event.organizerName, event.city, event.base, event.description], q);
 }

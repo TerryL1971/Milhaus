@@ -18,6 +18,7 @@ const VALID_ROLES: ProfileRole[] = [
 
 const VALID_STATUSES: ProfileStatus[] = ["active", "suspended", "banned"];
 
+/** Admin → Users: changes someone's role (e.g. makes them an admin). */
 export async function setUserRole(formData: FormData) {
   const id = formData.get("id") as string;
   const role = formData.get("role") as string;

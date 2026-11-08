@@ -22,6 +22,7 @@ function revalidateAdPaths() {
   revalidatePath("/my-ads");
 }
 
+/** Admin → Ad slots → Add an ad: one of Charlie's own hand-added ads (no end date). */
 export async function createAdSlot(formData: FormData) {
   const placement = formData.get("placement") as string;
   if (!AD_PLACEMENTS.includes(placement as AdPlacement)) {
@@ -45,6 +46,7 @@ export async function createAdSlot(formData: FormData) {
   redirect("/admin/ads");
 }
 
+/** Admin → Ad slots → "Hide" / "Unhide" — keeps the ad's details either way. */
 export async function toggleAdSlotActive(formData: FormData) {
   const id = formData.get("id") as string;
   const isActive = formData.get("isActive") === "true";
@@ -55,6 +57,7 @@ export async function toggleAdSlotActive(formData: FormData) {
   revalidateAdPaths();
 }
 
+/** Admin → Ad slots → "Delete": removes the ad for good. */
 export async function deleteAdSlot(formData: FormData) {
   const id = formData.get("id") as string;
 
