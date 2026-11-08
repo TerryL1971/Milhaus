@@ -112,8 +112,9 @@ export async function getBusinessByConsentToken(token: string) {
 /** Charlie's call (2026-10-15): he doesn't want to manually approve every
  * paid business submission once postings reach real volume — but unlike
  * a self-listed home/car/item, a business listing names a third party,
- * so [[legal-third-party-listing-risk]]'s consent requirement can't be
- * waived just because payment cleared. This is the one thing that still
+ * and listing a business without its owner's permission is illegal in
+ * Germany — so the consent requirement can't be waived just because
+ * payment cleared. This is the one thing that still
  * has to gate going live, and it's a yes/no fact (has the business
  * confirmed it's really being listed with permission?), not a judgment
  * call Charlie has to make — so it's checked here automatically instead

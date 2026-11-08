@@ -226,15 +226,40 @@ Deployed on Vercel. Configure the environment variables for Production, point
 from [vercel.json](./vercel.json). The build makes no filesystem or
 long-running-process assumptions, so it runs fully serverless.
 
-## Code conventions
+## Development guidelines
 
-- Every source file opens with a comment naming its own path, followed by
-  what it's for and the reasoning behind non-obvious decisions.
+Everything needed to work on this codebase is in this README and in the
+code's own comments — no particular editor or AI tool is assumed.
+(`CLAUDE.md` restates them, with more background, for AI coding
+assistants.)
+
+**Rules**
+- **Independence.** Nothing on the site may suggest that a military
+  installation, any of its offices, or the U.S. Department of Defense lists,
+  approves or endorses a listing — in badges, filters, copy or metadata.
+- **Business consent.** A business never goes live until the business itself
+  confirms it agrees to be listed (email link, or offline consent recorded by
+  the owner). Listing a business without permission is illegal in Germany;
+  payment alone is never enough. Enforced in
+  `src/lib/businesses-queries.ts` (`tryActivateBusiness`).
+- **Database first.** Schema changes go in a new, additive migration that's
+  safe to re-run. Apply it before deploying any code that depends on it.
+- **Both languages.** Every user-facing message exists in both
+  `messages/en.json` and `messages/de.json`.
+- **No secrets in the repository.** Keys belong in `.env.local` and the
+  hosting provider's environment settings.
+
+**Conventions**
+- Every source file opens with a comment naming its own path, then what the
+  file is for.
+- Comments explain *why*: who asked for a behaviour, what was decided and
+  what went wrong before. Keep them accurate when the code changes — they
+  are the project's history.
 - Server Components by default; client components only where interaction
   requires them.
-- Fixed vocabularies over free text, enforced by database `CHECK`
-  constraints.
-- Additive, re-runnable migrations.
+- Fixed vocabularies over free text, enforced by database `CHECK` constraints.
+- Check `npx tsc --noEmit` and `npm run lint`, and try every change in a
+  browser at desktop and phone width.
 - Small, self-contained commits.
 
 ---

@@ -6,6 +6,11 @@
 export type ListingType = "rental" | "car" | "product" | "service";
 export type OfferType = "rent" | "sale";
 
+/** Every listing is "self_listed" — posted by the person renting or
+ * selling it. "housing_office" is a retired value kept only because the
+ * database column still allows it: nothing may set it or display it, and
+ * the site must never suggest a military housing office listed, approved
+ * or endorsed a home (owner's decision, 2026-11-04). */
 export type ListingSource = "housing_office" | "self_listed";
 
 export type ListingStatus =
@@ -21,6 +26,8 @@ export type ListingStatus =
 export type ProfileRole =
   | "owner"
   | "admin"
+  // Retired along with the "housing_office" listing source (see
+  // ListingSource above); kept so old rows still type-check.
   | "housing_office_partner"
   | "landlord"
   | "individual_lister"
