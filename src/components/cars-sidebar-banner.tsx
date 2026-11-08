@@ -24,6 +24,7 @@
 // SponsorBannerCarousel uses when he hasn't added one yet.
 
 import Image from "next/image";
+import { AdLabel } from "@/components/ad-label";
 import { getActiveAdSlots } from "@/lib/ad-slots-queries";
 import type { AdSlot } from "@/lib/ad-slots";
 
@@ -88,6 +89,7 @@ export async function CarsSidebarBanner() {
               animated ? "group-hover:[animation-play-state:paused]" : ""
             }`}
           >
+            {fetchedAds.length > 0 && <AdLabel />}
             {ad.imageUrl ? (
               <Image src={ad.imageUrl} alt={ad.advertiserName} fill sizes="300px" className="object-cover" />
             ) : (

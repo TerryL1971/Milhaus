@@ -775,5 +775,8 @@
   "CartLink": {
     "empty": "Warenkorb",
     "withItems": "Warenkorb ({count, plural, =1 {1 Artikel} other {# Artikel}})"
+  },
+  "AdLabel": {
+    "label": "Anzeige"
   }
 }

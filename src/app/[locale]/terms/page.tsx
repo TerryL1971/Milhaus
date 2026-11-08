@@ -386,9 +386,9 @@ export default function TermsPage() {
           </p>
           <p className={labelClass}>Postal address</p>
           <p className="mb-3 text-[0.95rem] text-charcoal">
-            Robert Bosch Str-6
+            Robert Bosch Str. 6
             <br />
-            71106 Schonaich
+            71101 Schönaich
             <br />
             Germany
           </p>

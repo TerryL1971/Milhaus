@@ -8,14 +8,17 @@
 // and he supplied the exact German non-participation sentence for the
 // Verbraucherstreitbeilegung section below — not translated/paraphrased,
 // same reasoning as /terms for why operative legal wording stays as
-// given rather than being generated. The EU Online Dispute Resolution
-// section is standard, non-negotiable boilerplate required of any
-// EU-based trader selling to consumers online (Art. 14 ODR Regulation)
-// — independent of the separate German VSBG question Charlie answered,
-// so it's included regardless of his "I don't employ anyone" reasoning
-// for that one (which is about the right outcome — declining to
-// participate, which the law does allow a business of any size to do —
-// even if headcount isn't actually the legal basis for it).
+// given rather than being generated.
+//
+// Legal check (2026-11-08):
+// - The EU Online Dispute Resolution section and its link are gone: the
+//   EU shut that platform down on 20 July 2025 (Regulation (EU)
+//   2024/3228 repealed the ODR Regulation), and a dead link can be
+//   treated as misleading. The separate German § 36 VSBG statement below
+//   still applies and stays.
+// - Postcode corrected to 71101 (Schönaich's); 71106 is Magstadt's.
+// - Added the Digital Services Act point of contact (Art. 11 and 12 DSA),
+//   which every hosting service must publish whatever its size.
 //
 // Section headers and the two disclosure paragraphs are kept in German
 // (the conventional language for this document on a German-operated
@@ -53,7 +56,7 @@ export default function ImpressumPage() {
           <p className="mb-3 text-[0.95rem] text-charcoal">
             Robert Bosch Str. 6
             <br />
-            71106 Schönaich
+            71101 Schönaich
             <br />
             Germany
           </p>
@@ -77,22 +80,16 @@ export default function ImpressumPage() {
         </section>
 
         <section className="mb-9">
-          <h2 className="mb-3 font-display text-xl font-semibold text-ink">EU-Streitschlichtung</h2>
+          <h2 className="mb-3 font-display text-xl font-semibold text-ink">
+            Kontaktstelle nach dem Digital Services Act
+          </h2>
           <p className="mb-2 text-[0.95rem] leading-relaxed text-charcoal">
-            Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:{" "}
-            <a
-              href="https://ec.europa.eu/consumers/odr/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-olive-deep hover:underline"
-            >
-              https://ec.europa.eu/consumers/odr/
-            </a>
-            .
+            Zentrale Kontaktstelle für Behörden, die Europäische Kommission und Nutzer (Art. 11 und 12 DSA):
+            E-Mail info@milhaus.de. Kommunikation auf Deutsch oder Englisch.
           </p>
           <p className="text-sm italic text-ink-soft">
-            The European Commission provides a platform for online dispute resolution (ODR), available at the link
-            above.
+            Single point of contact for authorities, the European Commission and users under Articles 11 and 12 of
+            the Digital Services Act: info@milhaus.de. We communicate in German or English.
           </p>
         </section>
 

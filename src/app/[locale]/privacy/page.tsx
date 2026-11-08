@@ -52,7 +52,7 @@ const SECTIONS: Section[] = [
     heading: "Who this policy covers, and who is responsible",
     clauses: [
       "1.1. This Privacy Policy explains how Milhaus collects, uses, shares, and protects personal data when you visit the website, create an account, submit a listing or business profile, or otherwise use Milhaus's services.",
-      "1.2. The data controller responsible for this processing is Charles Edward Adam, trading as Milhaus, Adam's Sales Co., Military Sales, Robert Bosch Str. 6, 71106 Schönaich, Germany. Contact: info@milhaus.de, phone 0173 2966536. See the Impressum for the full legal notice.",
+      "1.2. The data controller responsible for this processing is Charles Edward Adam, trading as Milhaus, Adam's Sales Co., Military Sales, Robert Bosch Str. 6, 71101 Schönaich, Germany. Contact: info@milhaus.de, phone 0173 2966536. See the Impressum for the full legal notice.",
       "1.3. This policy should be read alongside the Milhaus Terms and Conditions of Use, which it is referenced from (section 19).",
     ],
   },
@@ -231,7 +231,7 @@ export default function PrivacyPage() {
           <p className="mb-3 text-[0.95rem] text-charcoal">
             Robert Bosch Str. 6
             <br />
-            71106 Schönaich
+            71101 Schönaich
             <br />
             Germany
           </p>

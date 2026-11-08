@@ -26,6 +26,7 @@
 // rather than showing an empty strip.
 
 import Image from "next/image";
+import { AdLabel } from "@/components/ad-label";
 import { getActiveAdSlots } from "@/lib/ad-slots-queries";
 
 type Slide =
@@ -104,6 +105,8 @@ export async function SponsorBannerCarousel() {
                 animated ? "group-hover:[animation-play-state:paused]" : ""
               }`}
             >
+              {/* Real advertisers only — not the "Advertise here" placeholder. */}
+              {ads.length > 0 && <AdLabel />}
               {slide.kind === "image" ? (
                 // No background/border — whatever the advertiser's image looks
                 // like (solid background baked in, or transparent) is the ad.

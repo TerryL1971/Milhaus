@@ -13,6 +13,7 @@
 // fallback) as every other ad placement.
 
 import Image from "next/image";
+import { AdLabel } from "@/components/ad-label";
 import type { AdSlot } from "@/lib/ad-slots";
 
 export function SpecialOfferCard({ offer, priority }: { offer: AdSlot; priority?: boolean }) {
@@ -23,8 +24,9 @@ export function SpecialOfferCard({ offer, priority }: { offer: AdSlot; priority?
       rel={offer.linkUrl.startsWith("http") ? "noopener noreferrer" : undefined}
       // Below sm: the spec'd ~500x600 (5:6) shape instead of a fixed 600px
       // at full phone width — that was a near-full-screen photo per card.
-      className="block aspect-[5/6] w-full overflow-hidden sm:aspect-auto sm:h-[600px] rounded-md border border-canvas-deep bg-paper transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(27,42,58,0.12)]"
+      className="relative block aspect-[5/6] w-full overflow-hidden sm:aspect-auto sm:h-[600px] rounded-md border border-canvas-deep bg-paper transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(27,42,58,0.12)]"
     >
+      <AdLabel />
       {offer.imageUrl ? (
         <div className="relative h-full w-full">
           <Image
