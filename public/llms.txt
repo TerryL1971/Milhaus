@@ -1,25 +1,38 @@
 # Milhaus
 
-> Milhaus is a rental-listing and classifieds marketplace for Americans relocating to Germany — military service members and expats. It lists homes from landlords and from outgoing families, plus cars, items for sale, a Military-Friendly Businesses directory, and a community events calendar.
+> Milhaus (www.milhaus.de) is a marketplace for Americans living in Germany — U.S. military service members, DoD civilians, their families, and expats. In one place it lists homes for rent and for sale, cars, trusted local businesses, special offers from those businesses, and community events, centred on the areas around U.S. bases: Stuttgart, Kaiserslautern, Ramstein, Wiesbaden, Grafenwöhr and Spangdahlem.
 
-Every listing type goes through the same checks before it's publicly visible. Milhaus is independent: it is not run by, affiliated with, or endorsed by any military installation's housing office.
+Milhaus is independent. It is not run by, affiliated with, or endorsed by any military installation's Housing Office or the U.S. Department of Defense.
+
+Key facts:
+- Homes and cars are posted by the people renting or selling them: landlords, property managers and families moving out (PCS).
+- Every listing stays up for 30 days at a time and comes down when it's rented or sold; posters renew it if it's still available.
+- Homes for rent can be marked "US Military only" or "US Military & Expats"; homes for sale are open to anyone.
+- Car prices are shown in US dollars, home prices in euros.
+- Businesses only appear in the directory after the business itself confirms it agrees to be listed.
+- The site is in English, with a German version at /de.
+- Contact: info@milhaus.de
 
 ## Homes
-- [Browse homes for rent](https://www.milhaus.de/listings): Rentals from landlords and outgoing families near US military bases in Germany, filterable by base, bedrooms, price, and amenities.
+- [Homes for rent](https://www.milhaus.de/listings): Houses and apartments for rent near U.S. bases in Germany, filterable by base, bedrooms, price, features (garage, garden, pet friendly…) and who the home is available to.
+- [Homes for sale](https://www.milhaus.de/listings?for=sale): Houses for sale near U.S. bases, listed by their owners — often families selling before a PCS move.
+- [For landlords](https://www.milhaus.de/for-landlords): How owners and property managers list homes on Milhaus.
 
 ## Cars
-- [Browse cars for sale](https://www.milhaus.de/cars): Vehicles sold by Americans in Germany — often US-spec cars being sold before a PCS move. Filterable by make, year, body type, and US/EU spec.
-
-## Items for sale
-- [Browse items for sale](https://www.milhaus.de/products): General household items, furniture, and gear sold by the community, often as part of a move.
+- [Cars for sale](https://www.milhaus.de/cars): Cars sold by Americans in Germany — often U.S.-spec cars sold before a move. Filterable by make, year, body type, transmission and US/EU spec.
 
 ## Services
-- [Military-Friendly Businesses directory](https://www.milhaus.de/services): Local businesses — movers, auto repair, tutoring, cleaning, childcare, pet care, home repair, photography, and more — vetted as military/English-friendly, organized by base and city.
+- [Military-friendly businesses](https://www.milhaus.de/services): A directory of local businesses that serve the American community — car dealers, movers, repair shops, real estate and more — organised by base and city.
+- [Special Offers](https://www.milhaus.de/offers): Current promotions from local businesses.
 
 ## Events
-- [Community events calendar](https://www.milhaus.de/events): Local meetups and events relevant to the American military/expat community in Germany, organized by base and city.
+- [Events calendar](https://www.milhaus.de/events): Upcoming community events near U.S. bases, with a link to each organiser.
+
+## For businesses
+- [Advertise on Milhaus](https://www.milhaus.de/advertise): Banner, Cars-page sidebar and Special Offers ad spots, bought for 30 days up to several years, online or by invoice.
 
 ## About
+- [How verification works](https://www.milhaus.de/how-verification-works)
 - [Terms and Conditions](https://www.milhaus.de/terms)
+- [Privacy Policy](https://www.milhaus.de/privacy)
 - [Impressum (legal notice)](https://www.milhaus.de/impressum)
-- [How listing verification works](https://www.milhaus.de/how-verification-works)

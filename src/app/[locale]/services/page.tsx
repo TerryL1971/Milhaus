@@ -5,8 +5,9 @@
 // replaced. Charlie hand-enters each business from /admin/businesses;
 // there's no post-a-service flow here anymore.
 
+import { pageMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { BusinessesGrid } from "@/components/businesses-grid";
 import { SponsorBannerCarousel } from "@/components/sponsor-banner-carousel";
@@ -15,7 +16,12 @@ import { getActiveBusinesses } from "@/lib/businesses-queries";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("ServicesPage");
-  return { title: t("metaTitle"), description: t("metaDescription") };
+  return pageMetadata({
+    locale: await getLocale(),
+    path: "/services",
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  });
 }
 
 type SearchParams = Promise<{ q?: string; base?: string }>;

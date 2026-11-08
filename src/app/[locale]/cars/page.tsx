@@ -7,8 +7,9 @@
 // engine. Deliberately simpler than the rental browse page — a search box
 // and a grid, matching what Charlie actually asked for.
 
+import { pageMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { CarsGrid } from "@/components/cars-grid";
 import { CarsSidebarBanner } from "@/components/cars-sidebar-banner";
@@ -20,7 +21,12 @@ import { createClient } from "@/lib/supabase/server";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("CarsPage");
-  return { title: t("metaTitle"), description: t("metaDescription") };
+  return pageMetadata({
+    locale: await getLocale(),
+    path: "/cars",
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  });
 }
 
 type SearchParams = Promise<{ q?: string; base?: string }>;

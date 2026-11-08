@@ -4,6 +4,7 @@
 // with the on-base Housing Office (2026-11-04): nothing on the site may
 // suggest the Housing Office listed or approved a home.
 
+import { metaDescription, pageMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -34,30 +35,20 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 
   const title = `${listing.city} · ${currencyFormatter.format(listing.priceEurMonth)}${listing.offerType === "sale" ? " · for sale" : "/mo"}`;
   const description = listing.description || `${listing.bedrooms}-bedroom home in ${listing.city}.`;
-  const url = `${SITE_URL}/listings/${listing.id}`;
-
   return {
-    title,
-    description,
-    alternates: { canonical: url },
-    openGraph: {
+    ...pageMetadata({
+      locale: await getLocale(),
+      path: `/listings/${listing.id}`,
       title,
-      description,
-      url,
-      type: "website",
-      images: listing.photos[0] ? [{ url: listing.photos[0] }] : undefined,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: listing.photos[0] ? [listing.photos[0]] : undefined,
-    },
+      description: metaDescription(description),
+      images: listing.photos.slice(0, 1),
+    }),
     // Pending/rented/archived listings resolve here but shouldn't be
     // indexed — only what's genuinely available belongs in search results.
     robots: listing.status === "active" ? { index: true, follow: true } : { index: false, follow: false },
   };
 }
+
 
 export default async function ListingDetailPage({ params }: { params: Params }) {
   const { id } = await params;
@@ -125,8 +116,22 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
     },
     offers: {
       "@type": "Offer",
+      // Rent is per month — said in the data too, or €870 reads as a
+      // purchase price to search engines and AI answers.
+      businessFunction: isForSale ? "http://purl.org/goodrelations/v1#Sell" : "http://purl.org/goodrelations/v1#LeaseOut",
       price: listing.priceEurMonth,
       priceCurrency: "EUR",
+      ...(isForSale
+        ? {}
+        : {
+            priceSpecification: {
+              "@type": "UnitPriceSpecification",
+              price: listing.priceEurMonth,
+              priceCurrency: "EUR",
+              unitCode: "MON",
+              unitText: "month",
+            },
+          }),
       availability: isRented ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
     },
   };

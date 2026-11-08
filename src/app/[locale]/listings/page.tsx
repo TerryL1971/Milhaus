@@ -16,8 +16,9 @@
 // their own. The filters below only ever see one half, so a rent price
 // range never gets mixed up with sale prices.
 
+import { pageMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { ListingsGrid } from "@/components/listings-grid";
 import { SponsorBannerCarousel } from "@/components/sponsor-banner-carousel";
@@ -31,9 +32,14 @@ type SearchParams = Promise<{ q?: string; for?: string }>;
 export async function generateMetadata({ searchParams }: { searchParams: SearchParams }): Promise<Metadata> {
   const t = await getTranslations("ListingsPage");
   const forSale = (await searchParams).for === "sale";
-  return forSale
-    ? { title: t("saleMetaTitle"), description: t("saleMetaDescription") }
-    : { title: t("metaTitle"), description: t("metaDescription") };
+  // Each tab is its own page as far as search goes — the For sale tab's
+  // canonical keeps its ?for=sale rather than folding into /listings.
+  return pageMetadata({
+    locale: await getLocale(),
+    path: forSale ? "/listings?for=sale" : "/listings",
+    title: forSale ? t("saleMetaTitle") : t("metaTitle"),
+    description: forSale ? t("saleMetaDescription") : t("metaDescription"),
+  });
 }
 
 export default async function ListingsPage({ searchParams }: { searchParams: SearchParams }) {

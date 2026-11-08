@@ -6,15 +6,19 @@
 // gone (2026-11-04, after Charlie and Terry met the on-base Housing
 // Office — nothing may suggest the Housing Office lists or approves homes).
 
+import { pageMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 
-export const metadata: Metadata = {
-  title: "How verification works",
-  description:
-    "How every Milhaus listing gets checked before it goes live, and taken down once it's gone.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
+    locale: await getLocale(),
+    path: "/how-verification-works",
+    title: "How verification works",
+    description: "How every Milhaus listing gets checked before it goes live, and taken down once it's gone.",
+  });
+}
 
 export default async function HowVerificationWorksPage() {
   const t = await getTranslations("HowVerification");

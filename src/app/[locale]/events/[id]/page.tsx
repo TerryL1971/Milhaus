@@ -3,11 +3,12 @@
 // description, and the picture gallery Charlie asked for. Public, no
 // sign-in wall, same as every other listing/business/seller detail page.
 
+import { pageMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { LightboxTrigger } from "@/components/photo-lightbox";
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getEvent } from "@/lib/events-queries";
 import { SITE_URL } from "@/lib/site-url";
@@ -30,27 +31,15 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   if (!event) return { title: "Event not found", robots: { index: false, follow: false } };
 
   const description = event.description ?? `${event.title} — ${event.city}, hosted by ${event.organizerName}.`;
-  const url = `${SITE_URL}/events/${event.id}`;
-
-  return {
+  return pageMetadata({
+    locale: await getLocale(),
+    path: `/events/${event.id}`,
     title: event.title,
     description,
-    alternates: { canonical: url },
-    openGraph: {
-      title: event.title,
-      description,
-      url,
-      type: "website",
-      images: event.coverImageUrl ? [{ url: event.coverImageUrl }] : undefined,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: event.title,
-      description,
-      images: event.coverImageUrl ? [event.coverImageUrl] : undefined,
-    },
-  };
+    images: event.coverImageUrl ? [event.coverImageUrl] : undefined,
+  });
 }
+
 
 export default async function EventDetailPage({ params }: { params: Params }) {
   const { id } = await params;

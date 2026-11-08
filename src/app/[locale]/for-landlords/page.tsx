@@ -7,14 +7,18 @@
 // import tooling for MVP) and goes through Charlie by email instead.
 
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
+import { pageMetadata } from "@/lib/seo";
 import { Link } from "@/i18n/navigation";
 
-export const metadata: Metadata = {
-  title: "For landlords",
-  description:
-    "List a property with Milhaus — for individual owners with one home, or property managers with multiple units.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
+    locale: await getLocale(),
+    path: "/for-landlords",
+    title: "For landlords",
+    description: "List a property with Milhaus — for individual owners with one home, or property managers with multiple units.",
+  });
+}
 
 export default async function ForLandlordsPage() {
   const t = await getTranslations("ForLandlords");

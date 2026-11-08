@@ -15,12 +15,18 @@
 // Flag for Terry/Charlie: a German version needs either an authorized
 // translation or Charlie's own sign-off on one, not a generated guess.
 
+import { getLocale } from "next-intl/server";
+import { pageMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Terms and Conditions of Use",
-  description: "Milhaus's Terms and Conditions of Use.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
+    locale: await getLocale(),
+    path: "/terms",
+    title: "Terms and Conditions of Use",
+    description: "Milhaus's Terms and Conditions of Use.",
+  });
+}
 
 type Section = {
   num: number;

@@ -4,8 +4,9 @@
 // capped at 4 like the "more from this seller" strip). Public, no sign-in
 // wall, same as SellerCard — see src/components/seller-card.tsx.
 
+import { pageMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Avatar } from "@/components/avatar";
@@ -15,7 +16,6 @@ import { ProductListingCard } from "@/components/product-listing-card";
 import { ServiceListingCard } from "@/components/service-listing-card";
 import { Link } from "@/i18n/navigation";
 import { getSellerListings, getSellerProfile } from "@/lib/listings";
-import { SITE_URL } from "@/lib/site-url";
 
 const PHOTO_GRADIENTS = [
   "linear-gradient(135deg,#D8C9A8,#A9AE83)",
@@ -39,21 +39,16 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   // exactly the kind of page that should be indexable.
   const title = seller.displayName ?? "Seller profile";
   const description = seller.bio || "See everything this seller has listed on Milhaus.";
-  const url = `${SITE_URL}/sellers/${id}`;
-
-  return {
+  return pageMetadata({
+    locale: await getLocale(),
+    path: `/sellers/${id}`,
     title,
     description,
-    alternates: { canonical: url },
-    openGraph: {
-      title,
-      description,
-      url,
-      type: "profile",
-      images: seller.coverImageUrl ? [{ url: seller.coverImageUrl }] : undefined,
-    },
-  };
+    images: seller.coverImageUrl ? [seller.coverImageUrl] : undefined,
+    type: "profile",
+  });
 }
+
 
 export default async function SellerProfilePage({ params }: { params: Params }) {
   const { id } = await params;

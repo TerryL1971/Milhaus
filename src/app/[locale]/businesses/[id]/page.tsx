@@ -5,6 +5,8 @@
 // callout, the full description, tags, and the social-links row. Public,
 // no sign-in wall, same as /sellers/[id] and every listing detail page.
 
+import { getLocale } from "next-intl/server";
+import { pageMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -25,27 +27,15 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 
   const description =
     business.description ?? `${BUSINESS_CATEGORY_LABELS[business.category]} in ${business.city}.`;
-  const url = `${SITE_URL}/businesses/${business.id}`;
-
-  return {
+  return pageMetadata({
+    locale: await getLocale(),
+    path: `/businesses/${business.id}`,
     title: business.name,
     description,
-    alternates: { canonical: url },
-    openGraph: {
-      title: business.name,
-      description,
-      url,
-      type: "website",
-      images: business.coverImageUrl ? [{ url: business.coverImageUrl }] : undefined,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: business.name,
-      description,
-      images: business.coverImageUrl ? [business.coverImageUrl] : undefined,
-    },
-  };
+    images: business.coverImageUrl ? [business.coverImageUrl] : undefined,
+  });
 }
+
 
 export default async function BusinessProfilePage({ params }: { params: Params }) {
   const { id } = await params;

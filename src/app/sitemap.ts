@@ -48,6 +48,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       alternates: { languages: withLanguageAlternates("") },
     },
     {
+      url: `${SITE_URL}/listings`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.9,
+      alternates: { languages: withLanguageAlternates("/listings") },
+    },
+    {
+      url: `${SITE_URL}/listings?for=sale`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.9,
+      alternates: { languages: withLanguageAlternates("/listings?for=sale") },
+    },
+    {
       url: `${SITE_URL}/cars`,
       lastModified: new Date(),
       changeFrequency: "daily",
@@ -75,6 +89,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
       alternates: { languages: withLanguageAlternates("/events") },
     },
+    ...["/for-landlords", "/how-verification-works"].map((path) => ({
+      url: `${SITE_URL}${path}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
+      alternates: { languages: withLanguageAlternates(path) },
+    })),
     {
       url: `${SITE_URL}/advertise`,
       lastModified: new Date(),

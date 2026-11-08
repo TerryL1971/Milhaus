@@ -4,6 +4,7 @@
 // hero with the live listings grid, matching the mockup's single-page
 // structure. Listing data is read live from Supabase.
 
+import { pageMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import Image from "next/image";
@@ -33,12 +34,9 @@ import { createClient } from "@/lib/supabase/server";
 // layout already sets up for /de.
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
-  return {
-    alternates: {
-      canonical: locale === "de" ? `${SITE_URL}/de` : SITE_URL,
-      languages: { en: SITE_URL, de: `${SITE_URL}/de` },
-    },
-  };
+  const t = await getTranslations({ locale, namespace: "Metadata" });
+  // No `title` — the homepage uses the layout's default title as is.
+  return pageMetadata({ locale, path: "", description: t("description"), shareTitle: t("title") });
 }
 
 // Same fallback-when-no-photo treatment as ListingsGrid/CarsGrid, just a

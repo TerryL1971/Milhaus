@@ -5,15 +5,21 @@
 // hand-enters every event from /admin/events, same model as the
 // businesses directory started with.
 
+import { pageMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { EventsBrowser } from "@/components/events-browser";
 import { SponsorBannerCarousel } from "@/components/sponsor-banner-carousel";
 import { getActiveEvents } from "@/lib/events-queries";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("EventsPage");
-  return { title: t("metaTitle"), description: t("metaDescription") };
+  return pageMetadata({
+    locale: await getLocale(),
+    path: "/events",
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  });
 }
 
 type SearchParams = Promise<{ q?: string }>;

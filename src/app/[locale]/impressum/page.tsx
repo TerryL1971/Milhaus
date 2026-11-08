@@ -23,12 +23,18 @@
 // factual contact block (name/address/phone/email/VAT ID) is plain
 // English labels, same split /terms uses for its own contact block.
 
+import { getLocale } from "next-intl/server";
+import { pageMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Impressum",
-  description: "Legal notice (Impressum) for Milhaus, per § 5 DDG.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
+    locale: await getLocale(),
+    path: "/impressum",
+    title: "Impressum",
+    description: "Legal notice (Impressum) for Milhaus, per § 5 DDG.",
+  });
+}
 
 const labelClass = "mb-1 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75";
 

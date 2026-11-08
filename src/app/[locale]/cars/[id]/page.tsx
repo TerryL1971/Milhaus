@@ -2,8 +2,9 @@
 // Car listing detail page — mirrors src/app/[locale]/listings/[id]/page.tsx
 // (same photo gallery, same public SellerCard), swapped to car fields.
 
+import { pageMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { ListingPhotoGallery } from "@/components/listing-photo-gallery";
 import { ReportListingButton } from "@/components/report-listing-button";
@@ -33,28 +34,18 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 
   const title = `${listing.year} ${listing.make} ${listing.model} · ${currencyFormatter.format(listing.priceEurMonth)}`;
   const description = listing.description || `${listing.year} ${listing.make} ${listing.model} for sale in ${listing.city}.`;
-  const url = `${SITE_URL}/cars/${listing.id}`;
-
   return {
-    title,
-    description,
-    alternates: { canonical: url },
-    openGraph: {
+    ...pageMetadata({
+      locale: await getLocale(),
+      path: `/cars/${listing.id}`,
       title,
       description,
-      url,
-      type: "website",
-      images: listing.photos[0] ? [{ url: listing.photos[0] }] : undefined,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: listing.photos[0] ? [listing.photos[0]] : undefined,
-    },
+      images: listing.photos.slice(0, 1),
+    }),
     robots: listing.status === "active" ? { index: true, follow: true } : { index: false, follow: false },
   };
 }
+
 
 export default async function CarDetailPage({ params }: { params: Params }) {
   const { id } = await params;

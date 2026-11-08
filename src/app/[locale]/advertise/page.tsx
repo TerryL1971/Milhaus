@@ -8,8 +8,9 @@
 //
 // Every "Advertise here" placeholder on the site links here.
 
+import { pageMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { addAdToCart } from "@/app/[locale]/advertise/actions";
 import { CartLink } from "@/components/cart-link";
 import { AD_BASE_TERMS, AD_MAX_QUANTITY, AD_TERM_OPTIONS, adUnitPrice, termPrice } from "@/lib/ad-pricing";
@@ -19,7 +20,12 @@ import { createClient } from "@/lib/supabase/server";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("AdvertisePage");
-  return { title: t("metaTitle"), description: t("metaDescription") };
+  return pageMetadata({
+    locale: await getLocale(),
+    path: "/advertise",
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  });
 }
 
 const labelClass = "mb-1 block font-mono text-[0.68rem] uppercase tracking-wider text-ink-soft/75";

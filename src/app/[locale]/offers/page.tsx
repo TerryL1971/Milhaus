@@ -15,8 +15,9 @@
 // just nothing on the public site links to either any more, same as
 // /post-service's own orphaned state.
 
+import { pageMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { SpecialOfferCard } from "@/components/special-offer-card";
 import { SponsorBannerCarousel } from "@/components/sponsor-banner-carousel";
 import { getActiveAdSlots } from "@/lib/ad-slots-queries";
@@ -24,7 +25,12 @@ import { firstPhotoIndices } from "@/lib/priority-indices";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("OffersPage");
-  return { title: t("metaTitle"), description: t("metaDescription") };
+  return pageMetadata({
+    locale: await getLocale(),
+    path: "/offers",
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  });
 }
 
 export default async function OffersPage() {

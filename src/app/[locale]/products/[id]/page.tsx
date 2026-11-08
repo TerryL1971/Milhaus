@@ -10,8 +10,9 @@
 // page if someone has the direct link — just unconditionally noindexed
 // and out of the sitemap, matching /services/[id]'s own treatment.
 
+import { pageMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { ListingPhotoGallery } from "@/components/listing-photo-gallery";
 import { ReportListingButton } from "@/components/report-listing-button";
@@ -40,28 +41,18 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   }
 
   const title = `${listing.title} · ${currencyFormatter.format(listing.priceEurMonth)}`;
-  const url = `${SITE_URL}/products/${listing.id}`;
-
   return {
-    title,
-    description: listing.description || listing.title,
-    alternates: { canonical: url },
-    openGraph: {
+    ...pageMetadata({
+      locale: await getLocale(),
+      path: `/products/${listing.id}`,
       title,
       description: listing.description || listing.title,
-      url,
-      type: "website",
-      images: listing.photos[0] ? [{ url: listing.photos[0] }] : undefined,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description: listing.description || listing.title,
-      images: listing.photos[0] ? [listing.photos[0]] : undefined,
-    },
+      images: listing.photos.slice(0, 1),
+    }),
     robots: { index: false, follow: false },
   };
 }
+
 
 export default async function ProductDetailPage({ params }: { params: Params }) {
   const { id } = await params;

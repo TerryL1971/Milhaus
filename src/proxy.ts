@@ -20,13 +20,14 @@ const handleI18nRouting = createMiddleware(routing);
 // unprefixed path as belonging to the default locale's [locale] tree
 // regardless. Caught this by hand for each one as they were added (first
 // /admin 404ing, then sitemap.xml and robots.txt, then /icon and
-// /apple-icon, then /cart, now /consent — this exact bug is also why the
+// /apple-icon, then /cart, then /consent, then /llms.txt (2026-11-08:
+// AI crawlers were getting a 404 for it) — this exact bug is also why the
 // old /checkout/[listingId] route this replaced silently 404'd; it was
 // never added here either, and never actually browser-tested) rather
 // than all at once — worth listing explicitly here instead of a prefix
 // guess, so a future addition outside [locale] doesn't silently hit the
 // same bug again.
-const ROUTES_OUTSIDE_LOCALE = ["/sitemap.xml", "/robots.txt", "/icon", "/apple-icon"];
+const ROUTES_OUTSIDE_LOCALE = ["/sitemap.xml", "/robots.txt", "/llms.txt", "/icon", "/apple-icon"];
 
 function isOutsideLocaleRouting(pathname: string): boolean {
   return (

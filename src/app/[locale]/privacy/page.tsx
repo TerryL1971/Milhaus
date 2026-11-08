@@ -27,12 +27,18 @@
 //     needs Charlie's sign-off or a professional translation, not a
 //     generated guess.
 
+import { getLocale } from "next-intl/server";
+import { pageMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Privacy Policy",
-  description: "How Milhaus collects, uses, and protects personal data.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata({
+    locale: await getLocale(),
+    path: "/privacy",
+    title: "Privacy Policy",
+    description: "How Milhaus collects, uses, and protects personal data.",
+  });
+}
 
 type Section = {
   num: number;

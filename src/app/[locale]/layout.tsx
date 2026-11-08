@@ -15,6 +15,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { WelcomeBanner } from "@/components/welcome-banner";
 import { routing } from "@/i18n/routing";
+import { DEFAULT_OG_IMAGE, SITE_NAME } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site-url";
 import "../globals.css";
 
@@ -57,24 +58,23 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 
   return {
     metadataBase: new URL(SITE_URL),
-    title: { default: title, template: `%s — milhaus` },
+    title: { default: title, template: `%s — ${SITE_NAME}` },
     description,
     robots: { index: true, follow: true },
+    // Fallbacks only — every public page sets its own canonical, hreflang
+    // and share card through pageMetadata (src/lib/seo.ts). There's
+    // deliberately no `alternates` here: a layout-level one made every
+    // page's hreflang point at the homepage.
     openGraph: {
       title,
       description,
-      siteName: "milhaus",
+      siteName: SITE_NAME,
       type: "website",
       locale: locale === "de" ? "de_DE" : "en_US",
+      images: [DEFAULT_OG_IMAGE],
     },
-    twitter: { card: "summary_large_image", title, description },
+    twitter: { card: "summary_large_image", title, description, images: [DEFAULT_OG_IMAGE.url] },
     verification: { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION },
-    // Points search engines at the other language version of this same
-    // page — without this, Google treats /de/... as a duplicate of the
-    // English page instead of its translation.
-    alternates: {
-      languages: { en: SITE_URL, de: `${SITE_URL}/de` },
-    },
   };
 }
 

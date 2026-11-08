@@ -12,16 +12,19 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
+      // "/post" also covers /post-ad, /post-car, /post-business etc.
+      // (robots rules match by prefix). Everything here is either
+      // private, a form, or a redirect — and already noindexed.
       disallow: [
         "/admin",
-        "/admin/*",
-        "/post",
-        "/de/post",
-        "/post-car",
-        "/de/post-car",
-        "/sign-in",
-        "/de/sign-in",
-        "/auth/*",
+        "/auth/",
+        "/api/",
+        "/cart",
+        "/consent/",
+        ...["/post", "/sign-in", "/my-listings", "/my-ads", "/edit-listing/", "/search"].flatMap((path) => [
+          path,
+          `/de${path}`,
+        ]),
       ],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
