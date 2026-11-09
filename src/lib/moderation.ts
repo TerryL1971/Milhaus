@@ -15,7 +15,7 @@
 
 import { sendEmail } from "@/lib/email";
 import { emailFrame, escapeHtml } from "@/lib/escape-html";
-import { SITE_URL } from "@/lib/site-url";
+import { PUBLIC_SITE_URL, SITE_URL } from "@/lib/site-url";
 import type { createAdminClient } from "@/lib/supabase/admin";
 import { TRADER } from "@/lib/withdrawal-notice";
 
@@ -126,7 +126,7 @@ export function sendTakedownNotice({
       ),
       heading("The rule it is based on"),
       p(
-        `${escapeHtml(info.ground)} — <a href="${SITE_URL}/terms" style="color:#545A41;">${SITE_URL}/terms</a>`,
+        `${escapeHtml(info.ground)} — <a href="${SITE_URL}/terms" style="color:#545A41;">${PUBLIC_SITE_URL}/terms</a>`,
       ),
       heading("How this decision was made"),
       p("A person at Milhaus reviewed the listing and made this decision. No automated tools were used."),

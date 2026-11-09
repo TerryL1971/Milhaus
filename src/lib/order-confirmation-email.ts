@@ -11,7 +11,7 @@
 
 import { sendEmail } from "@/lib/email";
 import { emailFrame, escapeHtml } from "@/lib/escape-html";
-import { SITE_URL } from "@/lib/site-url";
+import { PUBLIC_SITE_URL, SITE_URL } from "@/lib/site-url";
 import { IMMEDIATE_START_CONSENT, TRADER, withdrawalNotice } from "@/lib/withdrawal-notice";
 
 const currency = new Intl.NumberFormat("en-US", { style: "currency", currency: "EUR" });
@@ -31,7 +31,7 @@ export async function sendOrderConfirmation({
 }): Promise<boolean> {
   const total = items.reduce((sum, item) => sum + item.amountEur, 0);
   const when = orderedAt.toLocaleString("en-GB", { dateStyle: "long", timeStyle: "short", timeZone: "Europe/Berlin" });
-  const notice = withdrawalNotice("en", `${SITE_URL}/withdraw`);
+  const notice = withdrawalNotice("en", `${PUBLIC_SITE_URL}/withdraw`);
 
   const lines = items
     .map(
@@ -69,8 +69,8 @@ export async function sendOrderConfirmation({
            <p style="margin:0 0 8px;">When ordering you confirmed: &ldquo;${escapeHtml(IMMEDIATE_START_CONSENT)}&rdquo;</p>`
         : ""
     }
-    <p style="margin:16px 0 8px;">Terms and Conditions: <a href="${SITE_URL}/terms" style="color:#545A41;">${SITE_URL}/terms</a></p>
-    <p style="margin:0 0 8px;">To withdraw, use <a href="${SITE_URL}/withdraw" style="color:#545A41;">${SITE_URL}/withdraw</a> or reply to this email.</p>
+    <p style="margin:16px 0 8px;">Terms and Conditions: <a href="${SITE_URL}/terms" style="color:#545A41;">${PUBLIC_SITE_URL}/terms</a></p>
+    <p style="margin:0 0 8px;">To withdraw, use <a href="${SITE_URL}/withdraw" style="color:#545A41;">${PUBLIC_SITE_URL}/withdraw</a> or reply to this email.</p>
     <div style="margin-top:24px;padding-top:8px;border-top:1px solid #E6E1D2;">
       <p style="margin:0;font-size:16px;font-weight:600;color:#101842;">${escapeHtml(notice.title)}</p>
       ${noticeHtml}

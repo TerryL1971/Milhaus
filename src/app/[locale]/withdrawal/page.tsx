@@ -10,7 +10,8 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { localizedUrl, pageMetadata } from "@/lib/seo";
+import { pageMetadata } from "@/lib/seo";
+import { PUBLIC_SITE_URL } from "@/lib/site-url";
 import { withdrawalNotice } from "@/lib/withdrawal-notice";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -26,7 +27,10 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function WithdrawalPolicyPage() {
   const locale = await getLocale();
   const t = await getTranslations("WithdrawalPage");
-  const notice = withdrawalNotice(locale === "de" ? "de" : "en", localizedUrl("/withdraw", locale));
+  const notice = withdrawalNotice(
+    locale === "de" ? "de" : "en",
+    `${PUBLIC_SITE_URL}${locale === "de" ? "/de" : ""}/withdraw`,
+  );
 
   return (
     <main className="flex-1 py-14">
