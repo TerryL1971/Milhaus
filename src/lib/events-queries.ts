@@ -5,7 +5,7 @@
 // bundle if it ended up pulled in transitively.
 
 import { createClient } from "@/lib/supabase/server";
-import type { Event } from "@/lib/events";
+import { type Event, isEventCategory } from "@/lib/events";
 
 function mapRow(row: Record<string, unknown>): Event {
   return {
@@ -16,6 +16,7 @@ function mapRow(row: Record<string, unknown>): Event {
     organizerUrl: (row.organizer_url as string | null) ?? null,
     city: row.city as string,
     base: (row.base as string | null) ?? null,
+    category: isEventCategory(row.category) ? row.category : null,
     startsAt: row.starts_at as string,
     endsAt: (row.ends_at as string | null) ?? null,
     coverImageUrl: (row.cover_image_url as string | null) ?? null,

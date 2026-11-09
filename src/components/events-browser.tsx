@@ -19,15 +19,21 @@
 // what's filterable). They apply as soon as they're ticked — events are all
 // loaded client-side, so there's no Apply step to wait on. Clicking a
 // calendar day overrides When, so a past day can still be looked at.
+//
+// Type (Charlie's ask, 2026-11-09: "sports, cultural, fests etc") filters
+// by the category Charlie picks in Admin → Events. Only categories that
+// at least one event uses are offered, so there's never an empty choice;
+// events without a category only show while no Type is ticked.
 
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { EventCard } from "@/components/event-card";
 import { FilterCheckboxList } from "@/components/filter-checkbox-list";
 import { FilterCluster } from "@/components/filter-cluster";
 import { SearchNoResultsAlert } from "@/components/search-no-results-alert";
-import type { Event } from "@/lib/events";
+import { EVENT_CATEGORIES, type Event, type EventCategory } from "@/lib/events";
 import { matchesEvent } from "@/lib/search-matching";
 
 const WEEKDAY_LABELS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
@@ -97,10 +103,12 @@ export function EventsBrowser({
    * cars-grid.tsx's own prop comment and search/page.tsx's redirect. */
   initialQuery?: string;
 }) {
+  const tCategory = useTranslations("EventCategories");
   const [query, setQuery] = useState(initialQuery);
   const [alertDismissed, setAlertDismissed] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [when, setWhen] = useState<When>("upcoming");
+  const [categories, setCategories] = useState<string[]>([]);
   const [areas, setAreas] = useState<string[]>([]);
   const [organizers, setOrganizers] = useState<string[]>([]);
   const [monthCursor, setMonthCursor] = useState(() => {
@@ -117,11 +125,18 @@ export function EventsBrowser({
     setQuery("");
     setSelectedDate(null);
     setWhen("upcoming");
+    setCategories([]);
     setAreas([]);
     setOrganizers([]);
     setAlertDismissed(false);
   }
 
+  // In EVENT_CATEGORIES order (not alphabetical, which would change with
+  // the language), limited to categories some event actually has.
+  const categoryOptions = useMemo(() => {
+    const used = new Set(events.map((e) => e.category).filter(Boolean));
+    return EVENT_CATEGORIES.filter((category) => used.has(category));
+  }, [events]);
   const areaOptions = useMemo(() => [...new Set(events.map(eventArea))].sort(), [events]);
   const organizerOptions = useMemo(() => [...new Set(events.map((e) => e.organizerName))].sort(), [events]);
 
@@ -130,11 +145,12 @@ export function EventsBrowser({
   const matchingEvents = useMemo(() => {
     const q = query.trim().toLowerCase();
     return events.filter((event) => {
+      if (categories.length > 0 && !(event.category && categories.includes(event.category))) return false;
       if (areas.length > 0 && !areas.includes(eventArea(event))) return false;
       if (organizers.length > 0 && !organizers.includes(event.organizerName)) return false;
       return !q || matchesEvent(event, q);
     });
-  }, [events, query, areas, organizers]);
+  }, [events, query, categories, areas, organizers]);
 
   const eventDatesByKey = useMemo(() => {
     const map = new Map<string, number>();
@@ -286,6 +302,21 @@ export function EventsBrowser({
                 ))}
               </div>
             </FilterCluster>
+            {categoryOptions.length > 0 && (
+              <FilterCluster label="Type" icon="🏷️" badge={categories.length || undefined}>
+                <FilterCheckboxList
+                  options={categoryOptions.map((category: EventCategory) => ({
+                    value: category,
+                    label: tCategory(category),
+                  }))}
+                  selected={categories}
+                  onToggle={(value) => {
+                    setCategories((prev) => toggleIn(prev, value));
+                    setAlertDismissed(false);
+                  }}
+                />
+              </FilterCluster>
+            )}
             {areaOptions.length > 0 && (
               <FilterCluster label="Where" icon="📍" badge={areas.length || undefined}>
                 <FilterCheckboxList

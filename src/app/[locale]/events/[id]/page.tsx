@@ -44,6 +44,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 export default async function EventDetailPage({ params }: { params: Params }) {
   const { id } = await params;
   const t = await getTranslations("EventDetailPage");
+  const tCategory = await getTranslations("EventCategories");
   const event = await getEvent(id);
   if (!event) notFound();
 
@@ -115,7 +116,13 @@ export default async function EventDetailPage({ params }: { params: Params }) {
       )}
 
       <div className="mx-auto max-w-[900px] px-8">
-        <h1 className="mt-6 font-display text-2xl font-semibold text-ink sm:text-3xl">{event.title}</h1>
+        {/* Category chip — Charlie's ask, 2026-11-09. */}
+        {event.category && (
+          <span className="mt-6 inline-block rounded-[3px] bg-olive/15 px-2 py-0.5 font-mono text-[0.66rem] font-semibold uppercase tracking-wider text-olive-deep">
+            {tCategory(event.category)}
+          </span>
+        )}
+        <h1 className={`${event.category ? "mt-2" : "mt-6"} font-display text-2xl font-semibold text-ink sm:text-3xl`}>{event.title}</h1>
 
         <p className="mt-2 font-semibold text-ink">
           {dateTimeFormatter.format(startsAt)}

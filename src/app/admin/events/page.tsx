@@ -3,11 +3,14 @@
 // Charlie adds every entry himself, same pattern as /admin/businesses
 // minus the review queue and consent system (public event info he's
 // choosing to publish, not a third party's private details).
+// Category column (2026-11-09): a picker + Save on every row, because
+// events have no edit page and older events start without a category.
 
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { deleteEvent, toggleEventActive } from "@/app/admin/events/actions";
+import { deleteEvent, setEventCategory, toggleEventActive } from "@/app/admin/events/actions";
+import { EVENT_CATEGORIES, EVENT_CATEGORY_ADMIN_LABELS } from "@/lib/events";
 import { getAllEvents } from "@/lib/events-queries";
 import { isAdminRole } from "@/lib/roles";
 import { createClient } from "@/lib/supabase/server";
@@ -60,11 +63,12 @@ export default async function AdminEventsPage() {
           <p className="text-ink-soft">None added yet.</p>
         ) : (
           <div className="overflow-x-auto rounded-md border border-canvas-deep bg-paper">
-            <table className="w-full min-w-[800px] border-collapse text-sm">
+            <table className="w-full min-w-[980px] border-collapse text-sm">
               <thead>
                 <tr className="border-b border-canvas-deep text-left font-mono text-xs uppercase tracking-wider text-ink-soft/75">
                   <th className="px-4 py-3 font-medium">Title</th>
                   <th className="px-4 py-3 font-medium">Organizer</th>
+                  <th className="px-4 py-3 font-medium">Category</th>
                   <th className="px-4 py-3 font-medium">City / base</th>
                   <th className="px-4 py-3 font-medium">Starts</th>
                   <th className="px-4 py-3 font-medium">Status</th>
@@ -76,6 +80,35 @@ export default async function AdminEventsPage() {
                   <tr key={event.id} className="border-b border-canvas-deep last:border-0">
                     <td className="px-4 py-3 font-medium text-ink">{event.title}</td>
                     <td className="px-4 py-3 text-ink-soft">{event.organizerName}</td>
+                    <td className="px-4 py-3">
+                      <form action={setEventCategory} className="flex items-center gap-1.5">
+                        <input type="hidden" name="id" value={event.id} />
+                        <select
+                          name="category"
+                          required
+                          defaultValue={event.category ?? ""}
+                          aria-label={`Category for ${event.title}`}
+                          className={`w-36 rounded-md border bg-paper px-2 py-1.5 text-xs text-charcoal ${
+                            event.category ? "border-canvas-deep" : "border-rust"
+                          }`}
+                        >
+                          <option value="" disabled>
+                            Not set
+                          </option>
+                          {EVENT_CATEGORIES.map((category) => (
+                            <option key={category} value={category}>
+                              {EVENT_CATEGORY_ADMIN_LABELS[category]}
+                            </option>
+                          ))}
+                        </select>
+                        <button
+                          type="submit"
+                          className="rounded-md border border-canvas-deep px-2.5 py-1.5 text-xs font-semibold text-ink-soft hover:border-olive hover:text-olive-deep"
+                        >
+                          Save
+                        </button>
+                      </form>
+                    </td>
                     <td className="px-4 py-3 text-ink-soft">
                       {event.city}
                       {event.base ? ` · ${event.base}` : ""}

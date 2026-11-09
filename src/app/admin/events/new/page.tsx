@@ -12,6 +12,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createEvent } from "@/app/admin/events/actions";
 import { BASE_NAMES } from "@/lib/bases";
+import { EVENT_CATEGORIES, EVENT_CATEGORY_ADMIN_LABELS } from "@/lib/events";
 import { isAdminRole } from "@/lib/roles";
 import { createClient } from "@/lib/supabase/server";
 
@@ -49,6 +50,24 @@ export default async function AdminNewEventPage() {
               Title
             </label>
             <input id="title" name="title" required className={inputClass} />
+          </div>
+
+          <div>
+            <label htmlFor="category" className={labelClass}>
+              Category
+            </label>
+            {/* Charlie's ask, 2026-11-09 — what visitors filter by under
+                "Type" on /events. */}
+            <select id="category" name="category" required defaultValue="" className={inputClass}>
+              <option value="" disabled>
+                Choose a category…
+              </option>
+              {EVENT_CATEGORIES.map((category) => (
+                <option key={category} value={category}>
+                  {EVENT_CATEGORY_ADMIN_LABELS[category]}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>

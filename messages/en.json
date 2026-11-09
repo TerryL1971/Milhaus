@@ -550,6 +550,15 @@
     "organizedBy": "Organized by",
     "backToEvents": "← Back to events"
   },
+  "EventCategories": {
+    "sports": "Sports",
+    "culture": "Culture",
+    "festival": "Fests & markets",
+    "family": "Family & kids",
+    "food": "Food & drink",
+    "community": "Community",
+    "other": "Other"
+  },
   "SellerCard": {
     "postedBy": "Posted by",
     "emailButton": "Email {name}",

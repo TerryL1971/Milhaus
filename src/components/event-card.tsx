@@ -2,6 +2,8 @@
 // A single tile in the /events calendar/list — cover photo up top
 // (falling back to a gradient, same pattern every other card type uses
 // for a missing photo), a date badge, title, organizer, and city/base.
+// The category chip (Charlie's ask, 2026-11-09) sits top-right, opposite
+// the date, and only when the event has one.
 
 import Image from "next/image";
 import { useTranslations } from "next-intl";
@@ -16,6 +18,7 @@ const timeFormatter = new Intl.DateTimeFormat("en-US", { hour: "numeric", minute
 
 export function EventCard({ event }: { event: Event }) {
   const t = useTranslations("EventCard");
+  const tCategory = useTranslations("EventCategories");
   const startsAt = new Date(event.startsAt);
 
   return (
@@ -45,6 +48,11 @@ export function EventCard({ event }: { event: Event }) {
         <span className="absolute left-2.5 top-2.5 rounded-[3px] bg-ink px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-paper">
           {dateFormatter.format(startsAt)}
         </span>
+        {event.category && (
+          <span className="absolute right-2.5 top-2.5 rounded-[3px] bg-paper/95 px-2 py-0.5 font-mono text-[0.64rem] font-semibold uppercase tracking-wider text-olive-deep">
+            {tCategory(event.category)}
+          </span>
+        )}
       </div>
 
       <div className="px-4 pb-4 pt-3.5">

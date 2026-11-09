@@ -10,6 +10,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { isEventCategory } from "@/lib/events";
 import { createClient } from "@/lib/supabase/server";
 
 function revalidateEventPaths() {
@@ -46,6 +47,10 @@ export async function createEvent(formData: FormData) {
   if (!organizerName) throw new Error("Organizer name is required.");
   if (!city) throw new Error("City is required.");
   if (!startsAtRaw) throw new Error("Start date/time is required.");
+  // Required for new events (Charlie's categories ask, 2026-11-09), so
+  // every new event shows up under one of the /events "Type" filters.
+  const category = formData.get("category");
+  if (!isEventCategory(category)) throw new Error("Choose a category.");
 
   const supabase = await createClient();
   const eventId = crypto.randomUUID();
@@ -70,12 +75,28 @@ export async function createEvent(formData: FormData) {
     organizer_url: (formData.get("organizerUrl") as string | null) || null,
     city,
     base: (formData.get("base") as string | null) || null,
+    category,
     starts_at: new Date(startsAtRaw).toISOString(),
     ends_at: endsAtRaw ? new Date(endsAtRaw).toISOString() : null,
     cover_image_url: coverImageUrl,
     photos,
   });
 
+  if (error) throw new Error(error.message);
+
+  revalidateEventPaths();
+}
+
+/** Admin → Events → the Category picker on each row. Events have no edit
+ * page, and the ones added before categories existed (2026-11-09) start
+ * with none — this is how Charlie sets or changes one. */
+export async function setEventCategory(formData: FormData) {
+  const id = formData.get("id") as string;
+  const category = formData.get("category");
+  if (!isEventCategory(category)) throw new Error("Choose a category.");
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("events").update({ category }).eq("id", id);
   if (error) throw new Error(error.message);
 
   revalidateEventPaths();
