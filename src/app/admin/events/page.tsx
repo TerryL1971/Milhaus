@@ -5,6 +5,10 @@
 // choosing to publish, not a third party's private details).
 // Category column (2026-11-09): a picker + Save on every row, because
 // events have no edit page and older events start without a category.
+// Page widened to 1200px (from 1000px) at the same time — the extra
+// column pushed Delete off the edge behind a side-scroll (Terry,
+// 2026-11-09). The table only scrolls sideways on screens too narrow
+// for it (phones), never on a laptop or desktop.
 
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -39,7 +43,7 @@ export default async function AdminEventsPage() {
 
   return (
     <main className="flex-1 py-12">
-      <div className="mx-auto max-w-[1000px] px-8">
+      <div className="mx-auto max-w-[1200px] px-8">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
           <div>
             <Link href="/admin" className="mb-2 inline-block text-sm text-ink-soft hover:text-ink">
@@ -63,7 +67,7 @@ export default async function AdminEventsPage() {
           <p className="text-ink-soft">None added yet.</p>
         ) : (
           <div className="overflow-x-auto rounded-md border border-canvas-deep bg-paper">
-            <table className="w-full min-w-[980px] border-collapse text-sm">
+            <table className="w-full min-w-[900px] border-collapse text-sm">
               <thead>
                 <tr className="border-b border-canvas-deep text-left font-mono text-xs uppercase tracking-wider text-ink-soft/75">
                   <th className="px-4 py-3 font-medium">Title</th>
@@ -72,7 +76,7 @@ export default async function AdminEventsPage() {
                   <th className="px-4 py-3 font-medium">City / base</th>
                   <th className="px-4 py-3 font-medium">Starts</th>
                   <th className="px-4 py-3 font-medium">Status</th>
-                  <th className="px-4 py-3 font-medium"></th>
+                  <th className="px-4 py-3 font-medium"><span className="sr-only">Actions</span></th>
                 </tr>
               </thead>
               <tbody>
@@ -88,7 +92,7 @@ export default async function AdminEventsPage() {
                           required
                           defaultValue={event.category ?? ""}
                           aria-label={`Category for ${event.title}`}
-                          className={`w-36 rounded-md border bg-paper px-2 py-1.5 text-xs text-charcoal ${
+                          className={`w-32 rounded-md border bg-paper px-2 py-1.5 text-xs text-charcoal ${
                             event.category ? "border-canvas-deep" : "border-rust"
                           }`}
                         >
