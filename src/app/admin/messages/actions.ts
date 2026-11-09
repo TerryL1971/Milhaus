@@ -1,7 +1,8 @@
 // src/app/admin/messages/actions.ts
 // Admin → Messages: "Mark handled" and "Delete" for Contact-page
-// messages (2026-11-09). RLS lets only an admin update or delete these
-// rows (supabase/migrations/20261109180000_add_popup_ad_and_contact.sql);
+// messages and Milhaus Service pop-up requests (both 2026-11-09). RLS lets only an admin update or delete these
+// rows (supabase/migrations/20261109180000_add_popup_ad_and_contact.sql
+// and 20261109210000_service_popup.sql);
 // .select("id") turns a silently-skipped row into a visible error.
 
 "use server";
@@ -33,6 +34,31 @@ export async function deleteMessage(formData: FormData) {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("contact_messages")
+    .delete()
+    .eq("id", formData.get("id") as string)
+    .select("id");
+  if (error) throw new Error(error.message);
+  if (!data || data.length === 0) throw new Error("That didn't go through — you may need to sign in again.");
+  revalidateMessagePaths();
+}
+
+/** Milhaus Service requests (the 30-second pop-up), same two actions. */
+export async function markServiceRequestHandled(formData: FormData) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("service_requests")
+    .update({ status: "handled", handled_at: new Date().toISOString() })
+    .eq("id", formData.get("id") as string)
+    .select("id");
+  if (error) throw new Error(error.message);
+  if (!data || data.length === 0) throw new Error("That didn't go through — you may need to sign in again.");
+  revalidateMessagePaths();
+}
+
+export async function deleteServiceRequest(formData: FormData) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("service_requests")
     .delete()
     .eq("id", formData.get("id") as string)
     .select("id");

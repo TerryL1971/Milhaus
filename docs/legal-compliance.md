@@ -65,8 +65,9 @@ the exemption ends and the obligations below start to apply.
   Supabase, Vercel, Stripe, Resend, Sentry and IONOS. Most are accepted
   in each provider's dashboard.
 - **Privacy policy additions (2026-11-09):** the Contact form (name,
-  email and message, stored in Admin → Messages until deleted), and the
-  pop-up ad's two session-storage entries (when the visit started, and
+  email and message, stored in Admin → Messages until deleted), the
+  Milhaus Service pop-up's form (email address and the help wanted,
+  stored the same way), and the pop-up's two session-storage entries (when the visit started, and
   whether the pop-up has shown, so it appears at most once per visit;
   both are cleared when the browser session ends).
   Whether that storage needs cookie consent under § 25 TDDDG is a

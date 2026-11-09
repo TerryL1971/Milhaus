@@ -62,7 +62,16 @@ export default async function AdminPage() {
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
   if (!isAdminRole(profile?.role)) redirect("/");
 
-  const [pending, live, archived, reports, profiles, { count: openWithdrawals }, { count: openMessages }] = await Promise.all([
+  const [
+    pending,
+    live,
+    archived,
+    reports,
+    profiles,
+    { count: openWithdrawals },
+    { count: openContactMessages },
+    { count: openServiceRequests },
+  ] = await Promise.all([
     getPendingListings(),
     getLiveListings(),
     getArchivedListings(),
@@ -73,7 +82,10 @@ export default async function AdminPage() {
     supabase.from("withdrawal_requests").select("id", { count: "exact", head: true }).eq("status", "open"),
     // Contact-page messages (Charlie's ask, 2026-11-09), counted the same way.
     supabase.from("contact_messages").select("id", { count: "exact", head: true }).eq("status", "open"),
+    // Milhaus Service pop-up requests (2026-11-09) share the Messages button.
+    supabase.from("service_requests").select("id", { count: "exact", head: true }).eq("status", "open"),
   ]);
+  const openMessages = (openContactMessages ?? 0) + (openServiceRequests ?? 0);
   // Charlie: "who posted this" under the city/base line, both tables —
   // listings themselves only carry an ownerId, not a name, so this
   // builds the lookup once rather than a per-row query.
@@ -120,7 +132,7 @@ export default async function AdminPage() {
                 className="relative rounded-md border border-canvas-deep px-5 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-ink hover:text-ink"
               >
                 Messages
-                {(openMessages ?? 0) > 0 && (
+                {openMessages > 0 && (
                   <span className="ml-1.5 rounded-full bg-rust px-2 py-0.5 align-middle font-mono text-xs font-semibold text-paper">
                     {openMessages}
                   </span>

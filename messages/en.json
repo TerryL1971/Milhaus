@@ -738,9 +738,6 @@
     "special_offersName": "Special Offers card",
     "special_offersWhere": "A large card on the homepage's Special Offers row and the Offers page.",
     "special_offersSize": "Design at 500 × 600 px",
-    "popupName": "Pop-up ad",
-    "popupWhere": "A square ad that pops up once a visitor has been on the site for 30 seconds — once per visit.",
-    "popupSize": "Design at 1080 × 1080 px",
     "term30": "30 days",
     "term90": "90 days",
     "term180": "6 months",
@@ -777,7 +774,6 @@
     "placement_site_banner": "Site banner",
     "placement_cars_sidebar": "Cars sidebar",
     "placement_special_offers": "Special Offers card",
-    "placement_popup": "Pop-up ad",
     "spotNumber": "spot {number}",
     "runsFor": "Runs {days} days once live",
     "runsForYears": "Runs {count, plural, =1 {1 year} other {# years}} once live",
@@ -799,10 +795,25 @@
   "AdLabel": {
     "label": "Ad"
   },
-  "PopupAd": {
-    "close": "Close ad",
-    "learnMore": "Find out more",
-    "dialogLabel": "Ad from {name}"
+  "ServicePopup": {
+    "close": "Close",
+    "headingLine1": "Arrive in Stuttgart.",
+    "headingLine2": "We’ve got your back.",
+    "intro": "Personal support for apartment views, car buying & getting settled without the stress, bureaucracy, or language barrier.",
+    "helpLegend": "What can we help you with today?",
+    "selectAny": "(select any)",
+    "interest_car": "Car & Registration",
+    "interest_apartment": "Apartment Support",
+    "interest_bureaucracy": "Bureaucracy Help",
+    "interest_advice": "General Advice",
+    "emailLabel": "Your email address",
+    "emailPlaceholder": "your.email@domain.com",
+    "submit": "Get in touch with us",
+    "sending": "Sending…",
+    "orEmail": "Or simply drop us a line directly at",
+    "privacyNote": "We only use your email to get back to you.",
+    "sentHeading": "Thanks — we’ll be in touch!",
+    "sentBody": "We’ll reply to the email address you gave."
   },
   "WithdrawalPage": {
     "metaTitle": "Withdrawal policy",
