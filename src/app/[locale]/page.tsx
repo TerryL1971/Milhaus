@@ -151,8 +151,20 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
           crop its bottom on wide screens) nor needlessly taller (an empty
           navy band at ~1024px). Update this ratio if the photo's shape
           changes. */}
-      <section className="relative overflow-hidden bg-ink lg:min-h-[42.42vw]">
-        <div className="relative lg:absolute lg:inset-x-0 lg:top-0">
+      {/* Capped at 680px tall (Charlie, 2026-11-09: "the main hero image
+          seems to enlarge when looking on a desktop screen, but is correct
+          on a laptop screen"). Uncapped, 42.42vw made it ~815px tall on a
+          1920px monitor and ~1086px on a 2560px one — filling the screen
+          and stretching a 1584px-wide photo. 680px is the height it
+          reaches at 1600px wide, the site's content width, so laptops
+          look exactly as before. Wider than that, the photo keeps filling
+          the width and object-cover + object-bottom trims only the plain
+          sky off its top (the flag, house and the "Germany Feels Like
+          Home" lettering at the bottom stay whole). Past 1920px the photo
+          stops widening too — any wider and the trim would reach the
+          flag — and its edges fade into the navy instead. */}
+      <section className="relative overflow-hidden bg-ink lg:min-h-[min(42.42vw,680px)]">
+        <div className="relative lg:absolute lg:inset-x-0 lg:top-0 lg:mx-auto lg:h-[min(42.42vw,680px)] lg:max-w-[1920px]">
           {/* No `fill` any more — intrinsic width/height (the photo's own
               1584x672) scaled to w-full/h-auto instead. `fill` + any
               object-fit always means either cropping (cover) or side
@@ -173,7 +185,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
               once there isn't enough photo to put it over. priority —
               this is the largest above-the-fold element on the homepage,
               i.e. almost certainly the page's own LCP candidate. */}
-          <Image src={heroImageUrl} alt="" width={1584} height={672} sizes="100vw" className="block h-auto w-full" priority />
+          <Image src={heroImageUrl} alt="" width={1584} height={672} sizes="100vw" className="block h-auto w-full lg:h-full lg:object-cover lg:object-bottom" priority />
           {/* Lighter again, second pass — the new hero photo has "Germany
               Feels Like Home" baked into its own bottom-right corner now
               (see the removed scriptTagline overlay above), and the
@@ -190,6 +202,10 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
           {/* Phones/tablets only — the headline + subheads sit over the
               photo's light sky there; this keeps white text legible. */}
           <div className="absolute inset-0 bg-gradient-to-b from-ink/60 via-ink/30 to-transparent lg:hidden" />
+          {/* Screens wider than 1920px only: soft navy edges where the
+              photo stops, instead of a hard line against the background. */}
+          <div className="absolute inset-y-0 left-0 hidden w-32 bg-gradient-to-r from-ink to-transparent min-[1921px]:block" />
+          <div className="absolute inset-y-0 right-0 hidden w-32 bg-gradient-to-l from-ink to-transparent min-[1921px]:block" />
         </div>
 
         {/* Not `relative` below lg on purpose: the headline inside is
