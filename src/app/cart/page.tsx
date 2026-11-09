@@ -11,6 +11,7 @@ import { redirect } from "next/navigation";
 import { removeFromCart, startCartStripeCheckout } from "@/app/cart/actions";
 import { getAdOrderNames } from "@/lib/ad-orders-queries";
 import { createClient } from "@/lib/supabase/server";
+import { IMMEDIATE_START_CONSENT } from "@/lib/withdrawal-notice";
 
 export const metadata: Metadata = {
   title: "Your cart",
@@ -130,13 +131,52 @@ export default async function CartPage() {
               {/* Stripe Checkout itself offers card, Apple Pay, Google Pay,
                   and PayPal as payment methods (whichever Charlie has
                   turned on in the Stripe Dashboard) — one button, not a
-                  separate one per provider. */}
-              <form action={startCartStripeCheckout}>
+                  separate one per provider.
+
+                  German consumer law, added 2026-11-09 after the legal
+                  review:
+                  - The button that commits someone to pay must say so
+                    plainly (§ 312j(3) BGB) — "Checkout" didn't; "Order
+                    and pay" does. The terms and withdrawal policy sit
+                    right above it.
+                  - The required checkbox is the consumer's express
+                    request to start now (§ 356(4), § 357a(2) BGB).
+                    Without it a consumer could withdraw within 14 days
+                    and get every cent back even after their listing had
+                    run. Its exact wording is repeated in the order
+                    confirmation email, so it lives in
+                    src/lib/withdrawal-notice.ts. startCartStripeCheckout
+                    refuses to continue if it isn't ticked. */}
+              <form action={startCartStripeCheckout} className="flex flex-col gap-4">
+                <label className="flex items-start gap-2.5 text-sm text-charcoal">
+                  <input
+                    type="checkbox"
+                    name="immediateStart"
+                    required
+                    className="mt-0.5 h-4 w-4 flex-none rounded border-canvas-deep text-olive focus:ring-olive"
+                  />
+                  <span>{IMMEDIATE_START_CONSENT}</span>
+                </label>
+                <p className="text-xs text-ink-soft">
+                  By ordering you accept the{" "}
+                  <Link href="/terms" className="font-semibold text-olive-deep hover:underline">
+                    Terms and Conditions
+                  </Link>
+                  . Consumers have a 14-day right of withdrawal — see the{" "}
+                  <Link href="/withdrawal" className="font-semibold text-olive-deep hover:underline">
+                    withdrawal policy
+                  </Link>
+                  . How we use your data: the{" "}
+                  <Link href="/privacy" className="font-semibold text-olive-deep hover:underline">
+                    Privacy Policy
+                  </Link>
+                  .
+                </p>
                 <button
                   type="submit"
                   className="w-full rounded-md bg-brass px-5 py-2.5 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
                 >
-                  Checkout ({currencyFormatter.format(total)})
+                  Order and pay {currencyFormatter.format(total)}
                 </button>
               </form>
             </div>

@@ -42,6 +42,7 @@ import { publishFreeListing } from "@/lib/listing-publish";
 import { NEARBY_AMENITY_KEYS } from "@/lib/nearby-amenities";
 import { CONDITION_KEYS, CONDITION_LABELS, PRODUCT_CATEGORY_KEYS, PRODUCT_CATEGORY_LABELS } from "@/lib/product-categories";
 import { SERVICE_CATEGORY_KEYS, SERVICE_CATEGORY_LABELS } from "@/lib/service-categories";
+import { EnergyCertificateFields } from "@/components/energy-certificate-fields";
 import { createClient } from "@/lib/supabase/client";
 import type { Listing, ListingSource, OfferType } from "@/lib/types";
 
@@ -122,7 +123,24 @@ function detailsPayload(kind: Kind, formData: FormData) {
       stove_type: formData.get("stoveType") || null,
       is_new: formData.get("isNew") === "on",
       available_to: formData.get("availableTo") || null,
+      // § 87 GEG energy certificate — see energy-certificate-fields.tsx.
+      // An "exempt" home stores no figures, whatever was typed before
+      // the lister switched to it.
+      ...energyCertificateValues(formData),
     } as Record<string, unknown>,
+  };
+}
+
+function energyCertificateValues(formData: FormData) {
+  const type = (formData.get("energyCertificateType") as string) || null;
+  const hasFigures = type === "demand" || type === "consumption";
+  const number = (name: string) => (hasFigures && formData.get(name) ? Number(formData.get(name)) : null);
+  return {
+    energy_certificate_type: type,
+    energy_value_kwh: number("energyValueKwh"),
+    energy_class: hasFigures ? (formData.get("energyClass") as string) || null : null,
+    energy_source: hasFigures ? (formData.get("energySource") as string) || null : null,
+    year_built: number("yearBuilt"),
   };
 }
 
@@ -558,6 +576,11 @@ export function ListingForm({
       {isCar && (
         <>
           <p className={sectionHeadingClass}>{t("sectionVehicleDetails")}</p>
+          {/* Pkw-EnVKV (2026-11-09 legal pass): a dealer advertising a NEW
+              car must state its fuel/energy consumption and CO₂
+              emissions. Used cars — nearly everything on Milhaus — are
+              exempt, so it's a hint rather than more required fields. */}
+          <p className="-mt-2 text-xs text-ink-soft">{t("newCarHint")}</p>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           <div>
             <label htmlFor="year" className={labelClass}>
@@ -1095,6 +1118,8 @@ export function ListingForm({
           </div>
         </fieldset>
       )}
+
+      {isRental && <EnergyCertificateFields existing={existing} />}
 
       <p className={sectionHeadingClass}>{t("sectionPhotos")}</p>
 

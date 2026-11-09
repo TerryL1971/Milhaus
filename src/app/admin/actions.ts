@@ -11,6 +11,7 @@
 
 import { revalidatePath } from "next/cache";
 import { extendExpiry } from "@/lib/listing-expiry";
+import { TAKEDOWN_REASONS, isTakedownReason, listingOwnerEmail, sendTakedownNotice } from "@/lib/moderation";
 import { isAdminRole } from "@/lib/roles";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -39,7 +40,7 @@ export async function approveListing(formData: FormData) {
 
 /** Admin → Needs review → "Reject": moves it to the archive instead of live. */
 export async function rejectListing(formData: FormData) {
-  await updateListingStatus(formData.get("id") as string, "archived");
+  await takeDown(formData, true);
 }
 
 /** Admin → Live listings → "Mark rented / sold / unavailable". */
@@ -49,7 +50,58 @@ export async function markRented(formData: FormData) {
 
 /** Admin → "Archive": takes a listing off the site but keeps it (Relist brings it back). */
 export async function archiveListing(formData: FormData) {
-  await updateListingStatus(formData.get("id") as string, "archived");
+  await takeDown(formData, false);
+}
+
+// Reject and Archive both ask for a reason now (src/components/takedown-form.tsx)
+// and, unless it's "no_notice", email the owner a statement of reasons —
+// Digital Services Act Art. 17, added in the 2026-11-09 legal pass (see
+// src/lib/moderation.ts). The status change still goes through Charlie's
+// own session so RLS stays the gate; the email lookup needs the
+// service-role client, which is only reached after that update succeeded
+// (i.e. after RLS has confirmed he's an admin). The email is
+// best-effort: the listing comes down even if Resend is down, and the
+// page says nothing either way — the reason is saved on the listing.
+async function takeDown(formData: FormData, rejected: boolean) {
+  const id = formData.get("id") as string;
+  const reason = formData.get("reason");
+  const note = String(formData.get("note") ?? "").trim().slice(0, 1000) || null;
+  if (!isTakedownReason(reason)) throw new Error("Choose a reason first.");
+  if (TAKEDOWN_REASONS[reason].noteRequired && !note) {
+    throw new Error(`"${TAKEDOWN_REASONS[reason].label}" needs a short explanation — it's what the poster is told.`);
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("listings")
+    .update({
+      status: "archived",
+      moderation_reason: reason,
+      moderation_note: note,
+      moderated_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .select("id, title, owner_id");
+  if (error) throw new Error(error.message);
+  if (!data || data.length === 0) {
+    throw new Error("That didn't go through — you may not have permission to do this.");
+  }
+
+  if (reason !== "no_notice") {
+    const admin = createAdminClient();
+    const to = await listingOwnerEmail(admin, data[0].owner_id as string);
+    if (to) {
+      await sendTakedownNotice({
+        to,
+        listingTitle: data[0].title as string,
+        reason,
+        note,
+        fromReport: formData.get("fromReport") === "on",
+        rejected,
+      });
+    }
+  }
+  revalidatePath("/admin");
 }
 
 // Bringing a house back onto the market (or, for a previously-rejected

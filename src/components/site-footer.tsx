@@ -77,6 +77,11 @@ export async function SiteFooter() {
         { label: t("terms"), href: "/terms" },
         { label: t("privacy"), href: "/privacy" },
         { label: t("impressum"), href: "/impressum" },
+        // 2026-11-09 legal pass: the withdrawal policy, and the online
+        // withdrawal button § 356a BGB requires to be available on every
+        // page — "Vertrag widerrufen" on /de. See src/app/[locale]/withdraw.
+        { label: t("withdrawalPolicy"), href: "/withdrawal" },
+        { label: t("withdraw"), href: "/withdraw" },
       ],
     },
   ];

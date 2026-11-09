@@ -18,7 +18,7 @@ import {
   relistListing,
   setFeatured,
 } from "@/app/admin/actions";
-import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
+import { TakedownForm } from "@/components/takedown-form";
 import { getOpenReports } from "@/lib/listing-reports";
 import { getArchivedListings, getLiveListings, getPendingListings } from "@/lib/listings";
 import { getAllProfiles } from "@/lib/profiles";
@@ -62,12 +62,15 @@ export default async function AdminPage() {
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
   if (!isAdminRole(profile?.role)) redirect("/");
 
-  const [pending, live, archived, reports, profiles] = await Promise.all([
+  const [pending, live, archived, reports, profiles, { count: openWithdrawals }] = await Promise.all([
     getPendingListings(),
     getLiveListings(),
     getArchivedListings(),
     getOpenReports(),
     getAllProfiles(),
+    // Withdrawal requests (2026-11-09 legal pass) have a 14-day refund
+    // deadline, so the open count shows on the button like Reports.
+    supabase.from("withdrawal_requests").select("id", { count: "exact", head: true }).eq("status", "open"),
   ]);
   // Charlie: "who posted this" under the city/base line, both tables —
   // listings themselves only carry an ownerId, not a name, so this
@@ -96,6 +99,17 @@ export default async function AdminPage() {
                 {reports.length > 0 && (
                   <span className="ml-1.5 rounded-full bg-rust px-2 py-0.5 align-middle font-mono text-xs font-semibold text-paper">
                     {reports.length}
+                  </span>
+                )}
+              </Link>
+              <Link
+                href="/admin/withdrawals"
+                className="relative rounded-md border border-canvas-deep px-5 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-ink hover:text-ink"
+              >
+                Withdrawals
+                {(openWithdrawals ?? 0) > 0 && (
+                  <span className="ml-1.5 rounded-full bg-rust px-2 py-0.5 align-middle font-mono text-xs font-semibold text-paper">
+                    {openWithdrawals}
                   </span>
                 )}
               </Link>
@@ -213,7 +227,7 @@ export default async function AdminPage() {
                         </span>
                       </div>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap items-start gap-2">
                       <Link
                         href={`/edit-listing/${listing.id}`}
                         className="rounded-md border border-canvas-deep px-4 py-2 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-olive hover:text-olive-deep"
@@ -229,15 +243,12 @@ export default async function AdminPage() {
                           Approve
                         </button>
                       </form>
-                      <form action={rejectListing}>
-                        <input type="hidden" name="id" value={listing.id} />
-                        <ConfirmSubmitButton
-                          confirmMessage={`Reject "${listing.title}"? It moves to Archived — you can relist it later if you change your mind.`}
-                          className="rounded-md border border-canvas-deep px-4 py-2 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-rust hover:text-rust"
-                        >
-                          Reject
-                        </ConfirmSubmitButton>
-                      </form>
+                      <TakedownForm
+                        action={rejectListing}
+                        listingId={listing.id}
+                        buttonLabel="Reject…"
+                        submitLabel="Reject and email the poster"
+                      />
                     </div>
                   </div>
 
@@ -334,7 +345,7 @@ export default async function AdminPage() {
                         )}
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <div className="flex justify-end gap-2">
+                        <div className="flex flex-wrap items-start justify-end gap-2">
                           <Link
                             href={`/edit-listing/${listing.id}`}
                             className="rounded-md border border-canvas-deep px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-olive hover:text-olive-deep"
@@ -384,15 +395,13 @@ export default async function AdminPage() {
                               </button>
                             </form>
                           )}
-                          <form action={archiveListing}>
-                            <input type="hidden" name="id" value={listing.id} />
-                            <ConfirmSubmitButton
-                              confirmMessage={`Take "${listing.title}" off the live site? It moves to Archived — you can relist it later if you change your mind.`}
-                              className="rounded-md border border-canvas-deep px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-rust hover:text-rust"
-                            >
-                              Archive
-                            </ConfirmSubmitButton>
-                          </form>
+                          <TakedownForm
+                            action={archiveListing}
+                            listingId={listing.id}
+                            buttonLabel="Archive…"
+                            submitLabel="Take it down"
+                            small
+                          />
                         </div>
                       </td>
                     </tr>

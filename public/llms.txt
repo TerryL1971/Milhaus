@@ -35,4 +35,5 @@ Key facts:
 - [How verification works](https://www.milhaus.de/how-verification-works)
 - [Terms and Conditions](https://www.milhaus.de/terms)
 - [Privacy Policy](https://www.milhaus.de/privacy)
+- [Withdrawal policy](https://www.milhaus.de/withdrawal): Consumers' 14-day right of withdrawal for paid services, with an online withdrawal form at /withdraw.
 - [Impressum (legal notice)](https://www.milhaus.de/impressum)

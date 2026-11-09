@@ -66,7 +66,9 @@
     "privacy": "Privacy Policy",
     "impressum": "Impressum",
     "tagline": "A resource for the American community living in Germany. Not affiliated with the U.S. Department of Defense.",
-    "advertise": "Advertise with us"
+    "advertise": "Advertise with us",
+    "withdrawalPolicy": "Withdrawal policy",
+    "withdraw": "Withdraw from contract"
   },
   "CookieConsent": {
     "message": "We'd like to use privacy-friendly analytics to see how Milhaus is used. We won't turn this on until you say it's okay — the site keeps working the same either way.",
@@ -291,7 +293,8 @@
     "highlightHint": "★ Star up to 3 to show on your listing's card (fewer if the names are long — the card has one line).",
     "highlightOnCard": "Show {item} on the card",
     "highlightsFull": "That one won't fit — your card already has a full line of highlights. Remove a star to choose this instead.",
-    "highlightsMax": "You can highlight up to {max} — remove a star to choose this one instead."
+    "highlightsMax": "You can highlight up to {max} — remove a star to choose this one instead.",
+    "newCarHint": "Dealers selling a new car: German law (Pkw-EnVKV) requires its fuel/energy consumption and CO₂ emissions in the ad — add them to the description. Not needed for used cars."
   },
   "ListingDetail": {
     "backToListings": "← Back to listings",
@@ -552,7 +555,10 @@
     "emailButton": "Email {name}",
     "theSeller": "the seller",
     "moreFromSeller": "More from {name}",
-    "visitWebsite": "Visit website"
+    "visitWebsite": "Visit website",
+    "privateSeller": "Private individual",
+    "businessSeller": "Business",
+    "privateSellerNote": "Private individual: EU consumer protection rights (such as the right of withdrawal) don’t apply to contracts with private individuals."
   },
   "SellerProfilePage": {
     "emailButton": "Email {name}",
@@ -778,5 +784,63 @@
   },
   "AdLabel": {
     "label": "Ad"
+  },
+  "WithdrawalPage": {
+    "metaTitle": "Withdrawal policy",
+    "metaDescription": "The withdrawal policy and model withdrawal form for Milhaus paid services (listings and ad spots).",
+    "intro": "Applies to consumers who buy a paid service on Milhaus — posting fees, renewals and ad spots.",
+    "withdrawButton": "Withdraw from contract"
+  },
+  "WithdrawPage": {
+    "heading": "Withdraw from contract",
+    "metaDescription": "Withdraw online from a contract you made with Milhaus.",
+    "intro": "Use this form to withdraw from a paid contract with Milhaus (a posting fee, a renewal or ad spots) within the 14-day withdrawal period. We confirm receipt by email straight away.",
+    "policyLead": "Your rights in full:",
+    "policyLink": "withdrawal policy",
+    "name": "Your name",
+    "email": "Email for the confirmation",
+    "emailHint": "Ideally the address you ordered with.",
+    "contract": "Which contract are you withdrawing from?",
+    "contractPlaceholder": "e.g. the posting fee for “3-bed apartment in Ramstein”, or ad spots ordered on …",
+    "orderedOn": "Ordered on (optional)",
+    "confirmButton": "Confirm withdrawal",
+    "receivedHeading": "Your withdrawal has been received",
+    "receivedBody": "Thank you. We have received your withdrawal and will refund your payment without undue delay, within 14 days at the latest. Please keep this confirmation.",
+    "receivedAt": "Received",
+    "reference": "Reference",
+    "emailSent": "A confirmation has been sent to your email address.",
+    "emailNotSent": "We couldn’t send the confirmation email just now — your withdrawal is still saved. Please save or print this page."
+  },
+  "EnergyCertificate": {
+    "heading": "Energy certificate",
+    "hint": "Required by German law (§ 87 GEG): copy these from the home’s energy certificate (Energieausweis).",
+    "type": "Certificate type",
+    "choose": "Choose…",
+    "typeDemand": "Energy demand certificate (Bedarfsausweis)",
+    "typeConsumption": "Energy consumption certificate (Verbrauchsausweis)",
+    "typeExempt": "No certificate required (e.g. listed building)",
+    "valueDemand": "Energy demand (kWh/(m²·a))",
+    "valueConsumption": "Energy consumption (kWh/(m²·a))",
+    "class": "Energy efficiency class",
+    "classNone": "Not shown (certificate before May 2014)",
+    "source": "Main heating energy source",
+    "yearBuilt": "Year built",
+    "demandShort": "Energy demand",
+    "consumptionShort": "Energy consumption",
+    "classShort": "Class",
+    "sourceShort": "Energy source",
+    "yearBuiltShort": "Built",
+    "sources": {
+      "gas": "Natural gas",
+      "oil": "Heating oil",
+      "electricity": "Electricity",
+      "district_heating": "District heating",
+      "heat_pump": "Heat pump",
+      "wood": "Wood / pellets",
+      "liquid_gas": "Liquid gas (LPG)",
+      "solar": "Solar thermal",
+      "coal": "Coal",
+      "other": "Other"
+    }
   }
 }

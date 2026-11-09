@@ -59,6 +59,12 @@ export function mapRow(row: Record<string, unknown>): Listing {
     stoveType: (details.stove_type as Listing["stoveType"]) ?? null,
     isNew: Boolean(details.is_new),
     availableTo: (details.available_to as Listing["availableTo"]) ?? null,
+    energyCertificateType: (details.energy_certificate_type as Listing["energyCertificateType"]) ?? null,
+    energyValueKwh:
+      details.energy_value_kwh === null || details.energy_value_kwh === undefined ? null : Number(details.energy_value_kwh),
+    energyClass: (details.energy_class as string | null) ?? null,
+    energySource: (details.energy_source as string | null) ?? null,
+    yearBuilt: details.year_built === null || details.year_built === undefined ? null : Number(details.year_built),
     make: (details.make as string | null) ?? null,
     model: (details.model as string | null) ?? null,
     year: details.year === null || details.year === undefined ? null : Number(details.year),
@@ -174,6 +180,13 @@ export interface SellerProfile {
    * Charlie's vetted advertiser businesses directory. */
   websiteUrl: string | null;
   businessLogoUrl: string | null;
+  /** Private seller or business, for the seller card (§ 312l BGB) —
+   * only what's actually been declared: "private" = they ticked "I'm an
+   * individual (not a business)" on their profile; "business" = Charlie
+   * made them a dealer; null = neither, so no label is shown rather
+   * than guessing (most families never tick the box while posting is
+   * free). */
+  sellerType: "private" | "business" | null;
 }
 
 /** The public seller card shown on every listing's detail page, and the
@@ -186,7 +199,9 @@ export async function getSellerProfile(ownerId: string): Promise<SellerProfile |
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("profiles")
-    .select("display_name, contact_email, contact_phone, photo_url, cover_image_url, bio, website_url, business_logo_url")
+    .select(
+      "display_name, contact_email, contact_phone, photo_url, cover_image_url, bio, website_url, business_logo_url, is_individual_lister, role",
+    )
     .eq("id", ownerId)
     .maybeSingle();
 
@@ -200,6 +215,7 @@ export async function getSellerProfile(ownerId: string): Promise<SellerProfile |
     bio: data.bio as string | null,
     websiteUrl: data.website_url as string | null,
     businessLogoUrl: data.business_logo_url as string | null,
+    sellerType: data.is_individual_lister ? "private" : data.role === "dealer" ? "business" : null,
   };
 }
 

@@ -56,6 +56,7 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
   if (!listing) notFound();
 
   const t = await getTranslations("ListingDetail");
+  const tEnergy = await getTranslations("EnergyCertificate");
   const locale = await getLocale();
   const dateFormatter = new Intl.DateTimeFormat(locale, { month: "long", day: "numeric", year: "numeric" });
 
@@ -224,6 +225,46 @@ export default async function ListingDetailPage({ params }: { params: Params }) 
               <span>
                 {t("stove")}: {t(`stoveType.${listing.stoveType}`)}
               </span>
+            )}
+          </div>
+        )}
+
+        {/* § 87 GEG energy certificate details (2026-11-09 legal pass,
+            see src/components/energy-certificate-fields.tsx). */}
+        {listing.energyCertificateType && (
+          <div className="mt-4 rounded-md border border-canvas-deep bg-paper px-4 py-3 text-sm text-charcoal">
+            <p className="mb-1 font-body text-[0.68rem] uppercase tracking-wider text-ink-soft/75">
+              {tEnergy("heading")}
+            </p>
+            {listing.energyCertificateType === "exempt" ? (
+              <p>{tEnergy("typeExempt")}</p>
+            ) : (
+              <p className="flex flex-wrap gap-x-5 gap-y-1">
+                <span>
+                  {listing.energyCertificateType === "demand" ? tEnergy("typeDemand") : tEnergy("typeConsumption")}
+                </span>
+                {listing.energyValueKwh != null && (
+                  <span>
+                    {listing.energyCertificateType === "demand" ? tEnergy("demandShort") : tEnergy("consumptionShort")}:{" "}
+                    {listing.energyValueKwh} kWh/(m²·a)
+                  </span>
+                )}
+                {listing.energyClass && (
+                  <span>
+                    {tEnergy("classShort")}: <strong>{listing.energyClass}</strong>
+                  </span>
+                )}
+                {listing.energySource && (
+                  <span>
+                    {tEnergy("sourceShort")}: {tEnergy(`sources.${listing.energySource}`)}
+                  </span>
+                )}
+                {listing.yearBuilt != null && (
+                  <span>
+                    {tEnergy("yearBuiltShort")}: {listing.yearBuilt}
+                  </span>
+                )}
+              </p>
             )}
           </div>
         )}

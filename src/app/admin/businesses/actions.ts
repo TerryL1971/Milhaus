@@ -25,7 +25,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { BUSINESS_CATEGORY_KEYS, BUSINESS_TAG_KEYS, type BusinessCategoryKey, type BusinessTagKey } from "@/lib/businesses";
+import { BUSINESS_CATEGORY_KEYS, BUSINESS_TAG_KEYS, type BusinessCategoryKey } from "@/lib/businesses";
 import { tryActivateBusiness } from "@/lib/businesses-queries";
 import { sendConsentRequestEmail } from "@/lib/consent-email";
 import { createAdminClient } from "@/lib/supabase/admin";

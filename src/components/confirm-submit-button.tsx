@@ -1,7 +1,9 @@
 // src/components/confirm-submit-button.tsx
 // A plain `<button type="submit">` inside a server-action `<form>`, but
-// guarded by a native confirm() first. Built for the admin dashboard's
-// Reject/Archive buttons — Charlie runs that page solo, daily, and those
+// guarded by a native confirm() first. Now only used on Admin → Ad
+// orders; the dashboard's Reject/Archive moved to TakedownForm
+// (2026-11-09), which asks for a reason instead. Originally built for
+// the admin dashboard's Reject/Archive buttons — Charlie runs that page solo, daily, and those
 // two sit right next to lower-stakes actions at the same visual weight;
 // one misclick otherwise takes a real submitter's listing off the queue
 // or off the live site with no way back except Relist (which isn't even

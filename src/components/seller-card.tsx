@@ -56,6 +56,23 @@ export function SellerCard({
           >
             {name}
           </Link>
+          {/* Private seller or business (2026-11-09 legal pass): § 312l
+              BGB / Art. 6a of the EU consumer rights directive make a
+              marketplace say whether the other side is a trader, based
+              on their own declaration. Only a real declaration is shown
+              (see SellerProfile.sellerType) — labelling everyone who
+              didn't tick "I'm an individual" as a business mislabelled
+              ordinary families. A private seller also gets the required
+              warning that EU consumer rights don't apply to buying from
+              them. */}
+          {seller.sellerType && (
+            <p className="mt-1">
+              <span className="rounded-[3px] bg-canvas-deep/70 px-1.5 py-0.5 font-body text-[0.62rem] font-semibold uppercase tracking-wider text-ink-soft">
+                {seller.sellerType === "private" ? t("privateSeller") : t("businessSeller")}
+              </span>
+            </p>
+          )}
+          {seller.sellerType === "private" && <p className="mt-1 text-xs text-ink-soft/80">{t("privateSellerNote")}</p>}
           {seller.bio && <p className="mt-1.5 text-sm text-ink-soft">{seller.bio}</p>}
           {(seller.businessLogoUrl || seller.websiteUrl) && (
             <div className="mt-1.5 flex items-center gap-2">

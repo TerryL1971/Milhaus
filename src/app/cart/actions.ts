@@ -34,6 +34,7 @@ import { tryActivateBusiness } from "@/lib/businesses-queries";
 import { extendExpiry } from "@/lib/listing-expiry";
 import { fulfillAdOrder } from "@/lib/ad-orders";
 import { getAdOrderNames } from "@/lib/ad-orders-queries";
+import { sendOrderConfirmation } from "@/lib/order-confirmation-email";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -110,8 +111,14 @@ export async function removeFromCart(formData: FormData) {
   revalidatePath("/cart");
 }
 
-export async function startCartStripeCheckout() {
+export async function startCartStripeCheckout(formData: FormData) {
   const user = await requireUser();
+  // The cart's required "start right away" checkbox (§ 356(4) BGB — see
+  // the comment above it in src/app/cart/page.tsx). The browser already
+  // refuses to submit without it; this is the server-side guarantee.
+  if (formData.get("immediateStart") !== "on") {
+    throw new Error("Please tick the box asking us to start right away before ordering.");
+  }
   const items = await getCart(user.id);
 
   const session = await getStripe().checkout.sessions.create({
@@ -144,6 +151,9 @@ export async function startCartStripeCheckout() {
       provider_reference: session.id,
       amount_eur: item.price_eur,
       status: "pending",
+      // Proof of when the buyer asked for the service to start straight
+      // away — needed if they later withdraw and Charlie keeps a share.
+      immediate_start_requested_at: new Date().toISOString(),
     })),
   );
 
@@ -163,7 +173,7 @@ export async function settleCartPayment(providerReference: string) {
 
   const { data: payments } = await admin
     .from("listing_payments")
-    .select("listing_id, business_id, ad_order_id")
+    .select("listing_id, business_id, ad_order_id, amount_eur, immediate_start_requested_at")
     .eq("provider_reference", providerReference)
     .eq("status", "pending");
 
@@ -221,7 +231,56 @@ export async function settleCartPayment(providerReference: string) {
   const ownerId = await findPaymentOwner(listingIds, businessIds, adOrderIds);
   if (ownerId) {
     await admin.from("cart_items").delete().eq("user_id", ownerId);
+    await sendCartOrderConfirmation(ownerId, providerReference, payments);
   }
+}
+
+// The § 312f BGB contract confirmation (src/lib/order-confirmation-email.ts).
+// Runs once per payment: settleCartPayment returns early above when a
+// refreshed success page finds nothing still pending.
+async function sendCartOrderConfirmation(
+  ownerId: string,
+  providerReference: string,
+  payments: {
+    listing_id: string | null;
+    business_id: string | null;
+    ad_order_id: string | null;
+    amount_eur: number | string;
+    immediate_start_requested_at: string | null;
+  }[],
+) {
+  const admin = createAdminClient();
+  const { data: owner } = await admin.auth.admin.getUserById(ownerId);
+  const to = owner.user?.email;
+  if (!to) return;
+
+  const listingIds = payments.filter((p) => p.listing_id).map((p) => p.listing_id as string);
+  const businessIds = payments.filter((p) => p.business_id).map((p) => p.business_id as string);
+  const adOrderIds = payments.filter((p) => p.ad_order_id).map((p) => p.ad_order_id as string);
+  const [{ data: listings }, { data: businesses }, adOrderNames] = await Promise.all([
+    listingIds.length > 0
+      ? admin.from("listings").select("id, title").in("id", listingIds)
+      : Promise.resolve({ data: [] as { id: string; title: string }[] }),
+    businessIds.length > 0
+      ? admin.from("businesses").select("id, name").in("id", businessIds)
+      : Promise.resolve({ data: [] as { id: string; name: string }[] }),
+    getAdOrderNames(adOrderIds),
+  ]);
+
+  await sendOrderConfirmation({
+    to,
+    orderedAt: new Date(),
+    reference: providerReference.slice(-12),
+    immediateStartRequested: payments.some((p) => p.immediate_start_requested_at),
+    items: payments.map((p) => ({
+      amountEur: Number(p.amount_eur),
+      name: p.listing_id
+        ? `Listing: ${listings?.find((l) => l.id === p.listing_id)?.title ?? "listing fee"}`
+        : p.business_id
+          ? `Business listing: ${businesses?.find((b) => b.id === p.business_id)?.name ?? "business"}`
+          : (adOrderNames.get(p.ad_order_id as string) ?? "Advertising"),
+    })),
+  });
 }
 
 async function findPaymentOwner(

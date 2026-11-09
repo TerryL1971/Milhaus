@@ -66,7 +66,9 @@
     "privacy": "Datenschutz",
     "impressum": "Impressum",
     "tagline": "Eine Anlaufstelle für die amerikanische Community in Deutschland. Nicht verbunden mit dem US-Verteidigungsministerium.",
-    "advertise": "Bei uns werben"
+    "advertise": "Bei uns werben",
+    "withdrawalPolicy": "Widerrufsbelehrung",
+    "withdraw": "Vertrag widerrufen"
   },
   "CookieConsent": {
     "message": "Wir möchten datenschutzfreundliche Analysen nutzen, um zu sehen, wie Milhaus verwendet wird. Wir aktivieren dies erst, wenn Sie zustimmen — die Seite funktioniert in jedem Fall gleich.",
@@ -291,7 +293,8 @@
     "highlightHint": "★ Markieren Sie bis zu 3, die auf der Karte Ihres Inserats erscheinen (bei langen Namen weniger — die Karte hat eine Zeile).",
     "highlightOnCard": "{item} auf der Karte zeigen",
     "highlightsFull": "Das passt nicht mehr — die Zeile auf Ihrer Karte ist schon voll. Entfernen Sie eine Markierung, um stattdessen diese zu wählen.",
-    "highlightsMax": "Sie können bis zu {max} hervorheben — entfernen Sie eine Markierung, um stattdessen diese zu wählen."
+    "highlightsMax": "Sie können bis zu {max} hervorheben — entfernen Sie eine Markierung, um stattdessen diese zu wählen.",
+    "newCarHint": "Händler, die ein Neufahrzeug anbieten: Bitte Kraftstoff-/Energieverbrauch und CO₂-Emissionen in der Beschreibung angeben (Pkw-EnVKV). Für Gebrauchtwagen nicht erforderlich."
   },
   "ListingDetail": {
     "backToListings": "← Zurück zu den Angeboten",
@@ -552,7 +555,10 @@
     "emailButton": "E-Mail an {name}",
     "theSeller": "den Verkäufer",
     "moreFromSeller": "Mehr von {name}",
-    "visitWebsite": "Website besuchen"
+    "visitWebsite": "Website besuchen",
+    "privateSeller": "Privatperson",
+    "businessSeller": "Gewerblich",
+    "privateSellerNote": "Privatperson: Die EU-Verbraucherschutzrechte (z. B. das Widerrufsrecht) gelten bei Verträgen mit Privatpersonen nicht."
   },
   "SellerProfilePage": {
     "emailButton": "E-Mail an {name}",
@@ -778,5 +784,63 @@
   },
   "AdLabel": {
     "label": "Anzeige"
+  },
+  "WithdrawalPage": {
+    "metaTitle": "Widerrufsbelehrung",
+    "metaDescription": "Widerrufsbelehrung und Muster-Widerrufsformular für kostenpflichtige Leistungen von Milhaus (Inserate und Werbeplätze).",
+    "intro": "Gilt für Verbraucher, die bei Milhaus eine kostenpflichtige Leistung kaufen — Inseratsgebühren, Verlängerungen und Werbeplätze.",
+    "withdrawButton": "Vertrag widerrufen"
+  },
+  "WithdrawPage": {
+    "heading": "Vertrag widerrufen",
+    "metaDescription": "Widerrufen Sie online einen mit Milhaus geschlossenen Vertrag.",
+    "intro": "Hier können Sie einen kostenpflichtigen Vertrag mit Milhaus (Inseratsgebühr, Verlängerung oder Werbeplätze) innerhalb der 14-tägigen Widerrufsfrist widerrufen. Wir bestätigen den Eingang sofort per E-Mail.",
+    "policyLead": "Ihre Rechte im Einzelnen:",
+    "policyLink": "Widerrufsbelehrung",
+    "name": "Ihr Name",
+    "email": "E-Mail für die Eingangsbestätigung",
+    "emailHint": "Am besten die Adresse, mit der Sie bestellt haben.",
+    "contract": "Welchen Vertrag möchten Sie widerrufen?",
+    "contractPlaceholder": "z. B. Inseratsgebühr für „3-Zimmer-Wohnung in Ramstein“ oder Werbeplätze, bestellt am …",
+    "orderedOn": "Bestellt am (optional)",
+    "confirmButton": "Widerruf bestätigen",
+    "receivedHeading": "Ihr Widerruf ist eingegangen",
+    "receivedBody": "Vielen Dank. Wir haben Ihren Widerruf erhalten und erstatten Ihre Zahlung unverzüglich, spätestens binnen 14 Tagen. Bitte bewahren Sie diese Bestätigung auf.",
+    "receivedAt": "Eingegangen am",
+    "reference": "Referenz",
+    "emailSent": "Eine Eingangsbestätigung wurde an Ihre E-Mail-Adresse gesendet.",
+    "emailNotSent": "Die Bestätigungs-E-Mail konnte gerade nicht gesendet werden — Ihr Widerruf ist trotzdem gespeichert. Bitte speichern oder drucken Sie diese Seite."
+  },
+  "EnergyCertificate": {
+    "heading": "Energieausweis",
+    "hint": "In Deutschland vorgeschrieben (§ 87 GEG): Übernehmen Sie die Angaben aus dem Energieausweis des Hauses bzw. der Wohnung.",
+    "type": "Art des Energieausweises",
+    "choose": "Bitte wählen …",
+    "typeDemand": "Energiebedarfsausweis",
+    "typeConsumption": "Energieverbrauchsausweis",
+    "typeExempt": "Kein Energieausweis erforderlich (z. B. Baudenkmal)",
+    "valueDemand": "Endenergiebedarf (kWh/(m²·a))",
+    "valueConsumption": "Endenergieverbrauch (kWh/(m²·a))",
+    "class": "Energieeffizienzklasse",
+    "classNone": "Nicht angegeben (Ausweis vor Mai 2014)",
+    "source": "Wesentlicher Energieträger der Heizung",
+    "yearBuilt": "Baujahr",
+    "demandShort": "Endenergiebedarf",
+    "consumptionShort": "Endenergieverbrauch",
+    "classShort": "Effizienzklasse",
+    "sourceShort": "Energieträger",
+    "yearBuiltShort": "Baujahr",
+    "sources": {
+      "gas": "Erdgas",
+      "oil": "Heizöl",
+      "electricity": "Strom",
+      "district_heating": "Fernwärme",
+      "heat_pump": "Wärmepumpe",
+      "wood": "Holz / Pellets",
+      "liquid_gas": "Flüssiggas",
+      "solar": "Solarthermie",
+      "coal": "Kohle",
+      "other": "Sonstige"
+    }
   }
 }

@@ -97,6 +97,19 @@ export interface Listing {
    * badge. "everyone" shows no badge; null on listings posted before
    * the field existed. */
   availableTo: "everyone" | "military_and_expats" | "military_only" | null;
+  /** Homes only — the energy certificate (Energieausweis) details § 87
+   * GEG requires in every property ad (2026-11-09 legal pass, see
+   * src/components/energy-certificate-fields.tsx). "exempt" = no
+   * certificate needed (e.g. a listed building). Null on homes posted
+   * before the fields existed. */
+  energyCertificateType: "demand" | "consumption" | "exempt" | null;
+  /** kWh per m² per year, from the certificate. */
+  energyValueKwh: number | null;
+  /** A+ … H; null when the certificate predates classes (before May 2014). */
+  energyClass: string | null;
+  /** Main heating energy source, from the certificate. */
+  energySource: string | null;
+  yearBuilt: number | null;
   /** Car only — null on a rental. */
   make: string | null;
   /** Car only — null on a rental. */
