@@ -11,6 +11,7 @@ import { notFound } from "next/navigation";
 import { Dancing_Script, IBM_Plex_Mono, Work_Sans, Libre_Baskerville } from "next/font/google";
 import { ConditionalAnalytics } from "@/components/conditional-analytics";
 import { CookieConsentBanner } from "@/components/cookie-consent-banner";
+import { PopupAd } from "@/components/popup-ad";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { WelcomeBanner } from "@/components/welcome-banner";
@@ -111,6 +112,8 @@ export default async function LocaleLayout({
           <div className="flex flex-1 flex-col">{children}</div>
           <SiteFooter />
           <CookieConsentBanner />
+          {/* Charlie's pop-up ad (2026-11-09) — after 30 seconds, once per visit. */}
+          <PopupAd />
         </NextIntlClientProvider>
         {/* No-op until deployed to Vercel (that's what activates it) —
             and now also until a visitor accepts the cookie banner above;

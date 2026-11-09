@@ -41,6 +41,7 @@
     "products": "Artikel",
     "services": "Dienstleistungen",
     "events": "Veranstaltungen",
+    "contact": "Kontakt",
     "openMenu": "Menü öffnen",
     "closeMenu": "Menü schließen"
   },
@@ -737,6 +738,9 @@
     "special_offersName": "Sonderangebots-Karte",
     "special_offersWhere": "Eine große Karte in der Sonderangebote-Reihe der Startseite und auf der Angebote-Seite.",
     "special_offersSize": "Gestaltung in 500 × 600 px",
+    "popupName": "Pop-up-Anzeige",
+    "popupWhere": "Eine quadratische Anzeige, die erscheint, wenn jemand 30 Sekunden auf der Seite ist — einmal pro Besuch.",
+    "popupSize": "Gestaltung in 1080 × 1080 px",
     "term30": "30 Tage",
     "term90": "90 Tage",
     "term180": "6 Monate",
@@ -773,6 +777,7 @@
     "placement_site_banner": "Seitenbanner",
     "placement_cars_sidebar": "Auto-Seitenleiste",
     "placement_special_offers": "Sonderangebots-Karte",
+    "placement_popup": "Pop-up-Anzeige",
     "spotNumber": "Platz {number}",
     "runsFor": "Läuft {days} Tage ab Freischaltung",
     "runsForYears": "Läuft {count, plural, =1 {1 Jahr} other {# Jahre}} ab Freischaltung",
@@ -793,6 +798,11 @@
   },
   "AdLabel": {
     "label": "Anzeige"
+  },
+  "PopupAd": {
+    "close": "Anzeige schließen",
+    "learnMore": "Mehr erfahren",
+    "dialogLabel": "Anzeige von {name}"
   },
   "WithdrawalPage": {
     "metaTitle": "Widerrufsbelehrung",
@@ -819,6 +829,34 @@
     "reference": "Referenz",
     "emailSent": "Eine Eingangsbestätigung wurde an Ihre E-Mail-Adresse gesendet.",
     "emailNotSent": "Die Bestätigungs-E-Mail konnte gerade nicht gesendet werden — Ihr Widerruf ist trotzdem gespeichert. Bitte speichern oder drucken Sie diese Seite."
+  },
+  "ContactPage": {
+    "metaTitle": "Kontakt",
+    "metaDescription": "Fragen zu einer Anzeige, zur Werbung oder zu etwas anderem auf Milhaus? Schreiben Sie uns — wir melden uns.",
+    "heading": "Kontakt",
+    "intro": "Brauchen Sie Hilfe bei etwas Bestimmtem? Wählen Sie ein Thema, beschreiben Sie Ihr Anliegen, und wir antworten per E-Mail.",
+    "topic": "Wobei brauchen Sie Hilfe?",
+    "topicChoose": "Thema wählen…",
+    "topic_listing": "Meine Anzeige (aufgeben, bearbeiten, verlängern)",
+    "topic_finding": "Suche nach Wohnung, Auto oder Dienstleistung",
+    "topic_business": "Mein Unternehmen im Dienstleistungsverzeichnis",
+    "topic_advertising": "Werbung auf Milhaus",
+    "topic_payment": "Eine Zahlung oder Rechnung",
+    "topic_report": "Ein Problem oder eine Anzeige melden",
+    "topic_other": "Etwas anderes",
+    "name": "Ihr Name",
+    "email": "Ihre E-Mail-Adresse",
+    "message": "Ihre Nachricht",
+    "messagePlaceholder": "Beschreiben Sie Ihr Anliegen — geht es um eine Anzeige, nennen Sie bitte den Titel oder Link.",
+    "privacyNote": "Wir verwenden Ihren Namen und Ihre E-Mail-Adresse nur, um diese Nachricht zu beantworten.",
+    "send": "Nachricht senden",
+    "sending": "Wird gesendet…",
+    "sentHeading": "Danke — Ihre Nachricht ist unterwegs.",
+    "sentBody": "Wir antworten an die angegebene E-Mail-Adresse.",
+    "directHeading": "Lieber schreiben oder anrufen?",
+    "emailLabel": "E-Mail",
+    "phoneLabel": "Telefon",
+    "replyTime": "Milhaus wird von einer Person betrieben — bitte haben Sie etwas Geduld mit der Antwort."
   },
   "EnergyCertificate": {
     "heading": "Energieausweis",

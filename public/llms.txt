@@ -29,9 +29,10 @@ Key facts:
 - [Events calendar](https://www.milhaus.de/events): Upcoming community events near U.S. bases, with a link to each organiser.
 
 ## For businesses
-- [Advertise on Milhaus](https://www.milhaus.de/advertise): Banner, Cars-page sidebar and Special Offers ad spots, bought for 30 days up to several years, online or by invoice.
+- [Advertise on Milhaus](https://www.milhaus.de/advertise): Banner, Cars-page sidebar, Special Offers and pop-up ad spots, bought for 30 days up to several years, online or by invoice.
 
 ## About
+- [Contact](https://www.milhaus.de/contact): Contact form for help with a listing, finding a home or car, advertising, payments or reporting a problem.
 - [How verification works](https://www.milhaus.de/how-verification-works)
 - [Terms and Conditions](https://www.milhaus.de/terms)
 - [Privacy Policy](https://www.milhaus.de/privacy)

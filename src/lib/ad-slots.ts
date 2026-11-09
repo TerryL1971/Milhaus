@@ -7,6 +7,9 @@ export const AD_PLACEMENT_LABELS = {
   site_banner: "Site banner (homepage + every category page)",
   cars_sidebar: "Cars sidebar (/cars only)",
   special_offers: "Special Offers (homepage, up to 3 shown at once)",
+  // Charlie's ask, 2026-11-09: a pop-up after 30 seconds on the site, at
+  // most once per visit (src/components/popup-ad.tsx).
+  popup: "Pop-up (after 30 seconds on the site, once per visit)",
 } as const;
 
 export type AdPlacement = keyof typeof AD_PLACEMENT_LABELS;
@@ -21,6 +24,7 @@ export const AD_PLACEMENT_SHORT_LABELS: Record<AdPlacement, string> = {
   site_banner: "Site banner",
   cars_sidebar: "Cars sidebar",
   special_offers: "Special Offers card",
+  popup: "Pop-up ad",
 };
 export const AD_PLACEMENTS = Object.keys(AD_PLACEMENT_LABELS) as AdPlacement[];
 
@@ -35,6 +39,7 @@ export const AD_PLACEMENT_SIZES: Record<AdPlacement, string> = {
   // card on the site (Homes/Cars/Services), not a fixed 300px box, so a
   // wider image reads better here than a true 300x600 "Half Page Ad"
   // crop would.
+  popup: "Square, shown up to 440×440px (smaller on phones). Design at 1080×1080px — the same size as an Instagram post, so most advertisers already have one.",
   special_offers: "Fluid width (roughly 500px on desktop, narrower on phones) × fixed 600px height. Design at roughly 500×600px, 1000×1200px for retina — a differently-shaped image still works, just cropped to fill (object-cover).",
 };
 

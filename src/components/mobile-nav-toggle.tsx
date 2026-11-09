@@ -84,6 +84,10 @@ export function MobileNavToggle({
             <Link href="/events" className={navLinkClass} onClick={close}>
               {t("events")}
             </Link>
+            {/* Charlie, 2026-11-09 — same as the desktop header. */}
+            <Link href="/contact" className={navLinkClass} onClick={close}>
+              {t("contact")}
+            </Link>
           </nav>
 
           <div className="flex flex-col gap-2.5">

@@ -64,6 +64,14 @@ the exemption ends and the obligations below start to apply.
 - **Data processing agreements (AVV / DPA)** with every processor:
   Supabase, Vercel, Stripe, Resend, Sentry and IONOS. Most are accepted
   in each provider's dashboard.
+- **Privacy policy additions (2026-11-09):** the Contact form (name,
+  email and message, stored in Admin → Messages until deleted), and the
+  pop-up ad's two session-storage entries (when the visit started, and
+  whether the pop-up has shown, so it appears at most once per visit;
+  both are cleared when the browser session ends).
+  Whether that storage needs cookie consent under § 25 TDDDG is a
+  question for the lawyer or legal-text service; if it does, the pop-up
+  can be limited to visitors who accepted the cookie banner.
 - **Privacy policy additions:** IONOS (email), advertiser and invoice
   data, the 8–10-year tax retention of invoices, the supervisory
   authority (Landesbeauftragter für Datenschutz und Informationsfreiheit

@@ -89,7 +89,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
       alternates: { languages: withLanguageAlternates("/events") },
     },
-    ...["/for-landlords", "/how-verification-works"].map((path) => ({
+    ...["/for-landlords", "/how-verification-works", "/contact"].map((path) => ({
       url: `${SITE_URL}${path}`,
       lastModified: new Date(),
       changeFrequency: "monthly" as const,

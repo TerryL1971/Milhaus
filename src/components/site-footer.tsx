@@ -73,7 +73,8 @@ export async function SiteFooter() {
         // requirements plus the real facts already in Terms/Impressum —
         // see that page's own header comment for what still needs a
         // lawyer's/Charlie's confirmation before treating it as final.
-        { label: t("contact"), href: "mailto:info@milhaus.de" },
+        // The Contact page since 2026-11-09 (was a plain mailto: link).
+        { label: t("contact"), href: "/contact" },
         { label: t("terms"), href: "/terms" },
         { label: t("privacy"), href: "/privacy" },
         { label: t("impressum"), href: "/impressum" },

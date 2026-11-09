@@ -20,7 +20,7 @@ civilians, their families and expats. It has five sections:
 - **Events** — a calendar curated by the owner.
 
 The site earns money from posting fees, 30-day renewals and ad spots (banner,
-Cars sidebar, Special Offers), all priced by the owner in Admin → Pricing.
+Cars sidebar, Special Offers, pop-up), all priced by the owner in Admin → Pricing.
 
 **Owner:** Charlie. He is non-technical and runs the site alone from `/admin`
 — there's no routine approval queue, but he manages prices, ads, invoices,
@@ -79,6 +79,9 @@ may hire someone else to change it.
   service-role client after an ownership check). The live `listing-photos`
   storage policy refuses users' direct uploads.
 - **No pop-ups** (Charlie's preference) — use an on-page message or banner.
+  The one exception is the paid pop-up ad Charlie asked for on 2026-11-09
+  (`src/components/popup-ad-dialog.tsx`: after 30 seconds, once per visit,
+  never over forms or legal pages). Don't add others.
 - **On phones, scale elements in place** rather than moving them elsewhere
   in the layout, and check every change at phone width.
 

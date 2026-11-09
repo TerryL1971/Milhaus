@@ -4,7 +4,7 @@
 // reads the session on every request to swap "Sign in" for the signed-in
 // state, so it's never stale the way a client-fetched version could be.
 
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import Image from "next/image";
 import NextLink from "next/link";
 import { Avatar } from "@/components/avatar";
@@ -23,8 +23,20 @@ import { createClient } from "@/lib/supabase/server";
 const toggleButtonClass =
   "rounded-md border border-paper/35 px-4 py-2 text-sm font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:border-paper/70";
 
-export async function SiteHeader({ translatedPage = true }: { translatedPage?: boolean } = {}) {
+export async function SiteHeader({
+  translatedPage = true,
+}: { translatedPage?: boolean } = {}) {
   const t = await getTranslations("SiteHeader");
+  // German labels ("Dienstleistungen", "Veranstaltungen", "Anzeige
+  // aufgeben") are much longer than the English ones; with Contact added
+  // as a 6th link (2026-11-09) the German header ran 163px off the side
+  // of a 1280px laptop (it was already 68px over before). On German pages
+  // between xl and 2xl, everything scales down a step in place — logo,
+  // link text, gaps, button padding — rather than moving anywhere.
+  // English and screens 1536px+ are unchanged.
+  const compact = (await getLocale()) === "de";
+  const fit = (base: string, small: string) =>
+    compact ? `${base} ${small}` : base;
   const supabase = await createClient();
   const {
     data: { user },
@@ -46,7 +58,12 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
 
   return (
     <header className="sticky top-0 z-50 bg-ink text-paper">
-      <div className="relative mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-5 py-[18px] sm:gap-6 sm:px-8">
+      <div
+        className={fit(
+          "relative mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-5 py-[18px] sm:gap-6 sm:px-8",
+          "xl:gap-4 2xl:gap-6",
+        )}
+      >
         <HomeLink className="flex flex-shrink-0 items-center">
           {/* h-7, not h-10, below md — this logo file is a ~8.5:1 wide
               lockup; at h-10 it renders ~338px wide, which alone exceeds
@@ -65,7 +82,7 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
             width={1994}
             height={236}
             priority
-            className="h-7 w-auto md:h-10"
+            className={fit("h-7 w-auto md:h-10", "xl:h-8 2xl:h-10")}
           />
         </HomeLink>
 
@@ -78,28 +95,64 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
             Switching at md pushed the right-side buttons off-screen (and
             gave the page a horizontal scrollbar) on every tablet and small
             laptop between 768 and ~1200px; those get the hamburger now. */}
-        <nav className="hidden gap-6 whitespace-nowrap text-[0.92rem] font-medium xl:flex">
-          <Link href="/listings" className="opacity-85 transition-opacity hover:opacity-100">
+        <nav
+          className={fit(
+            "hidden gap-6 whitespace-nowrap text-[0.92rem] font-medium xl:flex",
+            "xl:gap-4 xl:text-[0.86rem] 2xl:gap-6 2xl:text-[0.92rem]",
+          )}
+        >
+          <Link
+            href="/listings"
+            className="opacity-85 transition-opacity hover:opacity-100"
+          >
             {t("homes")}
           </Link>
-          <Link href="/cars" className="opacity-85 transition-opacity hover:opacity-100">
+          <Link
+            href="/cars"
+            className="opacity-85 transition-opacity hover:opacity-100"
+          >
             {t("cars")}
           </Link>
-          <Link href="/offers" className="opacity-85 transition-opacity hover:opacity-100">
+          <Link
+            href="/offers"
+            className="opacity-85 transition-opacity hover:opacity-100"
+          >
             {t("specialOffers")}
           </Link>
-          <Link href="/services" className="opacity-85 transition-opacity hover:opacity-100">
+          <Link
+            href="/services"
+            className="opacity-85 transition-opacity hover:opacity-100"
+          >
             {t("services")}
           </Link>
-          <Link href="/events" className="opacity-85 transition-opacity hover:opacity-100">
+          <Link
+            href="/events"
+            className="opacity-85 transition-opacity hover:opacity-100"
+          >
             {t("events")}
+          </Link>
+          {/* Contact added as a 6th (Charlie, 2026-11-09) so people can ask
+              for help from the start, not hunt for it in the footer. */}
+          <Link
+            href="/contact"
+            className="opacity-85 transition-opacity hover:opacity-100"
+          >
+            {t("contact")}
           </Link>
         </nav>
 
-        <div className="hidden flex-shrink-0 items-center gap-3 xl:flex">
+        <div
+          className={fit(
+            "hidden flex-shrink-0 items-center gap-3 xl:flex",
+            "xl:gap-2 2xl:gap-3",
+          )}
+        >
           {/* Same slot/style as the Admin link — DE/EN always shows here;
               Admin joins it alongside for admins, rather than replacing it. */}
-          <LanguageToggle className={toggleButtonClass} preservePath={translatedPage} />
+          <LanguageToggle
+            className={toggleButtonClass}
+            preservePath={translatedPage}
+          />
           {user ? (
             <>
               {/* Plain next/link, not the i18n one — /admin sits outside
@@ -114,22 +167,36 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
                   compact circle instead of the email text this replaced,
                   so it also works as the "click the poster" affordance
                   pattern used elsewhere (SellerCard, /sellers/[id]). */}
-              <Link href="/my-listings" title={accountName} className="opacity-85 hover:opacity-100">
-                <Avatar name={accountName} photoUrl={accountPhotoUrl} size="sm" />
+              <Link
+                href="/my-listings"
+                title={accountName}
+                className="opacity-85 hover:opacity-100"
+              >
+                <Avatar
+                  name={accountName}
+                  photoUrl={accountPhotoUrl}
+                  size="sm"
+                />
               </Link>
               {/* Post An Ad sits immediately before the auth button in
                   both states (Sign Out here, Log In when signed out) —
                   Charlie's ask; this used to render after Sign Out. */}
               <Link
                 href="/post-ad"
-                className="rounded-md border border-paper/35 px-5 py-2.5 text-base font-semibold transition-[transform,box-shadow] hover:-translate-y-px hover:border-paper/70"
+                className={fit(
+                  "rounded-md border border-paper/35 px-5 py-2.5 text-base font-semibold transition-[transform,box-shadow] hover:-translate-y-px hover:border-paper/70",
+                  "xl:px-3.5 xl:text-[0.95rem] 2xl:px-5 2xl:text-base",
+                )}
               >
                 {t("postAd")}
               </Link>
               <form action="/auth/sign-out" method="post">
                 <button
                   type="submit"
-                  className="rounded-md border border-paper/35 px-5 py-2.5 text-sm font-semibold transition-[transform,box-shadow] hover:-translate-y-px hover:border-paper/70"
+                  className={fit(
+                    "rounded-md border border-paper/35 px-5 py-2.5 text-sm font-semibold transition-[transform,box-shadow] hover:-translate-y-px hover:border-paper/70",
+                    "xl:px-3.5 2xl:px-5",
+                  )}
                 >
                   {t("signOut")}
                 </button>
@@ -149,13 +216,19 @@ export async function SiteHeader({ translatedPage = true }: { translatedPage?: b
                   other nav link/button stays at its existing size. */}
               <Link
                 href="/post-ad"
-                className="rounded-md border border-paper/35 px-5 py-2.5 text-base font-semibold transition-[transform,box-shadow] hover:-translate-y-px hover:border-paper/70"
+                className={fit(
+                  "rounded-md border border-paper/35 px-5 py-2.5 text-base font-semibold transition-[transform,box-shadow] hover:-translate-y-px hover:border-paper/70",
+                  "xl:px-3.5 xl:text-[0.95rem] 2xl:px-5 2xl:text-base",
+                )}
               >
                 {t("postAd")}
               </Link>
               <Link
                 href="/sign-in"
-                className="rounded-md bg-brass px-5 py-2.5 text-base font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep"
+                className={fit(
+                  "rounded-md bg-brass px-5 py-2.5 text-base font-semibold text-paper transition-[transform,box-shadow] hover:-translate-y-px hover:bg-brass-deep",
+                  "xl:px-3.5 xl:text-[0.95rem] 2xl:px-5 2xl:text-base",
+                )}
               >
                 {t("signIn")}
               </Link>
