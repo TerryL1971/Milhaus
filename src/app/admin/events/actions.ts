@@ -96,8 +96,14 @@ export async function setEventCategory(formData: FormData) {
   if (!isEventCategory(category)) throw new Error("Choose a category.");
 
   const supabase = await createClient();
-  const { error } = await supabase.from("events").update({ category }).eq("id", id);
+  // .select("id") so a save that changed nothing (signed out, or not an
+  // admin — RLS just skips the row, no error) reports that instead of
+  // the picker saying "✓ Saved". Same check as src/app/admin/users/actions.ts.
+  const { data, error } = await supabase.from("events").update({ category }).eq("id", id).select("id");
   if (error) throw new Error(error.message);
+  if (!data || data.length === 0) {
+    throw new Error("That didn't save — you may need to sign in again.");
+  }
 
   revalidateEventPaths();
 }
