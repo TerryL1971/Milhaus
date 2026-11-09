@@ -1,13 +1,13 @@
 // src/app/admin/users/page.tsx
 // Admin's Users page — change what role someone has without needing to
-// remember the exact role strings (admin/housing_office_partner/landlord/
+// remember the exact role strings (admin/landlord/
 // individual_lister) or touch the database directly.
 
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { setUserRole, setUserStatus } from "@/app/admin/users/actions";
-import { getAllProfiles, ROLE_LABELS, STATUS_LABELS } from "@/lib/profiles";
+import { ASSIGNABLE_ROLES, getAllProfiles, ROLE_LABELS, STATUS_LABELS } from "@/lib/profiles";
 import { isAdminRole } from "@/lib/roles";
 import { createClient } from "@/lib/supabase/server";
 import type { ProfileRole, ProfileStatus } from "@/lib/types";
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const ROLE_OPTIONS = Object.entries(ROLE_LABELS) as [ProfileRole, string][];
+const ROLE_OPTIONS = ASSIGNABLE_ROLES.map((role) => [role, ROLE_LABELS[role]] as [ProfileRole, string]);
 const STATUS_OPTIONS = Object.entries(STATUS_LABELS) as [ProfileStatus, string][];
 
 export default async function AdminUsersPage() {

@@ -4,17 +4,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { ASSIGNABLE_ROLES } from "@/lib/profiles";
 import type { ProfileRole, ProfileStatus } from "@/lib/types";
 import { createClient } from "@/lib/supabase/server";
 
-const VALID_ROLES: ProfileRole[] = [
-  "owner",
-  "admin",
-  "housing_office_partner",
-  "landlord",
-  "individual_lister",
-  "dealer",
-];
+// The retired housing_office_partner role can't be set (CLAUDE.md rule 1).
+const VALID_ROLES: ProfileRole[] = ASSIGNABLE_ROLES;
 
 const VALID_STATUSES: ProfileStatus[] = ["active", "suspended", "banned"];
 

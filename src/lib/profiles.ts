@@ -38,14 +38,24 @@ export interface Profile {
 
 // Human-readable labels for the role dropdown — so nobody has to remember
 // the exact enum string (the problem that prompted building this page).
+// housing_office_partner is still a database value (kept for history) but
+// must never be shown or chosen — the no-Housing-Office rule (CLAUDE.md
+// rule 1, 2026-11-04). It reads as a plain lister here, and
+// ASSIGNABLE_ROLES leaves it out of the Users page dropdown. (It was
+// still offered there until Terry spotted it, 2026-11-09.)
 export const ROLE_LABELS: Record<ProfileRole, string> = {
   owner: "Owner",
   admin: "Admin",
-  housing_office_partner: "Housing office partner",
+  housing_office_partner: "Lister (old role)",
   landlord: "Landlord",
   individual_lister: "Individual lister",
   dealer: "Dealer (pays to post)",
 };
+
+/** The roles Admin → Users may set — every role except the retired
+ * housing_office_partner. src/app/admin/users/actions.ts checks against
+ * this too. */
+export const ASSIGNABLE_ROLES: ProfileRole[] = ["owner", "admin", "landlord", "individual_lister", "dealer"];
 
 function mapProfileRow(row: Record<string, unknown>): Profile {
   return {
