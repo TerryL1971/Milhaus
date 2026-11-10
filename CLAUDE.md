@@ -71,7 +71,7 @@ may hire someone else to change it.
 - **Card highlights:** a lister stars up to **3** features / what's-nearby
   items, and only as many as fit one line on the narrowest card. The form
   enforces it; cards never show half a label.
-- **Homepage Featured Homes** shows 2 for rent and 1 for sale.
+- **Homepage rows** show 4 cards (`CARDS_PER_ROW`, Terry 2026-11-10 — was 3); Featured Homes is 3 for rent and 1 for sale.
 - **Ads:** businesses buy spots on `/advertise` (cart + Stripe Checkout), or
   Charlie emails an itemized Stripe invoice from Admin → Ad orders. A bought
   spot's time starts when it first goes live with artwork.

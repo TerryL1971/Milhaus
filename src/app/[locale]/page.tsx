@@ -39,8 +39,14 @@ export async function generateMetadata(): Promise<Metadata> {
   return pageMetadata({ locale, path: "", description: t("description"), shareTitle: t("title") });
 }
 
+// How many cards each homepage row shows. Was 3; Terry asked for 4 per
+// row on 2026-11-10 ("probably temporary") — change this one number to
+// go back. The grids go 1 → 2 (2×2) → 4 wide; 3 columns is skipped so a
+// row of 4 never leaves one card alone on a second line.
+const CARDS_PER_ROW = 4;
+
 // Same fallback-when-no-photo treatment as ListingsGrid/CarsGrid, just a
-// local copy sized to 3 (these "Featured X" sections never show more).
+// local copy (cycled with %, so it doesn't need one per card).
 const RENTAL_PHOTO_GRADIENTS = [
   "linear-gradient(135deg,#D8C9A8,#A9AE83)",
   "linear-gradient(135deg,#C3B79D,#8C9873)",
@@ -68,26 +74,31 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
     data: { user },
   } = await supabase.auth.getUser();
   const [homesForRent, homesForSale, featuredCars, featuredBusinesses, specialOffers, favoriteIds] = await Promise.all([
-    getFeaturedListings("rental", 3, "rent"),
+    getFeaturedListings("rental", CARDS_PER_ROW, "rent"),
     getFeaturedListings("rental", 1, "sale"),
-    getFeaturedListings("car", 3),
-    getFeaturedBusinesses(3),
+    getFeaturedListings("car", CARDS_PER_ROW),
+    getFeaturedBusinesses(CARDS_PER_ROW),
     getActiveAdSlots("special_offers"),
     getFavoriteListingIds(user?.id),
   ]);
 
-  // Featured Homes: two for rent and one for sale (Charlie, 2026-11-04),
-  // topped up from whichever kind there's more of so the row stays
-  // three wide while one side is thin.
-  const featuredRentals = [...homesForRent.slice(0, 3 - Math.min(homesForSale.length, 1)), ...homesForSale].slice(0, 3);
+  // Featured Homes: one for sale and the rest for rent (Charlie,
+  // 2026-11-04: two for rent and one for sale when the row was 3 wide;
+  // with 4 per row it's three for rent and one for sale), topped up from
+  // whichever kind there's more of so the row stays full while one side
+  // is thin.
+  const featuredRentals = [
+    ...homesForRent.slice(0, CARDS_PER_ROW - Math.min(homesForSale.length, 1)),
+    ...homesForSale,
+  ].slice(0, CARDS_PER_ROW);
 
   // Every card in a Featured row's first (only) line is a real LCP
   // candidate, not just whichever renders a photo first — see
   // firstPhotoIndices' own comment for why a single findIndex wasn't
-  // enough. All 3 rows render 3-wide here.
-  const rentalPriorityIndices = firstPhotoIndices(featuredRentals, (listing) => listing.photos.length > 0, 3);
-  const carPriorityIndices = firstPhotoIndices(featuredCars, (listing) => listing.photos.length > 0, 3);
-  const businessPriorityIndices = firstPhotoIndices(featuredBusinesses, (business) => Boolean(business.coverImageUrl), 3);
+  // enough. Every row renders CARDS_PER_ROW wide here.
+  const rentalPriorityIndices = firstPhotoIndices(featuredRentals, (listing) => listing.photos.length > 0, CARDS_PER_ROW);
+  const carPriorityIndices = firstPhotoIndices(featuredCars, (listing) => listing.photos.length > 0, CARDS_PER_ROW);
+  const businessPriorityIndices = firstPhotoIndices(featuredBusinesses, (business) => Boolean(business.coverImageUrl), CARDS_PER_ROW);
 
   const howSteps = [
     { num: "01", heading: t("how1Heading"), body: t("how1Body") },
@@ -363,7 +374,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
             </Link>
           </div>
           {featuredRentals.length > 0 ? (
-            <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 xl:grid-cols-4">
               {featuredRentals.map((listing, index) => (
                 <ListingCard key={listing.id} listing={listing} photoGradient={RENTAL_PHOTO_GRADIENTS[index % RENTAL_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} priority={rentalPriorityIndices.has(index)} />
               ))}
@@ -383,7 +394,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
             </Link>
           </div>
           {featuredCars.length > 0 ? (
-            <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 xl:grid-cols-4">
               {featuredCars.map((listing, index) => (
                 <CarListingCard key={listing.id} listing={listing} photoGradient={CAR_PHOTO_GRADIENTS[index % CAR_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} priority={carPriorityIndices.has(index)} />
               ))}
@@ -405,7 +416,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
             </Link>
           </div>
           {featuredBusinesses.length > 0 ? (
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
               {featuredBusinesses.map((business, index) => (
                 <BusinessCard key={business.id} business={business} aspectClassName={FEATURED_CARD_ASPECT} priority={businessPriorityIndices.has(index)} />
               ))}
@@ -427,8 +438,8 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
           as the Homes/Cars/Services cards (stretch to fill their grid
           column) with a fixed 600px height — first built at a literal
           300x600 to match /cars' sidebar ad exactly, but that read as
-          too narrow next to the other cards' width, per Terry. Up to 3
-          shown at once, no rotation. Hidden entirely until Charlie's
+          too narrow next to the other cards' width, per Terry. Up to
+          CARDS_PER_ROW (4 since 2026-11-10) shown at once, no rotation. Hidden entirely until Charlie's
           added at least one — same "don't show an empty/fake section"
           rule as Military-Friendly Businesses. No real Buy & Sell
           inventory or /products page/nav were touched by this change. */}
@@ -438,8 +449,8 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
             <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
               <h2 className="font-display text-[clamp(1.5rem,7.5vw,2rem)] font-semibold text-ink">{t("specialOffersHeading")}</h2>
             </div>
-            <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 lg:grid-cols-3">
-              {specialOffers.slice(0, 3).map((offer, index) => (
+            <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 xl:grid-cols-4">
+              {specialOffers.slice(0, CARDS_PER_ROW).map((offer, index) => (
                 <SpecialOfferCard key={offer.id} offer={offer} priority={index === 0} />
               ))}
             </div>
