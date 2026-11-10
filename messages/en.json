@@ -169,7 +169,8 @@
     "availableToMilitaryAndExpats": "Military & Expats",
     "forRentBadge": "For rent",
     "forSaleBadge": "For sale",
-    "sold": "Sold"
+    "sold": "Sold",
+    "featuredBadge": "Featured"
   },
   "ListingForm": {
     "title": "Title",
@@ -462,7 +463,8 @@
     "automatic": "Automatic",
     "manual": "Manual",
     "lowMileage": "Low Mileage",
-    "noPhotoYet": "No photo yet"
+    "noPhotoYet": "No photo yet",
+    "featuredBadge": "Featured"
   },
   "CarDetail": {
     "backToCars": "← Back to cars",
@@ -519,7 +521,8 @@
     "filterAnyRating": "Any rating"
   },
   "BusinessCard": {
-    "noPhotoYet": "No photo yet"
+    "noPhotoYet": "No photo yet",
+    "featuredBadge": "Featured"
   },
   "ServiceCard": {
     "available": "Available",

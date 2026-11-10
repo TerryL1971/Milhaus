@@ -169,7 +169,8 @@
     "availableToMilitaryAndExpats": "Militär & Expats",
     "forRentBadge": "Zur Miete",
     "forSaleBadge": "Zu verkaufen",
-    "sold": "Verkauft"
+    "sold": "Verkauft",
+    "featuredBadge": "Empfohlen"
   },
   "ListingForm": {
     "title": "Titel",
@@ -462,7 +463,8 @@
     "automatic": "Automatik",
     "manual": "Schaltgetriebe",
     "lowMileage": "Niedrige Laufleistung",
-    "noPhotoYet": "Noch kein Foto"
+    "noPhotoYet": "Noch kein Foto",
+    "featuredBadge": "Empfohlen"
   },
   "CarDetail": {
     "backToCars": "← Zurück zu den Autos",
@@ -519,7 +521,8 @@
     "filterAnyRating": "Beliebige Bewertung"
   },
   "BusinessCard": {
-    "noPhotoYet": "Noch kein Foto"
+    "noPhotoYet": "Noch kein Foto",
+    "featuredBadge": "Empfohlen"
   },
   "ServiceCard": {
     "available": "Verfügbar",

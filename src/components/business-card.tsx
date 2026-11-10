@@ -38,6 +38,11 @@ export function BusinessCard({
   return (
     <div className="group relative overflow-hidden rounded-md border border-canvas-deep bg-paper transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(27,42,58,0.12)]">
       <Link href={`/businesses/${business.id}`} className="block">
+        {/* "★ Featured" on anything Charlie has featured in Admin (Terry's
+            ask, 2026-11-10: featured items showed nothing to say so). */}
+        {business.isFeatured && (
+          <span className="absolute left-2.5 top-2.5 z-10 rounded-[3px] bg-brass px-2 py-0.5 font-body text-[0.64rem] font-semibold uppercase tracking-wider text-paper">★ {t("featuredBadge")}</span>
+        )}
         {business.coverImageUrl ? (
           <div className={`relative ${aspectClassName} w-full`}>
             <Image

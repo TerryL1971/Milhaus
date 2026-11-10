@@ -76,8 +76,13 @@ export function ListingCard({
         ) : (
           <NoPhotoPlaceholder gradient={photoGradient} label={t("noPhotoYet")} />
         )}
-        {(listing.type === "rental" || listing.isNew || listing.amenities.includes("furnished") || (!isForSale && listing.amenities.includes("pet_friendly"))) && (
+        {(listing.isFeatured || listing.type === "rental" || listing.isNew || listing.amenities.includes("furnished") || (!isForSale && listing.amenities.includes("pet_friendly"))) && (
           <div className="absolute left-2.5 top-2.5 flex flex-wrap gap-1.5">
+            {/* "★ Featured" on anything Charlie has featured in Admin (Terry's
+            ask, 2026-11-10: featured items showed nothing to say so). */}
+            {listing.isFeatured && (
+              <span className="rounded-[3px] bg-brass px-2 py-0.5 font-body text-[0.64rem] font-semibold uppercase tracking-wider text-paper">★ {t("featuredBadge")}</span>
+            )}
             {/* For rent / For sale on every home (Charlie, 2026-11-04) —
                 they sit side by side on the homepage's Featured Homes. */}
             {listing.type === "rental" && (

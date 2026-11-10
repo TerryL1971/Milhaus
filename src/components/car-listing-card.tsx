@@ -65,6 +65,11 @@ export function CarListingCard({
         ) : (
           <NoPhotoPlaceholder gradient={photoGradient} label={t("noPhotoYet")} />
         )}
+        {/* "★ Featured" on anything Charlie has featured in Admin (Terry's
+            ask, 2026-11-10: featured items showed nothing to say so). */}
+        {listing.isFeatured && (
+          <span className="absolute left-2.5 top-2.5 rounded-[3px] bg-brass px-2 py-0.5 font-body text-[0.64rem] font-semibold uppercase tracking-wider text-paper">★ {t("featuredBadge")}</span>
+        )}
       </div>
       <div className="px-4 pb-4 pt-3.5">
         <div className="mb-1 flex items-start justify-between">
