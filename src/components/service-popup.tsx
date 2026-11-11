@@ -9,7 +9,8 @@
 // /advertise, on a misreading of the ask. When Terry saw Charlie's design
 // he had that spot removed (supabase/migrations/20261109210000_service_popup.sql).
 // The layout here was built from a blurry photo of the design; adjust it
-// when Charlie's original file arrives.
+// when Charlie's original file arrives. His "Milhaus Service" logo artwork
+// arrived on 2026-11-11 and is now used as is (see the logo below).
 //
 // When it appears (unchanged from the first version, tested in the
 // browser on 2026-11-09):
@@ -157,23 +158,20 @@ export function ServicePopup() {
           ×
         </button>
 
-        {/* Logo with the red script "Service" sweeping under its right
-            end, as in Charlie's design. */}
-        <div className="relative mb-5 mr-6 mt-2 pb-7">
+        {/* Charlie's own "Milhaus Service" artwork (sent 2026-11-11), in
+            place of the logo + script font first rebuilt from the blurry
+            photo. It arrived as a JPG on black — the black was lost
+            transparency — so public/brand/milhaus-service-logo.png is that
+            file with the black made transparent, to sit on the cream. If
+            Charlie sends a transparent PNG or SVG, replace that file. */}
+        <div className="mb-4 mr-8 mt-1">
           <Image
-            src="/brand/milhaus-logo-full-color-horizontal.png"
-            alt="Milhaus"
-            width={1994}
-            height={236}
-            className="h-auto w-[78%]"
+            src="/brand/milhaus-service-logo.png"
+            alt="Milhaus Service"
+            width={877}
+            height={261}
+            className="h-auto w-full"
           />
-          <span
-            aria-hidden="true"
-            className="absolute bottom-0 right-0 -rotate-6 text-[2.6rem] leading-none text-brass sm:text-[3rem]"
-            style={{ fontFamily: "var(--font-script)" }}
-          >
-            Service
-          </span>
         </div>
 
         <h2
