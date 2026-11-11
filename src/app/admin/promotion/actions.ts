@@ -67,9 +67,11 @@ export async function savePromotion(formData: FormData) {
     .select("id");
 
   if (error) {
-    // 42703 = a column doesn't exist: the migration hasn't been run.
+    // A missing column means the migration hasn't been run: Postgres
+    // says 42703, Supabase's API says PGRST204 ("Could not find the …
+    // column … in the schema cache" — what Terry saw, 2026-11-11).
     fail(
-      error.code === "42703"
+      error.code === "42703" || error.code === "PGRST204"
         ? "The database needs a small update first (supabase/migrations/20261111120000_promotion_settings.sql)."
         : error.message,
     );
