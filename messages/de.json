@@ -668,7 +668,7 @@
     "saleHeading": "Eine Immobilie zum Kauf",
     "saleBody": "Verkaufen Sie ein Haus oder eine Wohnung, die Ihnen gehört.",
     "individualNote": "Wohnungen, Häuser und Autos sind für dich kostenlos, weil du in deinem Profil angegeben hast, dass du privat inserierst. Gewerbliche Anbieter zahlen den normalen Preis. <link>In „Meine Anzeigen“ ändern</link>.",
-    "freeDaysLeft": "{days, plural, =1 {nur noch heute} other {noch # Tage}}"
+    "freeDaysLeft": "{days, plural, =1 {nur noch heute} other {noch <num>#</num> Tage}}"
   },
   "ListingsPage": {
     "metaTitle": "Wohnungen zur Miete",

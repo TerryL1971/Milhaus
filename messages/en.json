@@ -668,7 +668,7 @@
     "saleHeading": "A Home for Sale",
     "saleBody": "Selling a house or apartment you own.",
     "individualNote": "Homes and cars are free for you because your profile says you're a private individual. Businesses pay the normal price. <link>Change this in My listings</link>.",
-    "freeDaysLeft": "{days, plural, =1 {today only} other {for # days}}"
+    "freeDaysLeft": "{days, plural, =1 {today only} other {for <num>#</num> days}}"
   },
   "ListingsPage": {
     "metaTitle": "Homes for rent",
