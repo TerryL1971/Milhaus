@@ -137,15 +137,17 @@ export default async function PostAdPage() {
                     <s className="mb-0.5 rounded-[3px] bg-canvas-deep/60 px-2 py-0.5 font-mono text-[0.7rem] font-semibold tracking-wider text-ink-soft decoration-brass decoration-2">
                       {currencyFormatter.format(option.priceEur)}
                     </s>
-                    {/* "FREE for 51 days" on one line, the number as big and
-                        bold as FREE (Terry, 2026-11-11). */}
+                    {/* One line, the number as big and bold as FREE. Counts
+                        the days left after today (Terry, 2026-11-11): "FREE
+                        for 2 more days", "FREE for 1 more day", then on the
+                        last day "FREE today only". */}
                     <span className="whitespace-nowrap font-body leading-tight text-brass">
                       <span className="text-sm font-bold uppercase tracking-wide">{t("freeLabel")}</span>
                       {promo.freeDaysLeft !== null && (
                         <span className="text-[0.72rem] font-semibold">
                           {" "}
                           {t.rich("freeDaysLeft", {
-                            days: promo.freeDaysLeft,
+                            moreDays: promo.freeDaysLeft - 1,
                             num: (chunks) => <span className="text-sm font-bold">{chunks}</span>,
                           })}
                         </span>
