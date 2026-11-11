@@ -22,8 +22,9 @@
 //     visitor comes back in a new browser session (sessionStorage, which
 //     the browser clears when the site's tabs are closed).
 //   - Never while the cookie banner is still waiting for an answer —
-//     it waits until the visitor has chosen, then appears a few seconds
-//     later.
+//     it waits until the visitor has chosen, then appears 10 seconds
+//     later (Terry, 2026-11-11 — it was 4 seconds, which felt like it
+//     jumped up straight after Accept/Decline).
 //   - Never on pages where someone is filling in a form or reading a
 //     legal text (posting, editing, signing in, contact, withdrawal,
 //     terms, privacy, Impressum). If the 30 seconds run out on one of
@@ -51,7 +52,7 @@ import { sendServiceRequest, type ServiceRequestResult } from "@/lib/service-req
 
 const DELAY_MS = 30_000;
 /** After the cookie banner is answered, how long before the pop-up. */
-const AFTER_CONSENT_MS = 4_000;
+const AFTER_CONSENT_MS = 10_000;
 const VISIT_START_KEY = "milhaus-visit-started";
 const SHOWN_KEY = "milhaus-popup-shown";
 
