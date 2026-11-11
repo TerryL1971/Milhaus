@@ -19,6 +19,7 @@ import {
 } from "@/app/admin/pricing/actions";
 import { AD_BASE_TERMS, adTermLabel, calculatedTermPrice } from "@/lib/ad-pricing";
 import { getAdPriceList } from "@/lib/ad-pricing-queries";
+import { PostingPriceRow } from "@/components/posting-price-row";
 import { AD_PLACEMENT_SHORT_LABELS, AD_PLACEMENTS } from "@/lib/ad-slots";
 import { getListingPrices, type PriceableType } from "@/lib/listing-prices";
 import { isAdminRole } from "@/lib/roles";
@@ -107,23 +108,14 @@ export default async function AdminPricingPage() {
                     {currencyFormatter.format(prices[type])}
                   </td>
                   <td className="px-4 py-3">
-                    <form action={setListingPrice} className="flex justify-end gap-2">
-                      <input type="hidden" name="type" value={type} />
-                      <input
-                        type="number"
-                        name="priceEur"
-                        min="0"
-                        step="0.50"
-                        defaultValue={prices[type]}
-                        className="w-24 rounded-md border border-canvas-deep bg-canvas px-3 py-1.5 text-sm text-charcoal focus:border-olive focus:outline-none"
-                      />
-                      <button
-                        type="submit"
-                        className="rounded-md border border-canvas-deep px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-olive hover:text-olive-deep"
-                      >
-                        Save
-                      </button>
-                    </form>
+                    {/* Own Save button per row, box highlighted when
+                        changed but not saved (Terry, 2026-11-11). */}
+                    <PostingPriceRow
+                      type={type}
+                      label={TYPE_LABELS[type]}
+                      savedPrice={prices[type]}
+                      action={setListingPrice}
+                    />
                   </td>
                 </tr>
               ))}

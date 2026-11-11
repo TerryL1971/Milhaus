@@ -12,15 +12,22 @@ import type { PriceableType } from "@/lib/listing-prices";
 
 const VALID_TYPES: PriceableType[] = ["rental", "rental_sale", "car", "product", "service", "business"];
 
-export async function setListingPrice(formData: FormData) {
+export type SavePriceResult = { ok: true } | { ok: false; message: string } | null;
+
+/** One category's posting price — each row on Admin → Pricing has its
+ * own Save button (src/components/posting-price-row.tsx). Returns a
+ * result rather than throwing, so the row can say "✓ Saved" or what
+ * went wrong (the live site hides a thrown error's message). */
+export async function setListingPrice(_previous: SavePriceResult, formData: FormData): Promise<SavePriceResult> {
   const type = formData.get("type") as string;
-  const priceEur = Number(formData.get("priceEur"));
+  const raw = formData.get("priceEur");
+  const priceEur = Number(raw);
 
   if (!VALID_TYPES.includes(type as PriceableType)) {
-    throw new Error(`Not a real listing type: "${type}"`);
+    return { ok: false, message: `Not a real listing type: "${type}"` };
   }
-  if (!Number.isFinite(priceEur) || priceEur < 0) {
-    throw new Error("Price must be a number, 0 or more.");
+  if (raw === null || raw === "" || !Number.isFinite(priceEur) || priceEur < 0) {
+    return { ok: false, message: "Price must be a number, 0 or more." };
   }
 
   const supabase = await createClient();
@@ -30,13 +37,13 @@ export async function setListingPrice(formData: FormData) {
     .eq("type", type)
     .select("type");
 
-  if (error) {
-    throw new Error(error.message);
-  }
+  if (error) return { ok: false, message: error.message };
   if (!data || data.length === 0) {
-    throw new Error("That didn't go through — you may not have permission to do this.");
+    return { ok: false, message: "That didn't save — you may need to sign in again." };
   }
-  revalidatePath("/admin/pricing");
+  // The prices also show on the posting pages and in the footer.
+  revalidatePath("/", "layout");
+  return { ok: true };
 }
 
 // The "free until" launch-promo date that used to be saved here is now
