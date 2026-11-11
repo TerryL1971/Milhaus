@@ -15,8 +15,8 @@
 // "I'm an individual" ticked — individuals post homes and cars free.
 // That was right but unexplained, so a note now says why. This page
 // also now follows the "free until" launch promo like the post forms
-// do; before, it showed the full price while the promo made posting
-// free.
+// do (before, it showed the full price while the promo made posting
+// free): the price is crossed out with "Free" under it.
 
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -48,10 +48,12 @@ export default async function PostAdPage() {
   const profile = user ? await getProfile(user.id) : null;
   const isIndividual = profile?.isIndividualLister ?? false;
   // Same rules as getPostingPrice / getPostingPriceForProfile in
-  // src/lib/listing-prices.ts: the promo makes everything free; the
-  // individual tick makes homes and cars free.
-  const priceFor = (price: number, individualsFree: boolean) =>
-    promo.isActive || (individualsFree && isIndividual) ? 0 : price;
+  // src/lib/listing-prices.ts: the individual tick makes homes and cars
+  // free; the promo makes everything free. priceEur is what it would
+  // cost without the promo — during the promo the card shows that price
+  // crossed out with "Free" under it (Terry, 2026-11-11), so people see
+  // what they're saving.
+  const priceFor = (price: number, individualsFree: boolean) => (individualsFree && isIndividual ? 0 : price);
   const individualMakesFree =
     isIndividual && !promo.isActive && (prices.rental > 0 || prices.rental_sale > 0 || prices.car > 0);
 
@@ -104,13 +106,25 @@ export default async function PostAdPage() {
                 <p className="font-display text-xl font-semibold text-ink group-hover:text-olive-deep">
                   {option.heading}
                 </p>
-                <span
-                  className={`flex-shrink-0 rounded-[3px] px-2 py-0.5 font-mono text-[0.7rem] font-semibold uppercase tracking-wider ${
-                    option.priceEur > 0 ? "bg-brass/15 text-brass-deep" : "bg-olive/15 text-olive-deep"
-                  }`}
-                >
-                  {option.priceEur > 0 ? currencyFormatter.format(option.priceEur) : t("freeLabel")}
-                </span>
+                {promo.isActive && option.priceEur > 0 ? (
+                  // Launch promo: normal price crossed out, "Free" under it.
+                  <span className="flex flex-shrink-0 flex-col items-end gap-1">
+                    <s className="rounded-[3px] bg-canvas-deep/60 px-2 py-0.5 font-mono text-[0.7rem] font-semibold tracking-wider text-ink-soft decoration-brass decoration-2">
+                      {currencyFormatter.format(option.priceEur)}
+                    </s>
+                    <span className="font-body text-base font-bold uppercase tracking-wide text-brass">
+                      {t("freeLabel")}
+                    </span>
+                  </span>
+                ) : (
+                  <span
+                    className={`flex-shrink-0 rounded-[3px] px-2 py-0.5 font-mono text-[0.7rem] font-semibold uppercase tracking-wider ${
+                      option.priceEur > 0 ? "bg-brass/15 text-brass-deep" : "bg-olive/15 text-olive-deep"
+                    }`}
+                  >
+                    {option.priceEur > 0 ? currencyFormatter.format(option.priceEur) : t("freeLabel")}
+                  </span>
+                )}
               </div>
               <p className="text-sm text-ink-soft">{option.body}</p>
             </Link>

@@ -904,5 +904,9 @@
       "coal": "Coal",
       "other": "Other"
     }
+  },
+  "PromoBanner": {
+    "message": "🎉 Free to post for a limited time — list a home, car, or item today.",
+    "dismiss": "Dismiss"
   }
 }

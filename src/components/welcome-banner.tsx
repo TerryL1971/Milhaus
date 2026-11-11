@@ -5,12 +5,15 @@
 // visit. A blocking popup tends to hurt trust/conversion and can get
 // silently eaten by the browser's own popup blocker anyway.
 //
-// MESSAGE is a plain exported constant specifically so Charlie/Terry can
-// swap the copy (e.g. once the free-posting period in CLAUDE.md/Charlie's
-// ask ends) without touching the component logic. Bump BANNER_VERSION
-// when the message changes meaningfully — that resets the "already
-// dismissed" state for everyone, since a dismissal of the old message
-// shouldn't silently suppress an unrelated new one.
+// Since 2026-11-11 (Terry's ask) it only appears while posting really
+// is free: src/components/promo-banner.tsx shows it only while the
+// "free until" launch promo in Admin → Pricing is running, so it comes
+// down by itself when that date passes. Before, the message was fixed
+// English text that stayed up whatever the prices were. The text now
+// lives in messages/*.json (PromoBanner) and arrives as `message`. Bump
+// BANNER_VERSION when the message changes meaningfully — that resets
+// the "already dismissed" state for everyone, since a dismissal of the
+// old message shouldn't silently suppress an unrelated new one.
 
 "use client";
 
@@ -19,7 +22,6 @@ import { useEffect, useState } from "react";
 const BANNER_VERSION = "1";
 const STORAGE_KEY = `milhaus-banner-dismissed-v${BANNER_VERSION}`;
 
-export const MESSAGE = "🎉 Free to post for a limited time — list a home, car, or item today.";
 
 function wasNotYetDismissed(): boolean {
   try {
@@ -32,7 +34,7 @@ function wasNotYetDismissed(): boolean {
   }
 }
 
-export function WelcomeBanner() {
+export function WelcomeBanner({ message, dismissLabel }: { message: string; dismissLabel: string }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -60,11 +62,11 @@ export function WelcomeBanner() {
 
   return (
     <div className="flex items-center justify-center gap-3 bg-olive px-4 py-2 text-center text-sm font-medium text-paper">
-      <span>{MESSAGE}</span>
+      <span>{message}</span>
       <button
         type="button"
         onClick={dismiss}
-        aria-label="Dismiss"
+        aria-label={dismissLabel}
         className="flex-shrink-0 opacity-80 hover:opacity-100"
       >
         ✕

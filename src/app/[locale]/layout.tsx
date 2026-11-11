@@ -14,7 +14,7 @@ import { CookieConsentBanner } from "@/components/cookie-consent-banner";
 import { ServicePopup } from "@/components/service-popup";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { WelcomeBanner } from "@/components/welcome-banner";
+import { PromoBanner } from "@/components/promo-banner";
 import { routing } from "@/i18n/routing";
 import { DEFAULT_OG_IMAGE, SITE_NAME } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site-url";
@@ -108,7 +108,8 @@ export default async function LocaleLayout({
       <body className="flex min-h-full flex-col font-body">
         <NextIntlClientProvider>
           <SiteHeader />
-          <WelcomeBanner />
+          {/* Only while the "free until" promo runs (2026-11-11). */}
+          <PromoBanner />
           <div className="flex flex-1 flex-col">{children}</div>
           <SiteFooter />
           <CookieConsentBanner />

@@ -904,5 +904,9 @@
       "coal": "Kohle",
       "other": "Sonstige"
     }
+  },
+  "PromoBanner": {
+    "message": "🎉 Für kurze Zeit kostenlos inserieren — stell noch heute eine Wohnung, ein Haus oder ein Auto ein.",
+    "dismiss": "Schließen"
   }
 }
