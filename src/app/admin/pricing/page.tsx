@@ -30,6 +30,13 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+// "Items for sale" (product) is left off the list (Terry, 2026-11-11):
+// Buy & Sell was retired for Special Offers on 2026-10-26, so nobody
+// posts items any more and the price would only confuse Charlie. The
+// price row stays in the database, and the label stays here, in case
+// it ever comes back.
+const HIDDEN_TYPES: PriceableType[] = ["product"];
+
 const TYPE_LABELS: Record<PriceableType, string> = {
   rental: "Homes for rent",
   rental_sale: "Homes for sale",
@@ -91,7 +98,9 @@ export default async function AdminPricingPage() {
               </tr>
             </thead>
             <tbody>
-              {(Object.keys(TYPE_LABELS) as PriceableType[]).map((type) => (
+              {(Object.keys(TYPE_LABELS) as PriceableType[])
+                .filter((type) => !HIDDEN_TYPES.includes(type))
+                .map((type) => (
                 <tr key={type} className="border-b border-canvas-deep last:border-0">
                   <td className="px-4 py-3 font-medium text-ink">{TYPE_LABELS[type]}</td>
                   <td className="px-4 py-3 font-mono text-ink-soft">
