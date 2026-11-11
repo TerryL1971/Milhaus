@@ -9,6 +9,14 @@
 // Shows each category's price up front — per Terry: the customer has to
 // know what a listing costs before clicking through, not discover it
 // after already starting the form.
+//
+// 2026-11-11 (Terry testing prices): every card said FREE for him even
+// after he set prices in Admin → Pricing, because his own profile has
+// "I'm an individual" ticked — individuals post homes and cars free.
+// That was right but unexplained, so a note now says why. This page
+// also now follows the "free until" launch promo like the post forms
+// do; before, it showed the full price while the promo made posting
+// free.
 
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -16,6 +24,7 @@ import { CartLink } from "@/components/cart-link";
 import { Link } from "@/i18n/navigation";
 import { getListingPrices } from "@/lib/listing-prices";
 import { getProfile } from "@/lib/profiles";
+import { getFreeUntilStatus } from "@/lib/site-settings";
 import { createClient } from "@/lib/supabase/server";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -27,7 +36,7 @@ const currencyFormatter = new Intl.NumberFormat("en-US", { style: "currency", cu
 
 export default async function PostAdPage() {
   const t = await getTranslations("PostAdPage");
-  const prices = await getListingPrices();
+  const [prices, promo] = await Promise.all([getListingPrices(), getFreeUntilStatus()]);
 
   // Business directory submissions aren't covered by the individual-
   // lister discount (submitting a business is, by definition, a
@@ -38,21 +47,28 @@ export default async function PostAdPage() {
   } = await supabase.auth.getUser();
   const profile = user ? await getProfile(user.id) : null;
   const isIndividual = profile?.isIndividualLister ?? false;
+  // Same rules as getPostingPrice / getPostingPriceForProfile in
+  // src/lib/listing-prices.ts: the promo makes everything free; the
+  // individual tick makes homes and cars free.
+  const priceFor = (price: number, individualsFree: boolean) =>
+    promo.isActive || (individualsFree && isIndividual) ? 0 : price;
+  const individualMakesFree =
+    isIndividual && !promo.isActive && (prices.rental > 0 || prices.rental_sale > 0 || prices.car > 0);
 
   // No "sell an item" option any more — /products became Charlie's
   // Special Offers page (promo cards, not self-listed items), so
   // /post-product isn't promoted from anywhere public any more either.
   // The form itself still works for whoever already has the direct link.
   const options = [
-    { href: "/post", heading: t("rentalHeading"), body: t("rentalBody"), priceEur: isIndividual ? 0 : prices.rental },
+    { href: "/post", heading: t("rentalHeading"), body: t("rentalBody"), priceEur: priceFor(prices.rental, true) },
     {
       href: "/post?for=sale",
       heading: t("saleHeading"),
       body: t("saleBody"),
-      priceEur: isIndividual ? 0 : prices.rental_sale,
+      priceEur: priceFor(prices.rental_sale, true),
     },
-    { href: "/post-car", heading: t("carHeading"), body: t("carBody"), priceEur: isIndividual ? 0 : prices.car },
-    { href: "/post-business", heading: t("serviceHeading"), body: t("serviceBody"), priceEur: prices.business },
+    { href: "/post-car", heading: t("carHeading"), body: t("carBody"), priceEur: priceFor(prices.car, true) },
+    { href: "/post-business", heading: t("serviceHeading"), body: t("serviceBody"), priceEur: priceFor(prices.business, false) },
   ];
 
   return (
@@ -62,6 +78,17 @@ export default async function PostAdPage() {
           <div>
             <h1 className="mb-2 font-display text-3xl font-semibold text-ink">{t("heading")}</h1>
             <p className="text-ink-soft">{t("subhead")}</p>
+            {individualMakesFree && (
+              <p className="mt-3 rounded-md bg-olive/10 px-3 py-2 text-sm text-olive-deep">
+                {t.rich("individualNote", {
+                  link: (chunks) => (
+                    <Link href="/my-listings" className="font-semibold underline">
+                      {chunks}
+                    </Link>
+                  ),
+                })}
+              </p>
+            )}
           </div>
           <CartLink />
         </div>

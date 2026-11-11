@@ -666,7 +666,8 @@
     "serviceBody": "List your own business in the directory.",
     "freeLabel": "Free",
     "saleHeading": "A Home for Sale",
-    "saleBody": "Selling a house or apartment you own."
+    "saleBody": "Selling a house or apartment you own.",
+    "individualNote": "Homes and cars are free for you because your profile says you're a private individual. Businesses pay the normal price. <link>Change this in My listings</link>."
   },
   "ListingsPage": {
     "metaTitle": "Homes for rent",
