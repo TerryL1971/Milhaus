@@ -16,7 +16,9 @@
 // That was right but unexplained, so a note now says why. This page
 // also now follows the "free until" launch promo like the post forms
 // do (before, it showed the full price while the promo made posting
-// free): the price is crossed out with "Free" under it.
+// free): the price is crossed out with "Free" under it — only on the
+// categories the promotion covers (Admin → Promotion can cover just
+// cars, for example).
 
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -24,7 +26,7 @@ import { CartLink } from "@/components/cart-link";
 import { Link } from "@/i18n/navigation";
 import { getListingPrices } from "@/lib/listing-prices";
 import { getProfile } from "@/lib/profiles";
-import { getFreeUntilStatus } from "@/lib/site-settings";
+import { getPromotion, promotionCovers } from "@/lib/site-settings";
 import { createClient } from "@/lib/supabase/server";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -36,7 +38,7 @@ const currencyFormatter = new Intl.NumberFormat("en-US", { style: "currency", cu
 
 export default async function PostAdPage() {
   const t = await getTranslations("PostAdPage");
-  const [prices, promo] = await Promise.all([getListingPrices(), getFreeUntilStatus()]);
+  const [prices, promo] = await Promise.all([getListingPrices(), getPromotion()]);
 
   // Business directory submissions aren't covered by the individual-
   // lister discount (submitting a business is, by definition, a
@@ -49,28 +51,48 @@ export default async function PostAdPage() {
   const isIndividual = profile?.isIndividualLister ?? false;
   // Same rules as getPostingPrice / getPostingPriceForProfile in
   // src/lib/listing-prices.ts: the individual tick makes homes and cars
-  // free; the promo makes everything free. priceEur is what it would
+  // free; a running promotion makes the categories it covers free. priceEur is what it would
   // cost without the promo — during the promo the card shows that price
   // crossed out with "Free" under it (Terry, 2026-11-11), so people see
   // what they're saving.
   const priceFor = (price: number, individualsFree: boolean) => (individualsFree && isIndividual ? 0 : price);
   const individualMakesFree =
-    isIndividual && !promo.isActive && (prices.rental > 0 || prices.rental_sale > 0 || prices.car > 0);
+    isIndividual &&
+    (["rental", "rental_sale", "car"] as const).some((type) => prices[type] > 0 && !promotionCovers(promo, type));
 
   // No "sell an item" option any more — /products became Charlie's
   // Special Offers page (promo cards, not self-listed items), so
   // /post-product isn't promoted from anywhere public any more either.
   // The form itself still works for whoever already has the direct link.
   const options = [
-    { href: "/post", heading: t("rentalHeading"), body: t("rentalBody"), priceEur: priceFor(prices.rental, true) },
+    {
+      href: "/post",
+      heading: t("rentalHeading"),
+      body: t("rentalBody"),
+      priceEur: priceFor(prices.rental, true),
+      promoFree: promotionCovers(promo, "rental"),
+    },
     {
       href: "/post?for=sale",
       heading: t("saleHeading"),
       body: t("saleBody"),
       priceEur: priceFor(prices.rental_sale, true),
+      promoFree: promotionCovers(promo, "rental_sale"),
     },
-    { href: "/post-car", heading: t("carHeading"), body: t("carBody"), priceEur: priceFor(prices.car, true) },
-    { href: "/post-business", heading: t("serviceHeading"), body: t("serviceBody"), priceEur: priceFor(prices.business, false) },
+    {
+      href: "/post-car",
+      heading: t("carHeading"),
+      body: t("carBody"),
+      priceEur: priceFor(prices.car, true),
+      promoFree: promotionCovers(promo, "car"),
+    },
+    {
+      href: "/post-business",
+      heading: t("serviceHeading"),
+      body: t("serviceBody"),
+      priceEur: priceFor(prices.business, false),
+      promoFree: promotionCovers(promo, "business"),
+    },
   ];
 
   return (
@@ -106,7 +128,7 @@ export default async function PostAdPage() {
                 <p className="font-display text-xl font-semibold text-ink group-hover:text-olive-deep">
                   {option.heading}
                 </p>
-                {promo.isActive && option.priceEur > 0 ? (
+                {option.promoFree && option.priceEur > 0 ? (
                   // Launch promo: normal price crossed out, "Free" under it.
                   <span className="flex flex-shrink-0 flex-col items-end gap-1">
                     <s className="rounded-[3px] bg-canvas-deep/60 px-2 py-0.5 font-mono text-[0.7rem] font-semibold tracking-wider text-ink-soft decoration-brass decoration-2">

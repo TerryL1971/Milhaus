@@ -57,9 +57,11 @@ may hire someone else to change it.
 ## How the site works (decisions to respect)
 
 - **Payment is the gate, not review.** A listing goes live as soon as it's
-  paid for, or immediately if posting is free (free category, the "free
-  until" launch promo, or a user who ticked "I'm an individual"). There is no
-  manual approval step; Charlie takes down anything abusive afterwards.
+  paid for, or immediately if posting is free (free category, a promotion
+  Charlie runs from Admin → Promotion — all or some categories, with dates
+  and its own banner text — or a user who ticked "I'm an individual").
+  There is no manual approval step; Charlie takes down anything abusive
+  afterwards. The green banner shows only while a promotion runs.
 - **Every listing lasts 30 days.** A daily Vercel Cron job
   (`/api/cron/expire-listings`) takes it down, emails the owner 3 days
   before, and renewing costs the posting fee again. Charlie can grant a free

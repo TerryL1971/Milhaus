@@ -8,7 +8,7 @@
 // included as a 5th priced category alongside the original four.
 
 import { createClient } from "@/lib/supabase/server";
-import { getFreeUntilStatus } from "@/lib/site-settings";
+import { getPromotion, promotionCovers } from "@/lib/site-settings";
 
 // "rental_sale" is a home for sale — still a type='rental' listing, with
 // its own posting price (Terry, 2026-11-04). priceableType() maps one.
@@ -51,12 +51,11 @@ export async function getListingPrice(type: PriceableType): Promise<number> {
 /** The one check every /post-* page needs before rendering its form:
  * does this category currently cost something? Returns the price to
  * show a "pay to post" gate for, or null if Charlie's left this
- * category free (price is 0), or the site-wide launch promo
- * (site_settings.free_until) is still running, and the listing goes
- * live straight away with no payment step. */
+ * category free (price is 0), or a promotion from Admin → Promotion is
+ * running and covers this category (src/lib/site-settings.ts), and the
+ * listing goes live straight away with no payment step. */
 export async function getPostingPrice(type: PriceableType): Promise<number | null> {
-  const { isActive } = await getFreeUntilStatus();
-  if (isActive) return null;
+  if (promotionCovers(await getPromotion(), type)) return null;
 
   const price = await getListingPrice(type);
   return price > 0 ? price : null;

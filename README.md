@@ -74,7 +74,8 @@ _Screenshots show sample content._
 - A dashboard built for a non-technical operator: live, expired and archived
   listings with one-click actions, users and roles, reports, businesses,
   events and ad slots.
-- Pricing control per category, a launch "free until" promotion, and an ad
+- Pricing control per category, a free-posting promotion (Admin →
+  Promotion: on/off, categories, dates, banner text), and an ad
   price list with term discounts and per-term overrides.
 - Itemized Stripe invoices for advertisers — emailed, copyable as a link, or
   marked paid for bank transfers.

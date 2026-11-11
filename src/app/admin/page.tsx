@@ -150,6 +150,13 @@ export default async function AdminPage() {
               >
                 Pricing
               </Link>
+              {/* Free-posting promotion and its banner (2026-11-11). */}
+              <Link
+                href="/admin/promotion"
+                className="rounded-md border border-canvas-deep px-5 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-ink hover:text-ink"
+              >
+                Promotion
+              </Link>
               <Link
                 href="/admin/businesses"
                 className="rounded-md border border-canvas-deep px-5 py-2.5 text-sm font-semibold text-ink-soft transition-[transform] hover:-translate-y-px hover:border-ink hover:text-ink"
