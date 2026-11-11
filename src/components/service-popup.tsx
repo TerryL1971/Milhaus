@@ -31,6 +31,9 @@
 // If the browser blocks storage, it shows once per page load after 30
 // seconds rather than failing.
 //
+// For testing on localhost, add ?popup to the page address to open it
+// immediately (see the shortcut below; ignored on the live site).
+//
 // No "Ad" label: it's Milhaus's own service on Milhaus's own site, not a
 // paid ad for someone else. Closes with the × button, the Escape key or
 // a click outside it; focus moves to the × so keyboard users can close
@@ -86,6 +89,18 @@ export function ServicePopup() {
   const closeRef = useRef<HTMLButtonElement>(null);
   const quiet = QUIET_PATHS.some((prefix) => pathname.startsWith(prefix));
   const [result, action, pending] = useActionState<ServiceRequestResult, FormData>(sendServiceRequest, null);
+
+  // Testing shortcut (Terry's ask, 2026-11-11): on localhost only
+  // (`npm run dev`), adding ?popup to any page address opens the pop-up
+  // straight away — no 30-second wait, no once-per-visit limit, no
+  // cookie-banner wait, even on the quiet pages. Next.js removes this
+  // branch from the live site's build, so ?popup does nothing there.
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "development") return;
+    if (!new URLSearchParams(window.location.search).has("popup")) return;
+    const timer = setTimeout(() => setOpen(true), 0);
+    return () => clearTimeout(timer);
+  }, [pathname]);
 
   useEffect(() => {
     if (open || quiet || readNumber(SHOWN_KEY)) return;
