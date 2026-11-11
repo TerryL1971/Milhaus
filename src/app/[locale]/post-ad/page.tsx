@@ -137,14 +137,16 @@ export default async function PostAdPage() {
                     <s className="mb-0.5 rounded-[3px] bg-canvas-deep/60 px-2 py-0.5 font-mono text-[0.7rem] font-semibold tracking-wider text-ink-soft decoration-brass decoration-2">
                       {currencyFormatter.format(option.priceEur)}
                     </s>
-                    <span className="font-body text-sm font-bold uppercase leading-tight tracking-wide text-brass">
-                      {t("freeLabel")}
+                    {/* "FREE for 51 days" on one line (Terry, 2026-11-11). */}
+                    <span className="whitespace-nowrap font-body leading-tight text-brass">
+                      <span className="text-sm font-bold uppercase tracking-wide">{t("freeLabel")}</span>
+                      {promo.freeDaysLeft !== null && (
+                        <span className="text-[0.72rem] font-semibold">
+                          {" "}
+                          {t("freeDaysLeft", { days: promo.freeDaysLeft })}
+                        </span>
+                      )}
                     </span>
-                    {promo.freeDaysLeft !== null && (
-                      <span className="whitespace-nowrap font-body text-[0.72rem] font-semibold leading-tight text-brass">
-                        {t("freeDaysLeft", { days: promo.freeDaysLeft })}
-                      </span>
-                    )}
                   </span>
                 ) : (
                   <span
