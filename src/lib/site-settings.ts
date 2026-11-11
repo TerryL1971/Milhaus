@@ -33,6 +33,11 @@ export interface Promotion {
   isActive: boolean;
   /** Switched on but its start date hasn't come yet. */
   isScheduled: boolean;
+  /** While running with a last day: how many free days are left,
+   * counting today (German calendar days) — 1 on the last day. null if
+   * not running or it has no end date. Shown as "Free for 12 days" on
+   * the posting page (Terry, 2026-11-11). */
+  freeDaysLeft: number | null;
 }
 
 const NO_PROMOTION: Promotion = {
@@ -45,6 +50,7 @@ const NO_PROMOTION: Promotion = {
   bannerDe: null,
   isActive: false,
   isScheduled: false,
+  freeDaysLeft: null,
 };
 
 export async function getPromotion(): Promise<Promotion> {
@@ -59,6 +65,7 @@ export async function getPromotion(): Promise<Promotion> {
   const now = Date.now();
   const started = !startsAt || startsAt.getTime() <= now;
   const notEnded = !endsAt || endsAt.getTime() > now;
+  const isActive = enabled && started && notEnded;
 
   return {
     enabled,
@@ -68,8 +75,10 @@ export async function getPromotion(): Promise<Promotion> {
     showBanner: data.promo_banner !== false,
     bannerEn: data.promo_banner_en || null,
     bannerDe: data.promo_banner_de || null,
-    isActive: enabled && started && notEnded,
+    isActive,
     isScheduled: enabled && !started && notEnded,
+    freeDaysLeft:
+      isActive && endsAt ? daysBetween(berlinDay(new Date(now)), berlinDay(new Date(endsAt.getTime() - 1))) + 1 : null,
   };
 }
 
@@ -116,6 +125,15 @@ export function berlinDayStart(day: string, addDays = 0): Date {
 /** The "YYYY-MM-DD" day in Germany that a moment falls on. */
 export function berlinDay(moment: Date): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Berlin" }).format(moment);
+}
+
+/** Whole days from one "YYYY-MM-DD" to another. */
+function daysBetween(from: string, to: string): number {
+  const utc = (day: string) => {
+    const [year, month, date] = day.split("-").map(Number);
+    return Date.UTC(year, month - 1, date);
+  };
+  return Math.round((utc(to) - utc(from)) / 86_400_000);
 }
 
 /** e.g. "31 July 2027", for Charlie's status line. */
