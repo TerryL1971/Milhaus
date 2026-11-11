@@ -15,7 +15,7 @@ const VALID_TYPES: PriceableType[] = ["rental", "rental_sale", "car", "product",
 export type SavePriceResult = { ok: true } | { ok: false; message: string } | null;
 
 /** One category's posting price — each row on Admin → Pricing has its
- * own Save button (src/components/posting-price-row.tsx). Returns a
+ * own Save button (src/components/admin-price-field.tsx). Returns a
  * result rather than throwing, so the row can say "✓ Saved" or what
  * went wrong (the live site hides a thrown error's message). */
 export async function setListingPrice(_previous: SavePriceResult, formData: FormData): Promise<SavePriceResult> {
@@ -53,6 +53,20 @@ export async function setListingPrice(_previous: SavePriceResult, formData: Form
 // ---------- Advertising prices (/advertise, ad invoices) ----------
 // See src/lib/ad-pricing.ts for how these three combine.
 
+/** Runs one ad-price save and turns any problem into a message for the
+ * row (src/components/admin-price-field.tsx) instead of an error screen —
+ * the live site hides a thrown error's message. Added 2026-11-11 when
+ * these rows got the same "Not saved yet" highlight as the posting
+ * prices (Terry's ask). */
+async function asResult(save: () => Promise<void>): Promise<SavePriceResult> {
+  try {
+    await save();
+    return { ok: true };
+  } catch (error) {
+    return { ok: false, message: error instanceof Error ? error.message : "That didn't save — try again." };
+  }
+}
+
 function revalidateAdPricing() {
   revalidatePath("/admin/pricing");
   revalidatePath("/advertise");
@@ -83,66 +97,72 @@ async function expectRow(result: PromiseLike<{ data: unknown[] | null; error: { 
   }
 }
 
-export async function setAdMonthlyPrice(formData: FormData) {
-  const placement = formData.get("placement") as string;
-  assertPlacement(placement);
-  const monthlyEur = parseEuro(formData.get("monthlyEur"), "The 30-day price");
+export async function setAdMonthlyPrice(_previous: SavePriceResult, formData: FormData): Promise<SavePriceResult> {
+  return asResult(async () => {
+    const placement = formData.get("placement") as string;
+    assertPlacement(placement);
+    const monthlyEur = parseEuro(formData.get("monthlyEur"), "The 30-day price");
 
-  const supabase = await createClient();
-  await expectRow(
-    supabase
-      .from("ad_prices")
-      .update({ monthly_eur: monthlyEur, updated_at: new Date().toISOString() })
-      .eq("placement", placement)
-      .select("placement"),
-  );
-  revalidateAdPricing();
+    const supabase = await createClient();
+    await expectRow(
+      supabase
+        .from("ad_prices")
+        .update({ monthly_eur: monthlyEur, updated_at: new Date().toISOString() })
+        .eq("placement", placement)
+        .select("placement"),
+    );
+    revalidateAdPricing();
+  });
 }
 
-export async function setAdTermDiscount(formData: FormData) {
-  const days = Number(formData.get("days"));
-  assertTerm(days);
-  const discountPct = Number(formData.get("discountPct"));
-  if (!Number.isFinite(discountPct) || discountPct < 0 || discountPct > 100) {
-    throw new Error("The discount must be between 0 and 100 %.");
-  }
+export async function setAdTermDiscount(_previous: SavePriceResult, formData: FormData): Promise<SavePriceResult> {
+  return asResult(async () => {
+    const days = Number(formData.get("days"));
+    assertTerm(days);
+    const discountPct = Number(formData.get("discountPct"));
+    if (!Number.isFinite(discountPct) || discountPct < 0 || discountPct > 100) {
+      throw new Error("The discount must be between 0 and 100 %.");
+    }
 
-  const supabase = await createClient();
-  await expectRow(
-    supabase
-      .from("ad_term_discounts")
-      .update({ discount_pct: discountPct, updated_at: new Date().toISOString() })
-      .eq("days", days)
-      .select("days"),
-  );
-  revalidateAdPricing();
+    const supabase = await createClient();
+    await expectRow(
+      supabase
+        .from("ad_term_discounts")
+        .update({ discount_pct: discountPct, updated_at: new Date().toISOString() })
+        .eq("days", days)
+        .select("days"),
+    );
+    revalidateAdPricing();
+  });
 }
 
 /** A fixed price for one placement + term. Saving it empty goes back to
  * the 30-day price × months − discount. */
-export async function setAdPriceOverride(formData: FormData) {
-  const placement = formData.get("placement") as string;
-  assertPlacement(placement);
-  const days = Number(formData.get("days"));
-  assertTerm(days);
-  const raw = formData.get("priceEur");
+export async function setAdPriceOverride(_previous: SavePriceResult, formData: FormData): Promise<SavePriceResult> {
+  return asResult(async () => {
+    const placement = formData.get("placement") as string;
+    assertPlacement(placement);
+    const days = Number(formData.get("days"));
+    assertTerm(days);
+    const raw = formData.get("priceEur");
 
-  const supabase = await createClient();
-  if (raw === null || raw === "") {
-    const { error } = await supabase.from("ad_price_overrides").delete().eq("placement", placement).eq("days", days);
-    if (error) throw new Error(error.message);
-  } else {
-    await expectRow(
-      supabase
-        .from("ad_price_overrides")
-        .upsert({
-          placement,
-          days,
-          price_eur: parseEuro(raw, "The fixed price"),
-          updated_at: new Date().toISOString(),
-        })
-        .select("placement"),
-    );
-  }
-  revalidateAdPricing();
+    const supabase = await createClient();
+    if (raw === null || raw === "") {
+      const { error } = await supabase.from("ad_price_overrides").delete().eq("placement", placement).eq("days", days);
+      if (error) throw new Error(error.message);
+    } else {
+      await expectRow(
+        supabase
+          .from("ad_price_overrides")
+          .upsert({
+            placement,
+            days,
+            price_eur: parseEuro(raw, "The fixed price"),
+            updated_at: new Date().toISOString(),
+          })
+          .select("placement"),
+      );
+    }
+    revalidateAdPricing();
+  });
 }

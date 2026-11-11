@@ -19,7 +19,7 @@ import {
 } from "@/app/admin/pricing/actions";
 import { AD_BASE_TERMS, adTermLabel, calculatedTermPrice } from "@/lib/ad-pricing";
 import { getAdPriceList } from "@/lib/ad-pricing-queries";
-import { PostingPriceRow } from "@/components/posting-price-row";
+import { AdminPriceField } from "@/components/admin-price-field";
 import { AD_PLACEMENT_SHORT_LABELS, AD_PLACEMENTS } from "@/lib/ad-slots";
 import { getListingPrices, type PriceableType } from "@/lib/listing-prices";
 import { isAdminRole } from "@/lib/roles";
@@ -110,11 +110,14 @@ export default async function AdminPricingPage() {
                   <td className="px-4 py-3">
                     {/* Own Save button per row, box highlighted when
                         changed but not saved (Terry, 2026-11-11). */}
-                    <PostingPriceRow
-                      type={type}
-                      label={TYPE_LABELS[type]}
-                      savedPrice={prices[type]}
+                    <AdminPriceField
                       action={setListingPrice}
+                      hidden={{ type }}
+                      name="priceEur"
+                      savedValue={String(prices[type])}
+                      ariaLabel={`Price for ${TYPE_LABELS[type]}`}
+                      className="flex justify-end gap-2"
+                      messageAlign="right"
                     />
                   </td>
                 </tr>
@@ -140,25 +143,16 @@ export default async function AdminPricingPage() {
           <h3 className="mb-3 font-display text-lg font-semibold text-ink">1. Price for 30 days</h3>
           <div className="flex flex-col gap-3">
             {AD_PLACEMENTS.map((placement) => (
-              <form key={placement} action={setAdMonthlyPrice} className="flex flex-wrap items-center gap-2">
-                <input type="hidden" name="placement" value={placement} />
-                <span className="w-48 font-medium text-ink">{AD_PLACEMENT_SHORT_LABELS[placement]}</span>
-                <input
-                  type="number"
-                  name="monthlyEur"
-                  min="0"
-                  step="0.50"
-                  defaultValue={adPrices.monthlyEur[placement]}
-                  aria-label={`${AD_PLACEMENT_SHORT_LABELS[placement]} price for 30 days`}
-                  className="w-28 rounded-md border border-canvas-deep bg-canvas px-3 py-1.5 text-sm text-charcoal focus:border-olive focus:outline-none"
-                />
-                <button
-                  type="submit"
-                  className="rounded-md border border-canvas-deep px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-olive hover:text-olive-deep"
-                >
-                  Save
-                </button>
-              </form>
+              <AdminPriceField
+                key={placement}
+                action={setAdMonthlyPrice}
+                hidden={{ placement }}
+                name="monthlyEur"
+                savedValue={String(adPrices.monthlyEur[placement])}
+                ariaLabel={`${AD_PLACEMENT_SHORT_LABELS[placement]} price for 30 days`}
+                inputWidth="w-28"
+                label={AD_PLACEMENT_SHORT_LABELS[placement]}
+              />
             ))}
           </div>
         </div>
@@ -171,27 +165,19 @@ export default async function AdminPricingPage() {
           </p>
           <div className="flex flex-col gap-3">
             {AD_BASE_TERMS.filter((days) => days !== 30).map((days) => (
-              <form key={days} action={setAdTermDiscount} className="flex flex-wrap items-center gap-2">
-                <input type="hidden" name="days" value={days} />
-                <span className="w-48 font-medium text-ink">{adTermLabel(days)}</span>
-                <input
-                  type="number"
-                  name="discountPct"
-                  min="0"
-                  max="100"
-                  step="1"
-                  defaultValue={adPrices.discountPct[days]}
-                  aria-label={`Discount for ${adTermLabel(days)}`}
-                  className="w-20 rounded-md border border-canvas-deep bg-canvas px-3 py-1.5 text-sm text-charcoal focus:border-olive focus:outline-none"
-                />
-                <span className="text-sm text-ink-soft">% off</span>
-                <button
-                  type="submit"
-                  className="rounded-md border border-canvas-deep px-3 py-1.5 text-xs font-semibold text-ink-soft hover:border-olive hover:text-olive-deep"
-                >
-                  Save
-                </button>
-              </form>
+              <AdminPriceField
+                key={days}
+                action={setAdTermDiscount}
+                hidden={{ days: String(days) }}
+                name="discountPct"
+                savedValue={String(adPrices.discountPct[days])}
+                ariaLabel={`Discount for ${adTermLabel(days)}`}
+                max="100"
+                step="1"
+                inputWidth="w-20"
+                label={adTermLabel(days)}
+                suffix="% off"
+              />
             ))}
           </div>
         </div>
@@ -210,36 +196,20 @@ export default async function AdminPricingPage() {
                   {AD_BASE_TERMS.map((days) => {
                     const override = adPrices.overrides[placement]?.[days];
                     return (
-                      <form
+                      <AdminPriceField
                         key={days}
                         action={setAdPriceOverride}
+                        hidden={{ placement, days: String(days) }}
+                        name="priceEur"
+                        savedValue={override === undefined ? "" : String(override)}
+                        required={false}
+                        placeholder={String(calculatedTermPrice(adPrices, placement, days))}
+                        ariaLabel={`${AD_PLACEMENT_SHORT_LABELS[placement]}, ${adTermLabel(days)}: fixed price`}
                         className="flex items-center gap-2 rounded-md bg-canvas/50 px-3 py-2"
-                      >
-                        <input type="hidden" name="placement" value={placement} />
-                        <input type="hidden" name="days" value={days} />
-                        <span className="w-20 text-sm text-ink-soft">{adTermLabel(days)}</span>
-                        <input
-                          type="number"
-                          name="priceEur"
-                          min="0"
-                          step="0.50"
-                          defaultValue={override ?? ""}
-                          placeholder={String(calculatedTermPrice(adPrices, placement, days))}
-                          aria-label={`${AD_PLACEMENT_SHORT_LABELS[placement]}, ${adTermLabel(days)}: fixed price`}
-                          className="w-24 rounded-md border border-canvas-deep bg-paper px-2 py-1 text-sm text-charcoal placeholder:text-ink-soft/50 focus:border-olive focus:outline-none"
-                        />
-                        <button
-                          type="submit"
-                          className="rounded-md border border-canvas-deep px-2 py-1 text-xs font-semibold text-ink-soft hover:border-olive hover:text-olive-deep"
-                        >
-                          Save
-                        </button>
-                        {override !== undefined && (
-                          <span className="font-mono text-[0.62rem] uppercase tracking-wider text-olive-deep">
-                            Fixed
-                          </span>
-                        )}
-                      </form>
+                        label={adTermLabel(days)}
+                        labelClassName="w-20 text-sm text-ink-soft"
+                        fixed={override !== undefined}
+                      />
                     );
                   })}
                 </div>
