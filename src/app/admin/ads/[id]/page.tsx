@@ -24,8 +24,15 @@ const labelClass = "mb-1 block font-mono text-[0.68rem] uppercase tracking-wider
 const inputClass =
   "w-full rounded-md border border-canvas-deep bg-paper px-3 py-2 text-[0.95rem] text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none";
 
-export default async function AdminEditAdPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function AdminEditAdPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ error?: string }>;
+}) {
   const { id } = await params;
+  const { error } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -55,6 +62,12 @@ export default async function AdminEditAdPage({ params }: { params: Promise<{ id
             {neverLive
               ? `Bought for ${adTermLabel(ad.durationDays)}. It goes live when you save, and the ${adTermLabel(ad.durationDays)} start then.`
               : `Runs until ${new Date(ad.endsAt!).toLocaleDateString("en-US", { dateStyle: "long" })}.`}
+          </p>
+        )}
+
+        {error && (
+          <p role="alert" className="mb-6 rounded-md bg-rust/10 px-3 py-2 text-sm font-semibold text-rust">
+            {error}
           </p>
         )}
 
@@ -92,7 +105,7 @@ export default async function AdminEditAdPage({ params }: { params: Promise<{ id
               </div>
             )}
             <input id="image" name="image" type="file" accept="image/*" className="text-sm text-ink-soft" />
-            <p className="mt-1 text-xs text-ink-soft">{AD_PLACEMENT_SIZES[ad.placement]} Up to 1 MB.</p>
+            <p className="mt-1 text-xs text-ink-soft">{AD_PLACEMENT_SIZES[ad.placement]} Up to 3 MB.</p>
           </div>
 
           <div>

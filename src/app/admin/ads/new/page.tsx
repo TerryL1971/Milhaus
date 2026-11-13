@@ -3,6 +3,11 @@
 // advertiser supplies) or a plain heading/body text fallback — same
 // either/or shape the old hardcoded SponsorBannerCarousel SLIDES array
 // used, now a real row Charlie can add without a code change.
+//
+// Terry, 2026-11-13: the image could only be given as a web address,
+// which Charlie couldn't do with artwork an advertiser emailed him
+// (Milinsure's). It now has an "Upload the image" button, like the edit
+// page; the address box stays for artwork that's already online.
 
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -21,7 +26,8 @@ const labelClass = "mb-1 block font-mono text-[0.68rem] uppercase tracking-wider
 const inputClass =
   "w-full rounded-md border border-canvas-deep bg-paper px-3 py-2 text-[0.95rem] text-charcoal placeholder:text-charcoal/40 focus:border-olive focus:outline-none";
 
-export default async function AdminNewAdPage() {
+export default async function AdminNewAdPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+  const { error } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -43,6 +49,12 @@ export default async function AdminNewAdPage() {
           heading/body for a plain text slide (what &quot;Advertise here&quot; already is — just a row of this
           same table).
         </p>
+
+        {error && (
+          <p role="alert" className="mb-6 rounded-md bg-rust/10 px-3 py-2 text-sm font-semibold text-rust">
+            {error}
+          </p>
+        )}
 
         <form action={createAdSlot} className="flex flex-col gap-5">
           <div>
@@ -84,22 +96,36 @@ export default async function AdminNewAdPage() {
           </div>
 
           <div>
+            <label htmlFor="image" className={labelClass}>
+              Upload the image
+            </label>
+            <input id="image" name="image" type="file" accept="image/*" className="text-sm text-ink-soft" />
+            <p className="mt-1 text-xs text-ink-soft">
+              The artwork file the advertiser sent you (JPG or PNG, up to 3 MB). Sizes for each placement are
+              listed above.
+            </p>
+          </div>
+
+          <div>
             <label htmlFor="imageUrl" className={labelClass}>
-              Image URL (optional — leave blank for a text slide instead)
+              …or an image URL (if the artwork is already online)
             </label>
             <input id="imageUrl" name="imageUrl" type="url" placeholder="https://…" className={inputClass} />
+            <p className="mt-1 text-xs text-ink-soft">
+              No image at all? Leave both empty and fill in the heading below for a plain text ad.
+            </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label htmlFor="heading" className={labelClass}>
-                Heading (for a text slide)
+                Heading (for a text ad)
               </label>
               <input id="heading" name="heading" className={inputClass} />
             </div>
             <div>
               <label htmlFor="bodyText" className={labelClass}>
-                Body (for a text slide)
+                Body (for a text ad)
               </label>
               <input id="bodyText" name="bodyText" className={inputClass} />
             </div>

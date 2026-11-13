@@ -24,6 +24,13 @@ const nextConfig: NextConfig = {
   // the specific project ref) so this doesn't need touching if the
   // project ever moves to a different ref; scoped to the public storage
   // object path rather than the whole domain.
+  // Form submissions (server actions) are capped at 1 MB by default.
+  // Advertisers' artwork is often bigger — Charlie's ad image uploads
+  // (Admin → Ads, 2026-11-13) allow up to 3 MB, so the cap is 4 MB to fit
+  // the image plus the rest of the form. Vercel accepts up to 4.5 MB.
+  experimental: {
+    serverActions: { bodySizeLimit: "4mb" },
+  },
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "*.supabase.co", pathname: "/storage/v1/object/public/**" },
