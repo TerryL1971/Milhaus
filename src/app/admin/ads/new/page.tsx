@@ -12,6 +12,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { AdImagePicker } from "@/components/ad-image-picker";
 import { createAdSlot } from "@/app/admin/ads/actions";
 import { AD_PLACEMENTS, AD_PLACEMENT_LABELS, AD_PLACEMENT_SIZES } from "@/lib/ad-slots";
 import { isAdminRole } from "@/lib/roles";
@@ -99,16 +100,7 @@ export default async function AdminNewAdPage({ searchParams }: { searchParams: P
             <label htmlFor="image" className={labelClass}>
               Upload the image
             </label>
-            {/* Styled as a real button (Terry, 2026-11-13) — the browser's own
-                file box looked like plain text Charlie might not click. The
-                chosen file's name shows beside it. */}
-            <input
-              id="image"
-              name="image"
-              type="file"
-              accept="image/*"
-              className="block w-full text-sm text-ink-soft file:mr-3 file:cursor-pointer file:rounded-md file:border-0 file:bg-ink file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-paper hover:file:bg-ink-soft"
-            />
+            <AdImagePicker placementSelectId="placement" />
             <p className="mt-1 text-xs text-ink-soft">
               The artwork file the advertiser sent you (JPG or PNG, up to 3 MB). Sizes for each placement are
               listed above.
