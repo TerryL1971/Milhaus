@@ -10,7 +10,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import Image from "next/image";
 import { BusinessCard } from "@/components/business-card";
 import { CarListingCard } from "@/components/car-listing-card";
-import { ComingSoonPanel } from "@/components/coming-soon-panel";
+import { PlaceholderCard, placeholderSpots } from "@/components/placeholder-card";
 import { HeroSearchAlert } from "@/components/hero-search-alert";
 import { ListingCard } from "@/components/listing-card";
 import { SpecialOfferCard } from "@/components/special-offer-card";
@@ -360,11 +360,12 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
       {/* ---------- FEATURED HOMES / FEATURED CARS ---------- */}
       {/* Per Charlie's frontpage mockup — dedicated rows with the full
           card treatment (photo, badges, price/specs). The Featured rows
-          (these two and Businesses) always render — when a
-          category has zero active listings (e.g. right after Charlie
-          deletes the dev-only mock data, before real inventory exists),
-          ComingSoonPanel takes the grid's place instead of the whole
-          section just vanishing. */}
+          (these two, Businesses and Special Offers) always render, and
+          every spot real posts don't fill shows an invitation card
+          ("Your home could be here", src/components/placeholder-card.tsx
+          — Terry, 2026-11-14, when the demo content came off the live
+          site). Before that, an empty row showed one wide "coming soon"
+          box and a half-empty row just had gaps. */}
       <section className="py-11">
         <div className="mx-auto max-w-[1600px] px-8">
           <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
@@ -373,15 +374,14 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
               {t("featuredHomesViewAll")} →
             </Link>
           </div>
-          {featuredRentals.length > 0 ? (
-            <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 xl:grid-cols-4">
-              {featuredRentals.map((listing, index) => (
-                <ListingCard key={listing.id} listing={listing} photoGradient={RENTAL_PHOTO_GRADIENTS[index % RENTAL_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} priority={rentalPriorityIndices.has(index)} />
-              ))}
-            </div>
-          ) : (
-            <ComingSoonPanel heading={t("homesComingSoonHeading")} body={t("homesComingSoonBody")} />
-          )}
+          <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 xl:grid-cols-4">
+            {featuredRentals.map((listing, index) => (
+              <ListingCard key={listing.id} listing={listing} photoGradient={RENTAL_PHOTO_GRADIENTS[index % RENTAL_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} priority={rentalPriorityIndices.has(index)} />
+            ))}
+            {placeholderSpots(featuredRentals.length, CARDS_PER_ROW).map((spot, index) => (
+              <PlaceholderCard key={`home-${index}`} kind="home" href="/post" heading={t("placeholderHomeHeading")} body={t("placeholderHomeBody")} cta={t("placeholderHomeCta")} aspectClassName={FEATURED_CARD_ASPECT} className={spot} />
+            ))}
+          </div>
         </div>
       </section>
 
@@ -393,15 +393,14 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
               {t("featuredCarsViewAll")} →
             </Link>
           </div>
-          {featuredCars.length > 0 ? (
-            <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 xl:grid-cols-4">
-              {featuredCars.map((listing, index) => (
-                <CarListingCard key={listing.id} listing={listing} photoGradient={CAR_PHOTO_GRADIENTS[index % CAR_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} priority={carPriorityIndices.has(index)} />
-              ))}
-            </div>
-          ) : (
-            <ComingSoonPanel heading={t("carsComingSoonHeading")} body={t("carsComingSoonBody")} />
-          )}
+          <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 xl:grid-cols-4">
+            {featuredCars.map((listing, index) => (
+              <CarListingCard key={listing.id} listing={listing} photoGradient={CAR_PHOTO_GRADIENTS[index % CAR_PHOTO_GRADIENTS.length]} aspectClassName={FEATURED_CARD_ASPECT} isFavorited={user ? favoriteIds.has(listing.id) : undefined} priority={carPriorityIndices.has(index)} />
+            ))}
+            {placeholderSpots(featuredCars.length, CARDS_PER_ROW).map((spot, index) => (
+              <PlaceholderCard key={`car-${index}`} kind="car" href="/post-car" heading={t("placeholderCarHeading")} body={t("placeholderCarBody")} cta={t("placeholderCarCta")} aspectClassName={FEATURED_CARD_ASPECT} className={spot} />
+            ))}
+          </div>
         </div>
       </section>
 
@@ -415,15 +414,14 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
               {t("businessesViewAll")} →
             </Link>
           </div>
-          {featuredBusinesses.length > 0 ? (
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              {featuredBusinesses.map((business, index) => (
-                <BusinessCard key={business.id} business={business} aspectClassName={FEATURED_CARD_ASPECT} priority={businessPriorityIndices.has(index)} />
-              ))}
-            </div>
-          ) : (
-            <ComingSoonPanel heading={t("businessesComingSoonHeading")} body={t("businessesComingSoonBody")} />
-          )}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            {featuredBusinesses.map((business, index) => (
+              <BusinessCard key={business.id} business={business} aspectClassName={FEATURED_CARD_ASPECT} priority={businessPriorityIndices.has(index)} />
+            ))}
+            {placeholderSpots(featuredBusinesses.length, CARDS_PER_ROW).map((spot, index) => (
+              <PlaceholderCard key={`business-${index}`} kind="business" href="/post-business" heading={t("placeholderBusinessHeading")} body={t("placeholderBusinessBody")} cta={t("placeholderBusinessCta")} aspectClassName={FEATURED_CARD_ASPECT} className={spot} />
+            ))}
+          </div>
         </div>
       </section>
 
@@ -439,24 +437,25 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
           column) with a fixed 600px height — first built at a literal
           300x600 to match /cars' sidebar ad exactly, but that read as
           too narrow next to the other cards' width, per Terry. Up to
-          CARDS_PER_ROW (4 since 2026-11-10) shown at once, no rotation. Hidden entirely until Charlie's
-          added at least one — same "don't show an empty/fake section"
-          rule as Military-Friendly Businesses. No real Buy & Sell
+          CARDS_PER_ROW (4 since 2026-11-10) shown at once, no rotation. Was
+          hidden until Charlie had added one; since 2026-11-14 empty spots
+          show "Your offer could be here" cards linking to /advertise. No real Buy & Sell
           inventory or /products page/nav were touched by this change. */}
-      {specialOffers.length > 0 && (
-        <section className="bg-canvas-deep py-11">
-          <div className="mx-auto max-w-[1600px] px-8">
-            <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-              <h2 className="font-display text-[clamp(1.5rem,7.5vw,2rem)] font-semibold text-ink">{t("specialOffersHeading")}</h2>
-            </div>
-            <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 xl:grid-cols-4">
-              {specialOffers.slice(0, CARDS_PER_ROW).map((offer, index) => (
-                <SpecialOfferCard key={offer.id} offer={offer} priority={index === 0} />
-              ))}
-            </div>
+      <section className="bg-canvas-deep py-11">
+        <div className="mx-auto max-w-[1600px] px-8">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+            <h2 className="font-display text-[clamp(1.5rem,7.5vw,2rem)] font-semibold text-ink">{t("specialOffersHeading")}</h2>
           </div>
-        </section>
-      )}
+          <div className="grid grid-cols-1 gap-5.5 sm:grid-cols-2 xl:grid-cols-4">
+            {specialOffers.slice(0, CARDS_PER_ROW).map((offer, index) => (
+              <SpecialOfferCard key={offer.id} offer={offer} priority={index === 0} />
+            ))}
+            {placeholderSpots(Math.min(specialOffers.length, CARDS_PER_ROW), CARDS_PER_ROW).map((spot, index) => (
+              <PlaceholderCard key={`offer-${index}`} kind="offer" href="/advertise" heading={t("placeholderOfferHeading")} body={t("placeholderOfferBody")} cta={t("placeholderOfferCta")} tall className={spot} />
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* ---------- HOW IT WORKS ---------- */}
       <section id="how" className="py-18">
